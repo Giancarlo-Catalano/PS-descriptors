@@ -2,6 +2,8 @@ import random
 
 import numpy as np
 from deap import creator
+from pymoo.algorithms.moo.moead import MOEAD
+from pymoo.algorithms.moo.nsga2 import NSGA2
 from pymoo.algorithms.moo.nsga3 import NSGA3
 from pymoo.algorithms.soo.nonconvex.ga import GA
 from pymoo.core.problem import Problem, ElementwiseProblem
@@ -9,17 +11,21 @@ from pymoo.operators.crossover.sbx import SBX
 from pymoo.operators.mutation.pm import PM
 from pymoo.operators.repair.rounding import RoundingRepair
 from pymoo.operators.sampling.rnd import IntegerRandomSampling, FloatRandomSampling
+from pymoo.operators.survival.rank_and_crowding import RankAndCrowding
 from pymoo.optimize import minimize
 from pymoo.util.ref_dirs import get_reference_directions
 from pymoo.visualization.scatter import Scatter
 
 from BenchmarkProblems.BenchmarkProblem import BenchmarkProblem
+from Core.EvaluatedPS import EvaluatedPS
 from Core.PRef import PRef
-from Core.PS import PS
+from Core.PS import PS, STAR
 from Core.PSMetric.Classic3 import Classic3PSEvaluator
 from Core.SearchSpace import SearchSpace
 from PSMiners.Mining import get_history_pRef
+from PSMiners.PyMoo.CustomCrowding import PyMooCustomCrowding, PyMooPSGenotypeCrowding
 from PSMiners.PyMoo.Operators import PSPolynomialMutation, PSGeometricSampling, PSSimulatedBinaryCrossover
+from utils import announce
 
 
 class PSPyMooProblem(ElementwiseProblem):
@@ -58,46 +64,88 @@ def pymoo_result_to_pss(res) -> list[PS]:
     return [PS(row) for row in res.X]
 
 
+def gc_crowding(F, filter_out_duplicates=None, n_remove=None, **kwargs):
+    print("Called gc_crowding")
 
-def apply_to_nsgaiii_pymoo(benchmark_problem: BenchmarkProblem, pRef: PRef):
-    pymoo_problem = PSPyMooProblem(pRef)
 
-    print("Running the NSGA using pymoo")
-    # create the reference directions to be used for the optimization
-    ref_dirs = get_reference_directions("das-dennis", 3, n_partitions=12)
+    pop = kwargs["pop"]
+    front_indexes = kwargs["front_indexes"]
+    pop_matrix = np.array([ind.X for ind in pop])
+    where_fixed = pop_matrix != STAR
+    counts = np.sum(where_fixed, axis=0)
+    foods = (1 / counts).reshape((-1, 1))
+    scores = where_fixed[front_indexes] @ foods
+    result = scores.ravel()
+    colour = "green"
 
-    # create the algorithm object
-    algorithm = NSGA3(pop_size=600,
-                      ref_dirs=ref_dirs,
+    return result
+
+def get_pymoo_algorithm(pRef,
+                        which_algorithm: str,
+                        pop_size: int = 100,
+                        which_crowding: str= "cd"):
+    ss = pRef.search_space
+    n = ss.amount_of_parameters
+
+    if which_crowding == "gc":
+        survival = PyMooPSGenotypeCrowding()
+    else:
+        survival = RankAndCrowding(crowding_func = which_crowding)
+    if which_algorithm == "NSGAII":
+        return NSGA2(pop_size=pop_size,
                       sampling=PSGeometricSampling(),
                       crossover=PSSimulatedBinaryCrossover(),
-                      mutation=PSPolynomialMutation(benchmark_problem.search_space),
+                      mutation=PSPolynomialMutation(ss),
                       eliminate_duplicates=True,
+                     survival=survival
                       )
+    if which_algorithm == "NSGAIII":
+        ref_dirs = get_reference_directions("das-dennis", 3, n_partitions=12)
 
-    # execute the optimization
-    res = minimize(pymoo_problem,
-                   algorithm,
-                   seed=1,
-                   termination=('n_gen', 100))
+        # create the algorithm object
+        return NSGA3(pop_size=pop_size,
+                          ref_dirs=ref_dirs,
+                          sampling=PSGeometricSampling(),
+                          crossover=PSSimulatedBinaryCrossover(),
+                          mutation=PSPolynomialMutation(ss),
+                          eliminate_duplicates=True,
+                     survival=survival,
+                          )
+    elif which_algorithm == "MOEAD":
+        ref_dirs = get_reference_directions("uniform", 3, n_partitions=12)
 
-    Scatter().add(res.F).show()
+        return MOEAD(
+            ref_dirs = ref_dirs,
+            sampling=PSGeometricSampling(),
+            crossover=PSSimulatedBinaryCrossover(),
+            mutation=PSPolynomialMutation(ss),
+            n_neighbors=pRef.search_space.amount_of_parameters,
+            prob_neighbor_mating=0.7,
+            survival=survival
+        )
+
+def test_pymoo(benchmark_problem: BenchmarkProblem, pRef: PRef, which_algorithm: str, which_crowding: str):
+
+
+    algorithm = get_pymoo_algorithm(pRef, which_algorithm = which_algorithm, which_crowding = which_crowding)
+    pymoo_problem = PSPyMooProblem(pRef)
+
+    with announce(f"Running {which_algorithm} using {which_crowding}"):
+        res = minimize(pymoo_problem,
+                       algorithm,
+                       seed=1,
+                       termination=('n_gen', 20),
+                       verbose=True)
+
+
+    pss = pymoo_result_to_pss(res)
+    e_pss = [EvaluatedPS(values, metric_scores=ms) for values, ms in zip(res.X, res.F)]
+    e_pss.sort(reverse=False, key=lambda x: x.metric_scores[-1])  # sorting by atomicity, resverse=False because it's a minimisation task
+    #Scatter().add(res.F).show()
 
     pss = pymoo_result_to_pss(res)
     print(f"The pss found are {len(pss)}:")
-    for ps in pss:
-        print(ps)
-
-
-    print("Function value: %s" % res.F)
-
-
-def test_pymoo(benchmark_problem: BenchmarkProblem):
-    pRef = get_history_pRef(benchmark_problem=benchmark_problem,
-                            sample_size=1000,
-                            which_algorithm="SA",
-                            verbose=True)
-
-    apply_to_nsgaiii_pymoo(benchmark_problem, pRef)
+    for e_ps in e_pss:
+        print(e_ps)
 
 

@@ -140,9 +140,9 @@ def get_trapk_explainer():
 
 
 if __name__ == '__main__':
-    detector = get_bt_explainer()
+    #detector = get_bt_explainer()
     #detector.generate_files_with_default_settings()
-    detector.explanation_loop(amount_of_fs_to_propose=6, ps_show_limit=12)
+    #detector.explanation_loop(amount_of_fs_to_propose=6, ps_show_limit=12)
 
     # this is another change
 
@@ -157,5 +157,24 @@ if __name__ == '__main__':
 
     #problem = RoyalRoad(3, 5)
     #test_moead_on_problem(problem, sample_size=5000)
+
+
+    algorithm_which_options = ["NSGAII"]  # , "NSGAIII","MOEAD"
+    crowding_which_options= ["gc", "cd", "ce", "mnn", "2nn"]  # PCD
+    problem = RoyalRoad(3, 5)
+
+    with announce(f"Generating a pRef"):
+        pRef = get_history_pRef(benchmark_problem=problem,
+                                sample_size=10000,
+                                which_algorithm="SA",
+                                verbose=True)
+
+
+    for algorithm in algorithm_which_options:
+        for crowding in crowding_which_options:
+            test_pymoo(problem,
+                       pRef = pRef,
+                       which_algorithm=algorithm,
+                       which_crowding =crowding)
 
 
