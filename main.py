@@ -29,9 +29,10 @@ from Core.Explainer import Explainer
 from Explanation.Detector import Detector
 from FSStochasticSearch.Operators import SinglePointFSMutation
 from FSStochasticSearch.SA import SA
+from PSMiners.AbstractPSMiner import AbstractPSMiner
 from PSMiners.DEAP.NSGAPSMiner import NSGAPSMiner
 from PSMiners.MOEAD.testing import test_moead_on_problem
-from PSMiners.Mining import get_history_pRef
+from PSMiners.Mining import get_history_pRef, get_ps_miner
 from PSMiners.PyMoo.PSPyMooProblem import test_pymoo
 from utils import announce, indent
 import pandas as pd
@@ -159,9 +160,12 @@ if __name__ == '__main__':
     #test_moead_on_problem(problem, sample_size=5000)
 
 
-    algorithm_which_options = ["NSGAII"]  # , "NSGAIII","MOEAD"
+    algorithm_which_options = ["NSGAII", "NSGAIII","MOEAD"]
     crowding_which_options= ["gc", "cd", "ce", "mnn", "2nn"]  # PCD
     problem = RoyalRoad(3, 5)
+
+
+
 
     with announce(f"Generating a pRef"):
         pRef = get_history_pRef(benchmark_problem=problem,
@@ -169,12 +173,33 @@ if __name__ == '__main__':
                                 which_algorithm="SA",
                                 verbose=True)
 
+    algorithm = get_ps_miner(pRef, which="NSGA_experimental_crowding")
+    ps_budget = 10000
+    with announce(f"Running {algorithm} on {pRef} with {ps_budget =}", True):
+        termination_criterion = TerminationCriteria.PSEvaluationLimit(ps_limit=ps_budget)
+        algorithm.run(termination_criterion, verbose=True)
+
+    result_ps = algorithm.get_results(None)
+    result_ps = AbstractPSMiner.without_duplicates(result_ps)
+    result_ps = [ps for ps in result_ps if not ps.is_empty()]
+    print("the results of DEAP are ")
+    for ps in result_ps:
+        print(ps)
+
+
+    print("\n"*5)
+
+    which_ones_dont_work = set()
 
     for algorithm in algorithm_which_options:
         for crowding in crowding_which_options:
-            test_pymoo(problem,
-                       pRef = pRef,
-                       which_algorithm=algorithm,
-                       which_crowding =crowding)
+            try:
+                test_pymoo(problem,
+                           pRef = pRef,
+                           which_algorithm=algorithm,
+                           which_crowding =crowding)
+            except Exception as e:
+                print(f"The combination {algorithm} + {crowding} caused an error")
+                which_ones_dont_work.add(f"{algorithm}+{crowding}")
 
 

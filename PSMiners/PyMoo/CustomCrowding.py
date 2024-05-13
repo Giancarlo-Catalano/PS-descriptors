@@ -91,7 +91,7 @@ class PyMooCustomCrowding(Survival):
 
 class PyMooPSGenotypeCrowding(PyMooCustomCrowding):
     def get_crowding_scores_of_front(self, all_F, n_remove, population, front_indexes) -> np.ndarray:
-        print("Called PyMooPSGenotypeCrowding.get_crowding_scores_of_front")
+        #print("Called PyMooPSGenotypeCrowding.get_crowding_scores_of_front")
 
         pop_matrix = np.array([ind.X for ind in population])
         where_fixed = pop_matrix != STAR

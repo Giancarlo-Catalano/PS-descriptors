@@ -121,10 +121,12 @@ def get_toolbox_for_problem(pRef: PRef,
     search_space = pRef.search_space
 
 
-
+    def make_random_deap_individual():
+        result = geometric_distribution_values_of_ps(search_space)
+        return creator.DEAPPSIndividual(result)
 
     toolbox.register("make_random_ps",
-                     geometric_distribution_values_of_ps)
+                     make_random_deap_individual)
     def evaluate(ps) -> tuple:
         return classic3_evaluator.get_S_MF_A(ps)  # experimental
 

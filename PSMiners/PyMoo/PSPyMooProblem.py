@@ -134,7 +134,7 @@ def test_pymoo(benchmark_problem: BenchmarkProblem, pRef: PRef, which_algorithm:
         res = minimize(pymoo_problem,
                        algorithm,
                        seed=1,
-                       termination=('n_gen', 20),
+                       termination=('n_gen', 200),
                        verbose=True)
 
 
@@ -147,5 +147,8 @@ def test_pymoo(benchmark_problem: BenchmarkProblem, pRef: PRef, which_algorithm:
     print(f"The pss found are {len(pss)}:")
     for e_ps in e_pss:
         print(e_ps)
+
+
+    return pss
 
 
