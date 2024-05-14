@@ -37,7 +37,7 @@ from PSMiners.DEAP.DEAPPSMiner import DEAPPSMiner, test_DEAP_miner
 from PSMiners.MOEAD.testing import test_moead_on_problem
 from PSMiners.Mining import get_history_pRef, get_ps_miner
 from PSMiners.Platypus.PlatypusPSProblem import test_platypus
-from PSMiners.PyMoo.PSPyMooProblem import test_pymoo
+from PSMiners.PyMoo.PSPyMooProblem import test_pymoo, sequential_search_pymoo
 from utils import announce, indent
 import pandas as pd
 
@@ -174,7 +174,7 @@ if __name__ == '__main__':
 
     with announce(f"Generating a pRef"):
         pRef = get_history_pRef(benchmark_problem=problem,
-                                sample_size=1000,
+                                sample_size=10000,
                                 which_algorithm="uniform",
                                 verbose=True)
 
@@ -190,6 +190,12 @@ if __name__ == '__main__':
 
 
     def get_pymoo_data():
+        from_pymoo = test_pymoo(problem,
+                                pRef = pRef,
+                                which_algorithm="NSGAIII",
+                                which_crowding ="mnn")
+        all_results[f"pymoo_NSGAIII"] = from_pymoo.copy()
+
         for algorithm in ["NSGAII"]:
             for crowding in ["gc", "cd", "ce", "mnn", "2nn"]:
                 try:
@@ -205,8 +211,9 @@ if __name__ == '__main__':
 
     def get_platypus_data():
         jail = ["NSGAIII", "CMAES", "GDE3",  "IBEA", "OMOPSO", "SMPSO", "SPEA2", "EpsMOEA"]
-        heaven = ["NSGAII",  "MOEAD"]
-        for which_algorithm in ["NSGAII",  "MOEAD"]:
+        slow = ["MOEAD"]
+        heaven = ["NSGAII"]
+        for which_algorithm in heaven:
             with announce(f"Running Platypus's {which_algorithm}"):
                 pss = test_platypus(problem, pRef=pRef, budget=ps_budget, which_algorithm=which_algorithm)
                 add_to_results_with_name(f"Platypus_{which_algorithm}", pss)
@@ -223,14 +230,18 @@ if __name__ == '__main__':
         e_pss.sort(reverse=True)
         return e_pss
 
+    # get_deap_data()
+    # get_pymoo_data()
+    # get_platypus_data()
+    #
+    # for miner_key in all_results:
+    #     print(f"\n\n\nFor the miner {miner_key}")
+    #     sorted_pss = get_sorted_by_atomicity(all_results[miner_key])
+    #     for ps in sorted_pss:
+    #         print(problem.repr_ps(ps))
 
-    get_platypus_data()
 
-    for miner_key in all_results:
-        print(f"\n\n\nFor the miner {miner_key}")
-        sorted_pss = get_sorted_by_atomicity(all_results[miner_key])
-        for ps in sorted_pss:
-            print(ps)
+    sequential_search_pymoo(pRef=pRef, ps_budget_per_run=5000, pop_size=150, runs=10)
 
 
 

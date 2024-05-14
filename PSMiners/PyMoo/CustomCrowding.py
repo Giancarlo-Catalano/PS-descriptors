@@ -7,7 +7,7 @@ from pymoo.util.misc import find_duplicates
 from pymoo.util.nds.non_dominated_sorting import NonDominatedSorting
 from pymoo.util.randomized_argsort import randomized_argsort
 
-from Core.PS import STAR
+from Core.PS import STAR, PS
 
 
 class PyMooCustomCrowding(Survival):
@@ -94,14 +94,40 @@ class PyMooPSGenotypeCrowding(PyMooCustomCrowding):
         #print("Called PyMooPSGenotypeCrowding.get_crowding_scores_of_front")
 
         pop_matrix = np.array([ind.X for ind in population])
-        where_fixed = pop_matrix != STAR
+        where_fixed: np.ndarray = pop_matrix != STAR
         counts = np.sum(where_fixed, axis=0)
         foods = (1 / counts).reshape((-1, 1))
-        scores = where_fixed[front_indexes] @ foods
-        result = scores.ravel()
-        colour = "green"
+        scores = np.array([np.average(foods[row]) for row in where_fixed[front_indexes]])
+        return scores
 
-        return result
 
+class PyMooPSSequentialCrowding(PyMooCustomCrowding):
+    coverage: np.ndarray
+    foods: np.ndarray
+
+    def __init__(self, already_obtained: list[PS]):
+        super().__init__()
+        self.coverage = PyMooPSSequentialCrowding.get_coverage(already_obtained)
+        self.coverage = np.array([1 if x > 0 else 0 for x in self.coverage])
+        self.foods = (1 - self.coverage).reshape((-1, 1))
+
+        print(f"In the operator, the coverage is {(self.coverage*100).astype(int)}")
+
+    @classmethod
+    def get_coverage(cls, already_obtained: list[PS]):
+        pop_matrix = np.array([ps.values for ps in already_obtained])
+        where_fixed = pop_matrix != STAR
+        counts = np.sum(where_fixed, axis=0)
+
+        return counts / len(already_obtained)
+
+
+    def get_crowding_scores_of_front(self, all_F, n_remove, population, front_indexes) -> np.ndarray:
+        pop_matrix = np.array([population[index].X for index in front_indexes])
+        where_fixed: np.ndarray = pop_matrix != STAR
+        scores = np.array([np.average(self.foods[row])
+                           for row in where_fixed])
+
+        return scores
 
 

@@ -23,7 +23,7 @@ from Core.PS import PS, STAR
 from Core.PSMetric.Classic3 import Classic3PSEvaluator
 from Core.SearchSpace import SearchSpace
 from PSMiners.Mining import get_history_pRef
-from PSMiners.PyMoo.CustomCrowding import PyMooCustomCrowding, PyMooPSGenotypeCrowding
+from PSMiners.PyMoo.CustomCrowding import PyMooCustomCrowding, PyMooPSGenotypeCrowding, PyMooPSSequentialCrowding
 from PSMiners.PyMoo.Operators import PSPolynomialMutation, PSGeometricSampling, PSSimulatedBinaryCrossover
 from utils import announce
 
@@ -92,7 +92,6 @@ def get_pymoo_algorithm(pRef,
                           crossover=PSSimulatedBinaryCrossover(),
                           mutation=PSPolynomialMutation(ss),
                           eliminate_duplicates=True,
-                     survival=survival,
                           )
     elif which_algorithm == "MOEAD":
         ref_dirs = get_reference_directions("uniform", 3, n_partitions=12)
@@ -134,4 +133,48 @@ def test_pymoo(benchmark_problem: BenchmarkProblem, pRef: PRef, which_algorithm:
 
     return pss
 
+
+def sequential_search_pymoo(pRef: PRef,
+                            ps_budget_per_run: int,
+                            pop_size: int = 150,
+                            runs: int = 6):
+    initial_crowding_operator = RankAndCrowding(crowding_func = "ce")
+
+    current_crowding_operator = initial_crowding_operator
+    accumulated_winners = []
+    for iteration in range(runs):
+        algorithm =  NSGA2(pop_size=pop_size,
+                     sampling=PSGeometricSampling(),
+                     crossover=PSSimulatedBinaryCrossover(),
+                     mutation=PSPolynomialMutation(pRef.search_space),
+                     eliminate_duplicates=True,
+                     survival=current_crowding_operator
+                     )
+        pymoo_problem = PSPyMooProblem(pRef)
+
+        with announce(f"Running {NSGA2} for iteration #{iteration}"):
+            res = minimize(pymoo_problem,
+                           algorithm,
+                           seed=1,
+                           termination=('n_evals', ps_budget_per_run))
+
+
+        e_pss = [EvaluatedPS(values, metric_scores=ms) for values, ms in zip(res.X, res.F)]
+        e_pss.sort(reverse=False, key=lambda x: x.metric_scores[-1])  # sorting by atomicity, resverse=False because it's a minimisation task
+        winners = e_pss[:3]
+        print(f"The winners for the {iteration}th run are")
+        for winner in winners:
+            print(winner)
+
+        accumulated_winners.extend(winners)
+        current_crowding_operator = PyMooPSSequentialCrowding(accumulated_winners)
+        if all(x==1 for x in current_crowding_operator.coverage):
+            print(f"Search terminated because the entire space has been covered")
+            break
+
+    accumulated_winners.sort(reverse=False, key=lambda x: x.metric_scores[-1]) # false because it's a minimisation task
+
+    print(f"At the end, the winners are")
+    for winner in accumulated_winners:
+        print(winner)
 

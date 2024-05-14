@@ -183,7 +183,7 @@ class Classic3PSEvaluator:
         return result
 
 
-    def get_S_MF_A(self, ps: PS) -> np.ndarray:   # it is 3 floats
+    def get_S_MF_A(self, ps: PS, invalid_value: float = -1000.0) -> np.ndarray:   # it is 3 floats
         self.used_evaluations += 1
         rows_all_fixed, excluding_one = self.get_relevant_rows_for_ps(ps)
 
@@ -192,7 +192,13 @@ class Classic3PSEvaluator:
         atomicity = self.get_atomicity_from_relevant_rows(ps,
                                                           rows_all_fixed,
                                                           excluding_one)
+
+        if not np.isfinite(mean_fitness):
+            mean_fitness = invalid_value
+        if not np.isfinite(atomicity):
+            mean_fitness = invalid_value
         return np.array([simplicity, mean_fitness, atomicity])
+
 
     def get_atomicity_contributions(self, ps: PS, normalised = False) -> np.ndarray:
         """ this function is used for explainability purposes, mainly"""
