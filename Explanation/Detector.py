@@ -150,8 +150,10 @@ class Detector:
 
 
     def generate_pss(self,
-                     ps_miner_method : Literal["classic", "NSGA", "NSGA_experimental_crowding", "SPEA2"] = "NSGA_experimental_crowding",
+                     ps_miner_method : Literal["classic", "NSGA", "NSGA_experimental_crowding", "SPEA2", "sequential"] = "NSGA_experimental_crowding",
                      ps_budget: int = 10000):
+
+
         algorithm = get_ps_miner(self.pRef, which=ps_miner_method)
 
         with announce(f"Running {algorithm} on {self.pRef} with {ps_budget =}", self.verbose):
@@ -332,7 +334,7 @@ class Detector:
         return list(current_candidates)
 
 
-    def get_contained_ps_with_properties(self, solution: EvaluatedFS):
+    def get_contained_ps_with_properties(self, solution: EvaluatedFS) -> list[PSWithProperties]:
         def pd_row_to_dict(row):
             return dict(row[1])
 
@@ -398,11 +400,11 @@ class Detector:
 
     def generate_files_with_default_settings(self):
 
-        self.generate_pRef(sample_size=100000,
+        self.generate_pRef(sample_size=1000,
                            which_algorithm="SA")
 
-        self.generate_pss(ps_miner_method="NSGA_experimental_crowding",  #TODO put this back to NSGA3
-                          ps_budget = 100000)
+        self.generate_pss(ps_miner_method="sequential",  #TODO put this back to NSGA3
+                          ps_budget = 6000)
 
         self.generate_control_pss()
 
@@ -438,6 +440,53 @@ class Detector:
         print("The distribution of PS sizes is")
         distribution = self.get_ps_size_distribution()
         print("\t"+"\n\t".join(f"{size}: {int(prop*100)}%" for size, prop in distribution.items()))
+
+    def explain_contained_ps_which_are_affected(self, solution: EvaluatedFS, vars: set):
+        def get_contained_special_vars(ps: PS):
+            fixed_vars = ps.get_fixed_variable_positions()
+            intersection = [var for var in vars if var in fixed_vars]
+            return intersection
+
+        contained_pss = self.get_contained_ps_with_properties(solution)
+        ps_with_vars = [(ps, get_contained_special_vars(ps)) for ps in contained_pss]
+        ps_with_vars = [(ps, intersection) for ps, intersection in ps_with_vars if len(intersection) > 0]
+        ps_with_vars.sort(reverse=True, key = lambda x: len([1]))  # the ones with the biggest intersection first
+
+
+        print(f"The affected partial solutions are")
+        shown_ps_max = 10
+        for ps, intersection in contained_pss[:shown_ps_max]:
+            print(self.problem.repr_ps(ps))
+            print(utils.indent(self.get_ps_description(ps, ps.properties)))
+            print(f"(Conflicts = {intersection})")
+            print()
+
+
+    def find_alternative_solution(self,
+                                  original_solution: EvaluatedFS,
+                                  vars_to_change: set[int],
+                                  exhaustive_search = False) -> EvaluatedPS:
+        if exhaustive_search:
+            return self.find_alternative_solution_via_exhaustive_search(original_solution, vars_to_change)
+        else:
+            raise Exception("The non-exhaustive search has not been implemented yet")
+
+    def request_change(self,
+                       solution: EvaluatedFS,
+                       vars_to_change: set,
+                       exhaustive_search: bool = False):
+        """ In the event of the decision maker not being happy with certain variables of a full solution, we can suggest
+            * the partial solutions that will be affected
+            * best replacement values, and the would be fitness
+        """
+
+        print(f"The fitness of the solution is {solution.fitness:.3f}")
+        self.explain_contained_ps_which_are_affected(solution, vars_to_change)
+
+
+
+
+
 
 
 

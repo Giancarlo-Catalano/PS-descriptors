@@ -16,6 +16,7 @@ from FSStochasticSearch.HistoryPRefs import uniformly_random_distribution_pRef, 
 from PSMiners.AbstractPSMiner import AbstractPSMiner
 from PSMiners.DEAP.DEAPPSMiner import DEAPPSMiner
 from PSMiners.DEAP.deap_utils import report_in_order_of_last_metric, plot_stats_for_run
+from PSMiners.PyMoo.SequentialCrowdingMiner import SequentialCrowdingMiner
 from utils import announce
 import plotly.express as px
 
@@ -58,6 +59,7 @@ def get_ps_miner(pRef: PRef,
                                          uses_custom_crowding = True,
                                          pRef = pRef,
                                          use_spea=True)
+        case "sequential": return SequentialCrowdingMiner.with_default_settings(pRef)
         case _: raise ValueError
 
 def write_pss_to_file(pss: list[PS], file: str):

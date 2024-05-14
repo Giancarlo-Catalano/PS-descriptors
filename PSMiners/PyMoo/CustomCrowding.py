@@ -105,13 +105,13 @@ class PyMooPSSequentialCrowding(PyMooCustomCrowding):
     coverage: np.ndarray
     foods: np.ndarray
 
-    def __init__(self, already_obtained: list[PS]):
+    def __init__(self, already_obtained: list[PS], immediate = False):
         super().__init__()
         self.coverage = PyMooPSSequentialCrowding.get_coverage(already_obtained)
-        self.coverage = np.array([1 if x > 0 else 0 for x in self.coverage])
+        if immediate:
+            self.coverage = np.array([1 if x > 0 else 0 for x in self.coverage])
         self.foods = (1 - self.coverage).reshape((-1, 1))
 
-        print(f"In the operator, the coverage is {(self.coverage*100).astype(int)}")
 
     @classmethod
     def get_coverage(cls, already_obtained: list[PS]):

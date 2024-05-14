@@ -38,6 +38,7 @@ from PSMiners.MOEAD.testing import test_moead_on_problem
 from PSMiners.Mining import get_history_pRef, get_ps_miner
 from PSMiners.Platypus.PlatypusPSProblem import test_platypus
 from PSMiners.PyMoo.PSPyMooProblem import test_pymoo, sequential_search_pymoo
+from PSMiners.PyMoo.SequentialCrowdingMiner import test_sequential_miner
 from utils import announce, indent
 import pandas as pd
 
@@ -103,7 +104,7 @@ def show_overall_system(benchmark_problem: BenchmarkProblem):
     print("And that concludes the showcase")
 
 def get_bt_explainer() -> Detector:
-    experimental_directory = r"C:\Users\gac8\PycharmProjects\PS-PDF\Experimentation\BTDetectorLong"
+    experimental_directory = r"C:\Users\gac8\PycharmProjects\PS-PDF\Experimentation\BTDetectorSequential"
     problem = EfficientBTProblem.from_default_files()
     return Detector.from_folder(problem=problem,
                           folder=experimental_directory,
@@ -143,10 +144,9 @@ def get_trapk_explainer():
 
 
 
-
-if __name__ == '__main__':
-    #detector = get_bt_explainer()
-    #detector.generate_files_with_default_settings()
+def explanation():
+    detector = get_bt_explainer()
+    detector.generate_files_with_default_settings()
     #detector.explanation_loop(amount_of_fs_to_propose=6, ps_show_limit=12)
 
     # utils.make_joined_bt_dataset()
@@ -161,10 +161,9 @@ if __name__ == '__main__':
     #problem = RoyalRoad(3, 5)
     #test_moead_on_problem(problem, sample_size=5000)
 
-
+def get_miners_data():
     problem = RoyalRoad(5, 5)
-
-    ps_budget = 1000
+    ps_budget = 10000
 
     all_results = dict()
 
@@ -200,9 +199,9 @@ if __name__ == '__main__':
             for crowding in ["gc", "cd", "ce", "mnn", "2nn"]:
                 try:
                     from_pymoo = test_pymoo(problem,
-                               pRef = pRef,
-                               which_algorithm=algorithm,
-                               which_crowding =crowding)
+                                            pRef = pRef,
+                                            which_algorithm=algorithm,
+                                            which_crowding =crowding)
 
                     all_results[f"pymoo_{algorithm}_{crowding}"] = from_pymoo.copy()
                 except Exception as e:
@@ -241,7 +240,29 @@ if __name__ == '__main__':
     #         print(problem.repr_ps(ps))
 
 
-    sequential_search_pymoo(pRef=pRef, ps_budget_per_run=5000, pop_size=150, runs=10)
+
+if __name__ == '__main__':
+    explanation()
+
+    # problem = EfficientBTProblem.from_default_files()
+    # #problem = Trapk(5, 5)
+    # ps_budget = 10000
+
+
+
+
+
+    # with announce(f"Generating a pRef"):
+    #     pRef = get_history_pRef(benchmark_problem=problem,
+    #                             sample_size=30000,
+    #                             which_algorithm="uniform",
+    #                             verbose=True)
+    #
+    # pss = test_sequential_miner(pRef=pRef, total_budget=10000)
+    #
+    # print("The archive at the end is")
+    # for ps in pss:
+    #     print(problem.repr_ps(ps))
 
 
 

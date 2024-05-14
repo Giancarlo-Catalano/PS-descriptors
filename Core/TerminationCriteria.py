@@ -130,3 +130,30 @@ class PSEvaluationLimit(TerminationCriteria):
 
     def met(self, **kwargs):
         return kwargs["ps_evaluations"] >= self.ps_limit
+
+
+class SearchSpaceIsCovered:
+    def __init__(self):
+        pass
+
+    def __repr__(self):
+        return f"SearchSpaceIsCovered"
+
+
+    def met(self, **kwargs):
+        coverage = kwargs["coverage"]
+        return all(x > 0 for x in coverage)
+
+
+class ArchiveSizeLimit:
+    max_archive_size: int
+    def __init__(self, max_archive_size: int):
+        self.max_archive_size = max_archive_size
+
+
+    def __repr__(self):
+        return f"ArchiveSizeLimit({self.max_archive_size})"
+
+
+    def met(self, **kwargs):
+        return len(kwargs["archive"] > self.max_archive_size)

@@ -1,12 +1,16 @@
 import random
+from typing import Any
 
 import numpy as np
 from deap import creator
+from pymoo.algorithms.moo.age import AGEMOEA
 from pymoo.algorithms.moo.moead import MOEAD
 from pymoo.algorithms.moo.nsga2 import NSGA2
 from pymoo.algorithms.moo.nsga3 import NSGA3
+from pymoo.algorithms.moo.rvea import RVEA
 from pymoo.algorithms.soo.nonconvex.ga import GA
 from pymoo.core.problem import Problem, ElementwiseProblem
+from pymoo.core.survival import Survival
 from pymoo.operators.crossover.sbx import SBX
 from pymoo.operators.mutation.pm import PM
 from pymoo.operators.repair.rounding import RoundingRepair
@@ -22,7 +26,6 @@ from Core.PRef import PRef
 from Core.PS import PS, STAR
 from Core.PSMetric.Classic3 import Classic3PSEvaluator
 from Core.SearchSpace import SearchSpace
-from PSMiners.Mining import get_history_pRef
 from PSMiners.PyMoo.CustomCrowding import PyMooCustomCrowding, PyMooPSGenotypeCrowding, PyMooPSSequentialCrowding
 from PSMiners.PyMoo.Operators import PSPolynomialMutation, PSGeometricSampling, PSSimulatedBinaryCrossover
 from utils import announce
@@ -62,6 +65,8 @@ class PSPyMooProblem(ElementwiseProblem):
 
 def pymoo_result_to_pss(res) -> list[PS]:
     return [PS(row) for row in res.X]
+
+
 
 def get_pymoo_algorithm(pRef,
                         which_algorithm: str,
