@@ -25,14 +25,18 @@ from BenchmarkProblems.GraphColouring import GraphColouring
 from BenchmarkProblems.RoyalRoad import RoyalRoad
 from BenchmarkProblems.Trapk import Trapk
 from Core import TerminationCriteria
+from Core.EvaluatedPS import EvaluatedPS
 from Core.Explainer import Explainer
+from Core.PS import PS
+from Core.PSMetric.Classic3 import Classic3PSEvaluator
 from Explanation.Detector import Detector
 from FSStochasticSearch.Operators import SinglePointFSMutation
 from FSStochasticSearch.SA import SA
 from PSMiners.AbstractPSMiner import AbstractPSMiner
-from PSMiners.DEAP.NSGAPSMiner import NSGAPSMiner
+from PSMiners.DEAP.DEAPPSMiner import DEAPPSMiner, test_DEAP_miner
 from PSMiners.MOEAD.testing import test_moead_on_problem
 from PSMiners.Mining import get_history_pRef, get_ps_miner
+from PSMiners.Platypus.PlatypusPSProblem import test_platypus
 from PSMiners.PyMoo.PSPyMooProblem import test_pymoo
 from utils import announce, indent
 import pandas as pd
@@ -59,7 +63,7 @@ def show_overall_system(benchmark_problem: BenchmarkProblem):
     pRef.describe_self()
 
     # 2. Obtaining the Core catalog
-    ps_miner = NSGAPSMiner.with_default_settings(pRef)
+    ps_miner = DEAPPSMiner.with_default_settings(pRef)
     ps_evaluation_budget = 10000
     termination_criterion = TerminationCriteria.PSEvaluationLimit(ps_evaluation_budget)
 
@@ -145,8 +149,6 @@ if __name__ == '__main__':
     #detector.generate_files_with_default_settings()
     #detector.explanation_loop(amount_of_fs_to_propose=6, ps_show_limit=12)
 
-    # this is another change
-
     # utils.make_joined_bt_dataset()
 
     # problem = RoyalRoad(5, 5)
@@ -160,46 +162,79 @@ if __name__ == '__main__':
     #test_moead_on_problem(problem, sample_size=5000)
 
 
-    algorithm_which_options = ["NSGAII", "NSGAIII","MOEAD"]
-    crowding_which_options= ["gc", "cd", "ce", "mnn", "2nn"]  # PCD
-    problem = RoyalRoad(3, 5)
+    problem = RoyalRoad(5, 5)
 
+    ps_budget = 1000
 
+    all_results = dict()
+
+    def add_to_results_with_name(miner_name, pss: list[PS]):
+        all_results[miner_name] = pss
 
 
     with announce(f"Generating a pRef"):
         pRef = get_history_pRef(benchmark_problem=problem,
-                                sample_size=10000,
-                                which_algorithm="SA",
+                                sample_size=1000,
+                                which_algorithm="uniform",
                                 verbose=True)
 
-    algorithm = get_ps_miner(pRef, which="NSGA_experimental_crowding")
-    ps_budget = 10000
-    with announce(f"Running {algorithm} on {pRef} with {ps_budget =}", True):
-        termination_criterion = TerminationCriteria.PSEvaluationLimit(ps_limit=ps_budget)
-        algorithm.run(termination_criterion, verbose=True)
+    def get_deap_data():
+        print("running deap")
+        for custom_crowding in [True, False]:
+            from_deap = test_DEAP_miner(benchmark_problem=problem,
+                                        budget=ps_budget,
+                                        pRef = pRef,
+                                        custom_crowding=True)
 
-    result_ps = algorithm.get_results(None)
-    result_ps = AbstractPSMiner.without_duplicates(result_ps)
-    result_ps = [ps for ps in result_ps if not ps.is_empty()]
-    print("the results of DEAP are ")
-    for ps in result_ps:
-        print(ps)
+            all_results[f"DEAP_custom_crowding_{custom_crowding}"] = from_deap.copy()
 
 
-    print("\n"*5)
+    def get_pymoo_data():
+        for algorithm in ["NSGAII"]:
+            for crowding in ["gc", "cd", "ce", "mnn", "2nn"]:
+                try:
+                    from_pymoo = test_pymoo(problem,
+                               pRef = pRef,
+                               which_algorithm=algorithm,
+                               which_crowding =crowding)
 
-    which_ones_dont_work = set()
+                    all_results[f"pymoo_{algorithm}_{crowding}"] = from_pymoo.copy()
+                except Exception as e:
+                    print(f"The combination {algorithm} + {crowding} caused an error")
 
-    for algorithm in algorithm_which_options:
-        for crowding in crowding_which_options:
-            try:
-                test_pymoo(problem,
-                           pRef = pRef,
-                           which_algorithm=algorithm,
-                           which_crowding =crowding)
-            except Exception as e:
-                print(f"The combination {algorithm} + {crowding} caused an error")
-                which_ones_dont_work.add(f"{algorithm}+{crowding}")
+
+    def get_platypus_data():
+        jail = ["NSGAIII", "CMAES", "GDE3",  "IBEA", "OMOPSO", "SMPSO", "SPEA2", "EpsMOEA"]
+        heaven = ["NSGAII",  "MOEAD"]
+        for which_algorithm in ["NSGAII",  "MOEAD"]:
+            with announce(f"Running Platypus's {which_algorithm}"):
+                pss = test_platypus(problem, pRef=pRef, budget=ps_budget, which_algorithm=which_algorithm)
+                add_to_results_with_name(f"Platypus_{which_algorithm}", pss)
+
+
+
+
+    evaluator = Classic3PSEvaluator(pRef)
+    def get_atomicity(ps: PS) -> float:
+        s, mf, a = evaluator.get_S_MF_A(ps)
+        return a
+    def get_sorted_by_atomicity(pss: list[PS]):
+        e_pss = [EvaluatedPS(ps.values, aggregated_score=get_atomicity(ps)) for ps in pss]
+        e_pss.sort(reverse=True)
+        return e_pss
+
+
+    get_platypus_data()
+
+    for miner_key in all_results:
+        print(f"\n\n\nFor the miner {miner_key}")
+        sorted_pss = get_sorted_by_atomicity(all_results[miner_key])
+        for ps in sorted_pss:
+            print(ps)
+
+
+
+
+
 
 

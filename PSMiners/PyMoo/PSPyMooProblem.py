@@ -63,23 +63,6 @@ class PSPyMooProblem(ElementwiseProblem):
 def pymoo_result_to_pss(res) -> list[PS]:
     return [PS(row) for row in res.X]
 
-
-def gc_crowding(F, filter_out_duplicates=None, n_remove=None, **kwargs):
-    print("Called gc_crowding")
-
-
-    pop = kwargs["pop"]
-    front_indexes = kwargs["front_indexes"]
-    pop_matrix = np.array([ind.X for ind in pop])
-    where_fixed = pop_matrix != STAR
-    counts = np.sum(where_fixed, axis=0)
-    foods = (1 / counts).reshape((-1, 1))
-    scores = where_fixed[front_indexes] @ foods
-    result = scores.ravel()
-    colour = "green"
-
-    return result
-
 def get_pymoo_algorithm(pRef,
                         which_algorithm: str,
                         pop_size: int = 100,
@@ -124,7 +107,7 @@ def get_pymoo_algorithm(pRef,
             survival=survival
         )
 
-def test_pymoo(benchmark_problem: BenchmarkProblem, pRef: PRef, which_algorithm: str, which_crowding: str):
+def test_pymoo(benchmark_problem: BenchmarkProblem, pRef: PRef, which_algorithm: str, which_crowding: str, ngen=100):
 
 
     algorithm = get_pymoo_algorithm(pRef, which_algorithm = which_algorithm, which_crowding = which_crowding)
@@ -134,7 +117,7 @@ def test_pymoo(benchmark_problem: BenchmarkProblem, pRef: PRef, which_algorithm:
         res = minimize(pymoo_problem,
                        algorithm,
                        seed=1,
-                       termination=('n_gen', 200),
+                       termination=('n_gen', ngen),
                        verbose=True)
 
 

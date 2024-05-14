@@ -128,7 +128,7 @@ def get_toolbox_for_problem(pRef: PRef,
     toolbox.register("make_random_ps",
                      make_random_deap_individual)
     def evaluate(ps) -> tuple:
-        return classic3_evaluator.get_S_MF_A(ps)  # experimental
+        return classic3_evaluator.get_S_MF_A(ps)
 
     toolbox.register("mate", tools.cxUniform, indpb=1/search_space.amount_of_parameters)
     lower_bounds = [-1 for _ in search_space.cardinalities]

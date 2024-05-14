@@ -3,16 +3,18 @@ from typing import Any, Optional
 from deap.base import Toolbox
 from deap.tools import Logbook
 
+from BenchmarkProblems.BenchmarkProblem import BenchmarkProblem
 from Core.EvaluatedPS import EvaluatedPS
 from Core.PRef import PRef
 from Core.PS import PS
 from Core.PSMetric.Classic3 import Classic3PSEvaluator
-from Core.TerminationCriteria import TerminationCriteria
+from Core.TerminationCriteria import TerminationCriteria, PSEvaluationLimit
 from PSMiners.AbstractPSMiner import AbstractPSMiner
 from PSMiners.DEAP.deap_utils import get_toolbox_for_problem, get_stats_object, nsga
+from utils import announce
 
 
-class NSGAPSMiner(AbstractPSMiner):
+class DEAPPSMiner(AbstractPSMiner):
     population_size: int
 
     toolbox: Toolbox
@@ -64,7 +66,7 @@ class NSGAPSMiner(AbstractPSMiner):
                                          verbose=verbose,
                                          classic3_evaluator=self.classic3_evaluator)
 
-        self.last_population = NSGAPSMiner.nsgaii_population_to_evaluated_ps_population(final_population)
+        self.last_population = DEAPPSMiner.nsgaii_population_to_evaluated_ps_population(final_population)
 
     @classmethod
     def with_default_settings(cls, pRef: PRef):
@@ -75,7 +77,22 @@ class NSGAPSMiner(AbstractPSMiner):
 
 
 
-    def get_results(self, amount: Optional[int]) -> list[EvaluatedPS]:
+    def get_results(self, amount: Optional[int] = None) -> list[EvaluatedPS]:
         if amount is None:
             amount = len(self.last_population)
         return self.last_population[:amount]
+
+
+
+def test_DEAP_miner(benchmark_problem: BenchmarkProblem,
+                    pRef: PRef,
+                    budget: int,
+                    custom_crowding: bool):
+    miner = DEAPPSMiner(pRef, 150, custom_crowding, False)
+    termination_criteria = PSEvaluationLimit(budget)
+
+
+    with announce(f"Running NSGAIII in DEAP"):
+        miner.run(termination_criteria, verbose=True)
+
+    return miner.get_results()

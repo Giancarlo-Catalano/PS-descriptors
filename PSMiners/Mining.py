@@ -14,7 +14,7 @@ from Core.ArchivePSMiner import ArchivePSMiner
 from FSStochasticSearch.HistoryPRefs import uniformly_random_distribution_pRef, pRef_from_GA, pRef_from_SA, \
     pRef_from_GA_best, pRef_from_SA_best
 from PSMiners.AbstractPSMiner import AbstractPSMiner
-from PSMiners.DEAP.NSGAPSMiner import NSGAPSMiner
+from PSMiners.DEAP.DEAPPSMiner import DEAPPSMiner
 from PSMiners.DEAP.deap_utils import report_in_order_of_last_metric, plot_stats_for_run
 from utils import announce
 import plotly.express as px
@@ -48,15 +48,15 @@ def get_ps_miner(pRef: PRef,
                  which: Literal["classic", "NSGA_experimental_crowding", "NSGA", "SPEA2"]):
     match which:
         case "classic": return ArchivePSMiner.with_default_settings(pRef)
-        case "NSGA": return NSGAPSMiner(population_size = 300,
+        case "NSGA": return DEAPPSMiner(population_size = 300,
                                         uses_custom_crowding = False,
                                         pRef = pRef)
-        case "NSGA_experimental_crowding":  return NSGAPSMiner(population_size = 300,
-                                            uses_custom_crowding = True,
-                                            pRef = pRef)
-        case "SPEA2": return NSGAPSMiner(population_size = 300,
-                                        uses_custom_crowding = True,
-                                        pRef = pRef,
+        case "NSGA_experimental_crowding":  return DEAPPSMiner(population_size = 300,
+                                                               uses_custom_crowding = True,
+                                                               pRef = pRef)
+        case "SPEA2": return DEAPPSMiner(population_size = 300,
+                                         uses_custom_crowding = True,
+                                         pRef = pRef,
                                          use_spea=True)
         case _: raise ValueError
 
@@ -123,7 +123,7 @@ def obtain_pss(benchmark_problem: BenchmarkProblem,
     if verbose:
         report_in_order_of_last_metric(result_ps, benchmark_problem, limit_to=12)
 
-    if verbose and isinstance(algorithm, NSGAPSMiner):
+    if verbose and isinstance(algorithm, DEAPPSMiner):
         logbook = algorithm.last_logbook
         nsga_run_plot_name_max = os.path.join(folder, "nsga_plot_max.png")
         nsga_run_plot_name_avg = os.path.join(folder, "nsga_plot_avg.png")
