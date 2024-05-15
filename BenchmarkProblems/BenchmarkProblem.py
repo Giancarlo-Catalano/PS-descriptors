@@ -49,3 +49,27 @@ class BenchmarkProblem:
 
     def get_global_optima_fitness(self) -> float:
         raise Exception("An implementation of BenchmarkProblem does not implement get_global_optima_fitness")
+
+
+    def ps_to_properties(self, ps: PS) -> dict:
+        raise NotImplemented(f"The class {self.__repr__()} does not implement .ps_to_properties")
+
+    def repr_property(self, property_name:str, property_value:str, property_rank_range:str):
+        rank_lower_bound, rank_upper_bound = property_rank_range
+        start = f"{property_name} = {property_value:.2f} is "
+
+
+        if rank_upper_bound == 0:
+            end = "the lowest observed"
+        elif rank_lower_bound == 1.0:
+            end = "the highest observed"
+        elif rank_lower_bound > 0.5:
+            end = f"relatively high (top {int((1-rank_upper_bound)*100)}% ~ {int((1-rank_lower_bound)*100)}%)"
+        else:
+            end = f"relatively low (bottom {int(rank_lower_bound*100)}% ~ {int(rank_upper_bound*100)}%)"
+
+        return start + end
+
+
+    def repr_extra_ps_info(self, ps: PS):
+        return f"PS has {ps.fixed_count()} fixed variables"

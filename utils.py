@@ -136,7 +136,27 @@ def merge_csv_files(first_file_name: str, second_file_name: str, output_file_nam
     concatenated_df = pd.concat([pd.read_csv(file) for file in [first_file_name, second_file_name]], ignore_index=True)
     concatenated_df.to_csv(output_file_name, index=False)
 
+def get_mean_error(values: Iterable) -> float:
+    if len(values) < 1:
+        return np.nan
+    mean = np.average(values)
+    return sum(abs(x - mean) for x in values) / len(values)
 
+def get_max_difference(values: Iterable) -> float:
+    return max(values) - min(values)
+
+
+def get_min_difference(values: Iterable) -> float:
+    to_check = np.array(sorted(values))
+    differences = to_check[1:] - to_check[:-1]
+    return min(differences)
+
+
+def get_statistical_info_about_iterable(values: Iterable, var_name: str) -> dict:
+    return {f"{var_name}_mean": np.average(values),
+            f"{var_name}_mean_error": get_mean_error(values),
+            f"{var_name}_min_diff": get_min_difference(values),
+            f"{var_name}_max_diff": get_max_difference(values)}
 
 
 
@@ -187,3 +207,42 @@ def as_float_tuple(items: Iterable) -> tuple:
 
 def make_folder_if_not_present(file_path: str):
     os.makedirs(os.path.dirname(file_path), exist_ok=True)
+
+
+
+def repr_with_precision(iterable: Iterable, significant_digits: int) -> str:
+    return "["+", ".join(f"{v:.{significant_digits}}" for v in iterable) + "]"
+
+
+
+def get_mean_and_mean_error(iterable: Iterable) -> (float, float):
+    mean = np.mean(iterable)
+    mean_error = get_mean_error(iterable)
+    return mean, mean_error
+
+
+
+
+def make_joined_bt_dataset():
+
+
+    # Paths to your CSV files
+    faulty_csv = r"C:\Users\gac8\PycharmProjects\PS-PDF\Experimentation\FaultyerBT\ps_properties.csv"
+    correct_csv = r"C:\Users\gac8\PycharmProjects\PS-PDF\Experimentation\BTDetector\ps_properties.csv"
+
+    # Read the CSV files into DataFrames
+    faulty_df = pd.read_csv(faulty_csv)
+    correct_df = pd.read_csv(correct_csv)
+
+    # Add a new column "Faulty" with True for the first DataFrame and False for the second
+    faulty_df['Faulty'] = True
+    correct_df['Faulty'] = False
+
+    # Concatenate the two DataFrames
+    concatenated_df = pd.concat([faulty_df, correct_df], ignore_index=True)
+
+    # Export the concatenated DataFrame to a new CSV file
+    output_csv_file = r"C:\Users\gac8\PycharmProjects\PS-PDF\Experimentation\FaultyBT\ps_properties_coverage.csv"
+    concatenated_df.to_csv(output_csv_file, index=False)
+
+    print("CSV files have been concatenated and a 'Faulty' column has been added.")

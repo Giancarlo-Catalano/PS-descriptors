@@ -5,19 +5,20 @@ import deap.base
 import matplotlib.pyplot as plt
 import numpy as np
 from deap import algorithms, creator, base, tools
-from deap.tools import selNSGA2, uniform_reference_points, selNSGA3WithMemory
+from deap.tools import selNSGA2, uniform_reference_points, selNSGA3WithMemory, selSPEA2
 
 from BenchmarkProblems.BenchmarkProblem import BenchmarkProblem
 from Core.EvaluatedPS import EvaluatedPS
 from Core.PRef import PRef
-from Core.PSMiner import PSMiner
+from Core.ArchivePSMiner import ArchivePSMiner
+from Core.SearchSpace import SearchSpace
 from Core.TerminationCriteria import TerminationCriteria
 from PSMiners.AbstractPSMiner import AbstractPSMiner
 from PSMiners.DEAP.CustomCrowdingMechanism import gc_selNSGA2, GC_selNSGA3WithMemory
 from FSStochasticSearch.HistoryPRefs import uniformly_random_distribution_pRef, pRef_from_GA, pRef_from_SA
 from Core.PS import PS
 from Core.PSMetric.Atomicity import Atomicity
-from Core.PSMetric.Classic3 import Classic3PSMetrics
+from Core.PSMetric.Classic3 import Classic3PSEvaluator
 from Core.PSMetric.MeanFitness import MeanFitness
 from Core.PSMetric.Metric import Metric
 from Core.PSMetric.Simplicity import Simplicity
@@ -30,7 +31,7 @@ def nsga(toolbox,
          termination_criteria: TerminationCriteria,
          cxpb,
          mutpb,
-         classic3_evaluator: Classic3PSMetrics,
+         classic3_evaluator: Classic3PSEvaluator,
          verbose=False):
     logbook = tools.Logbook()
     logbook.header = "gen", "evals", "min", "avg", "max"
@@ -94,28 +95,36 @@ def nsgaiii_pure_functionality(toolbox, mu, ngen, cxpb, mutpb):
         pop = toolbox.select(pop + offspring, mu)
     return pop
 
+def geometric_distribution_values_of_ps(search_space: SearchSpace) -> np.ndarray:
+    result = PS.empty(search_space)
+    chance_of_success = 0.79
+    while random.random() < chance_of_success:
+        var_index = random.randrange(search_space.amount_of_parameters)
+        value = random.randrange(search_space.cardinalities[var_index])
+        result = result.with_fixed_value(var_index, value)
+    return result
+
+
+def make_random_deap_individual(search_space: SearchSpace):
+    result = geometric_distribution_values_of_ps(search_space)
+    return creator.DEAPPSIndividual(result)
+
 def get_toolbox_for_problem(pRef: PRef,
-                            classic3_evaluator: Classic3PSMetrics,
-                            uses_experimental_crowding = True):
+                            classic3_evaluator: Classic3PSEvaluator,
+                            uses_experimental_crowding = True,
+                            use_spea = False):
     creator.create("FitnessMax", base.Fitness, weights=[1.0, 1.0, 1.0])
     creator.create("DEAPPSIndividual", PS,
                    fitness=creator.FitnessMax)
     toolbox = base.Toolbox()
 
     search_space = pRef.search_space
-    def geometric_distribution_ps():
-        result = PS.empty(search_space)
-        chance_of_success = 0.79
-        while random.random() < chance_of_success:
-            var_index = random.randrange(search_space.amount_of_parameters)
-            value = random.randrange(search_space.cardinalities[var_index])
-            result = result.with_fixed_value(var_index, value)
-        return creator.DEAPPSIndividual(result)
+
 
 
 
     toolbox.register("make_random_ps",
-                     geometric_distribution_ps)
+                     geometric_distribution_values_of_ps)
     def evaluate(ps) -> tuple:
         return classic3_evaluator.get_S_MF_A(ps)  # experimental
 
@@ -131,7 +140,10 @@ def get_toolbox_for_problem(pRef: PRef,
 
 
     ref_points = uniform_reference_points(nobj=3, p=12)
-    selection_method = GC_selNSGA3WithMemory(ref_points) if uses_experimental_crowding else selNSGA3WithMemory(ref_points)
+    if not use_spea:
+        selection_method = GC_selNSGA3WithMemory(ref_points) if uses_experimental_crowding else selNSGA3WithMemory(ref_points)
+    else:
+        selection_method = selSPEA2
     toolbox.register("select", selection_method)
     return toolbox
 
@@ -152,7 +164,7 @@ def report_in_order_of_last_metric(population,
     if limit_to is not None:
         amount_to_show = limit_to
     for ind in population[:amount_to_show]:
-        print(benchmark_problem.repr_ps(ind.ps))
+        print(benchmark_problem.repr_ps(ind))
         print(f"Has score {ind.metric_scores}\n")
 
 
@@ -191,33 +203,6 @@ def plot_stats_for_run(logbook,
     # Display the plots
     plt.savefig(figure_name)
     plt.close(fig)
-
-
-def comprehensive_search(benchmark_problem: BenchmarkProblem,
-                         metric: Metric,
-                         sample_size: int,
-                         amount = 12,
-                         reverse=True):
-    """This is a debug function, to check what the global optimum of an objective is"""
-    all_ps = PS.all_possible(benchmark_problem.search_space)
-
-    with announce("Generating the PRef"):
-        pRef = benchmark_problem.get_reference_population(sample_size)
-    metric.set_pRef(pRef)
-
-    evaluated_pss = [EvaluatedPS(ps) for ps in all_ps]
-    #evaluated_pss = [ps for ps in evaluated_pss if ps.ps.fixed_count() < 7]
-    with announce(f"Evaluating all the PSs, there are {len(evaluated_pss)} of them"):
-        for evaluated_ps in evaluated_pss:
-            evaluated_ps.aggregated_score = metric.get_single_normalised_score(evaluated_ps.ps)
-
-    evaluated_pss.sort(reverse=reverse)
-    print(f"The best in the search space, according to {metric} are")
-    to_show = evaluated_pss[:amount] if amount is not None else evaluated_pss
-    for e_ps in to_show:
-        print(e_ps)
-
-
 
 
 

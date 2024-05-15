@@ -41,7 +41,7 @@ def pRef_from_SA(benchmark_problem: BenchmarkProblem,
     algorithm = SA(fitness_function=benchmark_problem.fitness_function,
                    search_space=benchmark_problem.search_space,
                    mutation_operator=SinglePointFSMutation(benchmark_problem.search_space),
-                   cooling_coefficient=0.9995)
+                   cooling_coefficient=0.99995)
 
     solutions : list[EvaluatedFS] = []
 

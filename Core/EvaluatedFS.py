@@ -4,7 +4,7 @@ from Core.FullSolution import FullSolution
 
 
 @functools.total_ordering
-class EvaluatedFS:
+class EvaluatedFS(FullSolution):
 
     full_solution: FullSolution
     fitness: float

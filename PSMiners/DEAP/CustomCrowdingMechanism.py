@@ -97,7 +97,7 @@ class GC_selNSGA3WithMemory(object):
         self.extreme_points = None
 
     def __call__(self, individuals, k):
-        chosen, memory = gc_selNSGA3(individuals, k, self.ref_points, self.nd,
+        chosen, memory = gc_selNSGA3(individuals, k, self.ref_points, self.nd,  # this is the important part
                                   self.best_point, self.worst_point,
                                   self.extreme_points, True)
         self.best_point = memory.best_point.reshape((1, -1))
@@ -121,7 +121,7 @@ def gc_selNSGA3(individuals, k, ref_points, nd="log", best_point=None,
     :param k: The number of individuals to select.
     :param ref_points: Reference points to use for niching.
     :param nd: Specify the non-dominated algorithm to use: 'standard' or 'log'.
-    :param best_point: Best point found at previous generation. If not provided
+    :param best_point: Best_run point found at previous generation. If not provided
         find the best point only from current individuals.
     :param worst_point: Worst point found at previous generation. If not provided
         find the worst point only from current individuals.

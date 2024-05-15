@@ -136,6 +136,6 @@ class AbstractPSMiner:
             algorithm.run(PSEvaluationLimit(15000))
 
         print("The best results are")
-        best = algorithm.get_results()
+        best = algorithm.get_results(None)
         for item in best:
             print(item)

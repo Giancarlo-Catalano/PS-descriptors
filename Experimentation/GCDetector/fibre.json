@@ -1,0 +1,12 @@
+{
+    "amount_of_nodes": 5,
+    "amount_of_colours": 3,
+    "connections": [
+        [0, 1],
+        [0, 3],
+        [0, 4],
+        [1, 2],
+        [2, 3],
+        [2, 4]
+    ]
+}

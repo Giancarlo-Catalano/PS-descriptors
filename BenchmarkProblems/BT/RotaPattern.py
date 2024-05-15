@@ -120,16 +120,33 @@ def get_workers_present_each_day_of_the_week(rotas: list[RotaPattern], calendar_
     return workers_per_day.reshape((-1, 7))
 
 
-def get_range_scores(workers_per_weekday: np.ndarray):
+
+
+def range_score(min_amount, max_amount):
+    if max_amount == 0:
+        return 1
+    return ((max_amount - min_amount) / max_amount) ** 2
+
+
+def faulty_range_score(min_amount, max_amount):
+    if min_amount == 0:   # NOTE THE DIFFERENCE
+        return 0
+    return ((max_amount - min_amount) / max_amount) ** 2
+
+
+def get_range_scores(workers_per_weekday: np.ndarray, use_faulty_range_score = False):
+    """assumes that the input is already a matrix with 7 columns"""
     mins = np.min(workers_per_weekday, axis=0)
     maxs = np.max(workers_per_weekday, axis=0)
 
-    def range_score(min_amount, max_amount):
-        if max_amount == 0:
-            return 1
-        return ((max_amount - min_amount) / max_amount) ** 2
+    if use_faulty_range_score:
+        return [faulty_range_score(min_amount, max_amount)
+                for min_amount, max_amount in zip(mins, maxs)]
+    else:
+        return [range_score(min_amount, max_amount)
+                for min_amount, max_amount in zip(mins, maxs)]
 
-    return [range_score(min_amount, max_amount) for min_amount, max_amount in zip(mins, maxs)]
+
 
 
 

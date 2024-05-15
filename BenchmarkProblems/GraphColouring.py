@@ -1,7 +1,9 @@
 import itertools
+import json
 import random
-from typing import TypeAlias
+from typing import TypeAlias, Iterable
 
+import utils
 from BenchmarkProblems.BenchmarkProblem import BenchmarkProblem
 from Core.FullSolution import FullSolution
 from Core.PS import PS, STAR
@@ -49,10 +51,10 @@ class GraphColouring(BenchmarkProblem):
     def __init__(self,
                  amount_of_colours: int,
                  amount_of_nodes: int,
-                 connections: list[Connection]):
+                 connections: Iterable):
         self.amount_of_colours = amount_of_colours
         self.amount_of_nodes = amount_of_nodes
-        self.connections = connections
+        self.connections = [(a, b) for (a, b) in connections]
 
         search_space = SearchSpace([amount_of_colours for _ in range(self.amount_of_nodes)])
         super().__init__(search_space)
@@ -94,3 +96,31 @@ class GraphColouring(BenchmarkProblem):
 
     def view(self):
         visualize_undirected_graph(self.connections)
+
+    def save(self, filename: str):
+        """ simply stores the connections as a json"""
+        data = {"amount_of_nodes": self.amount_of_nodes,
+                "amount_of_colours": self.amount_of_colours,
+                "connections": self.connections}
+        utils.make_folder_if_not_present(filename)
+        with open(filename, "w+") as file:
+            json.dump(data, file, indent=4)
+
+    @classmethod
+    def from_file(cls, problem_file: str):
+        with open(problem_file, "r") as file:
+            data = json.load(file)
+
+        return cls(amount_of_colours=data["amount_of_colours"],
+                   amount_of_nodes=data["amount_of_nodes"],
+                   connections = data["connections"])
+
+
+    def ps_to_properties(self, ps: PS) -> dict:
+        def contains_pair(pair):
+            a, b = pair
+            return ps[a] == STAR or ps[b] == STAR
+
+        edge_count = len([pair for pair in self.connections
+                          if contains_pair(pair)])
+        return {"edge_count": edge_count}

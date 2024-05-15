@@ -54,10 +54,11 @@ class Explainer:
         return f"{self.benchmark_problem.repr_ps(ps)}, avg when present = {avg_when_present:.2f}, avg when absent = {avg_when_absent:.2f}, p-value = {p_value:e}"
 
     def local_explanation_of_full_solution(self, full_solution: FullSolution):
-        contained_pss = [ps for ps in self.ps_catalog if contains(full_solution, ps.ps) if not ps.ps.is_empty()]
+        contained_pss = [ps for ps in self.ps_catalog
+                         if contains(full_solution, ps)
+                         if not ps.is_empty()]
         #contained_pss = Explainer.only_non_obscured_pss(contained_pss)
         contained_pss.sort(reverse=True, key = lambda x: x.metric_scores[-1])  # sort by atomicity
-        contained_pss = [ps.ps for ps in contained_pss]
 
         fs_as_ps = PS.from_FS(full_solution)
         print(f"The solution \n {indent(self.benchmark_problem.repr_ps(fs_as_ps))}\ncontains the following PSs:")

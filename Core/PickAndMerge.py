@@ -41,8 +41,8 @@ class PickAndMergeSampler:
 
         while (len(available) > 0) and (added_count < self.merge_limit) and not current.is_fully_fixed():
             to_add = pick()
-            if PS.mergeable(current, to_add.ps):
-                current = PS.merge(current, to_add.ps)
+            if PS.mergeable(current, to_add):
+                current = PS.merge(current, to_add)
                 added_count += 1
             available.remove(to_add)
 
@@ -88,7 +88,7 @@ def test_pick_and_merge():
         sampler = PickAndMergeSampler(search_space, basis, merge_limit=ceil(sqrt(search_space.amount_of_parameters)))
         print("Initialised a sampler with the following partial solutions:")
         for individual in basis:
-            print(individual.ps)
+            print(individual)
 
         print("\n")
         for _ in range(12):

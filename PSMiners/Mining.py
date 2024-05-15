@@ -10,7 +10,7 @@ from Core import TerminationCriteria
 from Core.EvaluatedPS import EvaluatedPS
 from Core.PRef import PRef, plot_solutions_in_pRef
 from Core.PS import PS
-from Core.PSMiner import PSMiner
+from Core.ArchivePSMiner import ArchivePSMiner
 from FSStochasticSearch.HistoryPRefs import uniformly_random_distribution_pRef, pRef_from_GA, pRef_from_SA, \
     pRef_from_GA_best, pRef_from_SA_best
 from PSMiners.AbstractPSMiner import AbstractPSMiner
@@ -45,15 +45,19 @@ def get_history_pRef(benchmark_problem: BenchmarkProblem,
 
 
 def get_ps_miner(pRef: PRef,
-                 which: Literal["classic", "NSGA_experimental_crowding", "NSGA"]):
+                 which: Literal["classic", "NSGA_experimental_crowding", "NSGA", "SPEA2"]):
     match which:
-        case "classic": return PSMiner.with_default_settings(pRef)
+        case "classic": return ArchivePSMiner.with_default_settings(pRef)
         case "NSGA": return NSGAPSMiner(population_size = 300,
                                         uses_custom_crowding = False,
                                         pRef = pRef)
         case "NSGA_experimental_crowding":  return NSGAPSMiner(population_size = 300,
                                             uses_custom_crowding = True,
                                             pRef = pRef)
+        case "SPEA2": return NSGAPSMiner(population_size = 300,
+                                        uses_custom_crowding = True,
+                                        pRef = pRef,
+                                         use_spea=True)
         case _: raise ValueError
 
 def write_pss_to_file(pss: list[PS], file: str):
@@ -61,12 +65,12 @@ def write_pss_to_file(pss: list[PS], file: str):
     np.savez(file, ps_matrix = ps_matrix)
 
 def write_evaluated_pss_to_file(e_pss: list[EvaluatedPS], file: str):
-    ps_matrix = np.array([e_ps.ps.values for e_ps in e_pss])
+    ps_matrix = np.array([e_ps.values for e_ps in e_pss])
     fitness_matrix = np.array([e_ps.metric_scores for e_ps in e_pss])
 
     np.savez(file, ps_matrix = ps_matrix, fitness_matrix=fitness_matrix)
 
-def load_ps(file: str) -> list[[EvaluatedPS | PS]]:
+def load_pss(file: str) -> list[[EvaluatedPS | PS]]:
     results_dict = np.load(file)
     ps_matrix = results_dict["ps_matrix"]
 
@@ -137,7 +141,7 @@ def obtain_pss(benchmark_problem: BenchmarkProblem,
 
 def view_3d_plot_of_pss(ps_file: str):
 
-    e_pss = load_ps(ps_file)
+    e_pss = load_pss(ps_file)
     metric_matrix = np.array([e_ps.metric_scores for e_ps in e_pss])
     df = pd.DataFrame(metric_matrix, columns=["Simplicity", "Mean Fitness", "Atomicity"])
     # Create a 3D scatter plot with Plotly Express
