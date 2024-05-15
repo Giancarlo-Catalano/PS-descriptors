@@ -6,7 +6,6 @@ from deap.tools import Logbook
 from BenchmarkProblems.BenchmarkProblem import BenchmarkProblem
 from Core.EvaluatedPS import EvaluatedPS
 from Core.PRef import PRef
-from Core.PS import PS
 from Core.PSMetric.Classic3 import Classic3PSEvaluator
 from Core.TerminationCriteria import TerminationCriteria, PSEvaluationLimit
 from PSMiners.AbstractPSMiner import AbstractPSMiner

@@ -1,28 +1,17 @@
 import random
-from typing import Literal, Any
 
-import deap.base
 import matplotlib.pyplot as plt
 import numpy as np
 from deap import algorithms, creator, base, tools
-from deap.tools import selNSGA2, uniform_reference_points, selNSGA3WithMemory, selSPEA2
+from deap.tools import uniform_reference_points, selNSGA3WithMemory, selSPEA2
 
 from BenchmarkProblems.BenchmarkProblem import BenchmarkProblem
-from Core.EvaluatedPS import EvaluatedPS
 from Core.PRef import PRef
-from Core.ArchivePSMiner import ArchivePSMiner
+from Core.PS import PS
+from Core.PSMetric.Classic3 import Classic3PSEvaluator
 from Core.SearchSpace import SearchSpace
 from Core.TerminationCriteria import TerminationCriteria
-from PSMiners.AbstractPSMiner import AbstractPSMiner
-from PSMiners.DEAP.CustomCrowdingMechanism import gc_selNSGA2, GC_selNSGA3WithMemory
-from FSStochasticSearch.HistoryPRefs import uniformly_random_distribution_pRef, pRef_from_GA, pRef_from_SA
-from Core.PS import PS
-from Core.PSMetric.Atomicity import Atomicity
-from Core.PSMetric.Classic3 import Classic3PSEvaluator
-from Core.PSMetric.MeanFitness import MeanFitness
-from Core.PSMetric.Metric import Metric
-from Core.PSMetric.Simplicity import Simplicity
-from utils import announce
+from PSMiners.DEAP.CustomCrowdingMechanism import GC_selNSGA3WithMemory
 
 
 def nsga(toolbox,

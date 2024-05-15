@@ -2,8 +2,6 @@ from typing import Any
 
 import numpy as np
 from pymoo.core.survival import Survival
-from pymoo.operators.survival.rank_and_crowding import RankAndCrowding
-from pymoo.util.misc import find_duplicates
 from pymoo.util.nds.non_dominated_sorting import NonDominatedSorting
 from pymoo.util.randomized_argsort import randomized_argsort
 

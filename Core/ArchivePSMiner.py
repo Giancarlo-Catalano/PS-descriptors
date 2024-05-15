@@ -8,22 +8,20 @@ import numpy as np
 import utils
 from BenchmarkProblems.BenchmarkProblem import BenchmarkProblem
 from Core.EvaluatedPS import EvaluatedPS
-from Core.FSEvaluator import FSEvaluator
 from Core.PRef import PRef
-from Core.PSMetric.Simplicity import Simplicity
-from FSStochasticSearch.GA import GA
-from FSStochasticSearch.Operators import SinglePointFSMutation, TwoPointFSCrossover, TournamentSelection
 from Core.PS import PS
 from Core.PSMetric.Atomicity import Atomicity
 from Core.PSMetric.MeanFitness import MeanFitness
 from Core.PSMetric.Metric import Metric
+from Core.PSMetric.Simplicity import Simplicity
 from Core.SearchSpace import SearchSpace
 from Core.TerminationCriteria import TerminationCriteria, PSEvaluationLimit, IterationLimit
 from Core.get_init import just_empty
 from Core.get_local import specialisations
 from Core.selection import truncation_selection
+from FSStochasticSearch.GA import GA
+from FSStochasticSearch.Operators import SinglePointFSMutation, TwoPointFSCrossover, TournamentSelection
 from PSMiners.AbstractPSMiner import AbstractPSMiner
-from utils import announce
 
 Population: TypeAlias = list[EvaluatedPS]
 GetInitType: TypeAlias = [[PRef, Optional[int]], list[PS]]

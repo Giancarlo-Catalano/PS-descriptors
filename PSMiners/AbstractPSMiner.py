@@ -8,10 +8,6 @@ from Core.EvaluatedPS import EvaluatedPS
 from Core.FSEvaluator import FSEvaluator
 from Core.PRef import PRef
 from Core.PS import PS, STAR
-from Core.PSMetric.Metric import Metric
-from PSMiners.Operators.PSCrossoverOperator import PSCrossoverOperator
-from PSMiners.Operators.PSMutationOperator import PSMutationOperator
-from PSMiners.Operators.PSSelectionOperator import PSSelectionOperator
 from Core.SearchSpace import SearchSpace
 from Core.TerminationCriteria import TerminationCriteria, PSEvaluationLimit
 from utils import announce
