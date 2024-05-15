@@ -404,7 +404,7 @@ class Detector:
         self.generate_pRef(sample_size=100000,
                            which_algorithm="SA")
 
-        self.generate_pss(ps_miner_method="sequential",  #TODO put this back to NSGA3
+        self.generate_pss(ps_miner_method="sequential",
                           ps_budget = 100000)
 
         self.generate_control_pss()

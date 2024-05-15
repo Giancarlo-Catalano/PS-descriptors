@@ -147,15 +147,15 @@ def get_trapk_explainer():
 def explanation():
     detector = get_bt_explainer()
     #detector.generate_files_with_default_settings()
-    #detector.explanation_loop(amount_of_fs_to_propose=6, ps_show_limit=12)
+    detector.explanation_loop(amount_of_fs_to_propose=6, ps_show_limit=12)
 
     # utils.make_joined_bt_dataset()
 
     # problem = RoyalRoad(5, 5)
     # test_pymoo(problem)
 
-    detector.generate_control_pss()
-    detector.generate_properties_csv_file()
+    # detector.generate_control_pss()
+    # detector.generate_properties_csv_file()
     # get_faulty_bt_explainer().generate_properties_csv_file()
 
     #problem = RoyalRoad(3, 5)

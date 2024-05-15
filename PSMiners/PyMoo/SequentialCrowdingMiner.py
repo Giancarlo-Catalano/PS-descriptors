@@ -68,6 +68,11 @@ class SequentialCrowdingMiner(AbstractPSMiner):
         e_pss.sort(reverse=False, key=lambda x: x.metric_scores[-1])
         return e_pss
 
+    @classmethod
+    def sort_by_mean_fitness(cls, e_pss: list[EvaluatedPS]) -> list[EvaluatedPS]:
+        e_pss.sort(reverse=False, key=lambda x: x.metric_scores[1])
+        return e_pss
+
 
 
     def get_crowding_operator(self):
@@ -107,9 +112,15 @@ class SequentialCrowdingMiner(AbstractPSMiner):
                        termination=('n_evals', self.budget_per_run),
                        verbose=verbose)
 
+        winners = []
         e_pss = self.output_of_miner_to_evaluated_ps(res)
+
         e_pss = self.sort_by_atomicity(e_pss)
-        winners = e_pss[:self.kept_per_iteration]
+        winners.extend(e_pss[:self.kept_per_iteration])
+
+        e_pss = self.sort_by_mean_fitness(e_pss)
+        winners.extend(e_pss[:self.kept_per_iteration])
+
         self.archive.extend(winners)
 
         if verbose:
