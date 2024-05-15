@@ -220,6 +220,8 @@ class EfficientBTProblem(BTProblem):
         skill_diversity = get_skill_variation(cohort)
         skill_coverage = get_skill_coverage(cohort)
 
+        size = ps.fixed_count()
+
         return {"mean_RCQ" : mean_RCQ,
                 "mean_error_RCQ" : mean_error_RCQ,
                 "mean_WWD" : mean_WWD,
@@ -232,7 +234,8 @@ class EfficientBTProblem(BTProblem):
                 "mean_error_SQ": mean_error_SQ,
                 "skill_diversity": skill_diversity,
                 "skill_coverage": skill_coverage,
-                "day_coverage": coverage}
+                "day_coverage": coverage,
+                "size": size}
 
 
     def repr_extra_ps_info(self, ps: PS):

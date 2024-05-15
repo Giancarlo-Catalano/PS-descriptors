@@ -12,7 +12,9 @@ from utils import announce
 
 def generate_control_PSs(search_space: SearchSpace, reference_pss: list[PS]) -> list[PS]:
     def pick_size() -> int:
-        return len(random.choice(reference_pss))
+        to_mimic = random.choice(reference_pss)
+        wanted_size = to_mimic.fixed_count()
+        return wanted_size
 
     amount_to_generate = len(reference_pss)
     return [PS.random_with_fixed_size(search_space, pick_size())

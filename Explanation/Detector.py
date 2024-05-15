@@ -14,6 +14,7 @@ from Core.EvaluatedPS import EvaluatedPS
 from Core.PRef import PRef
 from Core.PS import PS, contains, STAR
 from Core.PSMetric.Classic3 import Classic3PSEvaluator
+from Core.PickAndMerge import PickAndMergeSampler
 from Explanation.detection_utils import generate_control_PSs
 from PSMiners.AbstractPSMiner import AbstractPSMiner
 from PSMiners.Mining import get_history_pRef, get_ps_miner, write_evaluated_pss_to_file, load_pss, write_pss_to_file
@@ -400,11 +401,11 @@ class Detector:
 
     def generate_files_with_default_settings(self):
 
-        self.generate_pRef(sample_size=1000,
+        self.generate_pRef(sample_size=100000,
                            which_algorithm="SA")
 
         self.generate_pss(ps_miner_method="sequential",  #TODO put this back to NSGA3
-                          ps_budget = 6000)
+                          ps_budget = 100000)
 
         self.generate_control_pss()
 
@@ -441,40 +442,80 @@ class Detector:
         distribution = self.get_ps_size_distribution()
         print("\t"+"\n\t".join(f"{size}: {int(prop*100)}%" for size, prop in distribution.items()))
 
-    def explain_contained_ps_which_are_affected(self, solution: EvaluatedFS, vars: set):
+
+    def get_ps_which_cover_any(self, solution: EvaluatedFS, vars: set[int]) -> list[(PS, set[int])]:
         def get_contained_special_vars(ps: PS):
             fixed_vars = ps.get_fixed_variable_positions()
             intersection = [var for var in vars if var in fixed_vars]
             return intersection
 
         contained_pss = self.get_contained_ps_with_properties(solution)
-        ps_with_vars = [(ps, get_contained_special_vars(ps)) for ps in contained_pss]
-        ps_with_vars = [(ps, intersection) for ps, intersection in ps_with_vars if len(intersection) > 0]
+        contained_pss = [(ps, get_contained_special_vars(ps)) for ps in contained_pss]
+        contained_pss = [(ps, intersection)
+                         for ps, intersection in contained_pss
+                         if len(intersection) > 0]
+        return contained_pss
+    def explain_contained_ps_which_are_affected(self, solution: EvaluatedFS, vars: set):
+        ps_with_vars = self.get_ps_which_cover_any(solution, vars)
         ps_with_vars.sort(reverse=True, key = lambda x: len([1]))  # the ones with the biggest intersection first
 
 
         print(f"The affected partial solutions are")
         shown_ps_max = 10
-        for ps, intersection in contained_pss[:shown_ps_max]:
+        for ps, intersection in ps_with_vars[:shown_ps_max]:
             print(self.problem.repr_ps(ps))
             print(utils.indent(self.get_ps_description(ps, ps.properties)))
             print(f"(Conflicts = {intersection})")
             print()
 
+    def patch_using_pss(self, original_solution: EvaluatedFS, vars_to_change: set[int]) -> EvaluatedFS:
+        def patch_can_be_used(patch: (PS, set[int]))-> bool:
+            ps, vars_used = patch
+            for variable in vars_used:
+                value = ps[variable]
+                if value == original_solution.values[variable]:
+                    return False
+            return True
+
+
+        candidate_patches = self.get_ps_which_cover_any(original_solution, vars_to_change)
+        candidate_patches = filter(patch_can_be_used, candidate_patches)
+
+        candidate_patches = [EvaluatedPS(ps.values) for ps in candidate_patches]
+        for candidate in candidate_patches:
+            simplicity, mean_fitness, atomicity = self.search_metrics_evaluator.get_S_MF_A(candidate)
+            candidate.aggregated_score = mean_fitness
+        sampler = PickAndMergeSampler(self.problem.search_space,
+                                      individuals=candidate_patches)
+        attemps = 10
+        incomplete_ps = PS.from_FS(original_solution)
+        for var in vars_to_change:
+            incomplete_ps.values[var] = STAR
+        resulting_fss = []
+        # TODO apply pick and merge here to fill the gaps
+        for attempt in range(attemps):
+            new_fs = sampler.fill_gaps_using_patches(incomplete_ps)
+            if True: # does not use any of the old values
+                resulting_fss.append(EvaluatedFS(new_fs, self.problem.fitness_function(new_fs)))
+
+        if len(resulting_fss) == 0:
+            raise Exception("Could not resolve using patches")
+        resulting_fss.sort(reverse=True)
+        return resulting_fss[0]
 
     def find_alternative_solution(self,
                                   original_solution: EvaluatedFS,
                                   vars_to_change: set[int],
-                                  exhaustive_search = False) -> EvaluatedPS:
-        if exhaustive_search:
-            return self.find_alternative_solution_via_exhaustive_search(original_solution, vars_to_change)
+                                  method: str) -> EvaluatedPS:
+        if method == "patch_ps":
+            return self.patch_using_pss(original_solution, vars_to_change)
         else:
             raise Exception("The non-exhaustive search has not been implemented yet")
 
     def request_change(self,
                        solution: EvaluatedFS,
                        vars_to_change: set,
-                       exhaustive_search: bool = False):
+                       method: str):
         """ In the event of the decision maker not being happy with certain variables of a full solution, we can suggest
             * the partial solutions that will be affected
             * best replacement values, and the would be fitness
@@ -482,6 +523,8 @@ class Detector:
 
         print(f"The fitness of the solution is {solution.fitness:.3f}")
         self.explain_contained_ps_which_are_affected(solution, vars_to_change)
+
+
 
 
 

@@ -35,3 +35,6 @@ class FullSolution:
         new_values = self.values.copy()
         new_values[variable_index] = new_value
         return FullSolution(new_values)
+
+    def copy(self):
+        return FullSolution(self.values)
