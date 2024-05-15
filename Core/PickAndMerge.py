@@ -28,7 +28,7 @@ class PickAndMergeSampler:
             merge_limit = ceil(sqrt(search_space.amount_of_parameters))
         self.merge_limit = merge_limit
 
-    def sample_ps_unsafe(self) -> PS:
+    def sample_ps_unsafe(self, starting_point: Optional[PS] = None) -> PS:
         """ this is unsafe in the sense that the result might not be complete"""
 
         available = set(self.individuals)
@@ -36,7 +36,7 @@ class PickAndMergeSampler:
         def pick() -> EvaluatedPS:
             return max(random.choices(list(available), k=self.tournament_size))
 
-        current = PS.empty(self.search_space)
+        current = PS.empty(self.search_space) if starting_point is None else starting_point
         added_count = 0
 
         while (len(available) > 0) and (added_count < self.merge_limit) and not current.is_fully_fixed():
@@ -54,11 +54,31 @@ class PickAndMergeSampler:
             result_values[index] = random.randrange(self.search_space.cardinalities[index])
         return PS(result_values)
 
+
+    def fill_in_the_gaps_avoid_previous(self, incomplete_ps: PS, previous_fs: FullSolution):
+        def pick_random_value_for_var_thats_different_from_previous(index: int) -> int:
+            allowed_values = list(range(self.search_space.cardinalities[index]))
+            if len(allowed_values) == 0:
+                raise Exception(f"While attempting to path the solution, var #{index} could not be filled, probabily because it has cardinality of 1")
+            old_value = previous_fs.values[index]
+            allowed_values.remove(old_value)
+            return random.choice(allowed_values)
+        result_values = np.array(incomplete_ps.values)
+        for index in incomplete_ps.get_unfixed_variable_positions():
+            result_values[index] = pick_random_value_for_var_thats_different_from_previous(index)
+
+        return PS(result_values)
+
     def sample(self) -> FullSolution:
         produced_ps = self.sample_ps_unsafe()
-        filled_feature = self.fill_in_the_gaps(produced_ps)
-        return filled_feature.to_FS()
+        filled_ps = self.fill_in_the_gaps(produced_ps)
+        return filled_ps.to_FS()
 
+
+    def apply_patches(self, starting_point: PS, original_FS: FullSolution) -> FullSolution:
+        produced_ps = self.sample_ps_unsafe(starting_point=starting_point)
+        filled_ps = self.fill_in_the_gaps_avoid_previous(produced_ps, original_FS)
+        return filled_ps.to_FS()
 
 def test_pick_and_merge():
     amount_of_groups = 3

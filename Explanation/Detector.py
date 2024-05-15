@@ -467,7 +467,7 @@ class Detector:
             print(f"(Conflicts = {intersection})")
             print()
 
-    def patch_using_pss(self, original_solution: EvaluatedFS, vars_to_change: set[int]) -> EvaluatedFS:
+    def get_patches_usable_to_cover(self, original_solution: EvaluatedFS, vars_to_change: set[int]) -> list[EvaluatedPS]:
         def patch_can_be_used(patch: (PS, set[int]))-> bool:
             ps, vars_used = patch
             for variable in vars_used:
@@ -484,18 +484,26 @@ class Detector:
         for candidate in candidate_patches:
             simplicity, mean_fitness, atomicity = self.search_metrics_evaluator.get_S_MF_A(candidate)
             candidate.aggregated_score = mean_fitness
+
+        return candidate_patches
+
+
+
+
+    def patch_fs(self, original_solution: EvaluatedFS, vars_to_change: set[int]) -> EvaluatedFS:
+        patches = self.get_patches_usable_to_cover(original_solution, vars_to_change)
         sampler = PickAndMergeSampler(self.problem.search_space,
-                                      individuals=candidate_patches)
+                                      individuals=patches)
         attemps = 10
         incomplete_ps = PS.from_FS(original_solution)
         for var in vars_to_change:
             incomplete_ps.values[var] = STAR
+
+
         resulting_fss = []
-        # TODO apply pick and merge here to fill the gaps
         for attempt in range(attemps):
-            new_fs = sampler.fill_gaps_using_patches(incomplete_ps)
-            if True: # does not use any of the old values
-                resulting_fss.append(EvaluatedFS(new_fs, self.problem.fitness_function(new_fs)))
+            new_fs = sampler.apply_patches(starting_point=incomplete_ps, original_FS=original_solution)
+            resulting_fss.append(EvaluatedFS(new_fs, self.problem.fitness_function(new_fs)))
 
         if len(resulting_fss) == 0:
             raise Exception("Could not resolve using patches")
@@ -507,7 +515,7 @@ class Detector:
                                   vars_to_change: set[int],
                                   method: str) -> EvaluatedPS:
         if method == "patch_ps":
-            return self.patch_using_pss(original_solution, vars_to_change)
+            return self.patch_fs(original_solution, vars_to_change)
         else:
             raise Exception("The non-exhaustive search has not been implemented yet")
 
