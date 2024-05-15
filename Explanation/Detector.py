@@ -364,8 +364,8 @@ class Detector:
 
 
     def explanation_loop(self,
-                         amount_of_fs_to_propose: int,
-                         ps_show_limit: int):
+                         amount_of_fs_to_propose: int = 6,
+                         ps_show_limit: int = 12):
         solutions = self.get_best_n_full_solutions(amount_of_fs_to_propose)
 
         print(f"The top {amount_of_fs_to_propose} solutions are")
@@ -400,11 +400,11 @@ class Detector:
 
     def generate_files_with_default_settings(self):
 
-        self.generate_pRef(sample_size=10000,
+        self.generate_pRef(sample_size=20000,
                            which_algorithm="SA")
 
         self.generate_pss(ps_miner_method="sequential",
-                          ps_budget = 10000)
+                          ps_budget = 30000)
 
         self.generate_control_pss()
 

@@ -227,8 +227,8 @@ def make_joined_bt_dataset():
 
 
     # Paths to your CSV files
-    faulty_csv = r"C:\Users\gac8\PycharmProjects\PS-PDF\Experimentation\FaultyerBT\ps_properties.csv"
-    correct_csv = r"C:\Users\gac8\PycharmProjects\PS-PDF\Experimentation\BTDetector\ps_properties.csv"
+    faulty_csv = r"C:\Users\gac8\PycharmProjects\PS-PDF\Experimentation\FaultyerBTTemp\ps_properties.csv"
+    correct_csv = r"C:\Users\gac8\PycharmProjects\PS-PDF\Experimentation\BTDetectorTemp\ps_properties.csv"
 
     # Read the CSV files into DataFrames
     faulty_df = pd.read_csv(faulty_csv)
@@ -242,7 +242,7 @@ def make_joined_bt_dataset():
     concatenated_df = pd.concat([faulty_df, correct_df], ignore_index=True)
 
     # Export the concatenated DataFrame to a new CSV file
-    output_csv_file = r"C:\Users\gac8\PycharmProjects\PS-PDF\Experimentation\FaultyBT\ps_properties_coverage.csv"
+    output_csv_file = r"C:\Users\gac8\PycharmProjects\PS-PDF\Experimentation\FaultyerBTTemp\ps_properties_again.csv"
     concatenated_df.to_csv(output_csv_file, index=False)
 
     print("CSV files have been concatenated and a 'Faulty' column has been added.")

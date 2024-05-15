@@ -2,6 +2,7 @@
 
 import os
 
+import utils
 from BenchmarkProblems.BenchmarkProblem import BenchmarkProblem
 from BenchmarkProblems.EfficientBTProblem.EfficientBTProblem import EfficientBTProblem
 from BenchmarkProblems.GraphColouring import GraphColouring
@@ -86,11 +87,11 @@ def get_bt_explainer() -> Detector:
     problem = EfficientBTProblem.from_default_files()
     return Detector.from_folder(problem=problem,
                           folder=experimental_directory,
-                          speciality_threshold=0.30,
+                          speciality_threshold=0.1,
                           verbose=True)
 
 def get_faulty_bt_explainer():
-    experimental_directory = r"C:\Users\gac8\PycharmProjects\PS-PDF\Experimentation\FaultyerBT"
+    experimental_directory = r"C:\Users\gac8\PycharmProjects\PS-PDF\Experimentation\FaultyerBTTemp"
     print("Using the FAULTY problem")
     problem = EfficientBTProblem.from_default_files()
     problem.use_faulty_fitness_function = True
@@ -123,11 +124,17 @@ def get_trapk_explainer():
 
 
 def explanation():
-    detector = get_bt_explainer()
-    detector.generate_files_with_default_settings()
-    detector.explanation_loop(amount_of_fs_to_propose=6, ps_show_limit=12)
+    # detector = get_bt_explainer()
+    # detector.generate_files_with_default_settings()
+    # detector.explanation_loop(amount_of_fs_to_propose=6, ps_show_limit=12)
 
-    # utils.make_joined_bt_dataset()
+
+    get_bt_explainer().explanation_loop()
+
+    print("And now for the faulty one..")
+    get_faulty_bt_explainer().explanation_loop()
+
+    #utils.make_joined_bt_dataset()
 
     # problem = RoyalRoad(5, 5)
     # test_pymoo(problem)
