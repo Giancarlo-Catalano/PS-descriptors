@@ -1,1 +1,0 @@
-from moead_framework.core.genetic_operator.abstract_operator import GeneticOperator

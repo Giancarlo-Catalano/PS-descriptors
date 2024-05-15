@@ -1,29 +1,11 @@
 #!/usr/bin/env python3
 
-
-""" This is the source code related to the paper 'Mining Potentially Explanatory Patterns via Partial Solutions',
-    The authors of the paper are Giancarlo Catalano (me),
-      Sandy Brownlee, David Cairns (Stirling Uni)
-      John McCall (RGU)
-      Russell Ainsle (BT).
-
-
-    This code is a minimal implementation of the system I proposed in the paper,
-    and I hope you can find the answers to any questions that you have!
-
-    I recommend playing around with:
-        - The problem being solved
-        - The metrics used to search for PSs (find them in PSMiner.with_default_settings)
-        - the sample sizes etc...
-"""
 import os
 
-import utils
 from BenchmarkProblems.BenchmarkProblem import BenchmarkProblem
 from BenchmarkProblems.EfficientBTProblem.EfficientBTProblem import EfficientBTProblem
 from BenchmarkProblems.GraphColouring import GraphColouring
 from BenchmarkProblems.RoyalRoad import RoyalRoad
-from BenchmarkProblems.Trapk import Trapk
 from Core import TerminationCriteria
 from Core.EvaluatedPS import EvaluatedPS
 from Core.Explainer import Explainer
@@ -32,15 +14,11 @@ from Core.PSMetric.Classic3 import Classic3PSEvaluator
 from Explanation.Detector import Detector
 from FSStochasticSearch.Operators import SinglePointFSMutation
 from FSStochasticSearch.SA import SA
-from PSMiners.AbstractPSMiner import AbstractPSMiner
 from PSMiners.DEAP.DEAPPSMiner import DEAPPSMiner, test_DEAP_miner
-from PSMiners.MOEAD.testing import test_moead_on_problem
-from PSMiners.Mining import get_history_pRef, get_ps_miner
+from PSMiners.Mining import get_history_pRef
 from PSMiners.Platypus.PlatypusPSProblem import test_platypus
-from PSMiners.PyMoo.PSPyMooProblem import test_pymoo, sequential_search_pymoo
-from PSMiners.PyMoo.SequentialCrowdingMiner import test_sequential_miner
+from PSMiners.PyMoo.PSPyMooProblem import test_pymoo
 from utils import announce, indent
-import pandas as pd
 
 
 def show_overall_system(benchmark_problem: BenchmarkProblem):
