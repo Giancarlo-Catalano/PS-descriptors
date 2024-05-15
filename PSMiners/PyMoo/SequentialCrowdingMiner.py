@@ -5,6 +5,7 @@ from deap.base import Toolbox
 from deap.tools import Logbook
 from pymoo.algorithms.moo.nsga2 import NSGA2
 from pymoo.core.survival import Survival
+from pymoo.cython.non_dominated_sorting import fast_non_dominated_sort
 from pymoo.operators.survival.rank_and_crowding import RankAndCrowding
 from pymoo.optimize import minimize
 
@@ -79,7 +80,7 @@ class SequentialCrowdingMiner(AbstractPSMiner):
         if len(self.archive) == 0:
             return RankAndCrowding(crowding_func = "ce")
         else:
-            return PyMooPSSequentialCrowding(self.archive, immediate=True)
+            return PyMooPSSequentialCrowding(self.archive, immediate=False)
 
 
     def get_miner_algorithm(self):
@@ -112,14 +113,23 @@ class SequentialCrowdingMiner(AbstractPSMiner):
                        termination=('n_evals', self.budget_per_run),
                        verbose=verbose)
 
-        winners = []
+        # debug
+        # F = res.pop.get("F").astype(float, copy=False)
+        # # remove the simplicity metric
+        # F = F[:, 1:]
+        # best = algorithm.survival.nds.do(F, only_non_dominated_front=True)
+
+
+        # end of debug
+
         e_pss = self.output_of_miner_to_evaluated_ps(res)
-
-        e_pss = self.sort_by_atomicity(e_pss)
-        winners.extend(e_pss[:self.kept_per_iteration])
-
-        e_pss = self.sort_by_mean_fitness(e_pss)
-        winners.extend(e_pss[:self.kept_per_iteration])
+        winners = e_pss
+        #
+        # e_pss = self.sort_by_atomicity(e_pss)
+        # winners.extend(e_pss[:self.kept_per_iteration])
+        #
+        # e_pss = self.sort_by_mean_fitness(e_pss)
+        # winners.extend(e_pss[:self.kept_per_iteration])
 
         self.archive.extend(winners)
 
@@ -145,8 +155,8 @@ class SequentialCrowdingMiner(AbstractPSMiner):
     @classmethod
     def with_default_settings(cls, pRef: PRef):
         return cls(pRef = pRef,
-                   budget_per_run = 5000,
-                   population_size_per_run = 100,
+                   budget_per_run = 1000,
+                   population_size_per_run = 50,
                    kept_per_iteration=5,
                    which_algorithm="NSGAII")
 

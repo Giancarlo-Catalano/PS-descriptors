@@ -154,7 +154,6 @@ class Detector:
                      ps_miner_method : Literal["classic", "NSGA", "NSGA_experimental_crowding", "SPEA2", "sequential"] = "NSGA_experimental_crowding",
                      ps_budget: int = 10000):
 
-
         algorithm = get_ps_miner(self.pRef, which=ps_miner_method)
 
         with announce(f"Running {algorithm} on {self.pRef} with {ps_budget =}", self.verbose):
@@ -401,11 +400,11 @@ class Detector:
 
     def generate_files_with_default_settings(self):
 
-        self.generate_pRef(sample_size=100000,
+        self.generate_pRef(sample_size=10000,
                            which_algorithm="SA")
 
         self.generate_pss(ps_miner_method="sequential",
-                          ps_budget = 100000)
+                          ps_budget = 10000)
 
         self.generate_control_pss()
 
