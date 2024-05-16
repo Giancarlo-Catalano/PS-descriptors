@@ -266,12 +266,20 @@ class Detector:
         # obtain the relative_property_rankings
         items = [(key, value, self.relative_property_ranking_within_dataset(key, value))
                  for key, value in all_properties.items()
-                 if key != "control"]
+                 if key != "control"
+                 if key != "size"]
 
         # only keep the ones that are significant
         items = [(key, value, relative_property_rank) for (key, value, relative_property_rank) in items
                  if self.relative_property_rank_is_significant(relative_property_rank)]
         return items
+
+
+    @classmethod
+    def get_rank_significance(cls, kvr):
+        lower, upper = kvr[2]
+        pillar = lower if lower < 1-upper else upper
+        return abs(pillar-0.5)*2
 
     def get_ps_description(self, ps: PS, ps_properties: dict) -> str:
         p_value, _ = self.t_test_for_mean_with_ps(ps)
@@ -279,12 +287,7 @@ class Detector:
         delta = avg_when_present - avg_when_absent
         significant_properties = self.only_significant_properties(ps_properties)
 
-        def get_rank_significance(kvr):
-            lower, upper = kvr[2]
-            pillar = lower if lower < 1-upper else upper
-            return abs(pillar-0.5)*2
-
-        significant_properties.sort(key=get_rank_significance, reverse=True)
+        significant_properties.sort(key=self.get_rank_significance, reverse=True)
 
 
 
@@ -298,7 +301,8 @@ class Detector:
 
         def repr_property(kvr) -> str:
             key, value, rank_range = kvr
-            return self.problem.repr_property(key, value, rank_range)
+            result = self.problem.repr_property(key, value, rank_range, ps)
+            return result
 
 
         properties_str = "\n".join(repr_property(kvr) for kvr in significant_properties)
@@ -352,7 +356,7 @@ class Detector:
         contained_pss = self.get_contained_ps_with_properties(solution)
 
         #contained_pss = Explainer.only_non_obscured_pss(contained_pss)
-        contained_pss.sort(reverse=True, key = lambda x: x.metric_scores[-1])  # sort by atomicity
+        contained_pss.sort(reverse=False, key = lambda x: len(x.properties))  # sort by atomicity
 
         fs_as_ps = PS.from_FS(solution.full_solution)
         print(f"The solution \n {utils.indent(self.problem.repr_ps(fs_as_ps))}\ncontains the following PSs:")
@@ -365,7 +369,8 @@ class Detector:
 
     def explanation_loop(self,
                          amount_of_fs_to_propose: int = 6,
-                         ps_show_limit: int = 12):
+                         ps_show_limit: int = 12,
+                         show_global_properties = False):
         solutions = self.get_best_n_full_solutions(amount_of_fs_to_propose)
 
         print(f"The top {amount_of_fs_to_propose} solutions are")
@@ -374,7 +379,7 @@ class Detector:
             print()
 
 
-        self.describe_global_information()
+        self.describe_global_information(show_global_properties = show_global_properties)
 
 
         first_round = True
@@ -433,13 +438,16 @@ class Detector:
                 for size in unique_sizes}
 
 
-    def describe_global_information(self):
+    def describe_global_information(self, show_global_properties = False):
         print("The partial solutions cover the search space with the following distribution:")
         print(utils.repr_with_precision(self.get_coverage_stats(), 2))
 
         print("The distribution of PS sizes is")
         distribution = self.get_ps_size_distribution()
         print("\t"+"\n\t".join(f"{size}: {int(prop*100)}%" for size, prop in distribution.items()))
+
+        if show_global_properties:
+            self.print_global_properties()
 
 
     def get_ps_which_cover_any(self, solution: EvaluatedFS, vars: set[int]) -> list[(PS, set[int])]:
@@ -530,6 +538,35 @@ class Detector:
 
         print(f"The fitness of the solution is {solution.fitness:.3f}")
         self.explain_contained_ps_which_are_affected(solution, vars_to_change)
+
+    def print_global_properties(self):
+        properties = self.properties
+        properties = properties[properties["control"] == False]
+
+        properties_and_values = {prop: properties[prop].values
+                                 for prop in properties.columns
+                                 if prop != "size"
+                                 if prop != "control"}
+        def value_is_significant(prop_name, prop_value) -> bool:
+            rank = self.relative_property_ranking_within_dataset(prop_name, prop_value)
+            return self.relative_property_rank_is_significant(rank) is not None
+
+        properties_and_values = {prop: [value for value in values
+                                        if value_is_significant(prop, value)
+                                        if np.isfinite(value)]
+                                 for prop, values in properties_and_values.items()}
+
+        properties_and_averages = {prop: np.average(values)
+                                 for prop, values in properties_and_values.items()
+                                 if len(values) > 0}
+
+
+        significant_props = self.only_significant_properties(properties_and_averages)
+
+        print("Some generally useful properties are")
+        for kvr in significant_props:
+            k, v, r = kvr
+            print(self.problem.repr_property_globally(k, v, r))
 
 
 

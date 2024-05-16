@@ -87,7 +87,7 @@ def get_bt_explainer() -> Detector:
     problem = EfficientBTProblem.from_default_files()
     return Detector.from_folder(problem=problem,
                           folder=experimental_directory,
-                          speciality_threshold=0.1,
+                          speciality_threshold=0.2,
                           verbose=True)
 
 def get_faulty_bt_explainer():
@@ -110,7 +110,6 @@ def get_gc_explainer():
                                   speciality_threshold=0.25,
                                   verbose=True)
 
-
 def get_trapk_explainer():
     experimental_directory = r"C:\Users\gac8\PycharmProjects\PS-PDF\Experimentation\Other"
     problem = RoyalRoad(4, 5)
@@ -119,32 +118,13 @@ def get_trapk_explainer():
                                   speciality_threshold=0.25,
                                   verbose=True)
 
-
-
-
-
 def explanation():
     # detector = get_bt_explainer()
+    # detector.generate_properties_csv_file()
     # detector.generate_files_with_default_settings()
     # detector.explanation_loop(amount_of_fs_to_propose=6, ps_show_limit=12)
 
-
-    get_bt_explainer().explanation_loop()
-
-    print("And now for the faulty one..")
-    get_faulty_bt_explainer().explanation_loop()
-
-    #utils.make_joined_bt_dataset()
-
-    # problem = RoyalRoad(5, 5)
-    # test_pymoo(problem)
-
-    # detector.generate_control_pss()
-    # detector.generate_properties_csv_file()
-    # get_faulty_bt_explainer().generate_properties_csv_file()
-
-    #problem = RoyalRoad(3, 5)
-    #test_moead_on_problem(problem, sample_size=5000)
+    get_bt_explainer().explanation_loop(show_global_properties = False)
 
 def get_miners_data():
     problem = RoyalRoad(5, 5)
@@ -228,26 +208,6 @@ def get_miners_data():
 
 if __name__ == '__main__':
     explanation()
-
-    # problem = EfficientBTProblem.from_default_files()
-    # #problem = Trapk(5, 5)
-    # ps_budget = 10000
-
-
-
-
-
-    # with announce(f"Generating a pRef"):
-    #     pRef = get_history_pRef(benchmark_problem=problem,
-    #                             sample_size=30000,
-    #                             which_algorithm="uniform",
-    #                             verbose=True)
-    #
-    # pss = test_sequential_miner(pRef=pRef, total_budget=10000)
-    #
-    # print("The archive at the end is")
-    # for ps in pss:
-    #     print(problem.repr_ps(ps))
 
 
 

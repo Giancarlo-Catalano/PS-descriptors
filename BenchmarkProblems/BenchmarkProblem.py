@@ -54,7 +54,7 @@ class BenchmarkProblem:
     def ps_to_properties(self, ps: PS) -> dict:
         raise NotImplemented(f"The class {self.__repr__()} does not implement .ps_to_properties")
 
-    def repr_property(self, property_name:str, property_value:str, property_rank_range:str):
+    def repr_property(self, property_name:str, property_value:str, property_rank_range:str, ps: PS):
         rank_lower_bound, rank_upper_bound = property_rank_range
         start = f"{property_name} = {property_value:.2f} is "
 
@@ -73,3 +73,6 @@ class BenchmarkProblem:
 
     def repr_extra_ps_info(self, ps: PS):
         return f"PS has {ps.fixed_count()} fixed variables"
+
+    def repr_property_globally(self, k, v, r):
+        raise NotImplemented

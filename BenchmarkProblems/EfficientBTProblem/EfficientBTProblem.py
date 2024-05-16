@@ -223,18 +223,18 @@ class EfficientBTProblem(BTProblem):
         size = ps.fixed_count()
 
         return {"mean_RCQ" : mean_RCQ,
-                "mean_error_RCQ" : mean_error_RCQ,
+                #"mean_error_RCQ" : mean_error_RCQ,
                 "mean_WWD" : mean_WWD,
-                "mean_error_WWD" : mean_error_WWD,
+                #"mean_error_WWD" : mean_error_WWD,
                 "mean_RD" : mean_RD,
                 #"mean_error_RD" : mean_error_RD,
                 "mean_WSP" : mean_WSP,
                 #"mean_error_WSP" : mean_error_WSP,
                 "mean_SQ": mean_SQ,
-                "mean_error_SQ": mean_error_SQ,
+                #"mean_error_SQ": mean_error_SQ,
                 "skill_diversity": skill_diversity,
-                "skill_coverage": skill_coverage,
-                "day_coverage": coverage,
+                #"skill_coverage": skill_coverage,
+                #"day_coverage": coverage,
                 "size": size}
 
 
@@ -244,22 +244,67 @@ class EfficientBTProblem(BTProblem):
         weekdays = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"]
         return f"The ranges are "+(", ".join(f"{weekday}:{min_max}" for weekday, min_max in zip(weekdays, mins_maxs)))
 
-    def repr_property_custom(self, property_name:str, property_value:float, property_rank_range:str):
+    def repr_property(self, property_name:str, property_value:float, property_rank_range:(float, float), ps: PS):
         lower_rank, upper_rank = property_rank_range
         is_low = lower_rank < 0.5
         rank_str =  f"(rank = {int(property_rank_range[0]*100)}% ~ {int(property_rank_range[1]*100)}%)"
-        if property_name == "mean_rota_choice_quantity":
-            return f"They have relatively {'FEW' if is_low else 'MANY'} rota choices (mean = {property_value:.2f}) {rank_str}"
-        elif property_name == "mean_weekly_working_days":
-            return f"The workers work for {'FEW' if is_low else 'MANY'} days a week (mean = {property_value:.2f}) {rank_str}"
-        elif property_name == "mean_difference_in_rotas":
-            return f"The rotas are generally {'SIMILAR' if is_low else 'DIFFERENT'} (mean difference = {property_value:.1f} days) {rank_str}"
-        elif property_name == "local_fitness":
-            return f"" # The local fitness is {'GOOD' if is_low else 'BAD'} {rank_str}"
-        elif property_name == "working_saturday_proportion":
-            return f"Saturdays are usually {'NOT ' if is_low else ''}covered {rank_str}"
-        elif property_name == "coverage":
-            return f"The rotas {'do NOT ' if is_low else ''}complement each other (coverage = {int(property_value*100)}%)"#
-        else:
-            raise ValueError(f"The property {property_name} was not recognised")
 
+        cohort = ps_to_cohort(self, ps)
+
+        if property_name == "mean_RCQ":
+            rota_choice_quantities = [member.get_amount_of_choices() for member in cohort]
+            return (f"The workers have {'FEW' if is_low else 'MANY'} rota choices: {rota_choice_quantities} "
+                    f"(mean = {np.average(rota_choice_quantities):.2f}, rank = {rank_str})")
+        # elif property_name == "mean_error_RCQ":
+        #     rota_choice_quantities = [member.get_amount_of_choices() for member in cohort]
+        #     return (f"The workers have {'THE SAME' if is_low else 'DIFFERENT'} "
+        #             f"amounts of rota choices: {rota_choice_quantities} rank = {rank_str})")
+        elif property_name == "mean_WWD":
+            working_week_days = [member.get_mean_weekly_working_days() for member in cohort]
+            return (f"The selected rotas have {'FEW' if is_low else 'MANY'} working days "
+                    f"(avg per week, per worker: {working_week_days} rank = {rank_str})")
+        # elif property_name == "mean_error_WWD":
+        #     working_week_days = [member.get_mean_weekly_working_days() for member in cohort]
+        #     return (f"The selected rotas have {'FEW' if is_low else 'MANY'} working days  "
+        #             f"average per week, per worker: {working_week_days} rank = {rank_str})")
+        elif property_name == "mean_RD":
+            average_difference = np.average(get_hamming_distances(cohort))
+            return (f"The selected rotas are {'SIMILAR' if is_low else 'DIFFERENT'} "
+                    f"(avg diff = {average_difference:.2f}) rank = {rank_str})")
+        elif property_name == "mean_WSP":
+            working_saturday_proportions = [member.get_proportion_of_working_saturdays() for member in cohort]
+            covered_saturdays  = int(np.average(working_saturday_proportions) * len(cohort) * (self.calendar_length // 7))
+            return (f"The selected rotas cover {'many' if is_low else 'few'} "
+                    f"Saturdays ({covered_saturdays} are covered, rank = {rank_str})")
+        elif property_name == "mean_SQ":
+            return (f"The workers have {'few' if is_low else 'many'} skills")
+        elif property_name == "skill_diversity":
+            return (f"The skills are very {'SIMILAR' if is_low else 'DIVERSE'}, rank = {rank_str}")
+
+
+    def repr_property_globally(self, property_name:str, property_value:float, property_rank_range: (float, float)):
+        lower_rank, upper_rank = property_rank_range
+        is_low = lower_rank < 0.5
+
+        if property_name == "mean_RCQ":
+            return (f"Rota options should be {'FEW' if is_low else 'MANY'}")
+        # elif property_name == "mean_error_RCQ":
+        #     rota_choice_quantities = [member.get_amount_of_choices() for member in cohort]
+        #     return (f"The workers have {'THE SAME' if is_low else 'DIFFERENT'} "
+        #             f"amounts of rota choices: {rota_choice_quantities} rank = {rank_str})")
+        elif property_name == "mean_WWD":
+            return (f"Workers should work {'FEW' if is_low else 'MANY'} days per week")
+        # elif property_name == "mean_error_WWD":
+        #     working_week_days = [member.get_mean_weekly_working_days() for member in cohort]
+        #     return (f"The selected rotas have {'FEW' if is_low else 'MANY'} working days  "
+        #             f"average per week, per worker: {working_week_days} rank = {rank_str})")
+        elif property_name == "mean_RD":
+            return (f"The rotas should be {'SIMILAR' if is_low else 'DIFFERENT'}")
+        elif property_name == "mean_WSP":
+            return (f"The selected rotas should cover {'many' if is_low else 'few'} Saturdays")
+        elif property_name == "mean_SQ":
+            return (f"The workers should have have {'few' if is_low else 'many'} skills")
+        elif property_name == "skill_diversity":
+            return (f"The skills should be {'SIMILAR' if is_low else 'DIVERSE'}")
+        else:
+            return f"The property {property_name} was not recognised"
