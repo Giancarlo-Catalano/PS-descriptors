@@ -370,6 +370,7 @@ class Detector:
     def explanation_loop(self,
                          amount_of_fs_to_propose: int = 6,
                          ps_show_limit: int = 12,
+                         show_debug_info = False,
                          show_global_properties = False):
         solutions = self.get_best_n_full_solutions(amount_of_fs_to_propose)
 
@@ -378,8 +379,8 @@ class Detector:
             print(self.problem.repr_fs(solution.full_solution))
             print()
 
-
-        self.describe_global_information(show_global_properties = show_global_properties)
+        if show_debug_info:
+            self.describe_global_information(show_global_properties = show_global_properties)
 
 
         first_round = True

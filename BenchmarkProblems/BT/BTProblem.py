@@ -49,9 +49,10 @@ class BTProblem(BenchmarkProblem):
 
     @classmethod
     def from_default_files(cls):
-        return cls.from_csv_files(employee_data_file=r"C:\Users\gac8\PycharmProjects\PS-PDF\resources\BT\employeeData.csv",
-                                  employee_skills_file=r"C:\Users\gac8\PycharmProjects\PS-PDF\resources\BT\employeeSkillsData.csv",
-                                  rota_file=r"C:\Users\gac8\PycharmProjects\PS-PDF\resources\BT\roster_pattern_days.csv",
+        root = r"C:\Users\gac8\PycharmProjects\PS-PDF\resources\BT\MartinsInstance" + "\\"
+        return cls.from_csv_files(employee_data_file=root+"employeeData.csv",
+                                  employee_skills_file=root+"employeeSkillsData.csv",
+                                  rota_file=root+"rosterPatternDaysData.csv",
                                   calendar_length=7*13)
 
     def to_json(self) -> dict:

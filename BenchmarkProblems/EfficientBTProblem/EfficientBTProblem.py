@@ -224,7 +224,7 @@ class EfficientBTProblem(BTProblem):
 
         return {"mean_RCQ" : mean_RCQ,
                 #"mean_error_RCQ" : mean_error_RCQ,
-                "mean_WWD" : mean_WWD,
+                #"mean_WWD" : mean_WWD,
                 #"mean_error_WWD" : mean_error_WWD,
                 "mean_RD" : mean_RD,
                 #"mean_error_RD" : mean_error_RD,
@@ -274,7 +274,7 @@ class EfficientBTProblem(BTProblem):
         elif property_name == "mean_WSP":
             working_saturday_proportions = [member.get_proportion_of_working_saturdays() for member in cohort]
             covered_saturdays  = int(np.average(working_saturday_proportions) * len(cohort) * (self.calendar_length // 7))
-            return (f"The selected rotas cover {'many' if is_low else 'few'} "
+            return (f"The selected rotas cover {'few' if is_low else 'many'} "
                     f"Saturdays ({covered_saturdays} are covered, rank = {rank_str})")
         elif property_name == "mean_SQ":
             return (f"The workers have {'few' if is_low else 'many'} skills")
