@@ -266,3 +266,8 @@ def ecdf(value:float, dataset: list[float]):
     total_quantity = len(dataset)
 
     return mean_index / total_quantity
+
+
+
+def second(p):
+    return p[1]

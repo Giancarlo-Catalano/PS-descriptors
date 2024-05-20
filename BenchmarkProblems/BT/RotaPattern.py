@@ -43,7 +43,7 @@ class RotaPattern:
 
 
     def __repr__(self):
-        split_by_week = [self.days[(which*self.workweek_length):(which+1*self.workweek_length)]
+        split_by_week = [self.days[(which*self.workweek_length):((which+1)*self.workweek_length)]
                           for which in range(len(self.days) // self.workweek_length)]
 
         def repr_week(week: list[WorkDay]) -> str:

@@ -120,6 +120,7 @@ def get_trapk_explainer():
 
 def explanation():
     #detector = get_bt_explainer()
+    #
     #detector.generate_properties_csv_file()
     #detector.generate_files_with_default_settings()
     # detector.explanation_loop(amount_of_fs_to_propose=6, ps_show_limit=12)
@@ -128,6 +129,7 @@ def explanation():
     #detector.generate_properties_csv_file()
 
     get_bt_explainer().explanation_loop(amount_of_fs_to_propose=3, show_debug_info=False, show_global_properties = False)
+    #get_bt_explainer().get_variables_properties_table()
 
 def get_miners_data():
     problem = RoyalRoad(5, 5)

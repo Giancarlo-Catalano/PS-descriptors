@@ -1,10 +1,11 @@
 import itertools
 import os
+import re
 from typing import Optional, Literal
 
 import numpy as np
 import pandas as pd
-from scipy.stats import t
+from scipy.stats import t, stats
 
 import utils
 from BenchmarkProblems.BenchmarkProblem import BenchmarkProblem
@@ -197,7 +198,7 @@ class Detector:
         with announce(f"Generating the properties file and storing it at {self.properties_file}", self.verbose):
             properties_dicts = [self.problem.ps_to_properties(ps) for ps in itertools.chain(self.pss, self.control_pss)]
             properties_df = pd.DataFrame(properties_dicts)
-            properties_df["control"] = np.array([index > len(self.pss) for index in range(len(properties_dicts))])   # not my best work
+            properties_df["control"] = np.array([index >= len(self.pss) for index in range(len(properties_dicts))])   # not my best work
             properties_df["size"] = np.array([ps.fixed_count() for ps in itertools.chain(self.pss, self.control_pss)])
 
             properties_df.to_csv(self.properties_file, index=False)
@@ -392,9 +393,26 @@ class Detector:
                 print("Would you like to see some explanations of the solutions? Write an index, or n to exit")
             else:
                 print("Type another index, or n to exit")
-            answer = input()
-            if answer.upper() == "N":
+            answer = input().upper()
+            if answer == "N":
                 break
+            elif answer.startswith("V:"):
+                if "S" in list(answer):
+                    try:
+                        variable_index, solution_index = [int(s) for s in re.findall(r'\d+', answer)]
+                        value = solutions[solution_index].full_solution.values[variable_index]
+                        self.describe_properties_of_variable(variable_index, value=value)
+                    except ValueError:
+                        print("That didn't work, please retry")
+                        continue
+
+                else:
+                    try:
+                        variable_index = int(answer[2:])
+                    except ValueError:
+                        print("That didn't work, please retry")
+                        continue
+                    self.describe_properties_of_variable(variable_index)
             else:
                 try:
                     index = int(answer)
@@ -452,6 +470,70 @@ class Detector:
         if show_global_properties:
             self.print_global_properties()
 
+
+
+    def get_variable_properties(self, var_index: int, value: Optional[int] = None) -> dict:
+
+        if value is None:
+            which_pss_contain_var = [var_index in ps.get_fixed_variable_positions()
+                                     for ps in self.pss]
+        else:
+            which_pss_contain_var = [ps[var_index] == value
+                                     for ps in self.pss]
+        relevant_properties = self.properties[self.properties["control"]==False][which_pss_contain_var]
+        relevant_properties = relevant_properties[relevant_properties["size"] > 1]
+        control_properties = self.properties[self.properties["control"]==True]
+
+
+        def valid_column_values_from(df: pd.DataFrame, column_name):
+            """ This is why I hate pandas"""
+            column = df[column_name].copy()
+            column.dropna(inplace=True)
+            column = column[~np.isnan(column)]
+            """ this tiny snipped took me half an hour, by the way. Modify with care"""
+            return column.values
+
+        def p_value_of_difference_of_means(property_name: str) -> float:
+            experimental_values = valid_column_values_from(relevant_properties, property_name)
+            control_values = valid_column_values_from(control_properties, property_name)
+
+            if len(experimental_values) < 2 or len(control_values) < 2:
+                return 1.0
+            t_value, p_value = stats.ttest_ind(experimental_values, control_values)
+            return p_value
+
+        properties_and_p_values = {prop: p_value_of_difference_of_means(prop)
+                                   for prop in control_properties.columns
+                                   if prop != "size"
+                                   if prop != "control"}
+
+        return properties_and_p_values
+
+
+    def get_variables_properties_table(self):
+        output_file_name = self.ps_file[:-4]+"_variables.csv"
+        dicts = [self.get_variable_properties(i) for i in range(self.problem.search_space.amount_of_parameters)]
+        df = pd.DataFrame(dicts)
+        with announce(f"Writing the variable data to {output_file_name}"):
+            df.to_csv(output_file_name, index=False)
+
+
+    def describe_properties_of_variable(self, var: int, value: Optional[int] = None):
+
+        if value is None:
+            properties = [(prop, p_value) for prop, p_value in self.get_variable_properties(var).items()
+                          if p_value < 0.05]
+        else:
+            properties = [(prop, p_value) for prop, p_value in self.get_variable_properties(var, value).items()
+                          if p_value < 0.05]
+        properties.sort(key=utils.second)
+
+        if value is None:
+            print(f"Significant properties for the variable {var}:")
+        else:
+            print(f"Significant properties for the variable {var} when it's = {value}:")
+        for prop, p_value in properties:
+            print(f"\t{prop}, with p-value {p_value:e}")
 
 
 
