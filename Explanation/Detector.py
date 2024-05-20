@@ -158,7 +158,9 @@ class Detector:
         algorithm = get_ps_miner(self.pRef, which=ps_miner_method)
 
         with announce(f"Running {algorithm} on {self.pRef} with {ps_budget =}", self.verbose):
-            termination_criterion = TerminationCriteria.PSEvaluationLimit(ps_limit=ps_budget)
+            budget_limit = TerminationCriteria.PSEvaluationLimit(ps_limit=ps_budget)
+            coverage_limit = TerminationCriteria.SearchSpaceIsCovered()
+            termination_criterion = TerminationCriteria.UnionOfCriteria(budget_limit, coverage_limit)
             algorithm.run(termination_criterion, verbose=self.verbose)
 
         result_ps = algorithm.get_results(None)
@@ -424,13 +426,13 @@ class Detector:
 
 
 
-    def generate_files_with_default_settings(self):
+    def generate_files_with_default_settings(self, pRef_size: Optional[int] = 10000, pss_budget: Optional[int] = 10000):
 
-        self.generate_pRef(sample_size=20000,
+        self.generate_pRef(sample_size=pRef_size,
                            which_algorithm="SA")
 
         self.generate_pss(ps_miner_method="sequential",
-                          ps_budget = 30000)
+                          ps_budget = pss_budget)
 
         self.generate_control_pss()
 
@@ -473,6 +475,11 @@ class Detector:
 
 
     def get_variable_properties(self, var_index: int, value: Optional[int] = None) -> dict:
+
+        # TODO think about this more thoroughly
+        # should we compare against control PSs or experimental PSs?
+
+
 
         if value is None:
             which_pss_contain_var = [var_index in ps.get_fixed_variable_positions()
