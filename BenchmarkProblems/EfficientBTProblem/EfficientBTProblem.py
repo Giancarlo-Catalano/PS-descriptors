@@ -244,10 +244,10 @@ class EfficientBTProblem(BTProblem):
         weekdays = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"]
         return f"The ranges are "+(", ".join(f"{weekday}:{min_max}" for weekday, min_max in zip(weekdays, mins_maxs)))
 
-    def repr_property(self, property_name:str, property_value:float, property_rank_range:(float, float), ps: PS):
+    def repr_property(self, property_name:str, property_value:float, rank:(float, float), ps: PS):
         #lower_rank, upper_rank = property_rank_range
-        is_low = property_rank_range < 0.5
-        rank_str = f"(rank = {int(property_rank_range*100)}%)" # "~ {int(property_rank_range[1]*100)}%)"
+        is_low = rank < 0.5
+        rank_str = f"(rank = {int(rank * 100)}%)" # "~ {int(property_rank_range[1]*100)}%)"
 
         cohort = ps_to_cohort(self, ps)
 

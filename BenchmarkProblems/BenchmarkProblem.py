@@ -54,19 +54,18 @@ class BenchmarkProblem:
     def ps_to_properties(self, ps: PS) -> dict:
         raise NotImplemented(f"The class {self.__repr__()} does not implement .ps_to_properties")
 
-    def repr_property(self, property_name:str, property_value:str, property_rank_range:str, ps: PS):
-        rank_lower_bound, rank_upper_bound = property_rank_range
+    def repr_property(self, property_name:str, property_value:str, rank:float, ps: PS):
         start = f"{property_name} = {property_value:.2f} is "
 
 
-        if rank_upper_bound == 0:
+        if rank == 0:
             end = "the lowest observed"
-        elif rank_lower_bound == 1.0:
+        elif rank == 1.0:
             end = "the highest observed"
-        elif rank_lower_bound > 0.5:
-            end = f"relatively high (top {int((1-rank_upper_bound)*100)}% ~ {int((1-rank_lower_bound)*100)}%)"
+        elif rank > 0.5:
+            end = f"relatively high (rank = {int(rank * 100)}%)"
         else:
-            end = f"relatively low (bottom {int(rank_lower_bound*100)}% ~ {int(rank_upper_bound*100)}%)"
+            end = f"relatively low (rank = {int(rank * 100)}%)"
 
         return start + end
 

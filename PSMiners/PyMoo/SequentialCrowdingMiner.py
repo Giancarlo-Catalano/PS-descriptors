@@ -80,7 +80,7 @@ class SequentialCrowdingMiner(AbstractPSMiner):
         if len(self.archive) == 0:
             return RankAndCrowding(crowding_func = "ce")
         else:
-            return PyMooPSSequentialCrowding(self.archive, immediate=True)
+            return PyMooPSSequentialCrowding(self.archive, immediate=False)
 
 
     def get_miner_algorithm(self):

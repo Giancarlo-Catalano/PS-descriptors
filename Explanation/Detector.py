@@ -160,7 +160,7 @@ class Detector:
         with announce(f"Running {algorithm} on {self.pRef} with {ps_budget =}", self.verbose):
             budget_limit = TerminationCriteria.PSEvaluationLimit(ps_limit=ps_budget)
             coverage_limit = TerminationCriteria.SearchSpaceIsCovered()
-            termination_criterion = TerminationCriteria.UnionOfCriteria(budget_limit, coverage_limit)
+            termination_criterion = budget_limit #TerminationCriteria.UnionOfCriteria(budget_limit, coverage_limit)
             algorithm.run(termination_criterion, verbose=self.verbose)
 
         result_ps = algorithm.get_results(None)

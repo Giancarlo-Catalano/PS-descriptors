@@ -101,8 +101,8 @@ def get_faulty_bt_explainer():
                           verbose=True)
 
 def get_gc_explainer():
-    experimental_directory = r"C:\Users\gac8\PycharmProjects\PS-PDF\Experimentation\GCDetector"
-    problem_file = os.path.join(experimental_directory, "islets.json")
+    experimental_directory = r"C:\Users\gac8\PycharmProjects\PS-PDF\Experimentation\GC\Bowtie"
+    problem_file = os.path.join(experimental_directory, "bowtie.json")
     problem = GraphColouring.from_file(problem_file)
     problem.view()
     return Detector.from_folder(folder = experimental_directory,
@@ -119,18 +119,12 @@ def get_trapk_explainer():
                                   verbose=True)
 
 def explanation():
-    detector = get_bt_explainer()
-    #
-    #detector.generate_properties_csv_file()
-    # detector.generate_files_with_default_settings(30000, 30000)
-    detector.generate_pss(ps_miner_method="sequential",
-                      ps_budget = 100000)
-    # detector.explanation_loop(amount_of_fs_to_propose=6, ps_show_limit=12)
+    detector = get_gc_explainer()
+    # detector.generate_properties_csv_file()
+    detector.generate_files_with_default_settings(6000, 120000)
+    detector.explanation_loop(amount_of_fs_to_propose=6, ps_show_limit=12)
 
-    #detector.generate_control_pss()
-    #detector.generate_properties_csv_file()
-
-    get_bt_explainer().explanation_loop(amount_of_fs_to_propose=3, show_debug_info=False, show_global_properties = False)
+    #detector.explanation_loop(amount_of_fs_to_propose=3, show_debug_info=False, show_global_properties = False)
     #get_bt_explainer().get_variables_properties_table()
 
 def get_miners_data():
