@@ -26,7 +26,7 @@ def get_pymoo_search_algorithm(which_algorithm: str,
                       mutation=mutation, eliminate_duplicates=True, survival=crowding_operator)
     if which_algorithm == "NSGAIII":
         return NSGA3(pop_size=pop_size, ref_dirs=get_ref_dirs(), sampling=sampling,
-                     crossover=crossover, mutation=mutation, eliminate_duplicates=True)
+                     crossover=crossover, mutation=mutation, eliminate_duplicates=True, survival=crowding_operator)
     elif which_algorithm == "MOEAD":
         return MOEAD(ref_dirs = get_ref_dirs(), sampling=sampling, crossover=crossover,
             mutation=mutation, n_neighbors=n_params, prob_neighbor_mating=0.7,

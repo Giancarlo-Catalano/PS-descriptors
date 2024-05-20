@@ -343,22 +343,30 @@ class Detector:
         return list(current_candidates)
 
 
-    def get_contained_ps_with_properties(self, solution: EvaluatedFS) -> list[PSWithProperties]:
+    def get_contained_ps_with_properties(self, solution: EvaluatedFS, must_contain: Optional[int] = None) -> list[PSWithProperties]:
         def pd_row_to_dict(row):
             return dict(row[1])
 
-        return [PSWithProperties(ps, pd_row_to_dict(properties))
-                         for (ps, properties) in zip(self.pss, self.properties.iterrows())
-                         if contains(solution.full_solution, ps)
-                         if ps.fixed_count() >= self.minimum_acceptable_ps_size]
+        if must_contain is not None:
+            return [PSWithProperties(ps, pd_row_to_dict(properties))
+                    for (ps, properties) in zip(self.pss, self.properties.iterrows())
+                    if contains(solution.full_solution, ps)
+                    if ps[must_contain] != STAR
+                    if ps.fixed_count() >= self.minimum_acceptable_ps_size]
+        else:
+            return [PSWithProperties(ps, pd_row_to_dict(properties))
+                             for (ps, properties) in zip(self.pss, self.properties.iterrows())
+                             if contains(solution.full_solution, ps)
+                             if ps.fixed_count() >= self.minimum_acceptable_ps_size]
 
 
 
 
 
 
-    def explain_solution(self, solution: EvaluatedFS, shown_ps_max: int):
-        contained_pss = self.get_contained_ps_with_properties(solution)
+    def explain_solution(self, solution: EvaluatedFS, shown_ps_max: int, must_contain: Optional[int] = None):
+        contained_pss = self.get_contained_ps_with_properties(solution, must_contain = must_contain)
+
 
         #contained_pss = Explainer.only_non_obscured_pss(contained_pss)
         contained_pss.sort(reverse=False, key = lambda x: len(x.properties))  # sort by atomicity
@@ -402,12 +410,12 @@ class Detector:
                 if "S" in list(answer):
                     try:
                         variable_index, solution_index = [int(s) for s in re.findall(r'\d+', answer)]
-                        value = solutions[solution_index].full_solution.values[variable_index]
-                        self.describe_properties_of_variable(variable_index, value=value)
+
+                        solution_to_explain = solutions[solution_index]
+                        self.explain_solution(solution_to_explain, shown_ps_max=ps_show_limit, must_contain = variable_index)
                     except ValueError:
                         print("That didn't work, please retry")
                         continue
-
                 else:
                     try:
                         variable_index = int(answer[2:])
