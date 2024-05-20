@@ -177,7 +177,9 @@ class Detector:
         return self.cached_pss
 
     def generate_control_pss(self):
-        control_pss = generate_control_PSs(self.problem.search_space, reference_pss=self.pss)
+        control_pss = generate_control_PSs(self.problem.search_space,
+                                           reference_pss=self.pss,
+                                           samples_for_each_category=1000)
         write_pss_to_file(control_pss, self.control_ps_file)
         self.cached_control_pss = control_pss
 
@@ -185,16 +187,18 @@ class Detector:
     @property
     def control_pss(self) -> list[PS]:
         if self.cached_control_pss is None:
-            with announce(f"Loading the control pss from {self.ps_file}", self.verbose):
+            with announce(f"Loading the control pss from {self.control_ps_file}", self.verbose):
                 self.cached_control_pss = load_pss(self.control_ps_file)
         return self.cached_control_pss
 
     def generate_properties_csv_file(self):
+        # only use the control pss
 
         with announce(f"Generating the properties file and storing it at {self.properties_file}", self.verbose):
             properties_dicts = [self.problem.ps_to_properties(ps) for ps in itertools.chain(self.pss, self.control_pss)]
             properties_df = pd.DataFrame(properties_dicts)
             properties_df["control"] = np.array([index > len(self.pss) for index in range(len(properties_dicts))])   # not my best work
+            properties_df["size"] = np.array([ps.fixed_count() for ps in itertools.chain(self.pss, self.control_pss)])
 
             properties_df.to_csv(self.properties_file, index=False)
         self.cached_properties = properties_df
@@ -207,34 +211,24 @@ class Detector:
         return self.cached_properties
 
 
-    def relative_property_ranking_within_dataset(self, property_name: str, property_value) -> (float, float):
-        known_values = list(self.properties[property_name])
-        known_values = [value for value in known_values if not np.isnan(value)]
-        known_values.sort()
+    def relative_property_ranking_within_dataset(self, ps: PS, property_name: str, property_value) -> float:
 
+        order_of_ps = ps.fixed_count()
+        is_control = self.properties["control"] == True
+        is_same_size = self.properties["size"] == order_of_ps
+        control_rows = self.properties[is_control & is_same_size]
+        control_values = control_rows[property_name]
+        control_values = [value for value in control_values if not np.isnan(value)]
 
-        index_just_before = 0
-        while index_just_before < len(known_values) and known_values[index_just_before] < property_value :
-            index_just_before +=1
-
-        index_just_after = index_just_before
-        while index_just_after < len(known_values) and known_values[index_just_after] == property_value:
-            index_just_after += 1
-
-        total_quantity = len(known_values)
-        return index_just_before / total_quantity, index_just_after / total_quantity
+        return utils.ecdf(property_value, control_values)
 
 
 
-    def relative_property_rank_is_significant(self, position: (float, float)) -> Optional[str]:
-        lower_bound, upper_bound = position
-        is_low = upper_bound < self.speciality_threshold
-        is_high = lower_bound > (1-self.speciality_threshold)
-
-        if is_low:
-            return "less"
-        elif is_high:
-            return "more"
+    def relative_property_rank_is_significant(self, position: float) -> Optional[str]:
+        if position < self.speciality_threshold:
+            return "low"
+        elif (1-position) < self.speciality_threshold:
+            return "high"
         else:
             return None
 
@@ -262,9 +256,9 @@ class Detector:
         return np.average(observations), np.average(not_observations)
 
 
-    def only_significant_properties(self, all_properties: dict) -> list[(str, float, float)]:
+    def only_significant_properties(self, ps: PS, all_properties: dict) -> list[(str, float, float)]:
         # obtain the relative_property_rankings
-        items = [(key, value, self.relative_property_ranking_within_dataset(key, value))
+        items = [(key, value, self.relative_property_ranking_within_dataset(ps, key, value))
                  for key, value in all_properties.items()
                  if key != "control"
                  if key != "size"]
@@ -277,27 +271,35 @@ class Detector:
 
     @classmethod
     def get_rank_significance(cls, kvr):
-        lower, upper = kvr[2]
-        pillar = lower if lower < 1-upper else upper
-        return abs(pillar-0.5)*2
+        rank = kvr[2]
+        return abs(rank-0.5)*2
 
     def get_ps_description(self, ps: PS, ps_properties: dict) -> str:
         p_value, _ = self.t_test_for_mean_with_ps(ps)
         avg_when_present, avg_when_absent = self.get_average_when_present_and_absent(ps)
         delta = avg_when_present - avg_when_absent
-        significant_properties = self.only_significant_properties(ps_properties)
 
-        significant_properties.sort(key=self.get_rank_significance, reverse=True)
+        # obtain the ranks
+        properties_values_significances = [(name, value, self.relative_property_ranking_within_dataset(ps, name, value))
+                                           for name, value in ps_properties.items()
+                                           if name != "size"
+                                           if name != "control"]
 
+        # only keep the significant ones
+        properties_values_significances = [(name, value, rank)
+                                           for name, value, rank in properties_values_significances
+                                           if self.relative_property_rank_is_significant(rank) is not None]
 
+        # sort by importance
+        properties_values_significances.sort(key=self.get_rank_significance, reverse=True)
 
         avg_with_and_without_str =  (f"delta = {delta:.2f}, "
                                      f"avg when present = {avg_when_present:.2f}, "
                                      f"avg when absent = {avg_when_absent:.2f}")
                                      #f"p-value = {p_value:e}")
 
-        contributions = -self.get_atomicity_contributions(ps)
-        contribution_str = "contributions: " + utils.repr_with_precision(contributions, 2)
+        #contributions = -self.get_atomicity_contributions(ps)
+        #contribution_str = "contributions: " + utils.repr_with_precision(contributions, 2)
 
         def repr_property(kvr) -> str:
             key, value, rank_range = kvr
@@ -305,11 +307,11 @@ class Detector:
             return result
 
 
-        properties_str = "\n".join(repr_property(kvr) for kvr in significant_properties)
+        properties_str = "\n".join(repr_property(kvr) for kvr in properties_values_significances)
 
         ps_details = self.problem.repr_extra_ps_info(ps)
 
-        return utils.indent("\n".join([ps_details, avg_with_and_without_str, properties_str, contribution_str]))
+        return utils.indent("\n".join([ps_details, avg_with_and_without_str, properties_str]))
 
 
 
@@ -539,36 +541,6 @@ class Detector:
 
         print(f"The fitness of the solution is {solution.fitness:.3f}")
         self.explain_contained_ps_which_are_affected(solution, vars_to_change)
-
-    def print_global_properties(self):
-        properties = self.properties
-        properties = properties[properties["control"] == False]
-
-        properties_and_values = {prop: properties[prop].values
-                                 for prop in properties.columns
-                                 if prop != "size"
-                                 if prop != "control"}
-        def value_is_significant(prop_name, prop_value) -> bool:
-            rank = self.relative_property_ranking_within_dataset(prop_name, prop_value)
-            return self.relative_property_rank_is_significant(rank) is not None
-
-        properties_and_values = {prop: [value for value in values
-                                        if value_is_significant(prop, value)
-                                        if np.isfinite(value)]
-                                 for prop, values in properties_and_values.items()}
-
-        properties_and_averages = {prop: np.average(values)
-                                 for prop, values in properties_and_values.items()
-                                 if len(values) > 0}
-
-
-        significant_props = self.only_significant_properties(properties_and_averages)
-
-        print("Some generally useful properties are")
-        for kvr in significant_props:
-            k, v, r = kvr
-            print(self.problem.repr_property_globally(k, v, r))
-
 
 
 

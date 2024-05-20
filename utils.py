@@ -246,3 +246,23 @@ def make_joined_bt_dataset():
     concatenated_df.to_csv(output_csv_file, index=False)
 
     print("CSV files have been concatenated and a 'Faulty' column has been added.")
+
+
+
+def ecdf(value:float, dataset: list[float]):
+    dataset.sort()
+
+
+    index_just_before = 0
+    while index_just_before < len(dataset) and dataset[index_just_before] < value :
+        index_just_before +=1
+
+    index_just_after = index_just_before
+    while index_just_after < len(dataset) and dataset[index_just_after] == value:
+        index_just_after += 1
+
+
+    mean_index = (index_just_before + index_just_after) / 2
+    total_quantity = len(dataset)
+
+    return mean_index / total_quantity
