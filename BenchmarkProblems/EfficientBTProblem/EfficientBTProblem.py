@@ -157,11 +157,13 @@ class EfficientBTProblem(BTProblem):
     extended_patterns: list[FullPatternOptions]
     workers_by_skills: dict  # Skill -> set[worker index]
     use_faulty_fitness_function: bool
+    rota_preference_weight: float
 
     def __init__(self,
                  workers: list[Worker],
                  calendar_length: int,
-                 use_faulty_fitness_function: bool = False):
+                 use_faulty_fitness_function: bool = False,
+                 rota_preference_weight: float = 0.001):
         super().__init__(workers, calendar_length)
         self.extended_patterns = [convert_worker_to_just_options(worker, calendar_length)
                                   for worker in workers]
@@ -169,6 +171,7 @@ class EfficientBTProblem(BTProblem):
                                           if skill in worker.available_skills}
                                   for skill in self.all_skills}
         self.use_faulty_fitness_function = use_faulty_fitness_function
+        self.rota_preference_weight = rota_preference_weight
 
     def get_ranges_for_weekdays_for_skill(self, chosen_patterns: list[ExtendedPattern],
                                           skill: Skill) -> WeekRanges:
@@ -187,13 +190,15 @@ class EfficientBTProblem(BTProblem):
 
     def fitness_function(self, fs: FullSolution) -> float:
         chosen_patterns = self.get_chosen_patterns_from_fs(fs)
+        quantity_of_unliked_rotas = np.sum(fs.values != 0)
 
         def score_for_skill(skill) -> float:
             ranges = self.get_ranges_for_weekdays_for_skill(chosen_patterns, skill)
             return self.aggregate_range_scores(ranges)
 
-        total_score = np.sum([score_for_skill(skill) for skill in self.all_skills])
-        return -total_score  # to convert it to a maximisation task
+        rota_score = np.sum([score_for_skill(skill) for skill in self.all_skills])
+        preference_score = self.rota_preference_weight * quantity_of_unliked_rotas
+        return -(rota_score + preference_score) # to convert it to a maximisation task
 
 
     def ps_to_properties(self, ps: PS) -> dict:
@@ -207,6 +212,7 @@ class EfficientBTProblem(BTProblem):
 
         #the local fitness is not a good metric to use
         local_fitness = np.average(get_ranges_in_weekdays(cohort, self.use_faulty_fitness_function))
+        quantity_of_fav_rotas = len([worker for worker in cohort if worker.chosen_rota_index == 0])
 
 
         mean_RCQ, mean_error_RCQ = utils.get_mean_and_mean_error(choice_amounts)
@@ -234,7 +240,8 @@ class EfficientBTProblem(BTProblem):
                 #"mean_error_SQ": mean_error_SQ,
                 "skill_diversity": skill_diversity,
                 "skill_coverage": skill_coverage,
-                #"day_coverage": coverage
+                #"day_coverage": coverage,
+                "quantity_of_fav_rotas": quantity_of_fav_rotas
                 }
 
 

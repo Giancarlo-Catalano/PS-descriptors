@@ -119,10 +119,10 @@ def get_trapk_explainer():
                                   verbose=True)
 
 def explanation():
-    detector = get_gc_explainer()
+    detector = get_bt_explainer()
     #detector.generate_properties_csv_file()
-    detector.generate_files_with_default_settings(6000, 18000)
-    detector.explanation_loop(amount_of_fs_to_propose=6, ps_show_limit=12)
+    detector.generate_files_with_default_settings(30000, 60000)
+    #detector.explanation_loop(amount_of_fs_to_propose=6, ps_show_limit=12)
 
     #detector.explanation_loop(amount_of_fs_to_propose=3, show_debug_info=False, show_global_properties = False)
     #get_bt_explainer().get_variables_properties_table()

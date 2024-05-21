@@ -39,7 +39,7 @@ class SequentialCrowdingMiner(AbstractPSMiner):
                  pRef: PRef,
                  which_algorithm: str,
                  population_size_per_run: int,
-                 kept_per_iteration: int,
+                 kept_per_iteration: int,  # unused
                  budget_per_run: int):
         super().__init__(pRef=pRef)
         self.which_algorithm = which_algorithm
@@ -116,23 +116,9 @@ class SequentialCrowdingMiner(AbstractPSMiner):
                        termination=('n_evals', self.budget_per_run),
                        verbose=verbose)
 
-        # debug
-        # F = res.pop.get("F").astype(float, copy=False)
-        # # remove the simplicity metric
-        # F = F[:, 1:]
-        # best = algorithm.survival.nds.do(F, only_non_dominated_front=True)
-
-
-        # end of debug
 
         e_pss = self.output_of_miner_to_evaluated_ps(res)
         winners = e_pss
-        #
-        # e_pss = self.sort_by_atomicity(e_pss)
-        # winners.extend(e_pss[:self.kept_per_iteration])
-        #
-        # e_pss = self.sort_by_mean_fitness(e_pss)
-        # winners.extend(e_pss[:self.kept_per_iteration])
 
         self.archive.extend(winners)
 
