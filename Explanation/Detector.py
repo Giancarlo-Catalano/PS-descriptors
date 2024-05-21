@@ -1,7 +1,6 @@
-import itertools
 import os
 import re
-from typing import Optional, Literal, TypeAlias
+from typing import Optional, Literal
 
 import numpy as np
 import pandas as pd
@@ -9,61 +8,22 @@ from scipy.stats import t, stats
 
 import utils
 from BenchmarkProblems.BenchmarkProblem import BenchmarkProblem
-from Core import TerminationCriteria
 from Core.EvaluatedFS import EvaluatedFS
 from Core.EvaluatedPS import EvaluatedPS
 from Core.PRef import PRef
 from Core.PS import PS, contains, STAR
 from Core.PSMetric.Classic3 import Classic3PSEvaluator
-from Core.PickAndMerge import PickAndMergeSampler
+from Explanation.MinedPSManager import MinedPSManager
 from Explanation.PSPropertyManager import PSPropertyManager
-from Explanation.detection_utils import generate_control_PSs
-from PSMiners.AbstractPSMiner import AbstractPSMiner
-from PSMiners.Mining import get_history_pRef, get_ps_miner, write_evaluated_pss_to_file, load_pss, write_pss_to_file
+from PSMiners.Mining import get_history_pRef
 from utils import announce
 
 
-
-#
-# class PSWithProperties(EvaluatedPS):
-#     properties: dict
-#     p_v_s: Optional[PVS]
-#
-#     def __init__(self, ps: EvaluatedPS, properties: dict, p_v_s: Optional[PVS] = None):
-#         super().__init__(ps.values, metric_scores=ps.metric_scores)
-#         self.properties = properties
-#         self.p_v_s = p_v_s
-#
-#
-
 class Detector:
-    """usage: this class requires you to make some files first, and then you can use it by loading those files"""
-    """ 
-            Run this first
-            BTDetector = BTDetector(problem = problem,
-                          folder=experimental_directory,
-                          speciality_threshold=0.1,
-                          verbose=True)
-            BTDetector.generate_files_with_default_settings()
-            
-            
-            Then you can just do this to run the explainer as many times as you want:
-            BTDetector = BTDetector(problem = problem,
-                          folder=experimental_directory,
-                          speciality_threshold=0.1,
-                          verbose=True)
-
-            BTDetector.explanation_loop(amount_of_fs_to_propose=6, ps_show_limit=12)
-            
-            
-            BTDetector.explanation_loop(amount_of_fs_to_propose=6, ps_show_limit=12)
-    """
-
     problem: BenchmarkProblem
 
     pRef_file: str   # npz
-    ps_file: str     # npz
-    control_ps_file: str   # npz
+    mined_ps_manager: MinedPSManager  # manages some npz files
     ps_property_manager: PSPropertyManager   # which will manage a csv
 
     minimum_acceptable_ps_size: int
@@ -91,8 +51,10 @@ class Detector:
                  verbose = False):
         self.problem = problem
         self.pRef_file = pRef_file
-        self.ps_file = ps_file
-        self.control_ps_file = control_ps_file
+        self.mined_ps_manager = MinedPSManager(problem = problem,
+                                               mined_ps_file=ps_file,
+                                               control_ps_file=control_ps_file,
+                                               verbose=verbose)
         self.ps_property_manager = PSPropertyManager(problem = problem,
                                                      property_table_file=properties_file,
                                                      verbose=verbose,
@@ -129,6 +91,11 @@ class Detector:
                    verbose=verbose)
 
 
+    @property
+    def pss(self):
+        return self.mined_ps_manager.pss
+
+
     def set_cached_pRef(self, new_pRef: PRef):
         self.cached_pRef = new_pRef
         self.cached_pRef_mean = np.average(self.cached_pRef.fitness_array)
@@ -159,53 +126,6 @@ class Detector:
         if self.cached_pRef_mean is None:
             self.cached_pRef_mean = np.average(self.pRef.fitness_array)
         return self.cached_pRef_mean
-
-
-    def generate_pss(self,
-                     ps_miner_method : Literal["classic", "NSGA", "NSGA_experimental_crowding", "SPEA2", "sequential"] = "NSGA_experimental_crowding",
-                     ps_budget: int = 10000):
-
-        algorithm = get_ps_miner(self.pRef, which=ps_miner_method)
-
-        with announce(f"Running {algorithm} on {self.pRef} with {ps_budget =}", self.verbose):
-            budget_limit = TerminationCriteria.PSEvaluationLimit(ps_limit=ps_budget)
-            coverage_limit = TerminationCriteria.SearchSpaceIsCovered()
-            termination_criterion = budget_limit #TerminationCriteria.UnionOfCriteria(budget_limit, coverage_limit)
-            algorithm.run(termination_criterion, verbose=self.verbose)
-
-        result_ps = algorithm.get_results(None)
-        result_ps = AbstractPSMiner.without_duplicates(result_ps)
-        result_ps = [ps for ps in result_ps if not ps.is_empty()]
-
-        with announce(f"Writing the PSs onto {self.ps_file}"):
-            write_evaluated_pss_to_file(result_ps, self.ps_file)
-
-        self.cached_pss = result_ps
-
-    @property
-    def pss(self) -> list[PS]:
-        if self.cached_pss is None:
-            with announce(f"Loading the cached pss from {self.ps_file}"):
-                self.cached_pss = load_pss(self.ps_file)
-        return self.cached_pss
-
-    def generate_control_pss(self):
-        control_pss = generate_control_PSs(self.problem.search_space,
-                                           reference_pss=self.pss,
-                                           samples_for_each_category=1000)
-        write_pss_to_file(control_pss, self.control_ps_file)
-        self.cached_control_pss = control_pss
-
-
-    @property
-    def control_pss(self) -> list[PS]:
-        if self.cached_control_pss is None:
-            with announce(f"Loading the control pss from {self.control_ps_file}", self.verbose):
-                self.cached_control_pss = load_pss(self.control_ps_file)
-        return self.cached_control_pss
-
-    def generate_properties_csv_file(self):
-        self.ps_property_manager.generate_property_table_file(self.pss, self.control_pss)
 
 
     def t_test_for_mean_with_ps(self, ps: PS) -> (float, float):
@@ -286,10 +206,7 @@ class Detector:
         return list(current_candidates)
 
 
-    def get_contained_ps(self, solution: EvaluatedFS, must_contain: Optional[int] = None) -> list[PS]:
-        def pd_row_to_dict(row):
-            return dict(row[1])
-
+    def get_contained_ps(self, solution: EvaluatedFS, must_contain: Optional[int] = None) -> list[EvaluatedPS]:
         contained = [ps
                     for ps in self.pss
                     if contains(solution.full_solution, ps)
@@ -302,9 +219,9 @@ class Detector:
         return contained
 
     def explain_solution(self, solution: EvaluatedFS, shown_ps_max: int, must_contain: Optional[int] = None):
-        contained_pss: list[PS] = self.get_contained_ps(solution, must_contain = must_contain)
+        contained_pss: list[EvaluatedPS] = self.get_contained_ps(solution, must_contain = must_contain)
 
-        # TODO sort them in a nice order
+        contained_pss = self.mined_ps_manager.sort_by_atomicity(contained_pss)
 
         print(f"The solution \n {utils.indent(self.problem.repr_fs(solution.full_solution))}\ncontains the following PSs:")
         for ps in contained_pss[:shown_ps_max]:
@@ -373,12 +290,12 @@ class Detector:
         self.generate_pRef(sample_size=pRef_size,
                            which_algorithm="SA")
 
-        self.generate_pss(ps_miner_method="sequential",
-                          ps_budget = pss_budget)
+        self.mined_ps_manager.generate_ps_file(pRef = self.pRef,
+                                               ps_miner_method="sequential",
+                                               ps_budget=pss_budget)
+        self.mined_ps_manager.generate_control_pss_file(samples_for_each_category=1000)
 
-        self.generate_control_pss()
-
-        self.generate_properties_csv_file()
+        self.ps_property_manager.generate_property_table_file(self.mined_ps_manager.pss, self.mined_ps_manager.control_pss)
 
 
     def get_coverage_stats(self) -> np.ndarray:
