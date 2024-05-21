@@ -1,0 +1,97 @@
+from typing import Optional, Literal
+
+import numpy as np
+from scipy.stats import t
+
+from BenchmarkProblems.BenchmarkProblem import BenchmarkProblem
+from Core.PRef import PRef
+from Core.PS import PS
+from Core.PSMetric.Classic3 import Classic3PSEvaluator
+from PSMiners.Mining import get_history_pRef
+from utils import announce
+
+
+class PRefManager:
+    problem: BenchmarkProblem
+    pRef_file: str
+
+    cached_pRef: Optional[PRef]
+    pRef_mean: Optional[float]
+    evaluator: Optional[Classic3PSEvaluator]
+
+    def __init__(self,
+                 problem: BenchmarkProblem,
+                 pRef_file: str,
+                 verbose: bool = False):
+        self.problem = problem
+        self.pRef_file = pRef_file
+        self.cached_pRef = None
+        self.evaluator = None
+        self.pRef_mean = None
+        self.verbose = verbose
+
+
+    def generate_pRef(self,
+                      sample_size: int,
+                      which_algorithm: Literal["uniform", "GA", "SA", "GA_best", "SA_best"]) -> PRef:
+
+        pRef  = get_history_pRef(benchmark_problem=self.problem,
+                                 which_algorithm=which_algorithm,
+                                 sample_size=sample_size,
+                                 verbose=self.verbose)
+
+        return pRef
+
+    def instantiate_evaluator(self):
+        self.evaluator = Classic3PSEvaluator(self.cached_pRef)
+
+
+    def instantiate_mean(self):
+        self.pRef_mean = np.average(self.cached_pRef.fitness_array)
+
+    def generate_pRef_file(self, sample_size: int,
+                           which_algorithm: Literal["uniform", "GA", "SA", "GA_best", "SA_best"]) -> PRef:
+
+        with announce(f"Generating the PRef using {which_algorithm} and writing it to {self.pRef_file}", self.verbose):
+            self.cached_pRef = self.generate_pRef(sample_size, which_algorithm)
+            self.instantiate_evaluator()
+            self.instantiate_mean()
+
+        with announce(f"Writing the pRef to {self.pRef_file}", self.verbose):
+            self.cached_pRef.save(file=self.pRef_file)
+
+
+    @property
+    def pRef(self) -> PRef:
+        if self.cached_pRef is None:
+            self.cached_pRef = PRef.load(self.pRef_file)
+            self.instantiate_evaluator()
+            self.instantiate_mean()
+        return self.cached_pRef
+
+
+    def t_test_for_mean_with_ps(self, ps: PS) -> (float, float):
+        observations = self.pRef.fitnesses_of_observations(ps)
+        n = len(observations)
+        sample_mean = np.average(observations)
+        sample_stdev = np.std(observations)
+
+        if n < 1 or sample_stdev == 0:
+            return -1, -1
+
+        t_score = (sample_mean - self.pRef_mean) / (sample_stdev / np.sqrt(n))
+        p_value = 1 - t.cdf(abs(t_score), df=n - 1)
+        return p_value, sample_mean
+
+    def get_average_when_present_and_absent(self, ps: PS) -> (float, float):
+        p_value, _ = self.t_test_for_mean_with_ps(ps)
+        observations, not_observations = self.pRef.fitnesses_of_observations_and_complement(ps)
+        return np.average(observations), np.average(not_observations)
+
+
+    def get_atomicity_contributions(self, ps: PS) -> np.ndarray:
+        return self.evaluator.get_atomicity_contributions(ps, normalised=True)
+
+
+
+

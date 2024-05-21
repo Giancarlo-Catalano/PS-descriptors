@@ -1,10 +1,12 @@
 from typing import Optional, Literal
 
+import numpy as np
+
 from BenchmarkProblems.BenchmarkProblem import BenchmarkProblem
 from Core import TerminationCriteria
 from Core.EvaluatedPS import EvaluatedPS
 from Core.PRef import PRef
-from Core.PS import PS
+from Core.PS import PS, STAR
 from PSMiners.AbstractPSMiner import AbstractPSMiner
 from PSMiners.Mining import get_ps_miner, write_evaluated_pss_to_file, load_pss, write_pss_to_file
 from utils import announce
@@ -100,6 +102,14 @@ class MinedPSManager:
             return ps.metric_scores[2]
 
         return sorted(pss, key=get_atomicity, reverse=True)
+
+
+
+    def get_coverage_stats(self) -> np.ndarray:
+        def ps_to_fixed_values_tally(ps: PS) -> np.ndarray:
+            return ps.values != STAR
+
+        return sum(ps_to_fixed_values_tally(ps) for ps in self.pss) / len(self.pss)
 
 
 
