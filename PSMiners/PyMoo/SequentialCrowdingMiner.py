@@ -77,10 +77,12 @@ class SequentialCrowdingMiner(AbstractPSMiner):
 
 
     def get_crowding_operator(self):
-        if len(self.archive) == 0:
-            return RankAndCrowding(crowding_func = "ce")
-        else:
-            return PyMooPSSequentialCrowding(self.archive, immediate=False)
+        # if len(self.archive) == 0:
+        #     return RankAndCrowding(crowding_func = "ce")
+        # else:
+        return PyMooPSSequentialCrowding(search_space=self.search_space,
+                                         already_obtained=self.archive,
+                                         immediate=False)
 
 
     def get_miner_algorithm(self):
@@ -88,7 +90,7 @@ class SequentialCrowdingMiner(AbstractPSMiner):
                                           pop_size=self.population_size_per_run,
                                           sampling=PSGeometricSampling(),
                                           crossover=PSSimulatedBinaryCrossover(),
-                                          mutation=PSPolynomialMutation(self.pRef.search_space),
+                                          mutation=PSPolynomialMutation(self.search_space),
                                           crowding_operator=self.get_crowding_operator(),
                                           search_space=self.search_space)
 
@@ -98,7 +100,8 @@ class SequentialCrowdingMiner(AbstractPSMiner):
         if len(self.archive) == 0:
             return np.zeros(self.search_space.amount_of_parameters)
         else:
-            return PyMooPSSequentialCrowding.get_coverage(self.archive)
+            return PyMooPSSequentialCrowding.get_coverage(search_space=self.pymoo_problem.search_space,
+                                                          already_obtained=self.archive)
 
     def step(self, verbose = False):
         print("Running a single step")
@@ -158,7 +161,7 @@ class SequentialCrowdingMiner(AbstractPSMiner):
                    budget_per_run = 1000,
                    population_size_per_run = 50,
                    kept_per_iteration=5,
-                   which_algorithm="NSGAII")
+                   which_algorithm="NSGAIII")
 
 
 

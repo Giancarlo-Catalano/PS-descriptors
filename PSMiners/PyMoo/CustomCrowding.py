@@ -6,6 +6,7 @@ from pymoo.util.nds.non_dominated_sorting import NonDominatedSorting
 from pymoo.util.randomized_argsort import randomized_argsort
 
 from Core.PS import STAR, PS
+from Core.SearchSpace import SearchSpace
 
 
 class PyMooCustomCrowding(Survival):
@@ -102,17 +103,24 @@ class PyMooPSGenotypeCrowding(PyMooCustomCrowding):
 class PyMooPSSequentialCrowding(PyMooCustomCrowding):
     coverage: np.ndarray
     foods: np.ndarray
+    search_space: SearchSpace
+    opt: Any
 
-    def __init__(self, already_obtained: list[PS], immediate = False):
+    def __init__(self, search_space: SearchSpace, already_obtained: list[PS], immediate = False):
+        self.search_space = search_space
         super().__init__()
-        self.coverage = PyMooPSSequentialCrowding.get_coverage(already_obtained)
+        self.coverage = PyMooPSSequentialCrowding.get_coverage(self.search_space, already_obtained)
         if immediate:
             self.coverage = np.array([1 if x > 0 else 0 for x in self.coverage])
         self.foods = (1 - self.coverage).reshape((-1, 1))
+        self.opt = []
 
 
     @classmethod
-    def get_coverage(cls, already_obtained: list[PS]):
+    def get_coverage(cls, search_space: SearchSpace, already_obtained: list[PS]):
+        if len(already_obtained) == 0:
+            return np.zeros(search_space.amount_of_parameters, dtype=float)
+
         pop_matrix = np.array([ps.values for ps in already_obtained])
         where_fixed = pop_matrix != STAR
         counts = np.sum(where_fixed, axis=0)
@@ -125,6 +133,8 @@ class PyMooPSSequentialCrowding(PyMooCustomCrowding):
         where_fixed: np.ndarray = pop_matrix != STAR
         scores = np.array([np.average(self.foods[row])
                            for row in where_fixed])
+
+        self.opt = population[front_indexes]
 
         return scores
 

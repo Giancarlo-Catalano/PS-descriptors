@@ -101,7 +101,7 @@ def get_faulty_bt_explainer():
                           verbose=True)
 
 def get_gc_explainer():
-    experimental_directory = r"C:\Users\gac8\PycharmProjects\PS-PDF\Experimentation\GC\Bowtie"
+    experimental_directory = r"C:\Users\gac8\PycharmProjects\PS-PDF\Experimentation\GC\Dummy"
     problem_file = os.path.join(experimental_directory, "bowtie.json")
     problem = GraphColouring.from_file(problem_file)
     problem.view()
