@@ -123,4 +123,7 @@ class GraphColouring(BenchmarkProblem):
 
         edge_count = len([pair for pair in self.connections
                           if contains_pair(pair)])
-        return {"edge_count": edge_count}
+
+        colour_count = len(set(value for value in ps.values if value != STAR))
+        return {"edge_count": edge_count,
+                "colour_count": colour_count}

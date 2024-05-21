@@ -102,12 +102,12 @@ def get_faulty_bt_explainer():
 
 def get_gc_explainer():
     experimental_directory = r"C:\Users\gac8\PycharmProjects\PS-PDF\Experimentation\GC\Dummy"
-    problem_file = os.path.join(experimental_directory, "bowtie.json")
-    problem = GraphColouring.from_file(problem_file)
+    problem_file = os.path.join(experimental_directory, "fibre.json")
+    problem = GraphColouring.from_file(problem_file)#GraphColouring.random(amount_of_colours=3, amount_of_nodes=5, chance_of_connection=0.40)
     problem.view()
     return Detector.from_folder(folder = experimental_directory,
                                   problem = problem,
-                                  speciality_threshold=0.25,
+                                  speciality_threshold=0.20,
                                   verbose=True)
 
 def get_trapk_explainer():
@@ -120,8 +120,8 @@ def get_trapk_explainer():
 
 def explanation():
     detector = get_gc_explainer()
-    # detector.generate_properties_csv_file()
-    detector.generate_files_with_default_settings(6000, 120000)
+    #detector.generate_properties_csv_file()
+    detector.generate_files_with_default_settings(6000, 18000)
     detector.explanation_loop(amount_of_fs_to_propose=6, ps_show_limit=12)
 
     #detector.explanation_loop(amount_of_fs_to_propose=3, show_debug_info=False, show_global_properties = False)
