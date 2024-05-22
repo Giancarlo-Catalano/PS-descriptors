@@ -5,6 +5,7 @@ import os
 import utils
 from BenchmarkProblems.BenchmarkProblem import BenchmarkProblem
 from BenchmarkProblems.EfficientBTProblem.EfficientBTProblem import EfficientBTProblem
+from BenchmarkProblems.EfficientBTProblem.ManuallyConstructedBTInstances import get_three_team_instance
 from BenchmarkProblems.GraphColouring import GraphColouring
 from BenchmarkProblems.RoyalRoad import RoyalRoad
 from Core import TerminationCriteria
@@ -90,16 +91,6 @@ def get_bt_explainer() -> Detector:
                                   speciality_threshold=0.2,
                                   verbose=True)
 
-def get_faulty_bt_explainer():
-    experimental_directory = r"C:\Users\gac8\PycharmProjects\PS-PDF\Experimentation\FaultyerBTTemp"
-    print("Using the FAULTY problem")
-    problem = EfficientBTProblem.from_default_files()
-    problem.use_faulty_fitness_function = True
-    return Detector.from_folder(problem=problem,
-                          folder=experimental_directory,
-                          speciality_threshold=0.1,
-                          verbose=True)
-
 def get_gc_explainer():
     experimental_directory = r"C:\Users\gac8\PycharmProjects\PS-PDF\Experimentation\GC\Dummy"
     problem_file = os.path.join(experimental_directory, "fibre.json")
@@ -110,102 +101,22 @@ def get_gc_explainer():
                                   speciality_threshold=0.20,
                                   verbose=True)
 
-def get_trapk_explainer():
-    experimental_directory = r"C:\Users\gac8\PycharmProjects\PS-PDF\Experimentation\Other"
-    problem = RoyalRoad(4, 5)
-    return Detector.from_folder(folder = experimental_directory,
-                                  problem = problem,
-                                  speciality_threshold=0.25,
-                                  verbose=True)
+
+def get_manual_bt_explainer() -> Detector:
+    experimental_directory = r"C:\Users\gac8\PycharmProjects\PS-PDF\Experimentation\BT\ThreeTeam"
+    problem = get_three_team_instance()
+    return Detector.from_folder(problem=problem,
+                                folder=experimental_directory,
+                                speciality_threshold=0.2,
+                                verbose=True)
 
 def explanation():
-    detector = get_bt_explainer()
-    #detector.generate_properties_csv_file()
-    #detector.generate_files_with_default_settings(30000, 60000)
-    detector.explanation_loop(amount_of_fs_to_propose=6, ps_show_limit=12)
+    detector = get_manual_bt_explainer()
+    detector.generate_files_with_default_settings(10000, 30000)
+    detector.explanation_loop(amount_of_fs_to_propose=6, ps_show_limit=100)
 
     #detector.explanation_loop(amount_of_fs_to_propose=3, show_debug_info=False, show_global_properties = False)
     #get_bt_explainer().get_variables_properties_table()
-
-def get_miners_data():
-    problem = RoyalRoad(5, 5)
-    ps_budget = 10000
-
-    all_results = dict()
-
-    def add_to_results_with_name(miner_name, pss: list[PS]):
-        all_results[miner_name] = pss
-
-
-    with announce(f"Generating a pRef"):
-        pRef = get_history_pRef(benchmark_problem=problem,
-                                sample_size=10000,
-                                which_algorithm="uniform",
-                                verbose=True)
-
-    def get_deap_data():
-        print("running deap")
-        for custom_crowding in [True, False]:
-            from_deap = test_DEAP_miner(benchmark_problem=problem,
-                                        budget=ps_budget,
-                                        pRef = pRef,
-                                        custom_crowding=True)
-
-            all_results[f"DEAP_custom_crowding_{custom_crowding}"] = from_deap.copy()
-
-
-    def get_pymoo_data():
-        from_pymoo = test_pymoo(problem,
-                                pRef = pRef,
-                                which_algorithm="NSGAIII",
-                                which_crowding ="mnn")
-        all_results[f"pymoo_NSGAIII"] = from_pymoo.copy()
-
-        for algorithm in ["NSGAII"]:
-            for crowding in ["gc", "cd", "ce", "mnn", "2nn"]:
-                try:
-                    from_pymoo = test_pymoo(problem,
-                                            pRef = pRef,
-                                            which_algorithm=algorithm,
-                                            which_crowding =crowding)
-
-                    all_results[f"pymoo_{algorithm}_{crowding}"] = from_pymoo.copy()
-                except Exception as e:
-                    print(f"The combination {algorithm} + {crowding} caused an error")
-
-
-    def get_platypus_data():
-        jail = ["NSGAIII", "CMAES", "GDE3",  "IBEA", "OMOPSO", "SMPSO", "SPEA2", "EpsMOEA"]
-        slow = ["MOEAD"]
-        heaven = ["NSGAII"]
-        for which_algorithm in heaven:
-            with announce(f"Running Platypus's {which_algorithm}"):
-                pss = test_platypus(problem, pRef=pRef, budget=ps_budget, which_algorithm=which_algorithm)
-                add_to_results_with_name(f"Platypus_{which_algorithm}", pss)
-
-
-
-
-    evaluator = Classic3PSEvaluator(pRef)
-    def get_atomicity(ps: PS) -> float:
-        s, mf, a = evaluator.get_S_MF_A(ps)
-        return a
-    def get_sorted_by_atomicity(pss: list[PS]):
-        e_pss = [EvaluatedPS(ps.values, aggregated_score=get_atomicity(ps)) for ps in pss]
-        e_pss.sort(reverse=True)
-        return e_pss
-
-    # get_deap_data()
-    # get_pymoo_data()
-    # get_platypus_data()
-    #
-    # for miner_key in all_results:
-    #     print(f"\n\n\nFor the miner {miner_key}")
-    #     sorted_pss = get_sorted_by_atomicity(all_results[miner_key])
-    #     for ps in sorted_pss:
-    #         print(problem.repr_ps(ps))
-
-
 
 if __name__ == '__main__':
     explanation()

@@ -50,7 +50,7 @@ class PRefManager:
         self.pRef_mean = np.average(self.cached_pRef.fitness_array)
 
     def generate_pRef_file(self, sample_size: int,
-                           which_algorithm: Literal["uniform", "GA", "SA", "GA_best", "SA_best"]) -> PRef:
+                           which_algorithm: Literal["uniform", "GA", "SA", "GA_best", "SA_best"]):
 
         with announce(f"Generating the PRef using {which_algorithm} and writing it to {self.pRef_file}", self.verbose):
             self.cached_pRef = self.generate_pRef(sample_size, which_algorithm)

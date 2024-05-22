@@ -151,7 +151,13 @@ class Detector:
     def explain_solution(self, solution: EvaluatedFS, shown_ps_max: int, must_contain: Optional[int] = None):
         contained_pss: list[EvaluatedPS] = self.get_contained_ps(solution, must_contain = must_contain)
 
-        contained_pss = self.mined_ps_manager.sort_by_atomicity(contained_pss)
+
+        def get_delta(ps: PS) -> float:
+            avg_when_present, avg_when_absent = self.pRef_manager.get_average_when_present_and_absent(ps)
+            return avg_when_present - avg_when_absent
+
+        contained_pss.sort(key=get_delta, reverse=True)
+        #contained_pss = self.mined_ps_manager.sort_by_atomicity(contained_pss)
 
         print(f"The solution \n {utils.indent(self.problem.repr_fs(solution.full_solution))}\ncontains the following PSs:")
         for ps in contained_pss[:shown_ps_max]:

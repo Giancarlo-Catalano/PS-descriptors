@@ -101,7 +101,7 @@ class MinedPSManager:
         def get_atomicity(ps: EvaluatedPS) -> float:
             return ps.metric_scores[2]
 
-        return sorted(pss, key=get_atomicity, reverse=True)
+        return sorted(pss, key=get_atomicity, reverse=False)
 
 
 
