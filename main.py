@@ -5,7 +5,8 @@ import os
 import utils
 from BenchmarkProblems.BenchmarkProblem import BenchmarkProblem
 from BenchmarkProblems.EfficientBTProblem.EfficientBTProblem import EfficientBTProblem
-from BenchmarkProblems.EfficientBTProblem.ManuallyConstructedBTInstances import get_three_team_instance
+from BenchmarkProblems.EfficientBTProblem.ManuallyConstructedBTInstances import get_three_team_instance, \
+    get_two_team_instance, get_stand_end_team_problem
 from BenchmarkProblems.GraphColouring import GraphColouring
 from BenchmarkProblems.RoyalRoad import RoyalRoad
 from Core import TerminationCriteria
@@ -103,8 +104,9 @@ def get_gc_explainer():
 
 
 def get_manual_bt_explainer() -> Detector:
-    experimental_directory = r"C:\Users\gac8\PycharmProjects\PS-PDF\Experimentation\BT\ThreeTeam"
-    problem = get_three_team_instance()
+    experimental_directory = r"C:\Users\gac8\PycharmProjects\PS-PDF\Experimentation\BT\TwoTeam"
+    #problem = get_two_team_instance()
+    problem = get_stand_end_team_problem(amount_of_skills=2)
     return Detector.from_folder(problem=problem,
                                 folder=experimental_directory,
                                 speciality_threshold=0.2,
