@@ -1,7 +1,7 @@
 import os
 import time
 from contextlib import ContextDecorator
-from typing import Iterable, Any
+from typing import Iterable, Any, Callable, Optional
 
 import numpy as np
 import pandas as pd
@@ -271,3 +271,24 @@ def ecdf(value:float, dataset: list[float]):
 
 def second(p):
     return p[1]
+
+
+def first(p):
+    return p[0]
+
+def sort_by_combination_of(items: list, key_functions: list[Callable], reverse=False) -> list:
+    def get_sorting_for_func(func) -> list[int]:
+        sorted_items = sorted(enumerate(items), key=lambda x: func(x[1]))
+        return [index for index, item in sorted_items]
+
+
+    def invert_sorting(sorting: list[int]) -> list[int]:
+        final_pos_and_index = sorted(enumerate(sorting), key=second)
+        return [final_pos for final_pos, original_index in final_pos_and_index]
+
+    ranks = np.array([invert_sorting(get_sorting_for_func(func)) for func in key_functions])
+
+    summed_ranks = np.sum(ranks, axis=0)
+
+    return [items[index] for index, rank in sorted(enumerate(summed_ranks), key=second, reverse=reverse)]
+

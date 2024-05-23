@@ -113,9 +113,9 @@ def get_manual_bt_explainer() -> Detector:
                                 verbose=True)
 
 def explanation():
-    detector = get_manual_bt_explainer()
-    detector.generate_files_with_default_settings(10000, 30000)
-    detector.explanation_loop(amount_of_fs_to_propose=6, ps_show_limit=100)
+    detector = get_bt_explainer()
+    #detector.generate_files_with_default_settings(10000, 30000)
+    detector.explanation_loop(amount_of_fs_to_propose=2, ps_show_limit=5)
 
     #detector.explanation_loop(amount_of_fs_to_propose=3, show_debug_info=False, show_global_properties = False)
     #get_bt_explainer().get_variables_properties_table()

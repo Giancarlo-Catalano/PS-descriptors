@@ -2,6 +2,8 @@ import os
 import re
 from typing import Optional
 
+import numpy as np
+
 import utils
 from BenchmarkProblems.BenchmarkProblem import BenchmarkProblem
 from Core.EvaluatedFS import EvaluatedFS
@@ -148,6 +150,19 @@ class Detector:
 
         return contained
 
+
+    def sort_pss(self, pss: list[EvaluatedPS]) -> list[EvaluatedPS]:
+        def get_atomicity(ps: EvaluatedPS) -> float:
+            return ps.metric_scores[2]
+
+        def get_mean_fitness(ps: EvaluatedPS) -> float:
+            return ps.metric_scores[1]
+
+        def get_simplicity(ps: EvaluatedPS) -> float:
+            return ps.metric_scores[0]
+
+        return utils.sort_by_combination_of(pss, key_functions=[get_mean_fitness, get_atomicity], reverse=False)
+
     def explain_solution(self, solution: EvaluatedFS, shown_ps_max: int, must_contain: Optional[int] = None):
         contained_pss: list[EvaluatedPS] = self.get_contained_ps(solution, must_contain = must_contain)
 
@@ -156,10 +171,13 @@ class Detector:
             avg_when_present, avg_when_absent = self.pRef_manager.get_average_when_present_and_absent(ps)
             return avg_when_present - avg_when_absent
 
-        contained_pss.sort(key=get_delta, reverse=True)
-        #contained_pss = self.mined_ps_manager.sort_by_atomicity(contained_pss)
+        #contained_pss.sort(key=get_delta, reverse=True)   # sort by delta
+        #contained_pss = self.mined_ps_manager.sort_by_atomicity(contained_pss)  # sort by atomicity
+        contained_pss = self.sort_pss(contained_pss)
 
-        print(f"The solution \n {utils.indent(self.problem.repr_fs(solution.full_solution))}\ncontains the following PSs:")
+        print(f"The solution \n"
+              f"{utils.indent(self.problem.repr_fs(solution.full_solution))}\n"
+              f"contains the following PSs:")
         for ps in contained_pss[:shown_ps_max]:
             print(self.problem.repr_ps(ps))
             print(utils.indent(self.get_ps_description(ps)))
