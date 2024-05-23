@@ -37,6 +37,8 @@ class RotaPattern:
     days: list[WorkDay]
 
     def __init__(self, workweek_length: int, days: list[WorkDay]):
+        if len(days) % workweek_length != 0:
+            print(f"The rota {days} is not valid, wrong length ({len(days)}) (% {workweek_length} != 0)")
         assert(len(days) % workweek_length == 0)
         self.workweek_length = workweek_length
         self.days = days

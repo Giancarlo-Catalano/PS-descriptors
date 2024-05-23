@@ -5,8 +5,9 @@ import os
 import utils
 from BenchmarkProblems.BenchmarkProblem import BenchmarkProblem
 from BenchmarkProblems.EfficientBTProblem.EfficientBTProblem import EfficientBTProblem
-from BenchmarkProblems.EfficientBTProblem.ManuallyConstructedBTInstances import get_three_team_instance, \
-    get_two_team_instance, get_stand_end_team_problem
+from BenchmarkProblems.EfficientBTProblem.ManuallyConstructedBTInstances import get_start_and_end_instance, \
+    get_toestepping_instance, get_unfairness_instance
+
 from BenchmarkProblems.GraphColouring import GraphColouring
 from BenchmarkProblems.RoyalRoad import RoyalRoad
 from Core import TerminationCriteria
@@ -105,16 +106,17 @@ def get_gc_explainer():
 
 def get_manual_bt_explainer() -> Detector:
     experimental_directory = r"C:\Users\gac8\PycharmProjects\PS-PDF\Experimentation\BT\TwoTeam"
-    #problem = get_two_team_instance()
-    problem = get_stand_end_team_problem(amount_of_skills=2)
+    problem = get_start_and_end_instance(amount_of_skills=3)
+    problem = get_toestepping_instance(amount_of_skills=3)
+    problem = get_unfairness_instance(amount_of_skills=3)
     return Detector.from_folder(problem=problem,
                                 folder=experimental_directory,
                                 speciality_threshold=0.2,
                                 verbose=True)
 
 def explanation():
-    detector = get_bt_explainer()
-    #detector.generate_files_with_default_settings(10000, 30000)
+    detector = get_manual_bt_explainer()
+    detector.generate_files_with_default_settings(10000, 30000)
     detector.explanation_loop(amount_of_fs_to_propose=2, ps_show_limit=5)
 
     #detector.explanation_loop(amount_of_fs_to_propose=3, show_debug_info=False, show_global_properties = False)
