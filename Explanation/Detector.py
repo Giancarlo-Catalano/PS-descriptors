@@ -221,6 +221,7 @@ class Detector:
         print(f"The top {amount_of_fs_to_propose} solutions are")
         for solution in solutions:
             print(self.problem.repr_fs(solution.full_solution))
+            print(f"(Has fitness {solution.fitness})")
             print()
 
         if show_debug_info:

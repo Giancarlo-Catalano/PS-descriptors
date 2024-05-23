@@ -1,5 +1,6 @@
 from BenchmarkProblems.UnitaryProblem import UnitaryProblem
 from Core.FullSolution import FullSolution
+from Core.PS import PS
 
 
 class RoyalRoad(UnitaryProblem):
@@ -20,3 +21,7 @@ class RoyalRoad(UnitaryProblem):
     @staticmethod
     def get_optimal_clique(clique_size: int) -> FullSolution:
         return FullSolution([1 for _ in range(clique_size)])
+
+
+    def ps_to_properties(self, ps: PS) -> dict:
+        return {"Functionality": 0}

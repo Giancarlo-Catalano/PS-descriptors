@@ -6,7 +6,7 @@ import utils
 from BenchmarkProblems.BenchmarkProblem import BenchmarkProblem
 from BenchmarkProblems.EfficientBTProblem.EfficientBTProblem import EfficientBTProblem
 from BenchmarkProblems.EfficientBTProblem.ManuallyConstructedBTInstances import get_start_and_end_instance, \
-    get_toestepping_instance, get_unfairness_instance
+    get_toestepping_instance, get_unfairness_instance, get_bad_week_instance
 
 from BenchmarkProblems.GraphColouring import GraphColouring
 from BenchmarkProblems.RoyalRoad import RoyalRoad
@@ -106,9 +106,24 @@ def get_gc_explainer():
 
 def get_manual_bt_explainer() -> Detector:
     experimental_directory = r"C:\Users\gac8\PycharmProjects\PS-PDF\Experimentation\BT\TwoTeam"
-    problem = get_start_and_end_instance(amount_of_skills=3)
-    problem = get_toestepping_instance(amount_of_skills=3)
-    problem = get_unfairness_instance(amount_of_skills=3)
+    amount_of_skills = 12
+    problem = get_bad_week_instance(amount_of_skills, workers_per_skill=4)
+    #problem = get_start_and_end_instance(amount_of_skills)
+    #problem = get_toestepping_instance(amount_of_skills=3)
+    #problem = get_unfairness_instance(amount_of_skills=3)
+    return Detector.from_folder(problem=problem,
+                                folder=experimental_directory,
+                                speciality_threshold=0.2,
+                                verbose=True)
+
+
+def get_manual_bt_explainer() -> Detector:
+    experimental_directory = r"C:\Users\gac8\PycharmProjects\PS-PDF\Experimentation\BT\TwoTeam"
+    amount_of_skills = 12
+    problem = RoyalRoad(5, 5)
+    #problem = get_start_and_end_instance(amount_of_skills)
+    #problem = get_toestepping_instance(amount_of_skills=3)
+    #problem = get_unfairness_instance(amount_of_skills=3)
     return Detector.from_folder(problem=problem,
                                 folder=experimental_directory,
                                 speciality_threshold=0.2,
@@ -116,7 +131,7 @@ def get_manual_bt_explainer() -> Detector:
 
 def explanation():
     detector = get_manual_bt_explainer()
-    detector.generate_files_with_default_settings(10000, 30000)
+    detector.generate_files_with_default_settings(20000, 10000)
     detector.explanation_loop(amount_of_fs_to_propose=2, ps_show_limit=5)
 
     #detector.explanation_loop(amount_of_fs_to_propose=3, show_debug_info=False, show_global_properties = False)

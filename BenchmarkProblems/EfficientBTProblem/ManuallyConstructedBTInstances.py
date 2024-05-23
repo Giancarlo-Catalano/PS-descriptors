@@ -19,9 +19,9 @@ def make_rota_pattern_from_string(input: str) -> RotaPattern:
 def random_id() -> str:
     return f"{random.randrange(10000)}"
 def get_start_and_end_instance(amount_of_skills: int = 2) -> EfficientBTProblem:
-    alternative_rota = make_rota_pattern_from_string("-W--W---W--W--")
-    starting_shift = make_rota_pattern_from_string("WWW----WWW----")
-    ending_shift = make_rota_pattern_from_string("----WWW----WWW")
+    alternative_rota = make_rota_pattern_from_string("W--W---")
+    starting_shift = make_rota_pattern_from_string("WWW----")
+    ending_shift = make_rota_pattern_from_string("---WWW-")
 
     workers = []
     for skill_number in range(amount_of_skills):
@@ -36,8 +36,18 @@ def get_start_and_end_instance(amount_of_skills: int = 2) -> EfficientBTProblem:
                               name=f"Ending_{skill_number}",
                               worker_id=random_id()))
 
+        workers.append(Worker(available_skills=skills,
+                              available_rotas=[alternative_rota, starting_shift],
+                              name=f"Starting_{skill_number}",
+                              worker_id=random_id()))
 
-    return EfficientBTProblem(workers=workers, calendar_length=7*12)
+        workers.append(Worker(available_skills=skills,
+                              available_rotas=[alternative_rota, ending_shift],
+                              name=f"Ending_{skill_number}",
+                              worker_id=random_id()))
+
+
+    return EfficientBTProblem(workers=workers, calendar_length=7*12, rota_preference_weight=0)
 
 
 
@@ -107,7 +117,8 @@ def get_unfairness_instance(amount_of_skills: int):
                               worker_id=random_id()))
 
     return EfficientBTProblem(workers = workers,
-                              calendar_length=7*12)
+                              calendar_length=7*12,
+                              rota_preference_weight=0)
 
 
 
@@ -131,6 +142,23 @@ def get_toestepping_instance(amount_of_skills: int):
                               worker_id=random_id()))
 
 
-    return EfficientBTProblem(workers=workers, calendar_length=7*12)
+    return EfficientBTProblem(workers=workers, calendar_length=7*12, rota_preference_weight=0)
 
 
+
+
+def get_bad_week_instance(amount_of_skills: int = 2, workers_per_skill: int = 2) -> EfficientBTProblem:
+    alternative_rota = make_rota_pattern_from_string("-------WWWWWW-")
+    starting_shift = make_rota_pattern_from_string("WWW----")
+    ending_shift = make_rota_pattern_from_string("---WWW-")
+
+    workers = []
+    for skill_number in range(amount_of_skills):
+        skills = {f"SKILL_{skill_number}"}
+        for _ in range(workers_per_skill):
+            workers.append(Worker(available_skills=skills,
+                                  available_rotas=[alternative_rota, starting_shift],
+                                  name=f"Worker_{skill_number}",
+                                  worker_id=random_id()))
+
+    return EfficientBTProblem(workers=workers, calendar_length=7*12, rota_preference_weight=0)

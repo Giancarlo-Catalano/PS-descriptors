@@ -144,8 +144,8 @@ class SequentialCrowdingMiner(AbstractPSMiner):
     @classmethod
     def with_default_settings(cls, pRef: PRef):
         return cls(pRef = pRef,
-                   budget_per_run = 1000,
-                   population_size_per_run = 50,
+                   budget_per_run = 500,
+                   population_size_per_run = 100,
                    kept_per_iteration=5,
                    which_algorithm="NSGAIII")
 
