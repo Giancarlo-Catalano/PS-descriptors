@@ -227,6 +227,19 @@ class Detector:
                         print("That didn't work, please retry")
                         continue
                     self.describe_properties_of_variable(variable_index)
+            elif answer.startswith("PLOTVAR"):
+                try:
+                    variable_index = int(input("Which variable?"))
+                    property_name = input("Which property?")
+
+
+                    self.ps_property_manager.plot_var_property(var_index=variable_index,
+                                                               value=None,
+                                                               property_name=property_name,
+                                                               pss=self.pss)
+                except ValueError:
+                    print("That didn't work, please retry")
+                    continue
             else:
                 try:
                     index = int(answer)
@@ -275,8 +288,8 @@ class Detector:
 
     def describe_properties_of_variable(self, var: int, value: Optional[int] = None):
 
-        properties = [(prop, p_value)
-                      for prop, p_value in self.ps_property_manager.get_variable_properties(self.pss, var, value).items()
+        properties = [(prop, p_value, prop_mean, control_mean)
+                      for prop, (p_value, prop_mean, control_mean) in self.ps_property_manager.get_variable_properties_stats(self.pss, var, value).items()
                       if p_value < 0.05]
 
         properties.sort(key=utils.second)
@@ -285,8 +298,8 @@ class Detector:
             print(f"Significant properties for the variable {var}:")
         else:
             print(f"Significant properties for the variable {var} when it's = {value}:")
-        for prop, p_value in properties:
-            print(f"\t{prop}, with p-value {p_value:e}")
+        for prop, p_value, prop_mean, control_mean in properties:
+            print(f"\t{prop}, with p-value {p_value:e}, prop_mean = {prop_mean:.2f}, control_mean = {control_mean:.2f}")
 
 
 

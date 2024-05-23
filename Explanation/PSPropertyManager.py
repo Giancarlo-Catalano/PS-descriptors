@@ -3,6 +3,7 @@ from typing import TypeAlias, Optional
 
 import numpy as np
 import pandas as pd
+from matplotlib import pyplot as plt
 from scipy.stats import stats
 
 import utils
@@ -91,7 +92,7 @@ class PSPropertyManager:
         return sorted(pss, reverse=True, key = lambda x: len(x[1]))
 
 
-    def get_variable_properties(self, pss: list[PS], var_index: int, value: Optional[int] = None) -> dict:
+    def get_variable_properties_stats(self, pss: list[PS], var_index: int, value: Optional[int] = None) -> dict:
 
         # TODO think about this more thoroughly
         # should we compare against control PSs or experimental PSs?
@@ -115,16 +116,16 @@ class PSPropertyManager:
             """ this tiny snipped took me half an hour, by the way. Modify with care"""
             return column.values
 
-        def p_value_of_difference_of_means(property_name: str) -> float:
+        def p_value_of_difference_of_means_and_mean(property_name: str) -> (float, float, float):
             experimental_values = valid_column_values_from(relevant_properties, property_name)
             control_values = valid_column_values_from(control_properties, property_name)
 
             if len(experimental_values) < 2 or len(control_values) < 2:
                 return 1.0
             t_value, p_value = stats.ttest_ind(experimental_values, control_values)
-            return p_value
+            return p_value, np.average(experimental_values), np.average(control_values)
 
-        properties_and_p_values = {prop: p_value_of_difference_of_means(prop)
+        properties_and_p_values = {prop: p_value_of_difference_of_means_and_mean(prop)
                                    for prop in control_properties.columns
                                    if prop != "size"
                                    if prop != "control"}
@@ -134,7 +135,47 @@ class PSPropertyManager:
 
     def get_variables_properties_table(self):
         output_file_name = self.property_table_file[:-4]+"_variables.csv"
-        dicts = [self.get_variable_properties(i) for i in range(self.problem.search_space.amount_of_parameters)]
+        dicts = [self.get_variable_properties_stats(i) for i in range(self.problem.search_space.amount_of_parameters)]
         df = pd.DataFrame(dicts)
         with announce(f"Writing the variable data to {output_file_name}"):
             df.to_csv(output_file_name, index=False)
+
+
+
+    def plot_var_property(self, var_index: int, value: Optional[int], property_name: str, pss: list[PS]):
+        if value is None:
+            which_pss_contain_var = [var_index in ps.get_fixed_variable_positions()
+                                     for ps in pss]
+        else:
+            which_pss_contain_var = [ps[var_index] == value
+                                     for ps in pss]
+
+        relevant_properties = self.property_table[self.property_table["control"]==False][which_pss_contain_var]
+        relevant_properties = relevant_properties[relevant_properties["size"] > 1]
+        control_properties = self.property_table[self.property_table["control"]==True]
+
+        def valid_column_values_from(df: pd.DataFrame, column_name):
+            """ This is why I hate pandas"""
+            column = df[column_name].copy()
+            column.dropna(inplace=True)
+            column = column[~np.isnan(column)]
+            """ this tiny snipped took me half an hour, by the way. Modify with care"""
+            return column.values
+
+        experimental_values = valid_column_values_from(relevant_properties, property_name)
+        control_values = valid_column_values_from(control_properties, property_name)
+
+        plt.hist(control_values, bins=20, alpha=0.5, label='Control', color='blue', edgecolor='black', density=True)
+        plt.hist(experimental_values, bins=20, alpha=0.5, label='Experimental', color='red', edgecolor='black', density=True)
+
+        # Add labels and title
+        plt.xlabel(property_name)
+        plt.ylabel('Frequency')
+        plt.title('Distribution of Control vs Experimental Values')
+
+        # Add legend
+        plt.legend()
+
+        # Show plot
+        plt.show()
+
