@@ -185,6 +185,33 @@ class Detector:
 
 
 
+    def handle_solution_query(self, solutions: list[EvaluatedFS], ps_show_limit: int):
+        index = int(input("Which solution?"))
+        solution_to_explain = solutions[index]
+        self.explain_solution(solution_to_explain, shown_ps_max=ps_show_limit)
+
+
+    def handle_variable_query(self):
+        variable_index = int(input("Which variable?"))
+        self.describe_properties_of_variable(variable_index)
+
+    def handle_variable_within_solution_query(self, solutions: list[EvaluatedFS], ps_show_limit: int):
+        variable_index = int(input("Which variable?"))
+        solution_index = int(input("Which solution?"))
+        solution_to_explain = solutions[solution_index]
+        self.explain_solution(solution_to_explain, shown_ps_max=ps_show_limit, must_contain = variable_index)
+        self.describe_properties_of_variable(variable_index)
+
+    def handle_plotvar_query(self):
+        variable_index = int(input("Which variable?"))
+        property_name = input("Which property?")
+
+        self.ps_property_manager.plot_var_property(var_index=variable_index,
+                                                   value=None,
+                                                   property_name=property_name,
+                                                   pss=self.pss)
+
+
     def explanation_loop(self,
                          amount_of_fs_to_propose: int = 6,
                          ps_show_limit: int = 12,
@@ -200,54 +227,27 @@ class Detector:
             self.describe_global_information()
 
 
-        first_round = True
+        finish = False
+        while not finish:
+            answer = input("Type a command from [s, v, vs, plotvar], or n to exit: ")
+            answer = answer.lower()
+            try:
 
-        while True:
-            if first_round:
-                print("Would you like to see some explanations of the solutions? Write an index, or n to exit")
-            else:
-                print("Type another index, or n to exit")
-            answer = input().upper()
-            if answer == "N":
-                break
-            elif answer.startswith("V:"):
-                if "S" in list(answer):
-                    try:
-                        variable_index, solution_index = [int(s) for s in re.findall(r'\d+', answer)]
+                match answer:
+                    case "s": self.handle_solution_query(solutions, ps_show_limit)
+                    case "v": self.handle_variable_query()
+                    case "vs": self.handle_variable_within_solution_query(solutions, ps_show_limit)
+                    case "plotvar": self.handle_plotvar_query()
+                    case "n": finish = True
+                    case _: print(f"Sorry, the command {answer} was not recognised")
+            except ValueError:
+                print("Sorry, you must have typed the wrong value, please try again")
+            except Exception:
+                print("Something went wrong")
+            finally:
+                continue
 
-                        solution_to_explain = solutions[solution_index]
-                        self.explain_solution(solution_to_explain, shown_ps_max=ps_show_limit, must_contain = variable_index)
-                    except ValueError:
-                        print("That didn't work, please retry")
-                        continue
-                else:
-                    try:
-                        variable_index = int(answer[2:])
-                    except ValueError:
-                        print("That didn't work, please retry")
-                        continue
-                    self.describe_properties_of_variable(variable_index)
-            elif answer.startswith("PLOTVAR"):
-                try:
-                    variable_index = int(input("Which variable?"))
-                    property_name = input("Which property?")
-
-
-                    self.ps_property_manager.plot_var_property(var_index=variable_index,
-                                                               value=None,
-                                                               property_name=property_name,
-                                                               pss=self.pss)
-                except ValueError:
-                    print("That didn't work, please retry")
-                    continue
-            else:
-                try:
-                    index = int(answer)
-                except ValueError:
-                    print("That didn't work, please retry")
-                    continue
-                solution_to_explain = solutions[index]
-                self.explain_solution(solution_to_explain, shown_ps_max=ps_show_limit)
+        print("Bye Bye!")
 
 
 
