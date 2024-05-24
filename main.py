@@ -131,7 +131,7 @@ def get_problem_explainer() -> Detector:
 
 def explanation():
     detector = get_problem_explainer()
-    detector.generate_files_with_default_settings(20000, 20000)
+    detector.generate_files_with_default_settings(20000, 10000)
     detector.explanation_loop(amount_of_fs_to_propose=2, ps_show_limit=5)
 
     #detector.explanation_loop(amount_of_fs_to_propose=3, show_debug_info=False, show_global_properties = False)

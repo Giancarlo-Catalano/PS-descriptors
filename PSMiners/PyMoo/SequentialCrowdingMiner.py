@@ -113,7 +113,7 @@ class SequentialCrowdingMiner(AbstractPSMiner):
         def get_simplicity(ps: EvaluatedPS) -> float:
             return ps.metric_scores[0]
 
-        return utils.sort_by_combination_of(pss, key_functions=[get_atomicity], reverse=False)
+        return utils.sort_by_combination_of(pss, key_functions=[get_simplicity, get_mean_fitness, get_atomicity], reverse=False)
 
     def step(self, verbose = False):
         print("Running a single step")
