@@ -1,5 +1,5 @@
 import os
-from typing import Iterable, Callable
+from typing import Iterable, Callable, Any
 
 import numba
 import numpy as np
@@ -199,6 +199,22 @@ class PRef:
         return cls(full_solution_matrix=results["fsm"],
                    fitness_array=results["fitness_array"],
                    search_space=SearchSpace(results["search_space"]))
+
+
+
+    @classmethod
+    def concat(cls, pRefs: list[Any]):
+        if len(pRefs) == 0:
+            raise Exception("Cannot concatenate 0 pRefs")
+        elif len(pRefs) == 1:
+            return pRefs[0]
+        else:
+            fsm = np.vstack(tuple(pRef.full_solution_matrix for pRef in pRefs))
+            fitness_array = np.concatenate([pRef.fitness_array for pRef in pRefs])
+            search_space = pRefs[0].search_space
+            return cls(full_solution_matrix=fsm,
+                       fitness_array = fitness_array,
+                       search_space = search_space)
 
 def plot_solutions_in_pRef(pRef: PRef, filename: str):
     x_points, y_points = utils.unzip(list(enumerate(pRef.fitness_array)))

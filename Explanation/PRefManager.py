@@ -1,3 +1,4 @@
+from math import ceil
 from typing import Optional, Literal
 
 import numpy as np
@@ -35,12 +36,16 @@ class PRefManager:
                       sample_size: int,
                       which_algorithm: Literal["uniform", "GA", "SA", "GA_best", "SA_best"]) -> PRef:
 
-        pRef  = get_history_pRef(benchmark_problem=self.problem,
-                                 which_algorithm=which_algorithm,
-                                 sample_size=sample_size,
+        methods = which_algorithm.split()
+        sample_size_for_each = ceil(sample_size / len(methods))
+
+        def make_pRef_with_method(method: str) -> PRef:
+            return get_history_pRef(benchmark_problem=self.problem,
+                                 which_algorithm=method,
+                                 sample_size=sample_size_for_each,
                                  verbose=self.verbose)
 
-        return pRef
+        return PRef.concat([make_pRef_with_method(method) for method in methods])
 
     def instantiate_evaluator(self):
         self.evaluator = Classic3PSEvaluator(self.cached_pRef)
@@ -50,15 +55,18 @@ class PRefManager:
         self.pRef_mean = np.average(self.cached_pRef.fitness_array)
 
     def generate_pRef_file(self, sample_size: int,
-                           which_algorithm: Literal["uniform", "GA", "SA", "GA_best", "SA_best"]):
+                           which_algorithm):
+        """ options for which_algorithm are "uniform", "GA", "SA", "GA_best", "SA_best",
+        you can use multiple by space-separating them, eg "uniform SA" """
 
-        with announce(f"Generating the PRef using {which_algorithm} and writing it to {self.pRef_file}", self.verbose):
-            self.cached_pRef = self.generate_pRef(sample_size, which_algorithm)
-            self.instantiate_evaluator()
-            self.instantiate_mean()
+        self.cached_pRef = self.generate_pRef(sample_size, which_algorithm)
+        self.instantiate_evaluator()
+        self.instantiate_mean()
 
         with announce(f"Writing the pRef to {self.pRef_file}", self.verbose):
             self.cached_pRef.save(file=self.pRef_file)
+
+
 
 
     @property

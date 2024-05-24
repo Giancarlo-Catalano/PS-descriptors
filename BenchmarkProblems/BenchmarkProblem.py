@@ -24,11 +24,9 @@ class BenchmarkProblem:
         raise Exception("An implementation of BenchmarkProblem does not implement __repr__")
 
     def get_reference_population(self, sample_size: int) -> PRef:
-        with announce(f"Generating a uniform pRef with {sample_size} samples"):
-            result = PRef.sample_from_search_space(search_space=self.search_space,
-                                                 fitness_function=self.fitness_function,
-                                                 amount_of_samples=sample_size)
-        return result
+        return PRef.sample_from_search_space(search_space=self.search_space,
+                                             fitness_function=self.fitness_function,
+                                             amount_of_samples=sample_size)
 
     def repr_full_solution(self, fs: FullSolution) -> str:
         """default implementation"""

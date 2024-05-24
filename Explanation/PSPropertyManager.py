@@ -150,6 +150,9 @@ class PSPropertyManager:
             which_pss_contain_var = [ps[var_index] == value
                                      for ps in pss]
 
+        if not any(which_pss_contain_var):
+            print("Could not produce a plot, insufficient pss")
+
         relevant_properties = self.property_table[self.property_table["control"]==False][which_pss_contain_var]
         relevant_properties = relevant_properties[relevant_properties["size"] > 1]
         control_properties = self.property_table[self.property_table["control"]==True]
