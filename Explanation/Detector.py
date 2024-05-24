@@ -255,11 +255,12 @@ class Detector:
     def generate_files_with_default_settings(self, pRef_size: Optional[int] = 10000, pss_budget: Optional[int] = 10000):
 
         self.pRef_manager.generate_pRef_file(sample_size=pRef_size,
-                                             which_algorithm="SA")
+                                             which_algorithm="uniform")
 
         self.mined_ps_manager.generate_ps_file(pRef = self.pRef,
-                                               ps_miner_method="sequential",
-                                               ps_budget=pss_budget)
+                                               population_size=100,
+                                               ps_budget_in_total=pss_budget,
+                                               ps_budget_per_run=3000)
         self.mined_ps_manager.generate_control_pss_file(samples_for_each_category=1000)
 
         self.ps_property_manager.generate_property_table_file(self.mined_ps_manager.pss, self.mined_ps_manager.control_pss)

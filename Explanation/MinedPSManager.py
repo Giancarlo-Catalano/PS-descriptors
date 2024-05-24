@@ -9,6 +9,7 @@ from Core.PRef import PRef
 from Core.PS import PS, STAR
 from PSMiners.AbstractPSMiner import AbstractPSMiner
 from PSMiners.Mining import get_ps_miner, write_evaluated_pss_to_file, load_pss, write_pss_to_file
+from PSMiners.PyMoo.SequentialCrowdingMiner import SequentialCrowdingMiner
 from utils import announce
 
 
@@ -34,7 +35,7 @@ class MinedPSManager:
         self.verbose = verbose
 
 
-    def mine_pss(self,
+    def mine_pss_old(self,
                  pRef: PRef,
                  ps_miner_method: Literal["classic", "NSGA", "NSGA_experimental_crowding", "SPEA2", "sequential"],
                  ps_budget: int) -> list[EvaluatedPS]:
@@ -52,13 +53,56 @@ class MinedPSManager:
 
         return result_ps
 
-    def generate_ps_file(self,
+
+
+
+    def generate_ps_file_old(self,
                          pRef: PRef,
                          ps_miner_method: Literal["classic", "NSGA", "NSGA_experimental_crowding", "SPEA2", "sequential"],
                          ps_budget: int):
 
         with announce(f"Mining the partial solutions using {ps_miner_method} and budget = {ps_budget}"):
-            self.cached_pss = self.mine_pss(pRef, ps_miner_method, ps_budget)
+            self.cached_pss = self.mine_pss_old(pRef, ps_miner_method, ps_budget)
+
+
+
+        with announce(f"Writing the PSs onto {self.mined_ps_file}", self.verbose):
+            write_evaluated_pss_to_file(self.cached_pss, self.mined_ps_file)
+
+    def mine_pss(self,
+                 pRef: PRef,
+                 population_size: int,
+                 ps_budget_per_run: int,
+                 ps_budget_in_total: int) -> list[EvaluatedPS]:
+        algorithm = SequentialCrowdingMiner(pRef = pRef,
+                                            budget_per_run=ps_budget_per_run,
+                                            population_size_per_run=population_size,
+                                            which_algorithm="NSGAII")
+
+        with announce(f"Running {algorithm} on {pRef} with {ps_budget_in_total =}", self.verbose):
+            budget_limit = TerminationCriteria.PSEvaluationLimit(ps_limit=ps_budget_in_total)
+            coverage_limit = TerminationCriteria.SearchSpaceIsCovered()
+            termination_criterion = budget_limit #TerminationCriteria.UnionOfCriteria(budget_limit, coverage_limit)
+            algorithm.run(termination_criterion, verbose=self.verbose)
+
+        result_ps = algorithm.get_results(None)
+        result_ps = AbstractPSMiner.without_duplicates(result_ps)
+        result_ps = [ps for ps in result_ps if not ps.is_empty()]
+
+        return result_ps
+
+
+    def generate_ps_file(self,
+                         pRef: PRef,
+                         population_size: int,
+                         ps_budget_per_run: int,
+                         ps_budget_in_total: int):
+
+        with announce(f"Mining the partial solutions using the sequential miner"):
+            self.cached_pss = self.mine_pss(pRef=pRef,
+                                                population_size=population_size,
+                                                ps_budget_in_total=ps_budget_in_total,
+                                                ps_budget_per_run=ps_budget_per_run)
 
 
 

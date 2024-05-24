@@ -1,3 +1,4 @@
+from math import ceil
 from typing import Any, Optional
 
 import numpy as np
@@ -9,6 +10,7 @@ from pymoo.cython.non_dominated_sorting import fast_non_dominated_sort
 from pymoo.operators.survival.rank_and_crowding import RankAndCrowding
 from pymoo.optimize import minimize
 
+import utils
 from BenchmarkProblems.BenchmarkProblem import BenchmarkProblem
 from Core.EvaluatedPS import EvaluatedPS
 from Core.PRef import PRef
@@ -28,7 +30,6 @@ from utils import announce
 class SequentialCrowdingMiner(AbstractPSMiner):
     which_algorithm: str
     population_size_per_run: int
-    kept_per_iteration: int
     budget_per_run: int
 
     pymoo_problem: PSPyMooProblem
@@ -39,12 +40,10 @@ class SequentialCrowdingMiner(AbstractPSMiner):
                  pRef: PRef,
                  which_algorithm: str,
                  population_size_per_run: int,
-                 kept_per_iteration: int,  # unused
                  budget_per_run: int):
         super().__init__(pRef=pRef)
         self.which_algorithm = which_algorithm
         self.population_size_per_run = population_size_per_run
-        self.kept_per_iteration = kept_per_iteration
         self.budget_per_run = budget_per_run
         self.pymoo_problem = PSPyMooProblem(pRef)
         self.archive = []
@@ -103,6 +102,19 @@ class SequentialCrowdingMiner(AbstractPSMiner):
             return PyMooPSSequentialCrowding.get_coverage(search_space=self.pymoo_problem.search_space,
                                                           already_obtained=self.archive)
 
+
+    def sort_by_m_and_a(self, pss: list[EvaluatedPS]) -> list[EvaluatedPS]:
+        def get_atomicity(ps: EvaluatedPS) -> float:
+            return ps.metric_scores[2]
+
+        def get_mean_fitness(ps: EvaluatedPS) -> float:
+            return ps.metric_scores[1]
+
+        def get_simplicity(ps: EvaluatedPS) -> float:
+            return ps.metric_scores[0]
+
+        return utils.sort_by_combination_of(pss, key_functions=[get_atomicity], reverse=False)
+
     def step(self, verbose = False):
         print("Running a single step")
         algorithm = self.get_miner_algorithm()
@@ -118,7 +130,32 @@ class SequentialCrowdingMiner(AbstractPSMiner):
 
 
         e_pss = self.output_of_miner_to_evaluated_ps(res)
-        winners = e_pss
+
+
+        # debug
+        print("The sorted e_pss are")
+        sorted_pss = self.sort_by_m_and_a(e_pss)
+        for ps in sorted_pss:
+            print(ps)
+
+
+        print("\nAdditionally, here's some more fitnesses\n")
+        first = PS.empty(self.search_space)
+        second = PS.empty(self.search_space)
+        third = PS.empty(self.search_space)
+        first.values[0:5] = 1
+        second.values[5:10] = 1
+        third.values[10:15] = 1
+
+        for ps in [first, second, third]:
+            s, m, a = self.pymoo_problem.objectives_evaluator.get_S_MF_A(ps)
+            print(f"{ps} has {s=}, {m=}, {a=}")
+
+
+        print("end of debug")
+
+        amount_to_keep_per_run = ceil(self.population_size_per_run / 20)
+        winners = sorted_pss[:amount_to_keep_per_run]
 
         self.archive.extend(winners)
 
@@ -144,9 +181,8 @@ class SequentialCrowdingMiner(AbstractPSMiner):
     @classmethod
     def with_default_settings(cls, pRef: PRef):
         return cls(pRef = pRef,
-                   budget_per_run = 500,
-                   population_size_per_run = 100,
-                   kept_per_iteration=5,
+                   budget_per_run = 10000,
+                   population_size_per_run = 200,
                    which_algorithm="NSGAIII")
 
 
