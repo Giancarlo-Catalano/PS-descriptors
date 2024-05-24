@@ -138,22 +138,6 @@ class SequentialCrowdingMiner(AbstractPSMiner):
         for ps in sorted_pss:
             print(ps)
 
-
-        print("\nAdditionally, here's some more fitnesses\n")
-        first = PS.empty(self.search_space)
-        second = PS.empty(self.search_space)
-        third = PS.empty(self.search_space)
-        first.values[0:5] = 1
-        second.values[5:10] = 1
-        third.values[10:15] = 1
-
-        for ps in [first, second, third]:
-            s, m, a = self.pymoo_problem.objectives_evaluator.get_S_MF_A(ps)
-            print(f"{ps} has {s=}, {m=}, {a=}")
-
-
-        print("end of debug")
-
         amount_to_keep_per_run = ceil(self.population_size_per_run / 20)
         winners = sorted_pss[:amount_to_keep_per_run]
 

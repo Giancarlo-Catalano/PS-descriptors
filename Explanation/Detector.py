@@ -248,10 +248,10 @@ class Detector:
     def generate_files_with_default_settings(self, pRef_size: Optional[int] = 10000, pss_budget: Optional[int] = 10000):
 
         self.pRef_manager.generate_pRef_file(sample_size=pRef_size,
-                                             which_algorithm="uniform SA")
+                                             which_algorithm="uniform")
 
         self.mined_ps_manager.generate_ps_file(pRef = self.pRef,
-                                               population_size=300,
+                                               population_size=100,
                                                ps_budget_in_total=pss_budget,
                                                ps_budget_per_run=3000)
         self.mined_ps_manager.generate_control_pss_file(samples_for_each_category=1000)

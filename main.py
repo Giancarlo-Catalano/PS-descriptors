@@ -120,7 +120,7 @@ def get_manual_bt_explainer() -> Detector:
 def get_problem_explainer() -> Detector:
     experimental_directory = r"C:\Users\gac8\PycharmProjects\PS-PDF\Experimentation\BT\TwoTeam"
     amount_of_skills = 12
-    problem = RoyalRoad(3, 5)
+    problem = RoyalRoad(12, 5)
     #problem = get_start_and_end_instance(amount_of_skills)
     #problem = get_toestepping_instance(amount_of_skills=3)
     #problem = get_unfairness_instance(amount_of_skills=3)
@@ -131,7 +131,7 @@ def get_problem_explainer() -> Detector:
 
 def explanation():
     detector = get_problem_explainer()
-    detector.generate_files_with_default_settings(20000, 10000)
+    detector.generate_files_with_default_settings(20000, 30000)
     detector.explanation_loop(amount_of_fs_to_propose=2, ps_show_limit=5)
 
     #detector.explanation_loop(amount_of_fs_to_propose=3, show_debug_info=False, show_global_properties = False)
