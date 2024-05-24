@@ -8,6 +8,7 @@ import utils
 from BenchmarkProblems.BenchmarkProblem import BenchmarkProblem
 from Core.EvaluatedFS import EvaluatedFS
 from Core.EvaluatedPS import EvaluatedPS
+from Core.FullSolution import FullSolution
 from Core.PRef import PRef
 from Core.PS import PS, contains, STAR
 from Explanation.MinedPSManager import MinedPSManager
@@ -245,10 +246,14 @@ class Detector:
 
 
 
-    def generate_files_with_default_settings(self, pRef_size: Optional[int] = 10000, pss_budget: Optional[int] = 10000):
+    def generate_files_with_default_settings(self,
+                                             pRef_size: Optional[int] = 10000,
+                                             pss_budget: Optional[int] = 10000,
+                                             force_include_in_pRef: Optional[list[FullSolution]] = None):
 
         self.pRef_manager.generate_pRef_file(sample_size=pRef_size,
-                                             which_algorithm="uniform")
+                                             which_algorithm="uniform SA GA",
+                                             force_include=force_include_in_pRef)
 
         self.mined_ps_manager.generate_ps_file(pRef = self.pRef,
                                                population_size=100,

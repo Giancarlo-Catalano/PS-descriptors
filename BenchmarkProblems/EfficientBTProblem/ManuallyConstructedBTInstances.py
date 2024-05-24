@@ -19,7 +19,7 @@ def make_rota_pattern_from_string(input: str) -> RotaPattern:
 def random_id() -> str:
     return f"{random.randrange(10000)}"
 def get_start_and_end_instance(amount_of_skills: int = 2) -> EfficientBTProblem:
-    alternative_rota = make_rota_pattern_from_string("W--W---")
+    alternative_rota = make_rota_pattern_from_string("-------WWWWWW-")
     starting_shift = make_rota_pattern_from_string("WWW----")
     ending_shift = make_rota_pattern_from_string("---WWW-")
 
@@ -160,5 +160,39 @@ def get_bad_week_instance(amount_of_skills: int = 2, workers_per_skill: int = 2)
                                   available_rotas=[alternative_rota, starting_shift],
                                   name=f"Worker_{skill_number}",
                                   worker_id=random_id()))
+
+    return EfficientBTProblem(workers=workers, calendar_length=7*12, rota_preference_weight=0)
+
+
+
+def get_square_instance(amount_of_squares: int) -> EfficientBTProblem:
+
+    def make_worker_aux(rota_1: str, rota_2: str, skills: set[int], name: str) -> Worker:
+        rota_1_pattern = make_rota_pattern_from_string(rota_1)
+        rota_2_pattern = make_rota_pattern_from_string(rota_2)
+        return Worker(available_skills={str(v) for v in skills},
+                                  available_rotas=[rota_1_pattern, rota_2_pattern],
+                                  name=name,
+                                  worker_id=random_id())
+
+    fullw = "WWWWWW-"
+    empty = "-------"
+
+    def make_square(initial_skill: int) -> list[Worker]:
+        a = initial_skill
+        b = initial_skill + 1
+        c = initial_skill + 2
+        d = initial_skill + 3
+
+        workers = []
+        workers.append(make_worker_aux("WWW-----------", fullw+empty, {a, b}, f"AB_{initial_skill}"))
+        workers.append(make_worker_aux("-WWW----------", empty+fullw, {b, c}, f"BC_{initial_skill}"))
+        workers.append(make_worker_aux("--WWW---------", fullw+empty, {c, d}, f"CD_{initial_skill}"))
+        workers.append(make_worker_aux("---WWW--------", empty+fullw, {d, a}, f"DA_{initial_skill}"))
+
+        return workers
+    workers = [worker
+               for which in range(amount_of_squares)
+               for worker in make_square(which*4)]
 
     return EfficientBTProblem(workers=workers, calendar_length=7*12, rota_preference_weight=0)

@@ -5,6 +5,7 @@ import numpy as np
 from scipy.stats import t
 
 from BenchmarkProblems.BenchmarkProblem import BenchmarkProblem
+from Core.FullSolution import FullSolution
 from Core.PRef import PRef
 from Core.PS import PS
 from Core.PSMetric.Classic3 import Classic3PSEvaluator
@@ -34,7 +35,8 @@ class PRefManager:
 
     def generate_pRef(self,
                       sample_size: int,
-                      which_algorithm: Literal["uniform", "GA", "SA", "GA_best", "SA_best"]) -> PRef:
+                      which_algorithm: Literal["uniform", "GA", "SA", "GA_best", "SA_best"],
+                      force_include: Optional[list[FullSolution]] = None) -> PRef:
 
         methods = which_algorithm.split()
         sample_size_for_each = ceil(sample_size / len(methods))
@@ -45,7 +47,15 @@ class PRefManager:
                                  sample_size=sample_size_for_each,
                                  verbose=self.verbose)
 
-        return PRef.concat([make_pRef_with_method(method) for method in methods])
+        pRefs = [make_pRef_with_method(method) for method in methods]
+
+        if force_include is not None and len(force_include) > 0:
+            forced_pRef = PRef.from_full_solutions(force_include,
+                                                   fitness_values=[self.problem.fitness_function(fs) for fs in force_include],
+                                                   search_space=self.problem.search_space)
+            pRefs.append(forced_pRef)
+
+        return PRef.concat(pRefs)
 
     def instantiate_evaluator(self):
         self.evaluator = Classic3PSEvaluator(self.cached_pRef)
@@ -55,11 +65,12 @@ class PRefManager:
         self.pRef_mean = np.average(self.cached_pRef.fitness_array)
 
     def generate_pRef_file(self, sample_size: int,
-                           which_algorithm):
+                           which_algorithm,
+                           force_include: Optional[list[FullSolution]] = None):
         """ options for which_algorithm are "uniform", "GA", "SA", "GA_best", "SA_best",
         you can use multiple by space-separating them, eg "uniform SA" """
 
-        self.cached_pRef = self.generate_pRef(sample_size, which_algorithm)
+        self.cached_pRef = self.generate_pRef(sample_size, which_algorithm, force_include=force_include)
         self.instantiate_evaluator()
         self.instantiate_mean()
 

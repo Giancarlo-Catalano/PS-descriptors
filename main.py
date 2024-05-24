@@ -6,13 +6,14 @@ import utils
 from BenchmarkProblems.BenchmarkProblem import BenchmarkProblem
 from BenchmarkProblems.EfficientBTProblem.EfficientBTProblem import EfficientBTProblem
 from BenchmarkProblems.EfficientBTProblem.ManuallyConstructedBTInstances import get_start_and_end_instance, \
-    get_toestepping_instance, get_unfairness_instance, get_bad_week_instance
+    get_toestepping_instance, get_unfairness_instance, get_bad_week_instance, get_square_instance
 
 from BenchmarkProblems.GraphColouring import GraphColouring
 from BenchmarkProblems.RoyalRoad import RoyalRoad
 from Core import TerminationCriteria
 from Core.EvaluatedPS import EvaluatedPS
 from Core.Explainer import Explainer
+from Core.FullSolution import FullSolution
 from Core.PS import PS
 from Core.PSMetric.Classic3 import Classic3PSEvaluator
 from Explanation.Detector import Detector
@@ -119,9 +120,9 @@ def get_manual_bt_explainer() -> Detector:
 
 def get_problem_explainer() -> Detector:
     experimental_directory = r"C:\Users\gac8\PycharmProjects\PS-PDF\Experimentation\BT\TwoTeam"
-    amount_of_skills = 12
-    problem = RoyalRoad(12, 5)
-    #problem = get_start_and_end_instance(amount_of_skills)
+    amount_of_skills = 3
+    #problem = RoyalRoad(12, 5)
+    problem = get_square_instance(amount_of_squares=5)
     #problem = get_toestepping_instance(amount_of_skills=3)
     #problem = get_unfairness_instance(amount_of_skills=3)
     return Detector.from_folder(problem=problem,
@@ -131,7 +132,8 @@ def get_problem_explainer() -> Detector:
 
 def explanation():
     detector = get_problem_explainer()
-    detector.generate_files_with_default_settings(20000, 30000)
+    optima = [FullSolution([1 for _ in range(detector.problem.search_space.amount_of_parameters)])]
+    detector.generate_files_with_default_settings(30000, 30000, force_include_in_pRef=optima)
     detector.explanation_loop(amount_of_fs_to_propose=2, ps_show_limit=5)
 
     #detector.explanation_loop(amount_of_fs_to_propose=3, show_debug_info=False, show_global_properties = False)
