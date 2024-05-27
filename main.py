@@ -1,6 +1,11 @@
 #!/usr/bin/env python3
-
+import logging
 import os
+import sys
+import traceback
+import warnings
+
+import numpy as np
 
 import utils
 from BenchmarkProblems.BenchmarkProblem import BenchmarkProblem
@@ -17,6 +22,8 @@ from Core.FullSolution import FullSolution
 from Core.PS import PS
 from Core.PSMetric.Classic3 import Classic3PSEvaluator
 from Explanation.Detector import Detector
+from Explanation.HyperparameterEvaluator import HyperparameterEvaluator
+from Explanation.SuccessForGC import count_found_targets
 from FSStochasticSearch.Operators import SinglePointFSMutation
 from FSStochasticSearch.SA import SA
 from PSMiners.DEAP.DEAPPSMiner import DEAPPSMiner, test_DEAP_miner
@@ -25,6 +32,11 @@ from PSMiners.Platypus.PlatypusPSProblem import test_platypus
 from PSMiners.PyMoo.PSPyMooProblem import test_pymoo
 from utils import announce, indent
 
+def warn_with_traceback(message, category, filename, lineno, file=None, line=None):
+
+    log = file if hasattr(file,'write') else sys.stderr
+    traceback.print_stack(file=log)
+    log.write(warnings.formatwarning(message, category, filename, lineno, line))
 
 def show_overall_system(benchmark_problem: BenchmarkProblem):
     """
@@ -119,12 +131,11 @@ def get_manual_bt_explainer() -> Detector:
 
 
 def get_problem_explainer() -> Detector:
-    experimental_directory = r"C:\Users\gac8\PycharmProjects\PS-PDF\Experimentation\BT\TwoTeam"
-    amount_of_skills = 3
-    #problem = RoyalRoad(12, 5)
-    problem = get_square_instance(amount_of_squares=5)
-    #problem = get_toestepping_instance(amount_of_skills=3)
-    #problem = get_unfairness_instance(amount_of_skills=3)
+    experimental_directory = r"C:\Users\gac8\PycharmProjects\PS-PDF\Experimentation\GC\Dummy"
+    gc_problem_file = os.path.join(experimental_directory, "islets.json")
+    gc_problem = GraphColouring.from_file(gc_problem_file)
+    gc_problem.view()
+    problem = EfficientBTProblem.from_Graph_Colouring(gc_problem)
     return Detector.from_folder(problem=problem,
                                 folder=experimental_directory,
                                 speciality_threshold=0.2,
@@ -132,16 +143,57 @@ def get_problem_explainer() -> Detector:
 
 def explanation():
     detector = get_problem_explainer()
-    optima = [FullSolution([1 for _ in range(detector.problem.search_space.amount_of_parameters)])]
-    detector.generate_files_with_default_settings(30000, 30000, force_include_in_pRef=optima)
-    detector.explanation_loop(amount_of_fs_to_propose=2, ps_show_limit=5)
+    # detector.generate_files_with_default_settings(30000, 30000)
+    detector.explanation_loop(amount_of_fs_to_propose=2, ps_show_limit=5, show_debug_info=True)
 
     #detector.explanation_loop(amount_of_fs_to_propose=3, show_debug_info=False, show_global_properties = False)
     #get_bt_explainer().get_variables_properties_table()
 
-if __name__ == '__main__':
-    explanation()
 
+def evaluation():
+    gc_problem = GraphColouring.make_insular_instance(amount_of_islands=4)
+    gc_problem.view()
+    bt_problem = EfficientBTProblem.from_Graph_Colouring(gc_problem)
+    experimental_directory = r"C:\Users\gac8\PycharmProjects\PS-PDF\Experimentation\GC\Dummy"
+    detector = Detector.from_folder(problem=bt_problem,
+                                     folder=experimental_directory,
+                                     speciality_threshold=0.2,
+                                     verbose=True)
+    detector.generate_files_with_default_settings(30000, 30000)
+    mined_pss = detector.pss
+    count = count_found_targets(gc_problem, mined_pss)
+    print(f"Out of the {len(mined_pss)} mined pss, {count} were the true clique targets")
+
+
+def grid_search():
+    # hype = HyperparameterEvaluator(algorithms_to_test=["NSGAII", "NSGAIII", "SPEA2"],
+    #                                island_amounts_to_test=[3, 6, 12],
+    #                                pRef_sizes_to_test=[1000, 5000, 10000, 30000],
+    #                                pRef_origin_methods = ["uniform", "SA"]
+    #                                population_sizes_to_test=[50, 100, 500],
+    #                                ps_budget=30000,
+    #                                ps_budgets_per_run_to_test=[1000, 5000, 10000])
+    hype = HyperparameterEvaluator(algorithms_to_test=["NSGAII", "NSGAIII", "MOEAD"],
+                                   island_amounts_to_test=[6],
+                                   pRef_sizes_to_test=[5000],
+                                   population_sizes_to_test=[100],
+                                   pRef_origin_methods = ["uniform", "SA", "GA"],
+                                   ps_budget=3000,
+                                   custom_crowding_operators_to_test = [True, False],
+                                   ps_budgets_per_run_to_test=[1000])
+    hype.get_data()
+
+
+
+
+
+
+if __name__ == '__main__':
+    logging.basicConfig(level=logging.INFO)
+    np.seterr(invalid="raise")
+    warnings.showwarning = warn_with_traceback
+    grid_search()
+    #test_linearity_between_gc_and_bt()
 
 
 

@@ -5,6 +5,7 @@ from pymoo.algorithms.moo.moead import MOEAD
 from pymoo.algorithms.moo.nsga2 import NSGA2
 from pymoo.algorithms.moo.nsga3 import NSGA3
 from pymoo.algorithms.moo.rvea import RVEA
+from pymoo.algorithms.moo.spea2 import SPEA2
 from pymoo.core.survival import Survival
 from pymoo.util.ref_dirs import get_reference_directions
 
@@ -37,6 +38,10 @@ def get_pymoo_search_algorithm(which_algorithm: str,
                        mutation=mutation, eliminate_duplicates=True, survival=crowding_operator)
     elif which_algorithm == "RVEA":
         return RVEA(pop_size=pop_size, sampling=sampling, crossover=crossover,
+                    mutation=mutation, eliminate_duplicates=True, survival=crowding_operator,
+                    ref_dirs=get_ref_dirs())
+    elif which_algorithm == "SPEA2":
+        return SPEA2(pop_size=pop_size, sampling=sampling, crossover=crossover,
                     mutation=mutation, eliminate_duplicates=True, survival=crowding_operator,
                     ref_dirs=get_ref_dirs())
     else:

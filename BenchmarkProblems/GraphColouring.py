@@ -1,7 +1,7 @@
 import itertools
 import json
 import random
-from typing import TypeAlias, Iterable
+from typing import TypeAlias, Iterable, Optional
 
 import utils
 from BenchmarkProblems.BenchmarkProblem import BenchmarkProblem
@@ -48,13 +48,18 @@ class GraphColouring(BenchmarkProblem):
 
     connections: list[Connection]
 
+    target_pss: Optional[set[PS]]
+
     def __init__(self,
                  amount_of_colours: int,
                  amount_of_nodes: int,
-                 connections: Iterable):
+                 connections: Iterable,
+                 target_pss: Optional[set[PS]] = None):
         self.amount_of_colours = amount_of_colours
         self.amount_of_nodes = amount_of_nodes
         self.connections = [(a, b) for (a, b) in connections]
+
+        self.target_pss = target_pss
 
         search_space = SearchSpace([amount_of_colours for _ in range(self.amount_of_nodes)])
         super().__init__(search_space)
@@ -127,3 +132,45 @@ class GraphColouring(BenchmarkProblem):
         colour_count = len(set(value for value in ps.values if value != STAR))
         return {"edge_count": edge_count,
                 "colour_count": colour_count}
+
+
+    @classmethod
+    def make_insular_instance(cls, amount_of_islands: int):
+        colour_count = 3
+        amount_of_nodes = colour_count * amount_of_islands
+        def make_connections_for_island(island_index: int) -> list[Connection]:
+            a = island_index * 3 + 0
+            b = island_index * 3 + 1
+            c = island_index * 3 + 2
+            return [(a, b), (b, c), (c, a)]
+
+
+        connections = [connection
+                       for island_index in range(amount_of_islands)
+                       for connection in make_connections_for_island(island_index)]
+
+        search_space = SearchSpace([colour_count for node in range(amount_of_nodes)])
+        def make_targets_for_island(island_index: int) -> Iterable[PS]:
+            colour_combinations = itertools.permutations(list(range(colour_count)))
+            def make_ps_for_colour_combination(colour_combo) -> PS:
+                result = PS.empty(search_space)
+                result.values[(island_index*colour_count):((island_index+1)*colour_count)] = colour_combo
+                return result
+            colour_combinations = itertools.permutations(list(range(colour_count)))
+            return map(make_ps_for_colour_combination, colour_combinations)
+
+        target_pss = {target for island_index in range(amount_of_islands)
+                      for target in make_targets_for_island(island_index)}
+
+        return cls(amount_of_colours=colour_count,
+                   amount_of_nodes=amount_of_nodes,
+                   connections = connections,
+                   target_pss=target_pss)
+
+
+
+    def get_targets(self) -> set[PS]:
+        if self.target_pss is None:
+            raise Exception("Requesting the target PSs from a GC instance with unknown targets")
+        else:
+            return self.target_pss

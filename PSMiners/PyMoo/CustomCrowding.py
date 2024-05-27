@@ -131,7 +131,8 @@ class PyMooPSSequentialCrowding(PyMooCustomCrowding):
     def get_crowding_scores_of_front(self, all_F, n_remove, population, front_indexes) -> np.ndarray:
         pop_matrix = np.array([population[index].X for index in front_indexes])
         where_fixed: np.ndarray = pop_matrix != STAR
-        scores = np.array([np.average(self.foods[row])
+
+        scores = np.array([np.average(self.foods[row]) if any(row) else 1
                            for row in where_fixed])
 
         self.opt = population[front_indexes]  # just to comply with Pymoo, ignore this

@@ -32,27 +32,28 @@ class PRefManager:
         self.pRef_mean = None
         self.verbose = verbose
 
-
-    def generate_pRef(self,
+    @staticmethod
+    def generate_pRef(problem,
                       sample_size: int,
                       which_algorithm: Literal["uniform", "GA", "SA", "GA_best", "SA_best"],
-                      force_include: Optional[list[FullSolution]] = None) -> PRef:
+                      force_include: Optional[list[FullSolution]] = None,
+                      verbose: bool = False) -> PRef:
 
         methods = which_algorithm.split()
         sample_size_for_each = ceil(sample_size / len(methods))
 
         def make_pRef_with_method(method: str) -> PRef:
-            return get_history_pRef(benchmark_problem=self.problem,
+            return get_history_pRef(benchmark_problem=problem,
                                  which_algorithm=method,
                                  sample_size=sample_size_for_each,
-                                 verbose=self.verbose)
+                                 verbose=verbose)
 
         pRefs = [make_pRef_with_method(method) for method in methods]
 
         if force_include is not None and len(force_include) > 0:
             forced_pRef = PRef.from_full_solutions(force_include,
-                                                   fitness_values=[self.problem.fitness_function(fs) for fs in force_include],
-                                                   search_space=self.problem.search_space)
+                                                   fitness_values=[problem.fitness_function(fs) for fs in force_include],
+                                                   search_space=problem.search_space)
             pRefs.append(forced_pRef)
 
         return PRef.concat(pRefs)
@@ -70,7 +71,11 @@ class PRefManager:
         """ options for which_algorithm are "uniform", "GA", "SA", "GA_best", "SA_best",
         you can use multiple by space-separating them, eg "uniform SA" """
 
-        self.cached_pRef = self.generate_pRef(sample_size, which_algorithm, force_include=force_include)
+        self.cached_pRef = PRefManager.generate_pRef(self.problem,
+                                                     sample_size,
+                                                     which_algorithm,
+                                                     force_include=force_include,
+                                                     verbose=self.verbose)
         self.instantiate_evaluator()
         self.instantiate_mean()
 

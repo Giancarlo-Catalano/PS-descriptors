@@ -292,3 +292,11 @@ def sort_by_combination_of(items: list, key_functions: list[Callable], reverse=F
 
     return [items[index] for index, rank in sorted(enumerate(summed_ranks), key=second, reverse=reverse)]
 
+
+
+def flatten(list_of_lists: list[list]) -> list:
+    """ crazy that I have to make this function"""
+    flat_list = []
+    for item in list_of_lists:
+        flat_list += item
+    return flat_list

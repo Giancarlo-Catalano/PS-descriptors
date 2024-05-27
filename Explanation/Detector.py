@@ -233,6 +233,7 @@ class Detector:
                     case "v": self.handle_variable_query()
                     case "vs": self.handle_variable_within_solution_query(solutions, ps_show_limit)
                     case "plotvar": self.handle_plotvar_query()
+                    case "pss": self.handle_pss_query()
                     case "n": finish = True
                     case _: print(f"Sorry, the command {answer} was not recognised")
             except ValueError:
@@ -277,6 +278,9 @@ class Detector:
                 for size in unique_sizes}
 
 
+
+
+
     def describe_global_information(self):
         print("The partial solutions cover the search space with the following distribution:")
         print(utils.repr_with_precision(self.mined_ps_manager.get_coverage_stats(), 2))
@@ -284,6 +288,8 @@ class Detector:
         print("The distribution of PS sizes is")
         distribution = self.get_ps_size_distribution()
         print("\t"+"\n\t".join(f"{size}: {int(prop*100)}%" for size, prop in distribution.items()))
+
+
 
 
     def describe_properties_of_variable(self, var: int, value: Optional[int] = None):
@@ -300,6 +306,18 @@ class Detector:
             print(f"Significant properties for the variable {var} when it's = {value}:")
         for prop, p_value, prop_mean, control_mean in properties:
             print(f"\t{prop}, with p-value {p_value:e}, prop_mean = {prop_mean:.2f}, control_mean = {control_mean:.2f}")
+
+    def handle_pss_query(self):
+        for ps in self.pss:
+            if isinstance(ps, EvaluatedPS):
+                s, m, a = ps.metric_scores
+                print(f"{ps}, "
+                      f"\n\t{s=:.2f},"
+                      f"\n\t{m=:.2f},"
+                      f"\n\t{a=:.4f},"
+                      f"")
+            else:
+                print(f"{ps}")
 
 
 

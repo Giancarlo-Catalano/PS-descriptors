@@ -6,8 +6,9 @@ import numpy as np
 
 import utils
 from BenchmarkProblems.BT.BTProblem import BTProblem
-from BenchmarkProblems.BT.RotaPattern import RotaPattern, get_range_scores
+from BenchmarkProblems.BT.RotaPattern import RotaPattern, get_range_scores, WorkDay
 from BenchmarkProblems.BT.Worker import Worker, Skill
+from BenchmarkProblems.GraphColouring import GraphColouring
 from Core.FullSolution import FullSolution
 from Core.PS import PS, STAR
 from Core.custom_types import JSON
@@ -163,8 +164,9 @@ class EfficientBTProblem(BTProblem):
                  workers: list[Worker],
                  calendar_length: int,
                  use_faulty_fitness_function: bool = False,
+                 weights: list[float] = None,
                  rota_preference_weight: float = 0.001):
-        super().__init__(workers, calendar_length)
+        super().__init__(workers, calendar_length, weights=weights)
         self.extended_patterns = [convert_worker_to_just_options(worker, calendar_length)
                                   for worker in workers]
         self.workers_by_skills = {skill: {index for index, worker in enumerate(self.workers)
@@ -293,4 +295,40 @@ class EfficientBTProblem(BTProblem):
             return (f"{'FEW' if is_low else 'MANY'} workers got their preferred rota, {rank_str}" )
         else:
             raise ValueError(f"Did not recognise the property {property_name} in EfficientBTProblem")
+
+
+    @classmethod
+    def from_Graph_Colouring(cls, gc: GraphColouring):
+
+        working_week = [WorkDay.working_day(900, 1700) for _ in range(7)]
+        not_working_week = [WorkDay.not_working() for _ in range(7)]
+
+
+        def make_rota_option_for_colour(colour_index: int) -> RotaPattern:
+            weeks_to_use = [not_working_week if colour_index == i else working_week
+                            for i in range(gc.amount_of_colours)]
+            all_days = utils.flatten(weeks_to_use)
+            return RotaPattern(7, all_days)
+
+
+        def make_worker(node_number: int):
+            rota_options = [make_rota_option_for_colour(c) for c in range(gc.amount_of_colours)]
+            return Worker(available_skills=set(),
+                          available_rotas=rota_options,
+                          name=f"Node_{node_number}",
+                          worker_id=f"Node_{node_number}")
+
+        workers = [make_worker(node_index) for node_index in range(gc.amount_of_nodes)]
+
+        for skill_number, connection in enumerate(gc.connections):
+            skill_str = f"SKILL_{skill_number}"
+            start, end = connection
+            workers[start].available_skills.add(skill_str)
+            workers[end].available_skills.add(skill_str)
+
+        return EfficientBTProblem(workers,
+                                  calendar_length=7*gc.amount_of_colours,
+                                  rota_preference_weight=0,
+                                  weights=[1 for _ in range(7)])
+
 

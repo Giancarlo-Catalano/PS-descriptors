@@ -35,18 +35,22 @@ class SequentialCrowdingMiner(AbstractPSMiner):
     pymoo_problem: PSPyMooProblem
     archive: list[EvaluatedPS]
 
+    use_experimental_crowding_operator: bool
+
 
     def __init__(self,
                  pRef: PRef,
                  which_algorithm: str,
                  population_size_per_run: int,
-                 budget_per_run: int):
+                 budget_per_run: int,
+                 use_experimental_crowding_operator: bool = True):
         super().__init__(pRef=pRef)
         self.which_algorithm = which_algorithm
         self.population_size_per_run = population_size_per_run
         self.budget_per_run = budget_per_run
         self.pymoo_problem = PSPyMooProblem(pRef)
         self.archive = []
+        self.use_experimental_crowding_operator = use_experimental_crowding_operator
 
     def __repr__(self):
         return (f"SequentialCrowdingMiner({self.which_algorithm = }, "
@@ -79,10 +83,12 @@ class SequentialCrowdingMiner(AbstractPSMiner):
         # if len(self.archive) == 0:
         #     return RankAndCrowding(crowding_func = "ce")
         # else:
-        return PyMooPSSequentialCrowding(search_space=self.search_space,
+        if self.use_experimental_crowding_operator:
+            return PyMooPSSequentialCrowding(search_space=self.search_space,
                                          already_obtained=self.archive,
                                          immediate=False)
-
+        else:
+            return RankAndCrowding(crowding_func = "ce")
 
     def get_miner_algorithm(self):
         return get_pymoo_search_algorithm(which_algorithm=self.which_algorithm,
@@ -116,11 +122,10 @@ class SequentialCrowdingMiner(AbstractPSMiner):
         return utils.sort_by_combination_of(pss, key_functions=[get_simplicity, get_mean_fitness, get_atomicity], reverse=False)
 
     def step(self, verbose = False):
-        print("Running a single step")
         algorithm = self.get_miner_algorithm()
         if verbose:
             coverage = self.get_coverage()
-            print(f"In the operator, the coverage is {(coverage*100).astype(int)}")
+            # print(f"In the operator, the coverage is {(coverage*100).astype(int)}")
 
         with announce("Running a single search step", verbose):
             res = minimize(self.pymoo_problem,
@@ -133,10 +138,10 @@ class SequentialCrowdingMiner(AbstractPSMiner):
 
 
         # debug
-        print("The sorted e_pss are")
+        #print("The sorted e_pss are")
         sorted_pss = self.sort_by_m_and_a(e_pss)
-        for ps in sorted_pss:
-            print(ps)
+        # for ps in sorted_pss:
+        #     print(ps)
 
         amount_to_keep_per_run = ceil(self.population_size_per_run / 20)
         winners = sorted_pss[:amount_to_keep_per_run]

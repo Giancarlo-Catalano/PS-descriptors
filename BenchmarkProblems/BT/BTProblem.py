@@ -18,15 +18,20 @@ from resources.BT.names import names
 class BTProblem(BenchmarkProblem):
     calendar_length: int
     workers: list[Worker]
-    weights = [1, 1, 1, 1, 1, 10, 0]
+    weights: list[float]
     all_skills: set[Skill]
 
     def __init__(self,
                  workers: list[Worker],
-                 calendar_length: int):
+                 calendar_length: int,
+                 weights=None):
+
 
         self.workers = workers
         self.calendar_length = calendar_length
+        if weights is None:
+            weights = [1, 1, 1, 1, 1, 10, 0]
+        self.weights = weights
 
         assert(calendar_length % 7 == 0)
 
