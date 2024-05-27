@@ -7,30 +7,21 @@ import warnings
 
 import numpy as np
 
-import utils
 from BenchmarkProblems.BenchmarkProblem import BenchmarkProblem
 from BenchmarkProblems.EfficientBTProblem.EfficientBTProblem import EfficientBTProblem
-from BenchmarkProblems.EfficientBTProblem.ManuallyConstructedBTInstances import get_start_and_end_instance, \
-    get_toestepping_instance, get_unfairness_instance, get_bad_week_instance, get_square_instance
-
+from BenchmarkProblems.EfficientBTProblem.ManuallyConstructedBTInstances import get_bad_week_instance
 from BenchmarkProblems.GraphColouring import GraphColouring
-from BenchmarkProblems.RoyalRoad import RoyalRoad
 from Core import TerminationCriteria
-from Core.EvaluatedPS import EvaluatedPS
 from Core.Explainer import Explainer
-from Core.FullSolution import FullSolution
-from Core.PS import PS
-from Core.PSMetric.Classic3 import Classic3PSEvaluator
 from Explanation.Detector import Detector
 from Explanation.HyperparameterEvaluator import HyperparameterEvaluator
 from Explanation.SuccessForGC import count_found_targets
 from FSStochasticSearch.Operators import SinglePointFSMutation
 from FSStochasticSearch.SA import SA
-from PSMiners.DEAP.DEAPPSMiner import DEAPPSMiner, test_DEAP_miner
+from PSMiners.DEAP.DEAPPSMiner import DEAPPSMiner
 from PSMiners.Mining import get_history_pRef
-from PSMiners.Platypus.PlatypusPSProblem import test_platypus
-from PSMiners.PyMoo.PSPyMooProblem import test_pymoo
 from utils import announce, indent
+
 
 def warn_with_traceback(message, category, filename, lineno, file=None, line=None):
 
