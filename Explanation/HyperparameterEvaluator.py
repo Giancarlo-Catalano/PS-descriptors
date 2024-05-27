@@ -65,7 +65,8 @@ class HyperparameterEvaluator:
                                           f"{miner_algorithm = }, "
                                           f"{population_size = }, "
                                           f"{ps_budget_per_run = },"
-                                          f"{uses_custom_crowding_operator}")
+                                          f"{uses_custom_crowding_operator},"
+                                          f"ps_budget = {self.ps_budget}")
                                     try:
                                         miner = SequentialCrowdingMiner(pRef = pRef,
                                                                         which_algorithm=miner_algorithm,
@@ -76,7 +77,8 @@ class HyperparameterEvaluator:
                                         miner.run(termination_criterion)
                                         mined_pss = miner.get_results()
                                         found = targets.intersection(mined_pss)
-                                        datapoint = {"island_amount": island_amount,
+                                        datapoint = {"total_ps_budget": self.ps_budget,
+                                                     "island_amount": island_amount,
                                                      "pRef_origin_method": pRef_origin_method,
                                                      "miner_algorith": miner_algorithm,
                                                      "population_size": population_size,
@@ -87,6 +89,7 @@ class HyperparameterEvaluator:
                                                      "uses_custom_crowding_operator": uses_custom_crowding_operator}
                                     except Exception as e:
                                         datapoint = {"ERROR": repr(e),
+                                                     "total_ps_budget": self.ps_budget,
                                                      "island_amount": island_amount,
                                                      "pRef_origin_method": pRef_origin_method,
                                                      "miner_algorith": miner_algorithm,
