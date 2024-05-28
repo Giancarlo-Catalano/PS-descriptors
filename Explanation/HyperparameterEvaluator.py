@@ -9,6 +9,9 @@ from Core.PS import PS
 from Explanation.PRefManager import PRefManager
 from PSMiners.PyMoo.SequentialCrowdingMiner import SequentialCrowdingMiner
 import logging
+
+from utils import execution_time
+
 logger = logging.getLogger(__name__)
 
 
@@ -74,7 +77,8 @@ class HyperparameterEvaluator:
                                                                         budget_per_run=ps_budget_per_run,
                                                                         use_experimental_crowding_operator=uses_custom_crowding_operator)
                                         termination_criterion = TerminationCriteria.PSEvaluationLimit(self.ps_budget)
-                                        miner.run(termination_criterion)
+                                        with execution_time() as timer:
+                                            miner.run(termination_criterion)
                                         mined_pss = miner.get_results()
                                         found = targets.intersection(mined_pss)
                                         datapoint = {"total_ps_budget": self.ps_budget,
@@ -86,7 +90,8 @@ class HyperparameterEvaluator:
                                                      "mined_count": len(mined_pss),
                                                      "target_count": len(targets),
                                                      "found_count": len(found),
-                                                     "uses_custom_crowding_operator": uses_custom_crowding_operator}
+                                                     "uses_custom_crowding_operator": uses_custom_crowding_operator,
+                                                     "runtime":timer.execution_time}
                                     except Exception as e:
                                         datapoint = {"ERROR": repr(e),
                                                      "total_ps_budget": self.ps_budget,

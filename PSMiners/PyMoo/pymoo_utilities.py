@@ -7,9 +7,11 @@ from pymoo.algorithms.moo.nsga3 import NSGA3
 from pymoo.algorithms.moo.rvea import RVEA
 from pymoo.algorithms.moo.spea2 import SPEA2
 from pymoo.core.survival import Survival
+from pymoo.operators.survival.rank_and_crowding import RankAndCrowding
 from pymoo.util.ref_dirs import get_reference_directions
 
 from Core.SearchSpace import SearchSpace
+from PSMiners.PyMoo.CustomCrowding import PyMooCustomCrowding
 
 
 def get_pymoo_search_algorithm(which_algorithm: str,
@@ -26,8 +28,12 @@ def get_pymoo_search_algorithm(which_algorithm: str,
         return NSGA2(pop_size=pop_size, sampling=sampling, crossover=crossover,
                       mutation=mutation, eliminate_duplicates=True, survival=crowding_operator)
     if which_algorithm == "NSGAIII":
-        return NSGA3(pop_size=pop_size, ref_dirs=get_ref_dirs(), sampling=sampling,
-                     crossover=crossover, mutation=mutation, eliminate_duplicates=True, survival=crowding_operator)
+        if isinstance(crowding_operator, PyMooCustomCrowding):
+            return NSGA3(pop_size=pop_size, ref_dirs=get_ref_dirs(), sampling=sampling,
+                         crossover=crossover, mutation=mutation, eliminate_duplicates=True, survival=crowding_operator)
+        else:
+            return NSGA3(pop_size=pop_size, ref_dirs=get_ref_dirs(), sampling=sampling,
+                         crossover=crossover, mutation=mutation, eliminate_duplicates=True)
     elif which_algorithm == "MOEAD":
         return MOEAD(ref_dirs = get_ref_dirs(), sampling=sampling, crossover=crossover,
             mutation=mutation, n_neighbors=n_params, prob_neighbor_mating=0.7,

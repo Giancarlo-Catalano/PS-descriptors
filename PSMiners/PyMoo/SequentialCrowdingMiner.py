@@ -88,7 +88,7 @@ class SequentialCrowdingMiner(AbstractPSMiner):
                                          already_obtained=self.archive,
                                          immediate=False)
         else:
-            return RankAndCrowding(crowding_func = "ce")
+            return RankAndCrowding()
 
     def get_miner_algorithm(self):
         return get_pymoo_search_algorithm(which_algorithm=self.which_algorithm,

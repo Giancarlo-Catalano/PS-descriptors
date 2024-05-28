@@ -167,9 +167,9 @@ def grid_search():
                                    island_amounts_to_test=[6],
                                    pRef_sizes_to_test=[5000],
                                    population_sizes_to_test=[100],
-                                   pRef_origin_methods = ["uniform", "SA", "GA"],
+                                   pRef_origin_methods = ["uniform"],
                                    ps_budget=3000,
-                                   custom_crowding_operators_to_test = [True, False],
+                                   custom_crowding_operators_to_test = [False, True],
                                    ps_budgets_per_run_to_test=[1000])
     hype.get_data()
 
@@ -180,10 +180,9 @@ def grid_search():
 
 if __name__ == '__main__':
     logging.basicConfig(level=logging.INFO)
-    np.seterr(invalid="raise")
     warnings.showwarning = warn_with_traceback
     grid_search()
-    # comment, again, again, again, again, again, again, again
+    # change this comment to make strange submits
 
     #test_linearity_between_gc_and_bt()
 
