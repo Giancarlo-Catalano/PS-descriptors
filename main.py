@@ -132,7 +132,7 @@ def get_problem_explainer() -> Detector:
                                 verbose=True)
 
 def explanation():
-    detector = get_problem_explainer()
+    detector = get_bt_explainer()
     # detector.generate_files_with_default_settings(30000, 30000)
     detector.explanation_loop(amount_of_fs_to_propose=2, ps_show_limit=5, show_debug_info=True)
 
@@ -181,7 +181,8 @@ def grid_search():
 if __name__ == '__main__':
     logging.basicConfig(level=logging.INFO)
     warnings.showwarning = warn_with_traceback
-    grid_search()
+    #grid_search()
+    explanation()
     # change this comment to make strange submits
 
     #test_linearity_between_gc_and_bt()

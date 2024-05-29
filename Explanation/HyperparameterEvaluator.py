@@ -68,7 +68,7 @@ class HyperparameterEvaluator:
                                           f"{miner_algorithm = }, "
                                           f"{population_size = }, "
                                           f"{ps_budget_per_run = },"
-                                          f"{uses_custom_crowding_operator},"
+                                          f"{uses_custom_crowding_operator = },"
                                           f"ps_budget = {self.ps_budget}")
                                     try:
                                         miner = SequentialCrowdingMiner(pRef = pRef,

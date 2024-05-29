@@ -73,3 +73,8 @@ class BenchmarkProblem:
 
     def repr_property_globally(self, k, v, r):
         raise NotImplemented
+
+
+    def get_readable_property_name(self, property: str) -> str:
+        """default behaviour is to just return the raw property name"""
+        return property

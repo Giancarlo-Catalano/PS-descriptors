@@ -170,8 +170,12 @@ class Detector:
         contained_pss = self.sort_pss(contained_pss)
 
         print(f"The solution \n"
-              f"{utils.indent(self.problem.repr_fs(solution.full_solution))}\n"
-              f"contains the following PSs:")
+              f"{utils.indent(self.problem.repr_fs(solution.full_solution))}")
+
+        if len(contained_pss) > 0:
+            print("No matching PSs were found for the requested combination of solution and variable...")
+        else:
+            print(f"contains the following PSs:")
         for ps in contained_pss[:shown_ps_max]:
             print(self.problem.repr_ps(ps))
             print(utils.indent(self.get_ps_description(ps)))
@@ -294,18 +298,18 @@ class Detector:
 
     def describe_properties_of_variable(self, var: int, value: Optional[int] = None):
 
-        properties = [(prop, p_value, prop_mean, control_mean)
-                      for prop, (p_value, prop_mean, control_mean) in self.ps_property_manager.get_variable_properties_stats(self.pss, var, value).items()
-                      if p_value < 0.05]
+        print(f"Significant properties for the variable {var}:"+("" if value is None else f"when it's  = {value}"))
 
+        property_stats = self.ps_property_manager.get_variable_properties_stats(self.pss, var, value)
+        properties = [(prop, p_value, prop_mean, control_mean)
+                      for prop, (p_value, prop_mean, control_mean) in property_stats.items()]
         properties.sort(key=utils.second)
 
-        if value is None:
-            print(f"Significant properties for the variable {var}:")
-        else:
-            print(f"Significant properties for the variable {var} when it's = {value}:")
         for prop, p_value, prop_mean, control_mean in properties:
-            print(f"\t{prop}, with p-value {p_value:e}, prop_mean = {prop_mean:.2f}, control_mean = {control_mean:.2f}")
+            if p_value < 0.05:
+                comparison_str = "lower" if  prop_mean < control_mean else "higher"
+                print(f"* \t{self.problem.get_readable_property_name(prop)} is {comparison_str} than average,"
+                      f"\n\t\t with p-value {p_value:.5f}, prop_mean = {prop_mean:.2f}, control_mean = {control_mean:.2f}")
 
     def handle_pss_query(self):
         for ps in self.pss:

@@ -332,3 +332,15 @@ class EfficientBTProblem(BTProblem):
                                   weights=[1 for _ in range(7)])
 
 
+    def get_readable_property_name(self, property: str) -> str:
+        match property:
+            case "mean_RCQ" : return "rota choice amount"
+            case "mean_error_RCQ" : return "difference in rota choice amount"
+            case "mean_RD" : return "difference between rotas"
+            case "mean_WSP" : return "saturday coverage"
+            case "mean_SQ" : return "amount of skills"
+            case "skill_diversity" : return "similarity of skills"
+            case "skill_coverage" : return "collective coverage of skills"
+            case "quantity_of_fav_rotas" : return "preferred rota usage"
+            case _: return property
+
