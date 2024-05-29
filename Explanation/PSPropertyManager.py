@@ -172,7 +172,7 @@ class PSPropertyManager:
         plt.hist(experimental_values, bins=20, alpha=0.5, label='Experimental', color='red', edgecolor='black', density=True)
 
         # Add labels and title
-        plt.xlabel(property_name)
+        plt.xlabel(self.problem.get_readable_property_name(property_name))
         plt.ylabel('Frequency')
         plt.title('Distribution of Control vs Experimental Values')
 
@@ -181,4 +181,9 @@ class PSPropertyManager:
 
         # Show plot
         plt.show()
+
+
+
+    def get_available_properties(self) -> list[str]:
+        return list(self.property_table.columns)
 

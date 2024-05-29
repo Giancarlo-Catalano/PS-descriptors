@@ -184,25 +184,26 @@ class Detector:
 
 
     def handle_solution_query(self, solutions: list[EvaluatedFS], ps_show_limit: int):
-        index = int(input("Which solution?"))
+        index = int(input("Which solution? "))
         solution_to_explain = solutions[index]
         self.explain_solution(solution_to_explain, shown_ps_max=ps_show_limit)
 
 
     def handle_variable_query(self):
-        variable_index = int(input("Which variable?"))
+        variable_index = int(input("Which variable? "))
         self.describe_properties_of_variable(variable_index)
 
     def handle_variable_within_solution_query(self, solutions: list[EvaluatedFS], ps_show_limit: int):
-        variable_index = int(input("Which variable?"))
-        solution_index = int(input("Which solution?"))
+        variable_index = int(input("Which variable? "))
+        solution_index = int(input("Which solution? "))
         solution_to_explain = solutions[solution_index]
         self.explain_solution(solution_to_explain, shown_ps_max=ps_show_limit, must_contain = variable_index)
         self.describe_properties_of_variable(variable_index)
 
     def handle_plotvar_query(self):
-        variable_index = int(input("Which variable?"))
-        property_name = input("Which property?")
+        variable_index = int(input("Which variable? "))
+        print("\tOptions for properties are "+", ".join(varname for varname in self.ps_property_manager.get_available_properties()))
+        property_name = input("Which property? ")
 
         self.ps_property_manager.plot_var_property(var_index=variable_index,
                                                    value=None,
