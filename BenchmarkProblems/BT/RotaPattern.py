@@ -114,6 +114,9 @@ class RotaPattern:
             new_smaller = RotaPattern(self.workweek_length, new_days)
             return compare_when_same_length(new_smaller, bigger)
 
+    def to_numpy_array(self) -> np.ndarray:
+        return np.array([day.working for day in self.days])
+
 
 def get_workers_present_each_day_of_the_week(rotas: list[RotaPattern], calendar_length: int) -> np.ndarray:
     all_rotas = np.array([rota.working_days_in_calendar(calendar_length) for rota in rotas])

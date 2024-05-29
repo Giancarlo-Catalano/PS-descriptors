@@ -78,3 +78,7 @@ class BenchmarkProblem:
     def get_readable_property_name(self, property: str) -> str:
         """default behaviour is to just return the raw property name"""
         return property
+
+
+    def print_stats_of_pss(self, pss: list[PS]) -> str:
+        return ""

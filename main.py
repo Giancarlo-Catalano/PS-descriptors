@@ -134,7 +134,7 @@ def get_problem_explainer() -> Detector:
 def explanation():
     detector = get_bt_explainer()
     # detector.generate_files_with_default_settings(30000, 30000)
-    detector.explanation_loop(amount_of_fs_to_propose=2, ps_show_limit=5, show_debug_info=True)
+    detector.explanation_loop(amount_of_fs_to_propose=2, ps_show_limit=12, show_debug_info=True)
 
     #detector.explanation_loop(amount_of_fs_to_propose=3, show_debug_info=False, show_global_properties = False)
     #get_bt_explainer().get_variables_properties_table()

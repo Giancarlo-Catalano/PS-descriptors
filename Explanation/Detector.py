@@ -173,9 +173,10 @@ class Detector:
               f"{utils.indent(self.problem.repr_fs(solution.full_solution))}")
 
         if len(contained_pss) > 0:
-            print("No matching PSs were found for the requested combination of solution and variable...")
-        else:
             print(f"contains the following PSs:")
+        else:
+            print("No matching PSs were found for the requested combination of solution and variable...")
+
         for ps in contained_pss[:shown_ps_max]:
             print(self.problem.repr_ps(ps))
             print(utils.indent(self.get_ps_description(ps)))
@@ -211,6 +212,11 @@ class Detector:
                                                    pss=self.pss)
 
 
+
+    def handle_global_query(self):
+        self.describe_global_information()
+
+
     def explanation_loop(self,
                          amount_of_fs_to_propose: int = 6,
                          ps_show_limit: int = 12,
@@ -223,24 +229,30 @@ class Detector:
             print(f"(Has fitness {solution.fitness})")
             print()
 
-        if show_debug_info:
-            self.describe_global_information()
-
-
         finish = False
         while not finish:
-            answer = input("Type a command from [s, v, vs, plotvar], or n to exit: ")
+            answer = input("Type a command from [s, v, vs, plotvar, global], or n to exit: ")
             answer = answer.lower()
             try:
 
-                match answer:
-                    case "s": self.handle_solution_query(solutions, ps_show_limit)
-                    case "v": self.handle_variable_query()
-                    case "vs": self.handle_variable_within_solution_query(solutions, ps_show_limit)
-                    case "plotvar": self.handle_plotvar_query()
-                    case "pss": self.handle_pss_query()
-                    case "n": finish = True
-                    case _: print(f"Sorry, the command {answer} was not recognised")
+                if answer in {"s", "sol", "solution"}:
+                    self.handle_solution_query(solutions, ps_show_limit)
+                elif answer in {"v", "var", "variable"}:
+                    self.handle_variable_query()
+                elif answer in {"vs", "variable in solution"}:
+                    self.handle_variable_within_solution_query(solutions, ps_show_limit)
+                elif answer in {"pss", "ps", "partial solutions"}:
+                    self.handle_pss_query()
+                elif answer in {"pv", "plotvar"}:
+                    self.handle_plotvar_query()
+                elif answer in {"g", "global"}:
+                    self.handle_global_query()
+                elif answer in {"distributions"}:
+                    self.handle_distribution_query()
+                elif answer in {"n", "no", "exit", "q", "quit"}:
+                    finish = True
+                else:
+                    print(f"Sorry, the command {answer} was not recognised")
             except ValueError:
                 print("Sorry, you must have typed the wrong value, please try again")
             except Exception:
@@ -324,6 +336,8 @@ class Detector:
             else:
                 print(f"{ps}")
 
+    def handle_distribution_query(self):
+        self.problem.print_stats_of_pss(self.pss)
 
 
 

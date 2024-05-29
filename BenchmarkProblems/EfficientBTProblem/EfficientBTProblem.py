@@ -344,3 +344,30 @@ class EfficientBTProblem(BTProblem):
             case "quantity_of_fav_rotas" : return "preferred rota usage"
             case _: return property
 
+
+
+    def print_stats_of_pss(self, pss: list[PS]):
+        cohorts = [ps_to_cohort(self, ps) for ps in pss]
+
+        all_rotas = np.vstack(self.extended_patterns)
+        all_rotas = set(tuple(row) for row in all_rotas)
+
+        def which_skills_in_cohort(cohort: Cohort) -> np.ndarray:
+            all_present = set(skill for member in cohort for skill in member.worker.available_skills)
+            return np.array([skill in all_present for skill in self.all_skills])
+        def which_rotas_in_cohort(cohort: Cohort) -> np.ndarray:
+            set_of_rotas = set(tuple(member.chosen_rota_extended) for member in cohort)
+            return np.array([rota in set_of_rotas for rota in all_rotas])
+
+
+        skill_distribution: np.ndarray = sum(map(which_skills_in_cohort, cohorts)) / len(cohorts)
+        rota_distribution: np.ndarray = sum(map(which_rotas_in_cohort, cohorts)) / len(cohorts)
+
+        print(f"The skill distribution is")
+        for skill, freq in zip(self.all_skills, skill_distribution):
+            print(f"\t{skill}: {int(freq*100)}%")
+
+        print(f"The rota distribution is")
+        for rota, freq in zip(all_rotas, rota_distribution):
+            rota_str = "".join("-" if v == 0 else "W" for v in rota)
+            print(f"\t{rota_str}: {int(freq*100)}%")
