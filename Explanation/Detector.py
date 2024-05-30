@@ -247,7 +247,7 @@ class Detector:
                     self.handle_plotvar_query()
                 elif answer in {"g", "global"}:
                     self.handle_global_query()
-                elif answer in {"distributions"}:
+                elif answer in {"d", "distributions"}:
                     self.handle_distribution_query()
                 elif answer in {"n", "no", "exit", "q", "quit"}:
                     finish = True

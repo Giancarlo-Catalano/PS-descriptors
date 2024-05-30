@@ -9,6 +9,7 @@ from BenchmarkProblems.BT.BTProblem import BTProblem
 from BenchmarkProblems.BT.RotaPattern import RotaPattern, get_range_scores, WorkDay
 from BenchmarkProblems.BT.Worker import Worker, Skill
 from BenchmarkProblems.GraphColouring import GraphColouring
+from BenchmarkProblems.RoyalRoad import RoyalRoad
 from Core.FullSolution import FullSolution
 from Core.PS import PS, STAR
 from Core.custom_types import JSON
@@ -332,6 +333,29 @@ class EfficientBTProblem(BTProblem):
                                   weights=[1 for _ in range(7)])
 
 
+    @classmethod
+    def from_RoyalRoad(cls, rr: RoyalRoad):
+        amount_of_days = 7 * rr.clique_size
+        master_rota_days = [WorkDay.working_day(900, 1700)
+                            if i < 7 else WorkDay.not_working() for i in range(amount_of_days)]
+        no_working_days = RotaPattern(7, [WorkDay.not_working() for i in range(amount_of_days)])
+
+
+        def make_worker_in_clique(which_worker: int, which_clique: int) -> Worker:
+            rotas = [RotaPattern(7, utils.cycle(master_rota_days, 7*which_worker)),
+                     no_working_days]
+            name = f"W{which_clique}_{which_worker}"
+            id = name
+            skills = {f"SKILL_{which_clique}"}
+            return Worker(available_skills=skills, available_rotas=rotas, name=name, worker_id=id)
+        workers = [make_worker_in_clique(which_worker, which_clique)
+                   for which_worker in range(rr.clique_size)
+                   for which_clique in range(rr.amount_of_cliques)]
+
+        return EfficientBTProblem(workers=workers, calendar_length=amount_of_days,
+                                  weights=[1 for _ in range(7)], rota_preference_weight=0)
+
+
     def get_readable_property_name(self, property: str) -> str:
         match property:
             case "mean_RCQ" : return "rota choice amount"
@@ -359,15 +383,52 @@ class EfficientBTProblem(BTProblem):
             set_of_rotas = set(tuple(member.chosen_rota_extended) for member in cohort)
             return np.array([rota in set_of_rotas for rota in all_rotas])
 
+        def which_skills_in_worker(worker_index: int) -> np.ndarray:
+            worker_skills = self.workers[worker_index].available_skills
+            return np.array([skill in worker_skills for skill in self.all_skills])
 
-        skill_distribution: np.ndarray = sum(map(which_skills_in_cohort, cohorts)) / len(cohorts)
-        rota_distribution: np.ndarray = sum(map(which_rotas_in_cohort, cohorts)) / len(cohorts)
+        def which_rotas_in_worker(worker_index: int) -> np.ndarray:
+            worker_rotas = self.extended_patterns[worker_index]
+            worker_rotas = {tuple(row) for row in worker_rotas}
+            return np.array([rota in worker_rotas for rota in all_rotas])
+
+
+
+
+        amount_of_workers = len(self.workers)
+
+        skill_distribution_in_pss: np.ndarray = sum(map(which_skills_in_cohort, cohorts)) / len(cohorts)
+        rota_distribution_in_pss: np.ndarray = sum(map(which_rotas_in_cohort, cohorts)) / len(cohorts)
+        skill_distribution_in_problem: np.ndarray = sum(map(which_skills_in_worker, range(amount_of_workers))) / amount_of_workers
+        rota_distribution_in_problem: np.ndarray = sum(map(which_rotas_in_worker, range(amount_of_workers))) / amount_of_workers
+
+
+        def sort_by_delta(container: list):
+            def key_func(item) -> float:
+                return abs(item[2]-item[1])
+
+            return sorted(container, key=key_func, reverse=True)
+
+        skills_freq = list(zip(self.all_skills, skill_distribution_in_pss, skill_distribution_in_problem))
+        skills_freq = sort_by_delta(skills_freq)
+
+        rota_freq = list(zip(all_rotas, rota_distribution_in_pss, rota_distribution_in_problem))
+        rota_freq = sort_by_delta(rota_freq)
+
+
+        def as_percentage(num: float) -> str:
+            return f"{num*100:.2f}%"
 
         print(f"The skill distribution is")
-        for skill, freq in zip(self.all_skills, skill_distribution):
-            print(f"\t{skill}: {int(freq*100)}%")
+        for skill, pss_freq, problem_freq in skills_freq:
+            print(f"\t{skill}: \tps={as_percentage(pss_freq)}, \tprob={as_percentage(problem_freq)}")
 
         print(f"The rota distribution is")
-        for rota, freq in zip(all_rotas, rota_distribution):
+        for rota, pss_freq, problem_freq in rota_freq:
             rota_str = "".join("-" if v == 0 else "W" for v in rota)
-            print(f"\t{rota_str}: {int(freq*100)}%")
+            print(f"\t{rota_str}: \tps={as_percentage(pss_freq)}, \tprob={as_percentage(problem_freq)}")
+
+
+
+        utils.simple_scatterplot("skill_pss_freq", "skill_problem_freq", skill_distribution_in_pss, skill_distribution_in_problem)
+        utils.simple_scatterplot("rota_pss_freq", "rota_problem_freq", rota_distribution_in_pss, rota_distribution_in_problem)

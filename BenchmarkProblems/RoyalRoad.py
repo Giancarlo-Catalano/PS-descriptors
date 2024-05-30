@@ -1,3 +1,5 @@
+import numpy as np
+
 from BenchmarkProblems.UnitaryProblem import UnitaryProblem
 from Core.FullSolution import FullSolution
 from Core.PS import PS
@@ -25,3 +27,15 @@ class RoyalRoad(UnitaryProblem):
 
     def ps_to_properties(self, ps: PS) -> dict:
         return {"Functionality": 0}
+
+
+    def get_targets(self) -> set[PS]:
+        result = set()
+        empty_values = np.full(fill_value=-1, shape=self.amount_of_bits)
+        for clique in range(self.amount_of_cliques):
+            values = empty_values.copy()
+            start = clique * self.clique_size
+            end = start + self.clique_size
+            values[start:end] = 1
+            result.add(PS(values))
+        return result

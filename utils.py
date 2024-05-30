@@ -1,3 +1,4 @@
+import json
 import os
 import time
 from contextlib import ContextDecorator
@@ -300,3 +301,47 @@ def flatten(list_of_lists: list[list]) -> list:
     for item in list_of_lists:
         flat_list += item
     return flat_list
+
+
+
+def simple_scatterplot(x_label:str, y_label:str, xs: Iterable[float], ys: Iterable[float]):
+    if len(xs) != len(ys):
+        raise ValueError("The lists must have the same length")
+
+    # Create scatter plot
+    plt.scatter(xs, ys)
+
+    # Add title and labels
+    plt.title(f'Scatter Plot of {x_label} vs {y_label}')
+    plt.xlabel(x_label)
+    plt.ylabel(y_label)
+
+    # Display the plot
+    plt.show()
+
+
+
+
+def decode_data_from_islets(input_directory: str, output_filename: str):
+    all_dicts = []
+    # Iterate through all files in the input directory
+    for filename in os.listdir(input_directory):
+        # Construct full file path
+        file_path = os.path.join(input_directory, filename)
+
+        # Check if the file is a JSON file
+        if not os.path.isfile(file_path):
+            continue
+
+        with open(file_path, 'r') as file:
+            data = json.load(file)
+            all_dicts.extend(data)
+
+    # Convert list of dictionaries to DataFrame
+    df = pd.DataFrame(all_dicts)
+
+    # Write the DataFrame to a CSV file
+    df.to_csv(output_filename, index=False)
+
+def cycle(items: list, shift: int) -> list:
+        return items[-shift:]+items[:-shift]

@@ -19,7 +19,7 @@ from FSStochasticSearch.Operators import SinglePointFSMutation
 from FSStochasticSearch.SA import SA
 from PSMiners.DEAP.DEAPPSMiner import DEAPPSMiner
 from PSMiners.Mining import get_history_pRef
-from utils import announce, indent
+from utils import announce, indent, decode_data_from_islets
 
 
 def warn_with_traceback(message, category, filename, lineno, file=None, line=None):
@@ -164,13 +164,13 @@ def grid_search():
     #                                ps_budget=30000,
     #                                ps_budgets_per_run_to_test=[1000, 5000, 10000])
     hype = HyperparameterEvaluator(algorithms_to_test=["NSGAII", "NSGAIII", "MOEAD"],
-                                   island_amounts_to_test=[6],
-                                   pRef_sizes_to_test=[5000],
-                                   population_sizes_to_test=[100],
-                                   pRef_origin_methods = ["uniform"],
-                                   ps_budget=3000,
-                                   custom_crowding_operators_to_test = [False, True],
-                                   ps_budgets_per_run_to_test=[1000])
+                                   problems_to_test=["island_3", "island_5", "island_10", "RR_3", "RR_5", "RR_10"],
+                                   pRef_sizes_to_test=[30000],
+                                   population_sizes_to_test=[100, 200],
+                                   pRef_origin_methods = ["SA+uniform", "SA"],
+                                   ps_budget=30000,
+                                   custom_crowding_operators_to_test = [True, False],
+                                   ps_budgets_per_run_to_test=[1000, 3000, 5000])
     hype.get_data()
 
 
@@ -181,11 +181,15 @@ def grid_search():
 if __name__ == '__main__':
     logging.basicConfig(level=logging.INFO)
     warnings.showwarning = warn_with_traceback
-    #grid_search()
-    explanation()
+    grid_search()
+    #explanation()
     # change this comment to make strange submits
 
     #test_linearity_between_gc_and_bt()
+
+
+    # decode_data_from_islets(r"C:\Users\gac8\Documents\Condor\islets_filtered",
+    #                         r"C:\Users\gac8\Documents\Condor\islets.csv")
 
 
 
