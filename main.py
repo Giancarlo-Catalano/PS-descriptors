@@ -11,6 +11,7 @@ from BenchmarkProblems.BenchmarkProblem import BenchmarkProblem
 from BenchmarkProblems.EfficientBTProblem.EfficientBTProblem import EfficientBTProblem
 from BenchmarkProblems.EfficientBTProblem.ManuallyConstructedBTInstances import get_bad_week_instance
 from BenchmarkProblems.GraphColouring import GraphColouring
+from BenchmarkProblems.RoyalRoad import RoyalRoad
 from Core import TerminationCriteria
 from Core.Explainer import Explainer
 from Explanation.Detector import Detector
@@ -122,18 +123,23 @@ def get_manual_bt_explainer() -> Detector:
 
 def get_problem_explainer() -> Detector:
     experimental_directory = r"C:\Users\gac8\PycharmProjects\PS-PDF\Experimentation\GC\Dummy"
-    gc_problem_file = os.path.join(experimental_directory, "islets.json")
-    gc_problem = GraphColouring.from_file(gc_problem_file)
-    gc_problem.view()
-    problem = EfficientBTProblem.from_Graph_Colouring(gc_problem)
+
+    use_gc = False
+    if use_gc:
+        gc_problem = GraphColouring.make_insular_instance(4)
+        gc_problem.view()
+        problem = EfficientBTProblem.from_Graph_Colouring(gc_problem)
+    else:
+        rr_problem = RoyalRoad(5, 4)
+        problem = EfficientBTProblem.from_RoyalRoad(rr_problem)
     return Detector.from_folder(problem=problem,
                                 folder=experimental_directory,
                                 speciality_threshold=0.2,
                                 verbose=True)
 
 def explanation():
-    detector = get_bt_explainer()
-    # detector.generate_files_with_default_settings(30000, 30000)
+    detector = get_problem_explainer()
+    detector.generate_files_with_default_settings(10000, 30000)
     detector.explanation_loop(amount_of_fs_to_propose=2, ps_show_limit=12, show_debug_info=True)
 
     #detector.explanation_loop(amount_of_fs_to_propose=3, show_debug_info=False, show_global_properties = False)
@@ -156,18 +162,19 @@ def explanation():
 
 
 def grid_search():
-    # hype = HyperparameterEvaluator(algorithms_to_test=["NSGAII", "NSGAIII", "SPEA2"],
-    #                                island_amounts_to_test=[3, 6, 12],
-    #                                pRef_sizes_to_test=[1000, 5000, 10000, 30000],
-    #                                pRef_origin_methods = ["uniform", "SA"]
-    #                                population_sizes_to_test=[50, 100, 500],
+    # hype = HyperparameterEvaluator(algorithms_to_test=["NSGAII", "NSGAIII", "MOEAD"],
+    #                                problems_to_test=["island_3", "island_5", "island_10", "RR_3", "RR_5", "RR_10"],
+    #                                pRef_sizes_to_test=[30000],
+    #                                population_sizes_to_test=[100, 200],
+    #                                pRef_origin_methods = ["SA+uniform", "SA"],
     #                                ps_budget=30000,
-    #                                ps_budgets_per_run_to_test=[1000, 5000, 10000])
-    hype = HyperparameterEvaluator(algorithms_to_test=["NSGAII", "NSGAIII", "MOEAD"],
-                                   problems_to_test=["island_3", "island_5", "island_10", "RR_3", "RR_5", "RR_10"],
+    #                                custom_crowding_operators_to_test = [True, False],
+    #                                ps_budgets_per_run_to_test=[1000, 3000, 5000])
+    hype = HyperparameterEvaluator(algorithms_to_test=["NSGAII"],
+                                   problems_to_test=[ "RR_5"],
                                    pRef_sizes_to_test=[30000],
                                    population_sizes_to_test=[100, 200],
-                                   pRef_origin_methods = ["SA+uniform", "SA"],
+                                   pRef_origin_methods = ["SA uniform"],
                                    ps_budget=30000,
                                    custom_crowding_operators_to_test = [True, False],
                                    ps_budgets_per_run_to_test=[1000, 3000, 5000])
@@ -181,8 +188,8 @@ def grid_search():
 if __name__ == '__main__':
     logging.basicConfig(level=logging.INFO)
     warnings.showwarning = warn_with_traceback
-    grid_search()
-    #explanation()
+    #grid_search()
+    explanation()
     # change this comment to make strange submits
 
     #test_linearity_between_gc_and_bt()

@@ -77,7 +77,8 @@ class MinedPSManager:
         algorithm = SequentialCrowdingMiner(pRef = pRef,
                                             budget_per_run=ps_budget_per_run,
                                             population_size_per_run=population_size,
-                                            which_algorithm="NSGAII")
+                                            which_algorithm="NSGAII",
+                                            use_experimental_crowding_operator=True)
 
         with announce(f"Running {algorithm} on {pRef} with {ps_budget_in_total =}", self.verbose):
             budget_limit = TerminationCriteria.PSEvaluationLimit(ps_limit=ps_budget_in_total)

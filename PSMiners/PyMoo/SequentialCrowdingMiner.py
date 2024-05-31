@@ -20,7 +20,7 @@ from Core.TerminationCriteria import TerminationCriteria, PSEvaluationLimit, Uni
     SearchSpaceIsCovered
 from PSMiners.AbstractPSMiner import AbstractPSMiner
 from PSMiners.DEAP.deap_utils import get_toolbox_for_problem, get_stats_object, nsga
-from PSMiners.PyMoo.CustomCrowding import PyMooPSSequentialCrowding
+from PSMiners.PyMoo.CustomCrowding import PyMooPSSequentialCrowding, AggressivePyMooPSSequentialCrowding
 from PSMiners.PyMoo.Operators import PSGeometricSampling, PSSimulatedBinaryCrossover, PSPolynomialMutation
 from PSMiners.PyMoo.PSPyMooProblem import PSPyMooProblem, get_pymoo_algorithm
 from PSMiners.PyMoo.pymoo_utilities import get_pymoo_search_algorithm
@@ -86,7 +86,7 @@ class SequentialCrowdingMiner(AbstractPSMiner):
         if self.use_experimental_crowding_operator:
             return PyMooPSSequentialCrowding(search_space=self.search_space,
                                          already_obtained=self.archive,
-                                         immediate=False)
+                                         immediate=True)
         else:
             return RankAndCrowding()
 

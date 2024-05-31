@@ -255,8 +255,8 @@ class Detector:
                     print(f"Sorry, the command {answer} was not recognised")
             except ValueError:
                 print("Sorry, you must have typed the wrong value, please try again")
-            except Exception:
-                print("Something went wrong")
+            except Exception as e:
+                print(f"Something went wrong: {e}")
             finally:
                 continue
 
@@ -270,13 +270,13 @@ class Detector:
                                              force_include_in_pRef: Optional[list[FullSolution]] = None):
 
         self.pRef_manager.generate_pRef_file(sample_size=pRef_size,
-                                             which_algorithm="uniform SA GA",
+                                             which_algorithm="uniform SA",
                                              force_include=force_include_in_pRef)
 
         self.mined_ps_manager.generate_ps_file(pRef = self.pRef,
                                                population_size=100,
                                                ps_budget_in_total=pss_budget,
-                                               ps_budget_per_run=3000)
+                                               ps_budget_per_run=10000)
         self.mined_ps_manager.generate_control_pss_file(samples_for_each_category=1000)
 
         self.ps_property_manager.generate_property_table_file(self.mined_ps_manager.pss, self.mined_ps_manager.control_pss)
@@ -325,7 +325,8 @@ class Detector:
                       f"\n\t\t with p-value {p_value:.5f}, prop_mean = {prop_mean:.2f}, control_mean = {control_mean:.2f}")
 
     def handle_pss_query(self):
-        for ps in self.pss:
+        pss = self.sort_pss(self.pss)
+        for ps in pss:
             if isinstance(ps, EvaluatedPS):
                 s, m, a = ps.metric_scores
                 print(f"{ps}, "

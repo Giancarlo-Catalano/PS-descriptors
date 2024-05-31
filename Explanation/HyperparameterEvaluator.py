@@ -76,6 +76,7 @@ class HyperparameterEvaluator:
             targets: set[PS] = original_problem.get_targets()
             for pRef_origin_method in self.pRef_origin_methods:
                 for pRef_size in self.pRef_sizes_to_test:
+                    logger.info(f"Generating the pRef")
                     pRef = PRefManager.generate_pRef(problem = bt_problem,
                                                      which_algorithm= pRef_origin_method,
                                                      sample_size=pRef_size)
@@ -102,6 +103,7 @@ class HyperparameterEvaluator:
                                             miner.run(termination_criterion)
                                         mined_pss = miner.get_results()
                                         found = targets.intersection(mined_pss)
+                                        logger.info(f"\t{len(found)} were found!")
                                         datapoint = {"total_ps_budget": self.ps_budget,
                                                      "problem_str": problem_str,
                                                      "pRef_origin_method": pRef_origin_method,
@@ -114,6 +116,7 @@ class HyperparameterEvaluator:
                                                      "uses_custom_crowding_operator": uses_custom_crowding_operator,
                                                      "runtime":timer.execution_time}
                                     except Exception as e:
+                                        logger.info(f"An error {e} occurred")
                                         datapoint = {"ERROR": repr(e),
                                                      "total_ps_budget": self.ps_budget,
                                                      "problem_str": problem_str,

@@ -342,15 +342,15 @@ class EfficientBTProblem(BTProblem):
 
 
         def make_worker_in_clique(which_worker: int, which_clique: int) -> Worker:
-            rotas = [RotaPattern(7, utils.cycle(master_rota_days, 7*which_worker)),
-                     no_working_days]
+            rotas = [no_working_days,
+                     RotaPattern(7, utils.cycle(master_rota_days, 7*which_worker))]
             name = f"W{which_clique}_{which_worker}"
             id = name
             skills = {f"SKILL_{which_clique}"}
             return Worker(available_skills=skills, available_rotas=rotas, name=name, worker_id=id)
         workers = [make_worker_in_clique(which_worker, which_clique)
-                   for which_worker in range(rr.clique_size)
-                   for which_clique in range(rr.amount_of_cliques)]
+                   for which_clique in range(rr.amount_of_cliques)
+                   for which_worker in range(rr.clique_size)]
 
         return EfficientBTProblem(workers=workers, calendar_length=amount_of_days,
                                   weights=[1 for _ in range(7)], rota_preference_weight=0)
@@ -374,34 +374,27 @@ class EfficientBTProblem(BTProblem):
         cohorts = [ps_to_cohort(self, ps) for ps in pss]
 
         all_rotas = np.vstack(self.extended_patterns)
-        all_rotas = set(tuple(row) for row in all_rotas)
+        all_rotas = list(set(tuple(row) for row in all_rotas))
+        all_skills = list(self.all_skills)
 
-        def which_skills_in_cohort(cohort: Cohort) -> np.ndarray:
-            all_present = set(skill for member in cohort for skill in member.worker.available_skills)
-            return np.array([skill in all_present for skill in self.all_skills])
-        def which_rotas_in_cohort(cohort: Cohort) -> np.ndarray:
-            set_of_rotas = set(tuple(member.chosen_rota_extended) for member in cohort)
-            return np.array([rota in set_of_rotas for rota in all_rotas])
+        def skills_of_cohort(cohort: Cohort) -> list[Skill]:
+            return [skill for member in cohort
+                    for skill in member.worker.available_skills]
+        def rotas_of_cohort(cohort: Cohort) -> list[tuple]:
+            return [tuple(member.chosen_rota_extended) for member in cohort]
 
-        def which_skills_in_worker(worker_index: int) -> np.ndarray:
-            worker_skills = self.workers[worker_index].available_skills
-            return np.array([skill in worker_skills for skill in self.all_skills])
-
-        def which_rotas_in_worker(worker_index: int) -> np.ndarray:
-            worker_rotas = self.extended_patterns[worker_index]
-            worker_rotas = {tuple(row) for row in worker_rotas}
-            return np.array([rota in worker_rotas for rota in all_rotas])
+        def rotas_of_worker(worker_index: int) -> list[tuple]:
+            return [tuple(row) for row in self.extended_patterns[worker_index]]
 
 
-
-
-        amount_of_workers = len(self.workers)
-
-        skill_distribution_in_pss: np.ndarray = sum(map(which_skills_in_cohort, cohorts)) / len(cohorts)
-        rota_distribution_in_pss: np.ndarray = sum(map(which_rotas_in_cohort, cohorts)) / len(cohorts)
-        skill_distribution_in_problem: np.ndarray = sum(map(which_skills_in_worker, range(amount_of_workers))) / amount_of_workers
-        rota_distribution_in_problem: np.ndarray = sum(map(which_rotas_in_worker, range(amount_of_workers))) / amount_of_workers
-
+        skill_distribution_in_pss = utils.count_frequency_in_containers(map(skills_of_cohort, cohorts),
+                                                                        all_skills)
+        skill_distribution_in_problem = utils.count_frequency_in_containers(map(lambda w: w.available_skills, self.workers),
+                                                                            all_skills)
+        rota_distribution_in_pss = utils.count_frequency_in_containers(map(rotas_of_cohort, cohorts),
+                                                                            all_rotas)
+        rota_distribution_in_problem = utils.count_frequency_in_containers(map(rotas_of_worker, range(len(self.workers))),
+                                                                            all_rotas)
 
         def sort_by_delta(container: list):
             def key_func(item) -> float:

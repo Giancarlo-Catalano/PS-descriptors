@@ -345,3 +345,11 @@ def decode_data_from_islets(input_directory: str, output_filename: str):
 
 def cycle(items: list, shift: int) -> list:
         return items[-shift:]+items[:-shift]
+
+
+def count_frequency_in_containers(containers: list[Iterable], catalog: list) -> np.ndarray:
+    def get_presence_array(container: Iterable) -> np.ndarray:
+        return np.array([item in container for item in catalog])
+
+    counts = list(map(get_presence_array, containers))
+    return np.average(counts, axis=0)

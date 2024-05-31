@@ -5,6 +5,7 @@ from pymoo.core.survival import Survival
 from pymoo.util.nds.non_dominated_sorting import NonDominatedSorting
 from pymoo.util.randomized_argsort import randomized_argsort
 
+import utils
 from Core.PS import STAR, PS
 from Core.SearchSpace import SearchSpace
 
@@ -138,5 +139,52 @@ class PyMooPSSequentialCrowding(PyMooCustomCrowding):
         self.opt = population[front_indexes]  # just to comply with Pymoo, ignore this
 
         return scores
+
+
+
+
+class AggressivePyMooPSSequentialCrowding(PyMooCustomCrowding):  # just for debu
+    search_space: SearchSpace
+    elite: list[PS]
+    opt: Any
+
+    def __init__(self, search_space: SearchSpace, already_obtained: list[PS], immediate = False):
+        self.search_space = search_space
+        super().__init__()
+        self.elite  = already_obtained
+        self.opt = []
+
+    @classmethod  # for legacy reasons
+    def get_coverage(cls, search_space: SearchSpace, already_obtained: list[PS]):
+        if len(already_obtained) == 0:
+            return np.zeros(search_space.amount_of_parameters, dtype=float)
+
+        pop_matrix = np.array([ps.values for ps in already_obtained])
+        where_fixed = pop_matrix != STAR
+        counts = np.sum(where_fixed, axis=0)
+
+        return counts / len(already_obtained)
+
+
+
+    def get_offence_score_for_ps(self, ps: PS) -> int:
+
+        def is_offended(from_elite: PS) -> bool:
+            return any((from_elite.values != STAR) & (ps.values != STAR))
+
+        return len([from_elite for from_elite in self.elite if is_offended(from_elite)])
+
+
+    def get_crowding_scores_of_front(self, all_F, n_remove, population, front_indexes) -> np.ndarray:
+        # note to self: 1 is good, 0 is bad
+        pss = [PS(individual.X) for individual in population[front_indexes]]
+        offence_scores: list[int] = [self.get_offence_score_for_ps(ps) for ps in pss]
+        final_scores = utils.remap_array_in_zero_one(-np.array(offence_scores))
+        self.opt = population[front_indexes]  # just to comply with Pymoo, ignore this
+
+        return final_scores
+
+
+
 
 
