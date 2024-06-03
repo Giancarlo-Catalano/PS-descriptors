@@ -163,7 +163,7 @@ class Detector:
         def get_simplicity(ps: EvaluatedPS) -> float:
             return ps.metric_scores[0]
 
-        return utils.sort_by_combination_of(pss, key_functions=[get_mean_fitness, get_atomicity], reverse=False)
+        return utils.sort_by_combination_of(pss, key_functions=[get_simplicity, get_mean_fitness, get_atomicity], reverse=False)
 
     def explain_solution(self, solution: EvaluatedFS, shown_ps_max: int, must_contain: Optional[int] = None):
         contained_pss: list[EvaluatedPS] = self.get_contained_ps(solution, must_contain = must_contain)
@@ -234,7 +234,7 @@ class Detector:
             answer = input("Type a command from [s, v, vs, plotvar, global], or n to exit: ")
             answer = answer.lower()
             try:
-
+                #TODO convert this into a match statement
                 if answer in {"s", "sol", "solution"}:
                     self.handle_solution_query(solutions, ps_show_limit)
                 elif answer in {"v", "var", "variable"}:
@@ -253,8 +253,6 @@ class Detector:
                     finish = True
                 else:
                     print(f"Sorry, the command {answer} was not recognised")
-            except ValueError:
-                print("Sorry, you must have typed the wrong value, please try again")
             except Exception as e:
                 print(f"Something went wrong: {e}")
             finally:
@@ -274,9 +272,9 @@ class Detector:
                                              force_include=force_include_in_pRef)
 
         self.mined_ps_manager.generate_ps_file(pRef = self.pRef,
-                                               population_size=100,
+                                               population_size=200,
                                                ps_budget_in_total=pss_budget,
-                                               ps_budget_per_run=10000)
+                                               ps_budget_per_run=pss_budget // 6)
         self.mined_ps_manager.generate_control_pss_file(samples_for_each_category=1000)
 
         self.ps_property_manager.generate_property_table_file(self.mined_ps_manager.pss, self.mined_ps_manager.control_pss)
@@ -306,8 +304,8 @@ class Detector:
         distribution = self.get_ps_size_distribution()
         print("\t"+"\n\t".join(f"{size}: {int(prop*100)}%" for size, prop in distribution.items()))
 
-
-
+        # print("The problem specific global information is")
+        # self.problem.get_problem_specific_global_information(self.get_best_n_full_solutions(10))
 
     def describe_properties_of_variable(self, var: int, value: Optional[int] = None):
 
@@ -338,7 +336,10 @@ class Detector:
                 print(f"{ps}")
 
     def handle_distribution_query(self):
-        self.problem.print_stats_of_pss(self.pss)
+        print("PSs properties")
+        self.problem.print_stats_of_pss(self.pss, self.get_best_n_full_solutions(50))
+
+
 
 
 

@@ -10,6 +10,7 @@ from BenchmarkProblems.BT.RotaPattern import RotaPattern, get_range_scores, Work
 from BenchmarkProblems.BT.Worker import Worker, Skill
 from BenchmarkProblems.GraphColouring import GraphColouring
 from BenchmarkProblems.RoyalRoad import RoyalRoad
+from Core.EvaluatedFS import EvaluatedFS
 from Core.FullSolution import FullSolution
 from Core.PS import PS, STAR
 from Core.custom_types import JSON
@@ -370,7 +371,7 @@ class EfficientBTProblem(BTProblem):
 
 
 
-    def print_stats_of_pss(self, pss: list[PS]):
+    def print_stats_of_pss(self, pss: list[PS], full_solutions: list[EvaluatedFS]):
         cohorts = [ps_to_cohort(self, ps) for ps in pss]
 
         all_rotas = np.vstack(self.extended_patterns)
@@ -405,9 +406,40 @@ class EfficientBTProblem(BTProblem):
         skills_freq = list(zip(self.all_skills, skill_distribution_in_pss, skill_distribution_in_problem))
         skills_freq = sort_by_delta(skills_freq)
 
-        rota_freq = list(zip(all_rotas, rota_distribution_in_pss, rota_distribution_in_problem))
+
+
+
+
+        # calculating how many times a rota was chosen vs available
+        def rotas_in_solution(solution: FullSolution) -> list[tuple]:
+            return [tuple(self.extended_patterns[var][val]) for var, val in enumerate(solution.values)]
+
+        def rota_counts_in_solution(solution: FullSolution) -> np.ndarray:
+            rotas_present = rotas_in_solution(solution)
+            return np.array([len([1 for rota in rotas_present if rota == wanted_rota])
+                             for wanted_rota in all_rotas])
+
+
+        def winning_rate_for_solution(e_solution: EvaluatedFS) -> np.ndarray:
+            counts = rota_counts_in_solution(e_solution.full_solution)
+            total_per_rota = rota_distribution_in_problem * len(self.workers)
+            return counts / total_per_rota
+
+        def average_of_winning_rates(solutions: list[FullSolution]) -> np.ndarray:
+            return np.average(np.array(list(map(winning_rate_for_solution, solutions))), axis=0)
+
+
+        rota_winning_freqs = average_of_winning_rates(full_solutions)
+        rota_freq = list(zip(all_rotas, rota_distribution_in_pss, rota_distribution_in_problem, rota_winning_freqs))
         rota_freq = sort_by_delta(rota_freq)
 
+
+        def useful_properties(rota: tuple) -> list[float]:
+            pattern = np.array(rota).reshape((-1, 7))
+            covered_saturdays = np.sum(pattern[:, 5])
+            covered_sundays = np.sum(pattern[:, 6])
+            range_score = self.aggregate_range_scores(get_range_scores(pattern))
+            return [covered_saturdays, covered_sundays, range_score]
 
         def as_percentage(num: float) -> str:
             return f"{num*100:.2f}%"
@@ -417,11 +449,32 @@ class EfficientBTProblem(BTProblem):
             print(f"\t{skill}: \tps={as_percentage(pss_freq)}, \tprob={as_percentage(problem_freq)}")
 
         print(f"The rota distribution is")
-        for rota, pss_freq, problem_freq in rota_freq:
+        for rota, pss_freq, problem_freq, winning_freq in rota_freq:
             rota_str = "".join("-" if v == 0 else "W" for v in rota)
-            print(f"\t{rota_str}: \tps={as_percentage(pss_freq)}, \tprob={as_percentage(problem_freq)}")
+            adj_problem_freq = int(problem_freq * len(self.workers))
+            adj_winning_freq = winning_freq * adj_problem_freq
+            #print(f"\t{rota_str}: \tps={as_percentage(pss_freq)}, \tprob={as_percentage(problem_freq)}, \twins={as_percentage(winning_freq)}")
+            properties = useful_properties(rota)
+            print(f"\t{rota_str}: \tps={as_percentage(pss_freq)}, \t#workers={adj_problem_freq}, \tavg.wins={adj_winning_freq:.2f}, {properties =}")
 
 
 
         utils.simple_scatterplot("skill_pss_freq", "skill_problem_freq", skill_distribution_in_pss, skill_distribution_in_problem)
-        utils.simple_scatterplot("rota_pss_freq", "rota_problem_freq", rota_distribution_in_pss, rota_distribution_in_problem)
+        utils.make_interactive_3d_plot(rota_distribution_in_pss,
+                                       rota_distribution_in_problem,
+                                       rota_winning_freqs,
+                                       names = ["rota_pss_freq", "rota_problem_freq", "rota_winning"])
+
+
+        #filename = r"C:\Users\gac8\PycharmProjects\PS-PDF\Experimentation\BT\MartinBT\rota_popularity.csv"
+
+
+
+
+
+
+
+
+
+
+

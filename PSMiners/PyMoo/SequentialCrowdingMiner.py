@@ -69,7 +69,7 @@ class SequentialCrowdingMiner(AbstractPSMiner):
 
     @classmethod
     def sort_by_atomicity(cls, e_pss: list[EvaluatedPS]) -> list[EvaluatedPS]:
-        e_pss.sort(reverse=False, key=lambda x: x.metric_scores[-1])
+        e_pss.sort(reverse=False, key=lambda x: x.metric_scores[-1])   # reverse is false because the keys are inverted
         return e_pss
 
     @classmethod
@@ -79,14 +79,23 @@ class SequentialCrowdingMiner(AbstractPSMiner):
 
 
 
+    @classmethod
+    def sort_by_mean_fitness_and_atomicity(cls, e_pss: list[EvaluatedPS]):
+        return utils.sort_by_combination_of(e_pss,
+                                            key_functions=[lambda x: x.metric_scores[1],
+                                                           lambda x:x.metric_scores[2]],
+                                            reverse=False)
+
+
+
     def get_crowding_operator(self):
         # if len(self.archive) == 0:
         #     return RankAndCrowding(crowding_func = "ce")
         # else:
         if self.use_experimental_crowding_operator:
             return PyMooPSSequentialCrowding(search_space=self.search_space,
-                                         already_obtained=self.archive,
-                                         immediate=True)
+                                             already_obtained=self.archive,
+                                             immediate=True)
         else:
             return RankAndCrowding()
 
@@ -125,7 +134,7 @@ class SequentialCrowdingMiner(AbstractPSMiner):
         algorithm = self.get_miner_algorithm()
         if verbose:
             coverage = self.get_coverage()
-            # print(f"In the operator, the coverage is {(coverage*100).astype(int)}")
+            print(f"In the operator, the coverage is {(coverage*100).astype(int)}")
 
         with announce("Running a single search step", verbose):
             res = minimize(self.pymoo_problem,
@@ -180,6 +189,7 @@ class SequentialCrowdingMiner(AbstractPSMiner):
         if amount is None:
             amount = len(self.archive)
 
+        self.archive = self.without_duplicates(self.archive)
         self.archive = self.sort_by_atomicity(self.archive)
         return self.archive[:amount]
 

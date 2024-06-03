@@ -8,6 +8,7 @@ from Core.EvaluatedPS import EvaluatedPS
 from Core.PRef import PRef
 from Core.PS import PS, STAR
 from PSMiners.AbstractPSMiner import AbstractPSMiner
+from PSMiners.DEAP.DEAPPSMiner import DEAPPSMiner
 from PSMiners.Mining import get_ps_miner, write_evaluated_pss_to_file, load_pss, write_pss_to_file
 from PSMiners.PyMoo.SequentialCrowdingMiner import SequentialCrowdingMiner
 from utils import announce
@@ -99,11 +100,11 @@ class MinedPSManager:
                          ps_budget_per_run: int,
                          ps_budget_in_total: int):
 
-        with announce(f"Mining the partial solutions using the sequential miner"):
+        with announce(f"Mining the partial solutions"):
             self.cached_pss = self.mine_pss(pRef=pRef,
-                                                population_size=population_size,
-                                                ps_budget_in_total=ps_budget_in_total,
-                                                ps_budget_per_run=ps_budget_per_run)
+                                            population_size=population_size,
+                                            ps_budget_in_total=ps_budget_in_total,
+                                            ps_budget_per_run=ps_budget_per_run)
 
 
 

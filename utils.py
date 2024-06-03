@@ -8,6 +8,7 @@ import numpy as np
 import pandas as pd
 from matplotlib import pyplot as plt
 from datetime import datetime
+import plotly.express as px
 
 
 def unzip(zipped):
@@ -353,3 +354,45 @@ def count_frequency_in_containers(containers: list[Iterable], catalog: list) -> 
 
     counts = list(map(get_presence_array, containers))
     return np.average(counts, axis=0)
+
+
+def make_interactive_3d_plot(first_metric, second_metric, third_metric, names: list[str]):
+    metric_matrix = np.array(list(zip(first_metric, second_metric, third_metric)))
+    df = pd.DataFrame(metric_matrix, columns=names)
+    # Create a 3D scatter plot with Plotly Express
+    fig = px.scatter_3d(
+        df,
+        x=names[0],
+        y=names[1],
+        z=names[2],
+        title=f"3D Scatter Plot of {names}",
+        labels={
+            names[0]: names[0],
+            names[1]: names[1],
+            names[2]: names[2]
+        }
+    )
+    # Determine tick values and text for each axis
+    x_ticks = np.linspace(df[names[0]].min(), df[names[0]].max(), 10)
+    y_ticks = np.linspace(df[names[1]].min(), df[names[1]].max(), 10)
+    z_ticks = np.linspace(df[names[2]].min(), df[names[2]].max(), 10)
+
+    fig.update_layout(
+        scene=dict(
+            xaxis=dict(
+                tickvals=x_ticks,
+                ticktext=[f"{tick:.2f}" for tick in x_ticks]
+            ),
+            yaxis=dict(
+                tickvals=y_ticks,
+                ticktext=[f"{tick:.2f}" for tick in y_ticks]
+            ),
+            zaxis=dict(
+                tickvals=z_ticks,
+                ticktext=[f"{tick:.2f}" for tick in z_ticks]
+            )
+        )
+    )
+
+
+    fig.show()

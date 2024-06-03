@@ -37,8 +37,7 @@ def get_pymoo_search_algorithm(which_algorithm: str,
     elif which_algorithm == "MOEAD":
         return MOEAD(ref_dirs = get_ref_dirs(), sampling=sampling, crossover=crossover,
             mutation=mutation, n_neighbors=n_params, prob_neighbor_mating=0.7,
-            survival=crowding_operator
-        )
+            survival=crowding_operator)
     elif which_algorithm == "AGEMOEA":
         return AGEMOEA(pop_size=pop_size, sampling=sampling, crossover=crossover,
                        mutation=mutation, eliminate_duplicates=True, survival=crowding_operator)

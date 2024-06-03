@@ -131,7 +131,7 @@ def get_problem_explainer() -> Detector:
         problem = EfficientBTProblem.from_Graph_Colouring(gc_problem)
     else:
         rr_problem = RoyalRoad(5, 4)
-        problem = EfficientBTProblem.from_RoyalRoad(rr_problem)
+        problem = rr_problem
     return Detector.from_folder(problem=problem,
                                 folder=experimental_directory,
                                 speciality_threshold=0.2,
@@ -139,7 +139,7 @@ def get_problem_explainer() -> Detector:
 
 def explanation():
     detector = get_problem_explainer()
-    detector.generate_files_with_default_settings(10000, 30000)
+    detector.generate_files_with_default_settings(30000, 20000)
     detector.explanation_loop(amount_of_fs_to_propose=2, ps_show_limit=12, show_debug_info=True)
 
     #detector.explanation_loop(amount_of_fs_to_propose=3, show_debug_info=False, show_global_properties = False)

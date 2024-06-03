@@ -1,3 +1,4 @@
+from Core.EvaluatedFS import EvaluatedFS
 from Core.FullSolution import FullSolution
 from Core.PRef import PRef
 from Core.PS import PS
@@ -80,5 +81,13 @@ class BenchmarkProblem:
         return property
 
 
-    def print_stats_of_pss(self, pss: list[PS]) -> str:
-        return ""
+    def print_stats_of_pss(self, pss: list[PS], full_solutions: list[EvaluatedFS]) -> str:
+        raise NotImplemented
+
+    def get_problem_specific_global_information(self, solutions: list[FullSolution]):
+        raise NotImplemented
+
+
+    def print_stats_of_full_solutions(self, param: list[FullSolution]):
+        raise NotImplemented
+

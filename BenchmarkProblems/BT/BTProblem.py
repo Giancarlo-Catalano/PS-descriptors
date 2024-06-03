@@ -30,7 +30,7 @@ class BTProblem(BenchmarkProblem):
         self.workers = workers
         self.calendar_length = calendar_length
         if weights is None:
-            weights = [1, 1, 1, 1, 1, 10, 0]
+            weights = [1, 1, 1, 1, 1, 10, 10]
         self.weights = weights
 
         assert(calendar_length % 7 == 0)
