@@ -15,7 +15,9 @@ import utils
 from BenchmarkProblems.BenchmarkProblem import BenchmarkProblem
 from Core.PRef import PRef
 from Core.PS import PS, STAR
+from Core.PSMetric.Additivity import Additivity
 from Core.PSMetric.Atomicity import Atomicity
+from Core.PSMetric.Linkage import Linkage
 from Core.PSMetric.LocalPerturbation import BivariateLocalPerturbation
 from Core.PSMetric.MeanFitness import MeanFitness
 from Core.PSMetric.Simplicity import Simplicity
@@ -96,7 +98,8 @@ class Classic3PSEvaluator:
     used_evaluations: int
 
 
-    atomicity_evaluator: BivariateLocalPerturbation  # todo remove this
+    blp_atomicity_evaluator: BivariateLocalPerturbation
+
 
     def __init__(self, pRef: PRef):
         self.pRef = pRef
@@ -104,8 +107,8 @@ class Classic3PSEvaluator:
         self.cached_isolated_benefits = self.calculate_isolated_benefits()
         self.used_evaluations = 0
 
-        self.atomicity_evaluator = BivariateLocalPerturbation()
-        self.atomicity_evaluator.set_pRef(pRef)
+        self.blp_atomicity_evaluator = BivariateLocalPerturbation()
+        self.blp_atomicity_evaluator.set_pRef(pRef)
 
     @classmethod
     def get_normalised_fitness_array(cls, fitness_array: ArrayOfFloats) -> ArrayOfFloats:
@@ -158,9 +161,9 @@ class Classic3PSEvaluator:
 
         for var in ps.get_fixed_variable_positions():
             value = ps[var]
-            except_one_fixed = [subset_where_column_has_value(original, var, value)
-                      for original in except_one_fixed]
-            except_one_fixed.append(with_all_fixed.copy_with_invalidated_fitnesses())
+            # except_one_fixed = [subset_where_column_has_value(original, var, value)
+            #           for original in except_one_fixed]
+            # except_one_fixed.append(with_all_fixed.copy_with_invalidated_fitnesses())   # done temporarly since we don't use atomicity anymore
             with_all_fixed = subset_where_column_has_value(with_all_fixed, var, value)
 
         return with_all_fixed, except_one_fixed
@@ -208,23 +211,14 @@ class Classic3PSEvaluator:
         return result
 
 
-    def get_atomicity_from_relevant_rows_experimental(self, ps: PS,
-                                                     rows_of_all_fixed: RowsOfPRef,
-                                                     except_for_one: list[RowsOfPRef]) -> float:
-        return self.atomicity_evaluator.get_single_score(ps)
 
-
-
-
-    def get_S_MF_A_experimental(self, ps: PS, invalid_value: float = -1000.0) -> np.ndarray:   # it is 3 floats
+    def get_S_MF_A(self, ps: PS, invalid_value: float = -1000.0) -> np.ndarray:   # it is 3 floats
         self.used_evaluations += 1
         rows_all_fixed, excluding_one = self.get_relevant_rows_for_ps(ps)
 
         simplicity = self.get_simplicity_of_PS(ps)
         mean_fitness = self.mf_of_rows(rows_all_fixed)
-        atomicity = self.get_atomicity_from_relevant_rows(ps,
-                                          rows_all_fixed,
-                                          excluding_one)
+        atomicity = self.blp_atomicity_evaluator.get_single_score(ps)
 
         if not np.isfinite(mean_fitness):
             mean_fitness = invalid_value
@@ -233,7 +227,7 @@ class Classic3PSEvaluator:
         return np.array([simplicity, mean_fitness, atomicity])
 
 
-    def get_S_MF_A(self, ps: PS, invalid_value: float = -1000.0) -> np.ndarray:   # it is 3 floats
+    def get_S_MF_A_original(self, ps: PS, invalid_value: float = -1000.0) -> np.ndarray:   # it is 3 floats
         self.used_evaluations += 1
         rows_all_fixed, excluding_one = self.get_relevant_rows_for_ps(ps)
 

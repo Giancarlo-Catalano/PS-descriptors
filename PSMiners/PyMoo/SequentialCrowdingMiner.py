@@ -19,6 +19,7 @@ from Core.PSMetric.Classic3 import Classic3PSEvaluator
 from Core.TerminationCriteria import TerminationCriteria, PSEvaluationLimit, UnionOfCriteria, IterationLimit, \
     SearchSpaceIsCovered
 from PSMiners.AbstractPSMiner import AbstractPSMiner
+from PSMiners.DEAP.DEAPPSMiner import DEAPPSMiner
 from PSMiners.DEAP.deap_utils import get_toolbox_for_problem, get_stats_object, nsga
 from PSMiners.PyMoo.CustomCrowding import PyMooPSSequentialCrowding, AggressivePyMooPSSequentialCrowding
 from PSMiners.PyMoo.Operators import PSGeometricSampling, PSSimulatedBinaryCrossover, PSPolynomialMutation
@@ -95,7 +96,7 @@ class SequentialCrowdingMiner(AbstractPSMiner):
         if self.use_experimental_crowding_operator:
             return PyMooPSSequentialCrowding(search_space=self.search_space,
                                              already_obtained=self.archive,
-                                             immediate=True)
+                                             immediate=False)
         else:
             return RankAndCrowding()
 
@@ -152,7 +153,7 @@ class SequentialCrowdingMiner(AbstractPSMiner):
         # for ps in sorted_pss:
         #     print(ps)
 
-        amount_to_keep_per_run = ceil(self.population_size_per_run / 20)
+        amount_to_keep_per_run = 5
         winners = sorted_pss[:amount_to_keep_per_run]
 
         self.archive.extend(winners)
@@ -161,6 +162,36 @@ class SequentialCrowdingMiner(AbstractPSMiner):
             print("At the end of this run, the winners were")
             for winner in winners:
                 print(winner)
+
+
+    def step_experimental(self, verbose = False):
+
+        algorithm = DEAPPSMiner(pRef=self.pRef,
+                                population_size=self.population_size_per_run,
+                                uses_custom_crowding=True,
+                                use_spea=False)
+
+        algorithm.run(PSEvaluationLimit(self.budget_per_run), verbose=True)
+
+        e_pss = algorithm.get_results(6)
+        #
+        #
+        # # debug
+        print("The sorted e_pss are")
+        sorted_pss = self.sort_by_m_and_a(e_pss)
+        for ps in sorted_pss:
+            print(ps)
+
+        amount_to_keep_per_run = 3
+        winners = sorted_pss[:amount_to_keep_per_run]
+
+        self.archive.extend(winners)
+
+        if verbose:
+            print("At the end of this run, the winners were")
+            for winner in winners:
+                print(winner)
+
 
 
     def run(self, termination_criteria: TerminationCriteria, verbose=False):

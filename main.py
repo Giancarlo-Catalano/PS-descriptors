@@ -7,13 +7,23 @@ import warnings
 
 import numpy as np
 
+import utils
 from BenchmarkProblems.BenchmarkProblem import BenchmarkProblem
 from BenchmarkProblems.EfficientBTProblem.EfficientBTProblem import EfficientBTProblem
 from BenchmarkProblems.EfficientBTProblem.ManuallyConstructedBTInstances import get_bad_week_instance
 from BenchmarkProblems.GraphColouring import GraphColouring
 from BenchmarkProblems.RoyalRoad import RoyalRoad
 from Core import TerminationCriteria
+from Core.EvaluatedPS import EvaluatedPS
 from Core.Explainer import Explainer
+from Core.PS import PS
+from Core.PSMetric.Additivity import Additivity, MeanError
+from Core.PSMetric.Atomicity import Atomicity
+from Core.PSMetric.BivariateANOVALinkage import BivariateANOVALinkage
+from Core.PSMetric.Classic3 import Classic3PSEvaluator
+from Core.PSMetric.Linkage import Linkage
+from Core.PSMetric.LocalPerturbation import BivariateLocalPerturbation, UnivariateLocalPerturbation
+from Core.PSMetric.Metric import Metric
 from Explanation.Detector import Detector
 from Explanation.HyperparameterEvaluator import HyperparameterEvaluator
 from FSStochasticSearch.Operators import SinglePointFSMutation
@@ -124,7 +134,7 @@ def get_manual_bt_explainer() -> Detector:
 def get_problem_explainer() -> Detector:
     experimental_directory = r"C:\Users\gac8\PycharmProjects\PS-PDF\Experimentation\GC\Dummy"
 
-    use_gc = False
+    use_gc = True
     if use_gc:
         gc_problem = GraphColouring.make_insular_instance(4)
         gc_problem.view()
@@ -137,28 +147,53 @@ def get_problem_explainer() -> Detector:
                                 speciality_threshold=0.2,
                                 verbose=True)
 
+
+def test_classic3(detector: Detector):
+    pRef = detector.pRef
+    evaluator = Classic3PSEvaluator(pRef)
+
+    pss = [PS.random_with_fixed_size(pRef.search_space, 4) for _ in range(10000)]
+
+    pss = [EvaluatedPS(ps, evaluator.get_S_MF_A(ps)) for ps in pss]
+    def sort_by_metric(metric: Metric):
+        print(f"Sorted by {metric}")
+        pss.sort(key=lambda x: metric.get_single_score(x), reverse=True)
+        for ps in pss[:120]:
+            print(ps)
+
+
+
+
+    atomicity_metrics = [Atomicity(),
+                         Linkage(),
+                         #BivariateLocalPerturbation(),
+                         #Additivity(0),
+                         #Additivity(1),
+                         #Additivity(2),
+                         #Additivity(3),
+                         #BivariateANOVALinkage(),
+                         #UnivariateLocalPerturbation(),
+                         #MeanError()
+                         ]
+
+    for metric in atomicity_metrics:
+        metric.set_pRef(pRef)
+        sort_by_metric(metric)
+
+
+    print(f"Sorted by all")
+    sorted_pss = utils.sort_by_combination_of(pss, key_functions=[lambda x: x.metric_scores[0],
+                                                         lambda x: x.metric_scores[1],
+                                                         lambda x: x.metric_scores[2]], reverse=True)
+    for ps in sorted_pss[:120]:
+        print(ps)
+
+
 def explanation():
     detector = get_problem_explainer()
-    detector.generate_files_with_default_settings(30000, 20000)
+    #test_classic3(detector)
+    detector.generate_files_with_default_settings(10000, 100000)
     detector.explanation_loop(amount_of_fs_to_propose=2, ps_show_limit=12, show_debug_info=True)
-
-    #detector.explanation_loop(amount_of_fs_to_propose=3, show_debug_info=False, show_global_properties = False)
-    #get_bt_explainer().get_variables_properties_table()
-
-
-# def evaluation():
-#     gc_problem = GraphColouring.make_insular_instance(amount_of_islands=4)
-#     gc_problem.view()
-#     bt_problem = EfficientBTProblem.from_Graph_Colouring(gc_problem)
-#     experimental_directory = r"C:\Users\gac8\PycharmProjects\PS-PDF\Experimentation\GC\Dummy"
-#     detector = Detector.from_folder(problem=bt_problem,
-#                                      folder=experimental_directory,
-#                                      speciality_threshold=0.2,
-#                                      verbose=True)
-#     detector.generate_files_with_default_settings(30000, 30000)
-#     mined_pss = detector.pss
-#     count = count_found_targets(gc_problem, mined_pss)
-#     print(f"Out of the {len(mined_pss)} mined pss, {count} were the true clique targets")
 
 
 def grid_search():
@@ -170,15 +205,17 @@ def grid_search():
     #                                ps_budget=30000,
     #                                custom_crowding_operators_to_test = [True, False],
     #                                ps_budgets_per_run_to_test=[1000, 3000, 5000])
-    hype = HyperparameterEvaluator(algorithms_to_test=["NSGAII"],
-                                   problems_to_test=[ "RR_5"],
-                                   pRef_sizes_to_test=[30000],
-                                   population_sizes_to_test=[100, 200],
-                                   pRef_origin_methods = ["SA uniform"],
-                                   ps_budget=30000,
+    hype = HyperparameterEvaluator(algorithms_to_test=["NSGAII", "NSGAIII", "MOEAD"],
+                                   problems_to_test=[ "RR_5", "insular_5"],
+                                   pRef_sizes_to_test=[20000],
+                                   population_sizes_to_test=[200, 500],
+                                   pRef_origin_methods = ["uniform", "SA", "SA uniform"],
+                                   ps_budget=20000,
                                    custom_crowding_operators_to_test = [True, False],
-                                   ps_budgets_per_run_to_test=[1000, 3000, 5000])
+                                   ps_budgets_per_run_to_test=[1000, 5000])
     hype.get_data()
+
+
 
 
 
@@ -188,16 +225,8 @@ def grid_search():
 if __name__ == '__main__':
     logging.basicConfig(level=logging.INFO)
     warnings.showwarning = warn_with_traceback
-    #grid_search()
-    explanation()
-    # change this comment to make strange submits
-
-    #test_linearity_between_gc_and_bt()
-
-
-    # decode_data_from_islets(r"C:\Users\gac8\Documents\Condor\islets_filtered",
-    #                         r"C:\Users\gac8\Documents\Condor\islets.csv")
-
+    grid_search()
+    #explanation()
 
 
 
