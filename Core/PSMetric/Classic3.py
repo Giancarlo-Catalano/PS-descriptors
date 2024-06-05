@@ -161,9 +161,9 @@ class Classic3PSEvaluator:
 
         for var in ps.get_fixed_variable_positions():
             value = ps[var]
-            # except_one_fixed = [subset_where_column_has_value(original, var, value)
-            #           for original in except_one_fixed]
-            # except_one_fixed.append(with_all_fixed.copy_with_invalidated_fitnesses())   # done temporarly since we don't use atomicity anymore
+            except_one_fixed = [subset_where_column_has_value(original, var, value)
+                      for original in except_one_fixed]
+            except_one_fixed.append(with_all_fixed.copy_with_invalidated_fitnesses())   # done temporarly since we don't use atomicity anymore
             with_all_fixed = subset_where_column_has_value(with_all_fixed, var, value)
 
         return with_all_fixed, except_one_fixed
@@ -212,7 +212,7 @@ class Classic3PSEvaluator:
 
 
 
-    def get_S_MF_A(self, ps: PS, invalid_value: float = -1000.0) -> np.ndarray:   # it is 3 floats
+    def get_S_MF_A_experimental(self, ps: PS, invalid_value: float = 0) -> np.ndarray:   # it is 3 floats
         self.used_evaluations += 1
         rows_all_fixed, excluding_one = self.get_relevant_rows_for_ps(ps)
 
@@ -227,7 +227,7 @@ class Classic3PSEvaluator:
         return np.array([simplicity, mean_fitness, atomicity])
 
 
-    def get_S_MF_A_original(self, ps: PS, invalid_value: float = -1000.0) -> np.ndarray:   # it is 3 floats
+    def get_S_MF_A(self, ps: PS, invalid_value: float = 0) -> np.ndarray:   # it is 3 floats
         self.used_evaluations += 1
         rows_all_fixed, excluding_one = self.get_relevant_rows_for_ps(ps)
 

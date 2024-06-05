@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+import heapq
 import logging
 import os
 import sys
@@ -14,18 +15,22 @@ from BenchmarkProblems.EfficientBTProblem.ManuallyConstructedBTInstances import 
 from BenchmarkProblems.GraphColouring import GraphColouring
 from BenchmarkProblems.RoyalRoad import RoyalRoad
 from Core import TerminationCriteria
+from Core.ArchivePSMiner import ArchivePSMiner
 from Core.EvaluatedPS import EvaluatedPS
 from Core.Explainer import Explainer
+from Core.PRef import PRef
 from Core.PS import PS
-from Core.PSMetric.Additivity import Additivity, MeanError
+from Core.PSMetric.Additivity import Additivity, MeanError, ExternalInfluence
 from Core.PSMetric.Atomicity import Atomicity
 from Core.PSMetric.BivariateANOVALinkage import BivariateANOVALinkage
 from Core.PSMetric.Classic3 import Classic3PSEvaluator
 from Core.PSMetric.Linkage import Linkage
 from Core.PSMetric.LocalPerturbation import BivariateLocalPerturbation, UnivariateLocalPerturbation
 from Core.PSMetric.Metric import Metric
+from Core.TerminationCriteria import PSEvaluationLimit
 from Explanation.Detector import Detector
 from Explanation.HyperparameterEvaluator import HyperparameterEvaluator
+from Explanation.PRefManager import PRefManager
 from FSStochasticSearch.Operators import SinglePointFSMutation
 from FSStochasticSearch.SA import SA
 from PSMiners.DEAP.DEAPPSMiner import DEAPPSMiner
@@ -134,13 +139,13 @@ def get_manual_bt_explainer() -> Detector:
 def get_problem_explainer() -> Detector:
     experimental_directory = r"C:\Users\gac8\PycharmProjects\PS-PDF\Experimentation\GC\Dummy"
 
-    use_gc = True
+    use_gc = False
     if use_gc:
         gc_problem = GraphColouring.make_insular_instance(4)
         gc_problem.view()
         problem = EfficientBTProblem.from_Graph_Colouring(gc_problem)
     else:
-        rr_problem = RoyalRoad(5, 4)
+        rr_problem = RoyalRoad(3, 4)
         problem = rr_problem
     return Detector.from_folder(problem=problem,
                                 folder=experimental_directory,
@@ -148,24 +153,27 @@ def get_problem_explainer() -> Detector:
                                 verbose=True)
 
 
-def test_classic3(detector: Detector):
-    pRef = detector.pRef
+def test_classic3(pRef: PRef):
     evaluator = Classic3PSEvaluator(pRef)
 
-    pss = [PS.random_with_fixed_size(pRef.search_space, 4) for _ in range(10000)]
+    pss = []
+    for s in range(2, 8):
+        pss.extend([PS.random_with_fixed_size(pRef.search_space, s) for _ in range(1000)])
+    pss = list(set(pss))
 
     pss = [EvaluatedPS(ps, evaluator.get_S_MF_A(ps)) for ps in pss]
     def sort_by_metric(metric: Metric):
         print(f"Sorted by {metric}")
-        pss.sort(key=lambda x: metric.get_single_score(x), reverse=True)
-        for ps in pss[:120]:
+        for ps in pss:
+            ps.metric_scores[2] = metric.get_single_score(ps)
+        best = heapq.nlargest(30, pss, key=lambda x: x.metric_scores[2])
+        for ps in best:
             print(ps)
 
 
-
-
-    atomicity_metrics = [Atomicity(),
-                         Linkage(),
+    atomicity_metrics = [
+                         ExternalInfluence(),
+                         Atomicity(),
                          #BivariateLocalPerturbation(),
                          #Additivity(0),
                          #Additivity(1),
@@ -190,10 +198,9 @@ def test_classic3(detector: Detector):
 
 
 def explanation():
-    detector = get_bt_explainer()
-    #test_classic3(detector)
+    detector = get_problem_explainer()
     detector.generate_files_with_default_settings(100000, 100000)
-    detector.explanation_loop(amount_of_fs_to_propose=2, ps_show_limit=12, show_debug_info=True)
+    #detector.explanation_loop(amount_of_fs_to_propose=2, ps_show_limit=12, show_debug_info=True)
 
 
 def grid_search():
@@ -206,14 +213,31 @@ def grid_search():
     #                                custom_crowding_operators_to_test = [True, False],
     #                                ps_budgets_per_run_to_test=[1000, 3000, 5000])
     hype = HyperparameterEvaluator(algorithms_to_test=["NSGAII"],
-                                   problems_to_test=[ "RR_5"],
-                                   pRef_sizes_to_test=[2000],
-                                   population_sizes_to_test=[50],
+                                   problems_to_test=["RR_5"],
+                                   pRef_sizes_to_test=[30000],
+                                   population_sizes_to_test=[1000],
                                    pRef_origin_methods = ["SA uniform"],
-                                   ps_budget=3000,
+                                   ps_budget=150000,
                                    custom_crowding_operators_to_test = [True],
-                                   ps_budgets_per_run_to_test=[5000])
+                                   ps_budgets_per_run_to_test=[15000])
     hype.get_data()
+
+
+
+def test_archive_miner():
+    problem = RoyalRoad(5, 5)
+    print("Generating the pRef")
+    pRef = PRefManager.generate_pRef(problem = problem,
+                                     which_algorithm= "SA uniform",
+                                     sample_size=10000)
+
+    print("running the miner")
+    miner = ArchivePSMiner.with_default_settings(pRef)
+    miner.run(termination_criteria=PSEvaluationLimit(10000))
+    results = miner.get_results(100)
+    print("The results are")
+    for ps in results:
+        print(ps)
 
 
 
@@ -221,8 +245,11 @@ def grid_search():
 if __name__ == '__main__':
     logging.basicConfig(level=logging.INFO)
     warnings.showwarning = warn_with_traceback
-    grid_search()
+    #grid_search()
     #explanation()
+    # test_archive_miner()
+    test_classic3(RoyalRoad(3, 4).get_reference_population(5000))
+
 
 
 

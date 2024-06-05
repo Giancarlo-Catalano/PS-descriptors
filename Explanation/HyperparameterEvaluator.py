@@ -9,7 +9,7 @@ from BenchmarkProblems.EfficientBTProblem.EfficientBTProblem import EfficientBTP
 from BenchmarkProblems.GraphColouring import GraphColouring
 from BenchmarkProblems.RoyalRoad import RoyalRoad
 from Core import TerminationCriteria
-from Core.PRef import PRef
+from Core.PRef import PRef, plot_solutions_in_pRef
 from Core.PS import PS, STAR
 from Explanation.PRefManager import PRefManager
 from PSMiners.PyMoo.SequentialCrowdingMiner import SequentialCrowdingMiner
@@ -87,6 +87,7 @@ class HyperparameterEvaluator:
                     pRef = PRefManager.generate_pRef(problem = bt_problem,
                                                      which_algorithm= pRef_origin_method,
                                                      sample_size=pRef_size)
+                    plot_solutions_in_pRef(pRef, "dummy_name.png")
                     for miner_algorithm in self.algorithms_to_test:
                         for uses_custom_crowding_operator in self.custom_crowding_operators_to_test:
                             for population_size in self.population_sizes_to_test:
@@ -107,7 +108,7 @@ class HyperparameterEvaluator:
                                                                         use_experimental_crowding_operator=uses_custom_crowding_operator)
                                         termination_criterion = TerminationCriteria.PSEvaluationLimit(self.ps_budget)
                                         with execution_time() as timer:
-                                            miner.run(termination_criterion)
+                                            miner.run(termination_criterion, verbose=True)
                                         mined_pss = miner.get_results()
                                         found = targets.intersection(mined_pss)
                                         logger.info(f"\t{len(found)} were found!")

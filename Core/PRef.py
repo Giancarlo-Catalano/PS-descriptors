@@ -220,6 +220,7 @@ def plot_solutions_in_pRef(pRef: PRef, filename: str):
     x_points, y_points = utils.unzip(list(enumerate(pRef.fitness_array)))
     fig = plt.figure()
     plt.plot(x_points, y_points)
-    plt.savefig(filename)
+    plt.show()
+    #plt.savefig(filename)
     plt.close(fig)
 

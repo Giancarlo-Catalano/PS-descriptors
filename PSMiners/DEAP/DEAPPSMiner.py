@@ -3,6 +3,7 @@ from typing import Any, Optional
 from deap.base import Toolbox
 from deap.tools import Logbook
 
+import utils
 from BenchmarkProblems.BenchmarkProblem import BenchmarkProblem
 from Core.EvaluatedPS import EvaluatedPS
 from Core.PRef import PRef
@@ -59,7 +60,7 @@ class DEAPPSMiner(AbstractPSMiner):
         final_population, self.last_logbook = nsga(toolbox=self.toolbox,
                                          mu =self.population_size,
                                          cxpb=0.5,
-                                         mutpb=1/self.search_space.amount_of_parameters,
+                                         mutpb=0.7,
                                          termination_criteria = termination_criteria,
                                          stats=self.stats,
                                          verbose=verbose,
@@ -79,6 +80,11 @@ class DEAPPSMiner(AbstractPSMiner):
     def get_results(self, amount: Optional[int] = None) -> list[EvaluatedPS]:
         if amount is None:
             amount = len(self.last_population)
+
+        self.last_population = utils.sort_by_combination_of(self.last_population, key_functions = [lambda x: x.metric_scores[0],
+                                                                                          lambda x: x.metric_scores[1],
+                                                                                          lambda x: x.metric_scores[2]], reverse=True)
+        self.last_population = sorted(self.last_population, key=lambda x: -x.metric_scores[2])
         return self.last_population[:amount]
 
 

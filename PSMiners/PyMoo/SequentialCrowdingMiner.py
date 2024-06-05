@@ -165,7 +165,7 @@ class SequentialCrowdingMiner(AbstractPSMiner):
 
 
     def step_experimental(self, verbose = False):
-
+        print("Running the experimental DEAPS miner")
         algorithm = DEAPPSMiner(pRef=self.pRef,
                                 population_size=self.population_size_per_run,
                                 uses_custom_crowding=True,
@@ -178,7 +178,7 @@ class SequentialCrowdingMiner(AbstractPSMiner):
         #
         # # debug
         print("The sorted e_pss are")
-        sorted_pss = self.sort_by_m_and_a(e_pss)
+        sorted_pss = list(reversed(self.sort_by_m_and_a(e_pss)))
         for ps in sorted_pss:
             print(ps)
 
@@ -204,6 +204,8 @@ class SequentialCrowdingMiner(AbstractPSMiner):
 
 
         while not should_stop():
+            if verbose:
+                print(f"Evaluations: {self.get_used_evaluations()}")
             self.step(verbose=verbose)
             iterations += 1
 

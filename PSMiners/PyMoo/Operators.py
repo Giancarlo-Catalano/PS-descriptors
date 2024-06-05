@@ -26,6 +26,10 @@ class PSGeometricSampling(FloatRandomSampling):
         n, (xl, xu) = problem.n_var, problem.bounds()
         return np.array([self.generate_single_individual(n, xu) for _ in range(n_samples)])
 
+    def _do(self, problem, n_samples, **kwargs):
+        n, (xl, xu) = problem.n_var, problem.bounds()
+        return np.array([self.generate_single_individual(n, xu) for _ in range(n_samples)])
+
 
 # ---------------------------------------------------------------------------------------------------------
 # Class
@@ -82,7 +86,7 @@ class PSSimulatedBinaryCrossover(Crossover):
     def __init__(self,
                  n_offsprings=2,
                  **kwargs):
-        super().__init__(2, n_offsprings, **kwargs)
+        super().__init__(2, n_offsprings, prob = 0.5, **kwargs)
 
 
     def _do(self, problem, X, **kwargs):
