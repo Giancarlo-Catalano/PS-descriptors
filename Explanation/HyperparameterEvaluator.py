@@ -1,6 +1,8 @@
 import json
 import re
-from typing import Iterator
+from typing import Iterator, Iterable
+
+import numpy as np
 
 from BenchmarkProblems.BenchmarkProblem import BenchmarkProblem
 from BenchmarkProblems.EfficientBTProblem.EfficientBTProblem import EfficientBTProblem
@@ -8,7 +10,7 @@ from BenchmarkProblems.GraphColouring import GraphColouring
 from BenchmarkProblems.RoyalRoad import RoyalRoad
 from Core import TerminationCriteria
 from Core.PRef import PRef
-from Core.PS import PS
+from Core.PS import PS, STAR
 from Explanation.PRefManager import PRefManager
 from PSMiners.PyMoo.SequentialCrowdingMiner import SequentialCrowdingMiner
 import logging
@@ -67,6 +69,11 @@ class HyperparameterEvaluator:
         else:
             raise Exception("The problem string was not recognised")
 
+    @classmethod
+    def get_count_of_covered_vars(cls, mined_pss: Iterable[PS]) -> int:
+        covered_positions = np.array([ps.values != STAR for ps in mined_pss])
+        covered_positions = np.sum(covered_positions, axis=0) > 0
+        return int(np.sum(covered_positions))
 
 
     def get_data(self):
@@ -114,6 +121,7 @@ class HyperparameterEvaluator:
                                                      "target_count": len(targets),
                                                      "found_count": len(found),
                                                      "uses_custom_crowding_operator": uses_custom_crowding_operator,
+                                                     "vars_covered": self.get_count_of_covered_vars(found),
                                                      "runtime":timer.execution_time}
                                     except Exception as e:
                                         logger.info(f"An error {e} occurred")

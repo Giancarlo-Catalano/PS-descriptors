@@ -274,7 +274,7 @@ class Detector:
         self.mined_ps_manager.generate_ps_file(pRef = self.pRef,
                                                population_size=600,
                                                ps_budget_in_total=pss_budget,
-                                               ps_budget_per_run=pss_budget // 6)
+                                               ps_budget_per_run=pss_budget // 12)
         self.mined_ps_manager.generate_control_pss_file(samples_for_each_category=1000)
 
         self.ps_property_manager.generate_property_table_file(self.mined_ps_manager.pss, self.mined_ps_manager.control_pss)

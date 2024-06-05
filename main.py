@@ -190,9 +190,9 @@ def test_classic3(detector: Detector):
 
 
 def explanation():
-    detector = get_problem_explainer()
+    detector = get_bt_explainer()
     #test_classic3(detector)
-    detector.generate_files_with_default_settings(10000, 100000)
+    detector.generate_files_with_default_settings(100000, 100000)
     detector.explanation_loop(amount_of_fs_to_propose=2, ps_show_limit=12, show_debug_info=True)
 
 
@@ -205,19 +205,15 @@ def grid_search():
     #                                ps_budget=30000,
     #                                custom_crowding_operators_to_test = [True, False],
     #                                ps_budgets_per_run_to_test=[1000, 3000, 5000])
-    hype = HyperparameterEvaluator(algorithms_to_test=["NSGAII", "NSGAIII", "MOEAD"],
-                                   problems_to_test=[ "RR_5", "insular_5"],
-                                   pRef_sizes_to_test=[20000],
-                                   population_sizes_to_test=[200, 500],
-                                   pRef_origin_methods = ["uniform", "SA", "SA uniform"],
-                                   ps_budget=20000,
-                                   custom_crowding_operators_to_test = [True, False],
-                                   ps_budgets_per_run_to_test=[1000, 5000])
+    hype = HyperparameterEvaluator(algorithms_to_test=["NSGAII"],
+                                   problems_to_test=[ "RR_5"],
+                                   pRef_sizes_to_test=[2000],
+                                   population_sizes_to_test=[50],
+                                   pRef_origin_methods = ["SA uniform"],
+                                   ps_budget=3000,
+                                   custom_crowding_operators_to_test = [True],
+                                   ps_budgets_per_run_to_test=[5000])
     hype.get_data()
-
-
-
-
 
 
 
