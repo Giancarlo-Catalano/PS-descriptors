@@ -396,3 +396,8 @@ def make_interactive_3d_plot(first_metric, second_metric, third_metric, names: l
 
 
     fig.show()
+
+
+
+def remap_in_range_0_1_knowing_range(value: float, known_range: (float, float)) -> float:
+    return (value - known_range[0]) / (known_range[1] - known_range[0])

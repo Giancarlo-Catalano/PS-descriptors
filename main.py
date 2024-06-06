@@ -158,7 +158,7 @@ def test_classic3(pRef: PRef):
 
     pss = []
     for s in range(2, 8):
-        pss.extend([PS.random_with_fixed_size(pRef.search_space, s) for _ in range(1000)])
+        pss.extend([PS.random_with_fixed_size(pRef.search_space, s) for _ in range(10000)])
     pss = list(set(pss))
 
     pss = [EvaluatedPS(ps, evaluator.get_S_MF_A(ps)) for ps in pss]
@@ -172,8 +172,8 @@ def test_classic3(pRef: PRef):
 
 
     atomicity_metrics = [
-                         ExternalInfluence(),
-                         Atomicity(),
+                         #ExternalInfluence(),
+                         #Atomicity(),
                          #BivariateLocalPerturbation(),
                          #Additivity(0),
                          #Additivity(1),
@@ -190,7 +190,7 @@ def test_classic3(pRef: PRef):
 
 
     print(f"Sorted by all")
-    sorted_pss = utils.sort_by_combination_of(pss, key_functions=[lambda x: x.metric_scores[0],
+    sorted_pss = utils.sort_by_combination_of(pss, key_functions=[
                                                          lambda x: x.metric_scores[1],
                                                          lambda x: x.metric_scores[2]], reverse=True)
     for ps in sorted_pss[:120]:
@@ -214,12 +214,12 @@ def grid_search():
     #                                ps_budgets_per_run_to_test=[1000, 3000, 5000])
     hype = HyperparameterEvaluator(algorithms_to_test=["NSGAII"],
                                    problems_to_test=["RR_5"],
-                                   pRef_sizes_to_test=[30000],
-                                   population_sizes_to_test=[1000],
-                                   pRef_origin_methods = ["SA uniform"],
-                                   ps_budget=150000,
+                                   pRef_sizes_to_test=[10000],
+                                   population_sizes_to_test=[200],
+                                   pRef_origin_methods = ["uniform SA"],
+                                   ps_budget=50000,
                                    custom_crowding_operators_to_test = [True],
-                                   ps_budgets_per_run_to_test=[15000])
+                                   ps_budgets_per_run_to_test=[10000])
     hype.get_data()
 
 
@@ -245,10 +245,10 @@ def test_archive_miner():
 if __name__ == '__main__':
     logging.basicConfig(level=logging.INFO)
     warnings.showwarning = warn_with_traceback
-    #grid_search()
+    grid_search()
     #explanation()
-    # test_archive_miner()
-    test_classic3(RoyalRoad(3, 4).get_reference_population(5000))
+    #test_archive_miner()
+    #test_classic3(RoyalRoad(3, 4).get_reference_population(5000))
 
 
 

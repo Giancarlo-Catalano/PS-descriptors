@@ -27,11 +27,12 @@ from Core.PS import PS, STAR
 from Core.PSMetric.Classic3 import Classic3PSEvaluator
 from Core.SearchSpace import SearchSpace
 from PSMiners.PyMoo.CustomCrowding import PyMooCustomCrowding, PyMooPSGenotypeCrowding, PyMooPSSequentialCrowding
+from PSMiners.PyMoo.FitnessSharing import get_sharing_scores
 from PSMiners.PyMoo.Operators import PSPolynomialMutation, PSGeometricSampling, PSSimulatedBinaryCrossover
 from utils import announce
 
 
-class PSPyMooProblem(ElementwiseProblem):
+class PSPyMooProblem(Problem):
     pRef: PRef
     objectives_evaluator: Classic3PSEvaluator
 
@@ -57,8 +58,13 @@ class PSPyMooProblem(ElementwiseProblem):
     def individual_to_ps(self, x):
         return PS(x)
 
-    def _evaluate(self, x, out, *args, **kwargs):
-        out["F"] = -self.objectives_evaluator.get_S_MF_A(self.individual_to_ps(x))  # minus sign because it's a maximisation task
+    def _evaluate(self, X, out, *args, **kwargs):
+        """ I believe that since this class inherits from Problem, x should be a group of solutions, and not just one"""
+        metrics = np.array([self.objectives_evaluator.get_S_MF_A(self.individual_to_ps(row)) for row in X])
+        out["F"] = -metrics  # minus sign because it's a maximisation task
+
+        # sharing_values = get_sharing_scores(X, 0.5, 2)
+        # out["F"] /= (sharing_values.reshape((-1, 1)))+1
 
 
 

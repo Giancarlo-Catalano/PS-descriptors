@@ -24,7 +24,7 @@ def get_pymoo_search_algorithm(which_algorithm: str,
     n_params = search_space.amount_of_parameters
     def get_ref_dirs():
         ref_dirs = get_reference_directions("das-dennis", 3, n_partitions=12)
-        return (ref_dirs + 1) / 3
+        return ref_dirs # (ref_dirs + 1) / 3  # i was meant to remove this...
     if which_algorithm == "NSGAII":
         return NSGA2(pop_size=pop_size, sampling=sampling, crossover=crossover,
                       mutation=mutation, eliminate_duplicates=True, survival=crowding_operator)

@@ -26,6 +26,19 @@ class PSGeometricSampling(FloatRandomSampling):
         n, (xl, xu) = problem.n_var, problem.bounds()
         return np.array([self.generate_single_individual(n, xu) for _ in range(n_samples)])
 
+
+
+class PSUniformSampling(FloatRandomSampling):
+
+    def generate_single_individual(self, n, xu) -> np.ndarray:
+        result_values = np.full(shape=n, fill_value=-1)  # the stars
+        chance_of_value = 0.5
+        while random.random() < chance_of_value:
+            var_index = random.randrange(n)
+            new_value = random.randrange(xu[var_index]+1)
+            result_values[var_index] = new_value
+        return result_values
+
     def _do(self, problem, n_samples, **kwargs):
         n, (xl, xu) = problem.n_var, problem.bounds()
         return np.array([self.generate_single_individual(n, xu) for _ in range(n_samples)])
@@ -52,7 +65,10 @@ class PSPolynomialMutation(Mutation):
         result_values = x.copy()
         for index, _ in enumerate(result_values):
             if random.random() < self.single_point_probability:
-                new_value = random.randrange(self.search_space.cardinalities[index])
+                if random.random() < 0.5:
+                    new_value = -1
+                else:
+                    new_value = random.randrange(self.search_space.cardinalities[index])
                 result_values[index] = new_value
 
         return result_values

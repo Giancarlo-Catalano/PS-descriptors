@@ -97,15 +97,34 @@ class Classic3PSEvaluator:
     cached_isolated_benefits: list[list[float]]
     used_evaluations: int
 
+    mf_range: (float, float)
+    atomicity_range: (float, float)
 
     blp_atomicity_evaluator: BivariateLocalPerturbation
 
 
+    @classmethod
+    def get_mf_range(cls, pRef: PRef) -> (float, float):
+        return np.min(pRef.fitness_array), np.max(pRef.fitness_array)
+    @classmethod
+    def get_atomicity_range(cls, isolated_benefits: list[list[float]]) -> (float, float):
+        flattened_benefits = np.array(utils.flatten(isolated_benefits))
+        min_benefit = np.min(flattened_benefits)
+        max_benefit = np.max(flattened_benefits)
+
+        upper_bound = -np.log(min_benefit)
+        lower_bound = -max_benefit * np.log(np.e) / np.e
+        return lower_bound, upper_bound
+
     def __init__(self, pRef: PRef):
         self.pRef = pRef
+
         self.normalised_fitnesses = self.get_normalised_fitness_array(self.pRef.fitness_array)
         self.cached_isolated_benefits = self.calculate_isolated_benefits()
         self.used_evaluations = 0
+
+        self.mf_range = self.get_mf_range(pRef)
+        self.atomicity_range = self.get_atomicity_range(self.cached_isolated_benefits)
 
         self.blp_atomicity_evaluator = BivariateLocalPerturbation()
         self.blp_atomicity_evaluator.set_pRef(pRef)
@@ -227,7 +246,7 @@ class Classic3PSEvaluator:
         return np.array([simplicity, mean_fitness, atomicity])
 
 
-    def get_S_MF_A(self, ps: PS, invalid_value: float = 0) -> np.ndarray:   # it is 3 floats
+    def get_S_MF_A_original(self, ps: PS, invalid_value: float = 0) -> np.ndarray:   # it is 3 floats
         self.used_evaluations += 1
         rows_all_fixed, excluding_one = self.get_relevant_rows_for_ps(ps)
 
@@ -236,6 +255,31 @@ class Classic3PSEvaluator:
         atomicity = self.get_atomicity_from_relevant_rows(ps,
                                                           rows_all_fixed,
                                                           excluding_one)
+
+        if not np.isfinite(mean_fitness):
+            mean_fitness = invalid_value
+        if not np.isfinite(atomicity):
+            mean_fitness = invalid_value
+        return np.array([simplicity, mean_fitness, atomicity])
+
+
+
+
+    def get_S_MF_A(self, ps: PS, invalid_value: float = 0) -> np.ndarray:   # it is 3 floats
+        """this one is normalised"""
+        self.used_evaluations += 1
+        rows_all_fixed, excluding_one = self.get_relevant_rows_for_ps(ps)
+
+
+        simplicity = self.get_simplicity_of_PS(ps)
+        simplicity = simplicity / len(ps)
+
+        mean_fitness = self.mf_of_rows(rows_all_fixed)
+        mean_fitness = utils.remap_in_range_0_1_knowing_range(mean_fitness, self.mf_range)
+        atomicity = self.get_atomicity_from_relevant_rows(ps,
+                                                          rows_all_fixed,
+                                                          excluding_one)
+        atomicity = utils.remap_in_range_0_1_knowing_range(atomicity, self.atomicity_range)
 
         if not np.isfinite(mean_fitness):
             mean_fitness = invalid_value

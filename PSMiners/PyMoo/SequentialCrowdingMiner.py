@@ -90,9 +90,6 @@ class SequentialCrowdingMiner(AbstractPSMiner):
 
 
     def get_crowding_operator(self):
-        # if len(self.archive) == 0:
-        #     return RankAndCrowding(crowding_func = "ce")
-        # else:
         if self.use_experimental_crowding_operator:
             return PyMooPSSequentialCrowding(search_space=self.search_space,
                                              already_obtained=self.archive,
@@ -144,7 +141,10 @@ class SequentialCrowdingMiner(AbstractPSMiner):
                        verbose=verbose)
 
 
+
         e_pss = self.output_of_miner_to_evaluated_ps(res)
+        for e_ps in e_pss:  # TODO remove this
+            e_ps.metric_scores = -self.pymoo_problem.objectives_evaluator.get_S_MF_A(e_ps)
 
 
         # debug
@@ -153,7 +153,7 @@ class SequentialCrowdingMiner(AbstractPSMiner):
         # for ps in sorted_pss:
         #     print(ps)
 
-        amount_to_keep_per_run = 5
+        amount_to_keep_per_run = len(sorted_pss) ## TODO remove this
         winners = sorted_pss[:amount_to_keep_per_run]
 
         self.archive.extend(winners)

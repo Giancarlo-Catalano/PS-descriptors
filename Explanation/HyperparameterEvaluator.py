@@ -87,7 +87,7 @@ class HyperparameterEvaluator:
                     pRef = PRefManager.generate_pRef(problem = bt_problem,
                                                      which_algorithm= pRef_origin_method,
                                                      sample_size=pRef_size)
-                    plot_solutions_in_pRef(pRef, "dummy_name.png")
+                    #plot_solutions_in_pRef(pRef, "dummy_name.png")
                     for miner_algorithm in self.algorithms_to_test:
                         for uses_custom_crowding_operator in self.custom_crowding_operators_to_test:
                             for population_size in self.population_sizes_to_test:
