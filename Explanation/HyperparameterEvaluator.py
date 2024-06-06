@@ -20,6 +20,15 @@ from utils import execution_time
 logger = logging.getLogger(__name__)
 
 
+
+def get_error_between_pss(ps_a: PS, ps_b: PS) -> int:
+    return int(np.sum(ps_a.values != ps_b.values))
+
+
+def minimum_error_to_find(target: PS, pool: list[PS]) -> int:
+    return min(get_error_between_pss(target, ps) for ps in pool)
+
+
 class HyperparameterEvaluator:
     pRef_sizes_to_test: list[int]
     pRef_origin_methods: list[str]
@@ -108,9 +117,10 @@ class HyperparameterEvaluator:
                                                                         use_experimental_crowding_operator=uses_custom_crowding_operator)
                                         termination_criterion = TerminationCriteria.PSEvaluationLimit(self.ps_budget)
                                         with execution_time() as timer:
-                                            miner.run(termination_criterion, verbose=True)
+                                            miner.run(termination_criterion, verbose=False)
                                         mined_pss = miner.get_results()
                                         found = targets.intersection(mined_pss)
+                                        smallest_errors = [minimum_error_to_find(target, mined_pss) for target in targets]
                                         logger.info(f"\t{len(found)} were found!")
                                         datapoint = {"total_ps_budget": self.ps_budget,
                                                      "problem_str": problem_str,
@@ -121,10 +131,11 @@ class HyperparameterEvaluator:
                                                      "mined_count": len(mined_pss),
                                                      "target_count": len(targets),
                                                      "found_count": len(found),
+                                                     "smallest_errors": [smallest_errors],
                                                      "uses_custom_crowding_operator": uses_custom_crowding_operator,
                                                      "vars_covered": self.get_count_of_covered_vars(found),
                                                      "runtime":timer.execution_time}
-                                    except Exception as e:
+                                    except Error as e:  # TODO change this
                                         logger.info(f"An error {e} occurred")
                                         datapoint = {"ERROR": repr(e),
                                                      "total_ps_budget": self.ps_budget,

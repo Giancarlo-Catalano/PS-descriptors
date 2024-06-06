@@ -214,12 +214,12 @@ def grid_search():
     #                                ps_budgets_per_run_to_test=[1000, 3000, 5000])
     hype = HyperparameterEvaluator(algorithms_to_test=["NSGAII"],
                                    problems_to_test=["RR_5"],
-                                   pRef_sizes_to_test=[10000],
-                                   population_sizes_to_test=[200],
+                                   pRef_sizes_to_test=[10000, 20000],
+                                   population_sizes_to_test=[200, 500],
                                    pRef_origin_methods = ["uniform SA"],
                                    ps_budget=50000,
                                    custom_crowding_operators_to_test = [True],
-                                   ps_budgets_per_run_to_test=[10000])
+                                   ps_budgets_per_run_to_test=[5000, 10000])
     hype.get_data()
 
 

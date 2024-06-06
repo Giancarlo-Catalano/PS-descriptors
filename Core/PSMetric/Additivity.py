@@ -1,4 +1,5 @@
 import itertools
+import random
 from typing import Optional
 
 import numpy as np
@@ -137,6 +138,11 @@ class ExternalInfluence(Metric):
         empty_ps_mf = self.mf(empty_ps, self.pRef)
         ps_mf = self.mf(ps, self.pRef)
 
+        if ps.is_empty():
+            return 0
+        if ps.is_fully_fixed():
+            return 0
+
         def absence_influence_for_var_val(var: int, val: int) -> int:
             trivial_mf = self.trivial_means[var][val]
             ps_with_trivial = ps.with_fixed_value(var, val)
@@ -169,3 +175,115 @@ class ExternalInfluence(Metric):
 
 
 
+
+
+
+class MutualInformation(Metric):
+    sorted_pRef: Optional[PRef]
+
+    univariate_probability_table: Optional[list]
+    bivariate_probability_table: Optional[list]
+
+    linkage_table: Optional[np.ndarray]
+
+    def __init__(self):
+        super().__init__()
+        self.sorted_pRef = None
+        self.univariate_probability_table = None
+        self.bivariate_probability_table = None
+        self.linkage_table = None
+
+    def __repr__(self):
+        return "MutualInformation"#
+
+
+
+    @classmethod
+    def get_sorted_pRef(cls, pRef: PRef) -> PRef:
+        indexed_fitnesses = list(enumerate(pRef.fitness_array))
+        indexed_fitnesses.sort(key=utils.second, reverse=True)
+        indexes, fitnesses = utils.unzip(indexed_fitnesses)
+
+        new_matrix = pRef.full_solution_matrix[indexes]
+        return PRef(fitnesses, new_matrix, search_space=pRef.search_space)
+    def set_pRef(self, pRef: PRef):
+        self.sorted_pRef = self.get_sorted_pRef(pRef)
+
+        self.univariate_probability_table, self.bivariate_probability_table = self.calculate_probability_tables()
+        self.linkage_table = self.get_linkage_table()
+
+    def calculate_probability_tables(self) -> (list, list):
+        fitnesses_with_indexes = list(enumerate(self.sorted_pRef.fitness_array))
+        def tournament_selection(tournament_size: int) -> np.ndarray:
+            picks = random.choices(fitnesses_with_indexes, k=tournament_size)
+            winner_index = max(picks, key=utils.second)[0]
+            return self.sorted_pRef.full_solution_matrix[winner_index]
+
+
+        univariate_counts = [np.zeros(card) for card in self.sorted_pRef.search_space.cardinalities]
+        cs = self.sorted_pRef.search_space.cardinalities
+        bivariate_count_table = [[np.zeros((c1, c2), dtype=int)
+                                  for c1 in cs]
+                                 for c2 in cs]
+        def register_solution_for_univariate(solution: np.ndarray):
+            for var, value in enumerate(solution):
+                univariate_counts[var][value] += 1
+
+
+        def register_solution_for_bivariate(solution: np.ndarray):
+            for var_a, value_a in enumerate(solution):
+                for var_b in range(var_a+1, len(solution)):
+                    value_b = solution[var_b]
+                    bivariate_count_table[var_a][var_b][value_a, value_b] += 1
+
+        for _ in range(len(self.sorted_pRef.fitness_array)):
+            sample = tournament_selection(2)
+            register_solution_for_univariate(sample)
+            register_solution_for_bivariate(sample)
+
+        def counts_to_probabilities(counts: np.ndarray):
+            """ used for both arrays and matrices"""
+            return (counts / np.sum(counts))
+
+
+        univariate_probabilities = [counts_to_probabilities(var_counts) for var_counts in univariate_counts]
+        bivariate_probabilities = [[counts_to_probabilities(bivariate_count_table[var_a][var_b]) if var_b > var_a else None
+                                    for var_b in range(len(cs))]
+                                   for var_a in range(len(cs))]
+        return univariate_probabilities, bivariate_probabilities
+
+    def get_linkage_between_vars(self, var_a:int, var_b:int) -> float:
+
+        def mutual_information(value_a: int, value_b: int) -> float:
+            p_a = self.univariate_probability_table[var_a][value_a]
+            p_b = self.univariate_probability_table[var_b][value_b]
+
+            p_a_b = self.bivariate_probability_table[var_a][var_b][value_a, value_b]
+            return p_a_b * np.log(p_a_b/(p_a * p_b))
+
+
+        ss = self.sorted_pRef.search_space
+        return sum(mutual_information(value_a, value_b)
+                   for value_a in range(ss.cardinalities[var_a])
+                   for value_b in range(ss.cardinalities[var_b]))
+
+    def get_linkage_table(self) -> np.ndarray:
+        param_count = self.sorted_pRef.search_space.amount_of_parameters
+        table = np.zeros((param_count, param_count), dtype=float)
+        for var_a in range(param_count):
+            for var_b in range(var_a+1, param_count):
+                table[var_a][var_b] = self.get_linkage_between_vars(var_a, var_b)
+
+        table += table.T
+
+        return table
+
+    def get_linkages_in_ps(self, ps: PS) -> list[float]:
+        fixed_vars = ps.get_fixed_variable_positions()
+        return [self.linkage_table[var_a, var_b] for var_a, var_b in itertools.combinations(fixed_vars, r=2)]
+
+    def get_single_score(self, ps: PS) -> float:
+        linkages = self.get_linkages_in_ps(ps)
+        if len(linkages) == 0:
+            return 0
+        return np.average(linkages)

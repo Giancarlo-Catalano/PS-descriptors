@@ -15,6 +15,7 @@ from pymoo.operators.crossover.sbx import SBX
 from pymoo.operators.mutation.pm import PM
 from pymoo.operators.repair.rounding import RoundingRepair
 from pymoo.operators.sampling.rnd import IntegerRandomSampling, FloatRandomSampling
+from pymoo.operators.selection.tournament import TournamentSelection
 from pymoo.operators.survival.rank_and_crowding import RankAndCrowding
 from pymoo.optimize import minimize
 from pymoo.util.ref_dirs import get_reference_directions
@@ -63,7 +64,7 @@ class PSPyMooProblem(Problem):
         metrics = np.array([self.objectives_evaluator.get_S_MF_A(self.individual_to_ps(row)) for row in X])
         out["F"] = -metrics  # minus sign because it's a maximisation task
 
-        # sharing_values = get_sharing_scores(X, 0.5, 2)
+        # sharing_values = get_sharing_scores(X, 0.5, 12)
         # out["F"] /= (sharing_values.reshape((-1, 1)))+1
 
 
@@ -91,10 +92,11 @@ def get_pymoo_algorithm(pRef,
                       crossover=PSSimulatedBinaryCrossover(),
                       mutation=PSPolynomialMutation(ss),
                       eliminate_duplicates=True,
-                     survival=survival
+                     survival=survival,
+                     selection=TournamentSelection(pressure=pop_size // 10)
                       )
     if which_algorithm == "NSGAIII":
-        ref_dirs = get_reference_directions("das-dennis", 3, n_partitions=12)
+        ref_dirs = get_reference_directions("das-dennis", 3, n_partitions=20)
 
         # create the algorithm object
         return NSGA3(pop_size=pop_size,

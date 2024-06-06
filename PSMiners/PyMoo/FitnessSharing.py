@@ -6,11 +6,11 @@ from Core.custom_types import ArrayOfFloats
 
 def distance_between_PS_values(vals_a: np.ndarray, vals_b: np.ndarray) -> float:
     overlap_count = np.sum(np.logical_and(vals_a == vals_b, vals_a != STAR), dtype=float)
-    # fixed_count = np.sum(np.logical_or((vals_a != STAR), (vals_b != STAR)), dtype=float)
-    fixed_count = np.minimum(np.sum(vals_a != STAR), np.sum(vals_b != STAR))
+    #fixed_count = np.sum(np.logical_or((vals_a != STAR), (vals_b != STAR)), dtype=float)
+    fixed_count = np.average((np.sum(vals_a != STAR), np.sum(vals_b != STAR)))
 
     if fixed_count < 1:
-        return 0
+        return 1
     return 1 - (overlap_count / fixed_count)
 
 

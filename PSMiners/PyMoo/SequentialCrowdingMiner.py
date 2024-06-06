@@ -23,7 +23,7 @@ from PSMiners.DEAP.DEAPPSMiner import DEAPPSMiner
 from PSMiners.DEAP.deap_utils import get_toolbox_for_problem, get_stats_object, nsga
 from PSMiners.PyMoo.CustomCrowding import PyMooPSSequentialCrowding, AggressivePyMooPSSequentialCrowding
 from PSMiners.PyMoo.Operators import PSGeometricSampling, PSSimulatedBinaryCrossover, PSPolynomialMutation
-from PSMiners.PyMoo.PSPyMooProblem import PSPyMooProblem, get_pymoo_algorithm
+from PSMiners.PyMoo.PSPyMooProblem import PSPyMooProblem
 from PSMiners.PyMoo.pymoo_utilities import get_pymoo_search_algorithm
 from utils import announce
 
@@ -143,10 +143,6 @@ class SequentialCrowdingMiner(AbstractPSMiner):
 
 
         e_pss = self.output_of_miner_to_evaluated_ps(res)
-        for e_ps in e_pss:  # TODO remove this
-            e_ps.metric_scores = -self.pymoo_problem.objectives_evaluator.get_S_MF_A(e_ps)
-
-
         # debug
         #print("The sorted e_pss are")
         sorted_pss = self.sort_by_m_and_a(e_pss)

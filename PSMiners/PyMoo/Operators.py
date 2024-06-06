@@ -69,6 +69,7 @@ class PSPolynomialMutation(Mutation):
                     new_value = -1
                 else:
                     new_value = random.randrange(self.search_space.cardinalities[index])
+                previous_value = result_values[index]
                 result_values[index] = new_value
 
         return result_values

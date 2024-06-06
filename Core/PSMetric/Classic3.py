@@ -15,8 +15,9 @@ import utils
 from BenchmarkProblems.BenchmarkProblem import BenchmarkProblem
 from Core.PRef import PRef
 from Core.PS import PS, STAR
-from Core.PSMetric.Additivity import Additivity
+from Core.PSMetric.Additivity import Additivity, ExternalInfluence, MeanError, MutualInformation
 from Core.PSMetric.Atomicity import Atomicity
+from Core.PSMetric.BivariateANOVALinkage import BivariateANOVALinkage
 from Core.PSMetric.Linkage import Linkage
 from Core.PSMetric.LocalPerturbation import BivariateLocalPerturbation
 from Core.PSMetric.MeanFitness import MeanFitness
@@ -126,7 +127,7 @@ class Classic3PSEvaluator:
         self.mf_range = self.get_mf_range(pRef)
         self.atomicity_range = self.get_atomicity_range(self.cached_isolated_benefits)
 
-        self.blp_atomicity_evaluator = BivariateLocalPerturbation()
+        self.blp_atomicity_evaluator = MutualInformation()
         self.blp_atomicity_evaluator.set_pRef(pRef)
 
     @classmethod
@@ -276,10 +277,11 @@ class Classic3PSEvaluator:
 
         mean_fitness = self.mf_of_rows(rows_all_fixed)
         mean_fitness = utils.remap_in_range_0_1_knowing_range(mean_fitness, self.mf_range)
-        atomicity = self.get_atomicity_from_relevant_rows(ps,
-                                                          rows_all_fixed,
-                                                          excluding_one)
-        atomicity = utils.remap_in_range_0_1_knowing_range(atomicity, self.atomicity_range)
+        # atomicity = self.get_atomicity_from_relevant_rows(ps,
+        #                                                   rows_all_fixed,
+        #                                                   excluding_one)
+        # atomicity = utils.remap_in_range_0_1_knowing_range(atomicity, self.atomicity_range)
+        atomicity = self.blp_atomicity_evaluator.get_single_score(ps)
 
         if not np.isfinite(mean_fitness):
             mean_fitness = invalid_value

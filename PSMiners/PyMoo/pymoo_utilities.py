@@ -1,5 +1,6 @@
 from typing import Any
 
+import numpy as np
 from pymoo.algorithms.moo.age import AGEMOEA
 from pymoo.algorithms.moo.moead import MOEAD
 from pymoo.algorithms.moo.nsga2 import NSGA2
@@ -7,11 +8,30 @@ from pymoo.algorithms.moo.nsga3 import NSGA3
 from pymoo.algorithms.moo.rvea import RVEA
 from pymoo.algorithms.moo.spea2 import SPEA2
 from pymoo.core.survival import Survival
+from pymoo.operators.selection.tournament import TournamentSelection
 from pymoo.operators.survival.rank_and_crowding import RankAndCrowding
 from pymoo.util.ref_dirs import get_reference_directions
 
+import utils
 from Core.SearchSpace import SearchSpace
 from PSMiners.PyMoo.CustomCrowding import PyMooCustomCrowding
+
+
+
+def tournament_select_for_pymoo(pop, P, **kwargs):
+    # The P input defines the tournaments and competitors
+    n_tournaments, n_competitors = P.shape
+
+    S = np.full(n_tournaments, -1, dtype=np.int)
+
+    # now do all the tournaments
+    for i in range(n_tournaments):
+        indexes = P[i]
+        fs = [pop[i].F for i in indexes]
+        indexes_and_fs = list(zip(indexes, fs))
+        indexes_and_fs.sort(key=utils.second)
+        S[i] =  indexes[0][0]
+    return S
 
 
 def get_pymoo_search_algorithm(which_algorithm: str,
@@ -24,7 +44,7 @@ def get_pymoo_search_algorithm(which_algorithm: str,
     n_params = search_space.amount_of_parameters
     def get_ref_dirs():
         ref_dirs = get_reference_directions("das-dennis", 3, n_partitions=12)
-        return ref_dirs # (ref_dirs + 1) / 3  # i was meant to remove this...
+        return (ref_dirs + 1) / 3
     if which_algorithm == "NSGAII":
         return NSGA2(pop_size=pop_size, sampling=sampling, crossover=crossover,
                       mutation=mutation, eliminate_duplicates=True, survival=crowding_operator)
