@@ -85,7 +85,7 @@ class HyperparameterEvaluator:
         return int(np.sum(covered_positions))
 
 
-    def get_data(self):
+    def get_data(self, ignore_errors = False):
         results = []
         for problem_str in self.problems_to_test:
             original_problem, bt_problem = self.get_problem_from_str(problem_str)
@@ -115,9 +115,11 @@ class HyperparameterEvaluator:
                                                                         population_size_per_run=population_size,
                                                                         budget_per_run=ps_budget_per_run,
                                                                         use_experimental_crowding_operator=uses_custom_crowding_operator)
-                                        termination_criterion = TerminationCriteria.PSEvaluationLimit(self.ps_budget)
+                                        eval_limit = TerminationCriteria.PSEvaluationLimit(self.ps_budget)
+                                        finish_early_if_all_found = TerminationCriteria.UntilAllTargetsFound(targets)
+                                        termination_criteria = TerminationCriteria.UnionOfCriteria(eval_limit, finish_early_if_all_found)
                                         with execution_time() as timer:
-                                            miner.run(termination_criterion, verbose=False)
+                                            miner.run(termination_criteria, verbose=True)
                                         mined_pss = miner.get_results()
                                         found = targets.intersection(mined_pss)
                                         smallest_errors = [minimum_error_to_find(target, mined_pss) for target in targets]
@@ -134,8 +136,11 @@ class HyperparameterEvaluator:
                                                      "smallest_errors": [smallest_errors],
                                                      "uses_custom_crowding_operator": uses_custom_crowding_operator,
                                                      "vars_covered": self.get_count_of_covered_vars(found),
-                                                     "runtime":timer.execution_time}
-                                    except Error as e:  # TODO change this
+                                                     "runtime":timer.execution_time,
+                                                     "used_evaluations":miner.get_used_evaluations()}
+                                    except Exception as e:  # TODO change this
+                                        if not ignore_errors:
+                                            raise e
                                         logger.info(f"An error {e} occurred")
                                         datapoint = {"ERROR": repr(e),
                                                      "total_ps_budget": self.ps_budget,

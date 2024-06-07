@@ -63,7 +63,7 @@ class PyMooCustomCrowding(Survival):
                     )
 
                 I = randomized_argsort(crowding_of_front, order='descending', method='numpy')
-                if n_remove != 0:
+                if n_remove != 0:  # otherwise we get a bug in the normal implementation!!!
                     I = I[:-n_remove]
 
             # otherwise take the whole front unsorted
@@ -113,7 +113,8 @@ class PyMooPSSequentialCrowding(PyMooCustomCrowding):
         self.coverage = PyMooPSSequentialCrowding.get_coverage(self.search_space, already_obtained)
         if immediate:
             self.coverage = np.array([1 if x > 0 else 0 for x in self.coverage])
-        self.foods = (1 - self.coverage).reshape((-1, 1))
+        #self.foods = (1 - self.coverage).reshape((-1, 1))
+        self.foods = 1/((self.coverage * len(already_obtained))+1).reshape((-1, 1))
         self.opt = []
 
 
@@ -136,7 +137,7 @@ class PyMooPSSequentialCrowding(PyMooCustomCrowding):
         scores = np.array([np.average(self.foods[row]) if any(row) else 1
                            for row in where_fixed])
 
-        self.opt = population[front_indexes]  # just to comply with Pymoo, ignore this
+        self.opt = [] # population[front_indexes]  # just to comply with Pymoo, ignore this
 
         return scores
 

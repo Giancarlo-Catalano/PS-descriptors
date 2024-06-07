@@ -68,10 +68,8 @@ class UntilAllTargetsFound(TerminationCriteria):
         return f"Targets({self.targets})"
 
     def met(self, **kwargs):
-        would_be_returned = kwargs["evaluated_population"]
-        population = utils.unzip(would_be_returned)[1]
-
-        return all(target in population for target in self.targets)
+        archive = kwargs["archive"]
+        return all(target in archive for target in self.targets)
 
 
 class UntilGlobalOptimaReached(TerminationCriteria):

@@ -5,7 +5,10 @@ from pymoo.algorithms.moo.age import AGEMOEA
 from pymoo.algorithms.moo.moead import MOEAD
 from pymoo.algorithms.moo.nsga2 import NSGA2
 from pymoo.algorithms.moo.nsga3 import NSGA3
+from pymoo.algorithms.moo.rnsga2 import RNSGA2
+from pymoo.algorithms.moo.rnsga3 import RNSGA3
 from pymoo.algorithms.moo.rvea import RVEA
+from pymoo.algorithms.moo.sms import SMSEMOA
 from pymoo.algorithms.moo.spea2 import SPEA2
 from pymoo.core.survival import Survival
 from pymoo.operators.selection.tournament import TournamentSelection
@@ -44,7 +47,10 @@ def get_pymoo_search_algorithm(which_algorithm: str,
     n_params = search_space.amount_of_parameters
     def get_ref_dirs():
         ref_dirs = get_reference_directions("das-dennis", 3, n_partitions=12)
-        return (ref_dirs + 1) / 3
+        return ref_dirs
+
+    def get_ref_points():
+        return np.array([[0, 0.6, 1]])
     if which_algorithm == "NSGAII":
         return NSGA2(pop_size=pop_size, sampling=sampling, crossover=crossover,
                       mutation=mutation, eliminate_duplicates=True, survival=crowding_operator)
@@ -57,18 +63,33 @@ def get_pymoo_search_algorithm(which_algorithm: str,
                          crossover=crossover, mutation=mutation, eliminate_duplicates=True)
     elif which_algorithm == "MOEAD":
         return MOEAD(ref_dirs = get_ref_dirs(), sampling=sampling, crossover=crossover,
-            mutation=mutation, n_neighbors=n_params, prob_neighbor_mating=0.7,
-            survival=crowding_operator)
-    elif which_algorithm == "AGEMOEA":
+            mutation=mutation, n_neighbors=n_params, prob_neighbor_mating=0.7)
+    elif which_algorithm == "AGE-MOEA":
         return AGEMOEA(pop_size=pop_size, sampling=sampling, crossover=crossover,
-                       mutation=mutation, eliminate_duplicates=True, survival=crowding_operator)
+                       mutation=mutation, eliminate_duplicates=True)
     elif which_algorithm == "RVEA":
         return RVEA(pop_size=pop_size, sampling=sampling, crossover=crossover,
-                    mutation=mutation, eliminate_duplicates=True, survival=crowding_operator,
+                    mutation=mutation, eliminate_duplicates=True,
                     ref_dirs=get_ref_dirs())
     elif which_algorithm == "SPEA2":
         return SPEA2(pop_size=pop_size, sampling=sampling, crossover=crossover,
-                    mutation=mutation, eliminate_duplicates=True, survival=crowding_operator,
+                    mutation=mutation, eliminate_duplicates=True,
                     ref_dirs=get_ref_dirs())
+    elif which_algorithm == "R-NSGA-III":
+        return RNSGA3(pop_size=pop_size, sampling=sampling, crossover=crossover,
+                    mutation=mutation, eliminate_duplicates=True,
+                      ref_points = get_ref_points(),
+                      pop_per_ref_point=pop_size//5)
+    elif which_algorithm == "SMS-EMOA":
+        return SMSEMOA(pop_size=pop_size, sampling=sampling, crossover=crossover,
+                    mutation=mutation, eliminate_duplicates=True, survival=crowding_operator)
+    elif which_algorithm == "R-NSGA-II":
+        return RNSGA2(pop_size=pop_size, sampling=sampling, crossover=crossover,
+                    mutation=mutation, eliminate_duplicates=True,
+                      ref_points = get_reference_directions("das-dennis", 3, n_partitions=7),
+                      epsilon=0.1,
+                      normalization='front',
+                      extreme_points_as_reference_points=False,
+                      weights=[1/3, 1/3, 1/3])
     else:
         raise Exception(f"The algorithm {which_algorithm} was not recognised...")

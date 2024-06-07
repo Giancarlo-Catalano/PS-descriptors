@@ -101,7 +101,7 @@ class Classic3PSEvaluator:
     mf_range: (float, float)
     atomicity_range: (float, float)
 
-    blp_atomicity_evaluator: BivariateLocalPerturbation
+    blp_atomicity_evaluator: MutualInformation
 
 
     @classmethod

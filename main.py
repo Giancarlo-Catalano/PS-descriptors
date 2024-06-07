@@ -6,8 +6,6 @@ import sys
 import traceback
 import warnings
 
-import numpy as np
-
 import utils
 from BenchmarkProblems.BenchmarkProblem import BenchmarkProblem
 from BenchmarkProblems.EfficientBTProblem.EfficientBTProblem import EfficientBTProblem
@@ -20,12 +18,7 @@ from Core.EvaluatedPS import EvaluatedPS
 from Core.Explainer import Explainer
 from Core.PRef import PRef
 from Core.PS import PS
-from Core.PSMetric.Additivity import Additivity, MeanError, ExternalInfluence
-from Core.PSMetric.Atomicity import Atomicity
-from Core.PSMetric.BivariateANOVALinkage import BivariateANOVALinkage
 from Core.PSMetric.Classic3 import Classic3PSEvaluator
-from Core.PSMetric.Linkage import Linkage
-from Core.PSMetric.LocalPerturbation import BivariateLocalPerturbation, UnivariateLocalPerturbation
 from Core.PSMetric.Metric import Metric
 from Core.TerminationCriteria import PSEvaluationLimit
 from Explanation.Detector import Detector
@@ -35,7 +28,7 @@ from FSStochasticSearch.Operators import SinglePointFSMutation
 from FSStochasticSearch.SA import SA
 from PSMiners.DEAP.DEAPPSMiner import DEAPPSMiner
 from PSMiners.Mining import get_history_pRef
-from utils import announce, indent, decode_data_from_islets
+from utils import announce, indent
 
 
 def warn_with_traceback(message, category, filename, lineno, file=None, line=None):
@@ -215,12 +208,12 @@ def grid_search():
     hype = HyperparameterEvaluator(algorithms_to_test=["NSGAII"],
                                    problems_to_test=["RR_5"],
                                    pRef_sizes_to_test=[20000],
-                                   population_sizes_to_test=[200, 500],
+                                   population_sizes_to_test=[200],
                                    pRef_origin_methods = ["uniform SA"],
-                                   ps_budget=50000,
-                                   custom_crowding_operators_to_test = [True],
-                                   ps_budgets_per_run_to_test=[5000, 10000])
-    hype.get_data()
+                                   ps_budget=20000,
+                                   custom_crowding_operators_to_test = [False],
+                                   ps_budgets_per_run_to_test=[5000])
+    hype.get_data(ignore_errors=True)
 
 
 
@@ -248,7 +241,9 @@ if __name__ == '__main__':
     grid_search()
     #explanation()
     #test_archive_miner()
-    #test_classic3(RoyalRoad(3, 4).get_reference_population(5000))
+    #test_classic3(RoyalRoad(3, 4).get_reference_population(5000))#
+
+
 
 
 

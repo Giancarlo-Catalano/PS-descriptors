@@ -38,8 +38,11 @@ def harmonic_mean(values: Iterable[float]) -> float:
     if len(values) == 0:
         raise Exception("Trying to get the harmonic mean of no values!")
 
+    if any(value <= 1e-5 for value in values):
+        raise Exception("In harmonic mean, there are zero values or negative values")
+
     sum_of_inverses = sum(value ** (-1) for value in values)
-    return (sum_of_inverses / len(sum_of_inverses)) ** (-1)
+    return (sum_of_inverses / len(values)) ** (-1)
 
 
 def get_descriptive_stats(data: np.ndarray) -> (float, float, float, float, float):
@@ -278,7 +281,22 @@ def second(p):
 def first(p):
     return p[0]
 
-def sort_by_combination_of(items: list, key_functions: list[Callable], reverse=False) -> list:
+
+
+def sort_using_remap_on_functions(items:list, key_functions: list[Callable], reverse=False) -> list:
+    values_matrix = np.array([[func(item) for func in key_functions] for item in items])
+    normalised_matrix = values_matrix.copy()
+    for i in range(normalised_matrix.shape[1]):
+        normalised_matrix[:, i] = remap_array_in_zero_one(normalised_matrix[:, i])
+    total_scores = np.sum(normalised_matrix, axis=1)
+    indexed_total_scores = list(enumerate(total_scores))
+    indexed_total_scores.sort(key=second, reverse=reverse)
+    return [items[index] for index, value in indexed_total_scores]
+
+
+def sort_by_combination_of(items: list, key_functions: list[Callable], reverse=False, use_remap=False) -> list:
+    if use_remap:
+        return sort_using_remap_on_functions(items, key_functions, reverse)
     def get_sorting_for_func(func) -> list[int]:
         sorted_items = sorted(enumerate(items), key=lambda x: func(x[1]))
         return [index for index, item in sorted_items]
@@ -293,6 +311,9 @@ def sort_by_combination_of(items: list, key_functions: list[Callable], reverse=F
     summed_ranks = np.sum(ranks, axis=0)
 
     return [items[index] for index, rank in sorted(enumerate(summed_ranks), key=second, reverse=reverse)]
+
+
+
 
 
 

@@ -1,6 +1,6 @@
 import numpy as np
 
-from Core.PS import STAR
+from Core.PS import STAR, PS
 from Core.custom_types import ArrayOfFloats
 
 
@@ -21,6 +21,15 @@ def sharing_value_between_PS_values(vals_a: np.ndarray, vals_b: np.ndarray, sigm
         return 1.0 - (distance / sigma_shared)**alpha
     else:
         return 0.0
+
+
+def get_sharing_score_from_reference_group(solution_matrix_reference: np.ndarray,
+                                            ps: PS,
+                                            sigma_shared: float, alpha: int) -> float:
+    ps_values = ps.values
+    penalties = [sharing_value_between_PS_values(ps_values, reference_solution, sigma_shared, alpha)
+                 for reference_solution in solution_matrix_reference]
+    return sum(penalties)
 
 def get_sharing_scores(solution_matrix: np.ndarray, sigma_shared: float, alpha: int) -> ArrayOfFloats:
 

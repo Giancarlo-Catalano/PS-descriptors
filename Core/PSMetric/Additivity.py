@@ -213,10 +213,10 @@ class MutualInformation(Metric):
         self.linkage_table = self.get_linkage_table()
 
     def calculate_probability_tables(self) -> (list, list):
-        fitnesses_with_indexes = list(enumerate(self.sorted_pRef.fitness_array))
+        indexes = list(range(len(self.sorted_pRef.fitness_array)))
         def tournament_selection(tournament_size: int) -> np.ndarray:
-            picks = random.choices(fitnesses_with_indexes, k=tournament_size)
-            winner_index = max(picks, key=utils.second)[0]
+            picks = random.choices(indexes, k=tournament_size)
+            winner_index = min(picks)
             return self.sorted_pRef.full_solution_matrix[winner_index]
 
 
@@ -286,4 +286,4 @@ class MutualInformation(Metric):
         linkages = self.get_linkages_in_ps(ps)
         if len(linkages) == 0:
             return 0
-        return np.average(linkages)
+        return np.median(linkages)

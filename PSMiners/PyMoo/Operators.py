@@ -11,6 +11,8 @@ from pymoo.operators.sampling.rnd import FloatRandomSampling
 from Core.SearchSpace import SearchSpace
 
 
+
+
 class PSGeometricSampling(FloatRandomSampling):
 
     def generate_single_individual(self, n, xu) -> np.ndarray:
@@ -31,13 +33,7 @@ class PSGeometricSampling(FloatRandomSampling):
 class PSUniformSampling(FloatRandomSampling):
 
     def generate_single_individual(self, n, xu) -> np.ndarray:
-        result_values = np.full(shape=n, fill_value=-1)  # the stars
-        chance_of_value = 0.5
-        while random.random() < chance_of_value:
-            var_index = random.randrange(n)
-            new_value = random.randrange(xu[var_index]+1)
-            result_values[var_index] = new_value
-        return result_values
+        return np.array([-1 if random.random() < 0.5 else random.randrange(cardinality+1) for cardinality in xu])
 
     def _do(self, problem, n_samples, **kwargs):
         n, (xl, xu) = problem.n_var, problem.bounds()
@@ -49,16 +45,14 @@ class PSUniformSampling(FloatRandomSampling):
 # ---------------------------------------------------------------------------------------------------------
 
 
-class PSPolynomialMutation(Mutation):
+class PSUniformMutation(Mutation):
     search_space: SearchSpace
     single_point_probability: float
 
     def __init__(self, search_space: SearchSpace, prob=None):
         self.search_space = search_space
-        if prob is None:
-            prob = 1 / self.search_space.amount_of_parameters
-        self.single_point_probability = prob
-        super().__init__(prob=0.9)  # no idea what's supposed to be there, but it used to say 0.9 by default..
+        self.single_point_probability = 1 / self.search_space.amount_of_parameters
+        super().__init__(prob=0.9 if prob is None else prob)  # no idea what's supposed to be there, but it used to say 0.9 by default..
 
 
     def mutate_single_individual(self, x: np.ndarray) -> np.ndarray:
@@ -82,7 +76,7 @@ class PSPolynomialMutation(Mutation):
         return result_values
 
 
-def ps_sbx_mate(mother:np.ndarray, father:np.ndarray):
+def ps_uniform_crossover(mother:np.ndarray, father:np.ndarray):
     daughter = mother.copy()
     son = father.copy()
 
@@ -98,7 +92,7 @@ def ps_sbx_mate(mother:np.ndarray, father:np.ndarray):
 # ---------------------------------------------------------------------------------------------------------
 
 
-class PSSimulatedBinaryCrossover(Crossover):
+class PSUniformCrossover(Crossover):
 
     def __init__(self,
                  n_offsprings=2,
@@ -110,8 +104,8 @@ class PSSimulatedBinaryCrossover(Crossover):
         _, n_matings, _ = X.shape
 
 
-        children = np.array([ps_sbx_mate(mother, father)
-                    for mother, father in zip(X[0], X[1])])
+        children = np.array([ps_uniform_crossover(mother, father)
+                             for mother, father in zip(X[0], X[1])])
 
         return np.swapaxes(children, 0, 1)
 
