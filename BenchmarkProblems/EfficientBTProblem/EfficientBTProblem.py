@@ -1,3 +1,4 @@
+import copy
 import itertools
 import math
 from typing import TypeAlias
@@ -5,6 +6,7 @@ from typing import TypeAlias
 import numpy as np
 
 import utils
+from BenchmarkProblems import InverseGraphColouringProblem
 from BenchmarkProblems.BT.BTProblem import BTProblem
 from BenchmarkProblems.BT.RotaPattern import RotaPattern, get_range_scores, WorkDay
 from BenchmarkProblems.BT.Worker import Worker, Skill
@@ -467,6 +469,57 @@ class EfficientBTProblem(BTProblem):
 
 
         #filename = r"C:\Users\gac8\PycharmProjects\PS-PDF\Experimentation\BT\MartinBT\rota_popularity.csv"
+
+
+    @classmethod
+    def from_inverse_graph_colouring_problem(cls, original_problem: InverseGraphColouringProblem):
+
+        if original_problem.amount_of_colours != 2:
+            raise Exception("Only 2 colours are currently supported in the BT version of the IGC problem")
+
+        workday = WorkDay.working_day(900, 1700)
+        restday = WorkDay.not_working()
+
+        rota_alpha = RotaPattern(7, [workday, workday, workday, restday, restday, restday, restday])
+        rota_beta = RotaPattern(7, [restday, restday, restday, workday, workday, workday, restday])
+
+        non_working_week = [restday]*7
+        def place_in_otherwise_empty_rota(weeks: int, rota_to_insert: RotaPattern, insertion_point:int) -> RotaPattern:
+            return RotaPattern(7,
+                               non_working_week*insertion_point+
+                               rota_to_insert.days+
+                               non_working_week*(weeks-insertion_point-1))
+
+        def options_for_nth_worker(n:int) -> list[RotaPattern]:
+            return [place_in_otherwise_empty_rota(weeks=original_problem.clique_size,
+                                                  rota_to_insert=rota_alpha,
+                                                  insertion_point=n),
+                    place_in_otherwise_empty_rota(weeks=original_problem.clique_size,
+                                                  rota_to_insert=rota_beta,
+                                                  insertion_point=n)]
+
+        def make_template_worker(name: str, rota_options: list[RotaPattern]):
+            return Worker(available_skills=set(),
+                          available_rotas=rota_options,
+                          worker_id=name,
+                          name = name)
+
+        def make_clique_for_skill(skill: str) -> list[Worker]:
+            return [Worker(available_skills={skill},
+                          available_rotas=options_for_nth_worker(n),
+                          worker_id=f"W{n}_S{skill}",
+                          name = f"W{n}_S{skill}")
+                    for n in range(original_problem.clique_size)]
+
+        workers = [worker for s in range(original_problem.amount_of_cliques)
+                   for worker in make_clique_for_skill(f"SKILL_{s}")]
+
+        return EfficientBTProblem(workers = workers,
+                                  calendar_length=7*original_problem.clique_size,
+                                  weights = [1, 1, 1, 1, 1, 1, 0],
+                                  rota_preference_weight=0)
+
+
 
 
 

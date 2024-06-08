@@ -7,6 +7,7 @@ import numpy as np
 from BenchmarkProblems.BenchmarkProblem import BenchmarkProblem
 from BenchmarkProblems.EfficientBTProblem.EfficientBTProblem import EfficientBTProblem
 from BenchmarkProblems.GraphColouring import GraphColouring
+from BenchmarkProblems.InverseGraphColouringProblem import InverseGraphColouring
 from BenchmarkProblems.RoyalRoad import RoyalRoad
 from Core import TerminationCriteria
 from Core.PRef import PRef, plot_solutions_in_pRef
@@ -75,6 +76,14 @@ class HyperparameterEvaluator:
             rr_problem = RoyalRoad(amount_of_cliques=parameters[0], clique_size=clique_size)
             bt_problem = EfficientBTProblem.from_RoyalRoad(rr_problem)
             return rr_problem, bt_problem
+        elif problem_str.startswith("collaboration"):
+            clique_size = 4 if len(parameters) < 2 else parameters[1]
+            colour_count = 2 if len(parameters) < 3 else parameters[2]
+            igc_problem = InverseGraphColouring(amount_of_cliques=parameters[0],
+                                                clique_size=clique_size,
+                                                amount_of_colours=colour_count)
+            bt_problem = EfficientBTProblem.from_inverse_graph_colouring_problem(igc_problem)
+            return igc_problem, bt_problem
         else:
             raise Exception("The problem string was not recognised")
 
@@ -85,7 +94,7 @@ class HyperparameterEvaluator:
         return int(np.sum(covered_positions))
 
 
-    def get_data(self, ignore_errors = False):
+    def get_data(self, ignore_errors = False, verbose=False):
         results = []
         for problem_str in self.problems_to_test:
             original_problem, bt_problem = self.get_problem_from_str(problem_str)
@@ -119,7 +128,7 @@ class HyperparameterEvaluator:
                                         finish_early_if_all_found = TerminationCriteria.UntilAllTargetsFound(targets)
                                         termination_criteria = TerminationCriteria.UnionOfCriteria(eval_limit, finish_early_if_all_found)
                                         with execution_time() as timer:
-                                            miner.run(termination_criteria, verbose=True)
+                                            miner.run(termination_criteria, verbose=verbose)
                                         mined_pss = miner.get_results()
                                         found = targets.intersection(mined_pss)
                                         smallest_errors = [minimum_error_to_find(target, mined_pss) for target in targets]
