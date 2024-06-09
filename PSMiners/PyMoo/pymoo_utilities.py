@@ -51,6 +51,8 @@ def get_pymoo_search_algorithm(which_algorithm: str,
 
     def get_ref_points():
         return np.array([[0, 0.6, 1]])
+
+
     if which_algorithm == "NSGAII":
         return NSGA2(pop_size=pop_size, sampling=sampling, crossover=crossover,
                       mutation=mutation, eliminate_duplicates=True, survival=crowding_operator)

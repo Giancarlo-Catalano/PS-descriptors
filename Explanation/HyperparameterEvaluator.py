@@ -136,6 +136,7 @@ class HyperparameterEvaluator:
                                         datapoint = {"total_ps_budget": self.ps_budget,
                                                      "problem_str": problem_str,
                                                      "pRef_origin_method": pRef_origin_method,
+                                                     "pRef_size": pRef_size,
                                                      "miner_algorithm": miner_algorithm,
                                                      "population_size": population_size,
                                                      "ps_budget_per_run": ps_budget_per_run,
