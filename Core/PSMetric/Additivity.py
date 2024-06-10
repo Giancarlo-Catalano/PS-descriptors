@@ -103,64 +103,66 @@ class MeanError(Metric):
 
 
 
-class ExternalInfluence(Metric):
+class Influence(Metric):
     pRef: Optional[PRef]
     trivial_means: Optional[list[list[float]]]
+    overall_mean: Optional[float]
 
     def __init__(self):
         super().__init__()
         self.pRef = None
 
     def __repr__(self):
-        return "ExternalInfluence"
+        return "Influence"
 
 
-    @classmethod
-    def mf(cls, ps: PS, pRef: PRef) -> float:
-        return np.average(pRef.fitnesses_of_observations(ps))
-    @classmethod
-    def calculate_trivial_means(cls, pRef:PRef) -> list[list[float]]:
+    def mf(self, ps: PS) -> float:
+        fitnesses = self.pRef.fitnesses_of_observations(ps)
+        if len(fitnesses) < 1:
+            return self.overall_mean
+        else:
+            return np.average(fitnesses)
+
+    def calculate_trivial_means(self) -> list[list[float]]:
         def value_for_combination(var, val) -> float:
-            ps = PS.empty(pRef.search_space).with_fixed_value(var, val)
-            return cls.mf(ps, pRef)
+            ps = PS.empty(self.pRef.search_space).with_fixed_value(var, val)
+            return self.mf(ps)
         return [[value_for_combination(var, val)
-                 for val in range(pRef.search_space.cardinalities[var])]
-                for var in range(pRef.search_space.amount_of_parameters)]
+                 for val in range(self.pRef.search_space.cardinalities[var])]
+                for var in range(self.pRef.search_space.amount_of_parameters)]
 
     def set_pRef(self, pRef: PRef):
         self.pRef = pRef
-        self.trivial_means = self.calculate_trivial_means(pRef)
+        self.overall_mean = np.average(pRef.fitness_array)
+        self.trivial_means = self.calculate_trivial_means()
 
 
-    def get_single_score(self, ps: PS) -> float:
-
+    def get_external_internal_influence(self, ps: PS) -> (float, float):
         empty_ps = PS.empty(search_space= self.pRef.search_space)
-        empty_ps_mf = self.mf(empty_ps, self.pRef)
-        ps_mf = self.mf(ps, self.pRef)
+        empty_ps_mf = self.mf(empty_ps)
+        ps_mf = self.mf(ps)
 
         if ps.is_empty():
-            return 0
+            return (0, 0)
         if ps.is_fully_fixed():
-            return 0
+            return (0,0)
 
         def absence_influence_for_var_val(var: int, val: int) -> int:
             trivial_mf = self.trivial_means[var][val]
-            ps_with_trivial = ps.with_fixed_value(var, val)
-            with_trivial_mf = self.mf(ps_with_trivial, self.pRef)
+            ps_with_trivial_mf = self.mf(ps.with_fixed_value(var, val))
             effect_on_empty = trivial_mf - empty_ps_mf
-            effect_on_ps = with_trivial_mf - ps_mf
+            effect_on_ps = ps_with_trivial_mf - ps_mf
             return np.abs(effect_on_ps - effect_on_empty)
         def absence_influence_for_var(var: int) -> float:
             influences = [absence_influence_for_var_val(var, val)
                           for val in range(self.pRef.search_space.cardinalities[var])]
-            return np.average(influences)
+            return np.max(influences)
 
         def presence_influence_for_var(var: int) -> int:
             trivial_mf = self.trivial_means[var][ps[var]]
-            ps_without_trivial = ps.with_unfixed_value(var)
-            without_trivial_mf = self.mf(ps_without_trivial, self.pRef)
+            without_trivial_mf = self.mf(ps.with_unfixed_value(var))
             effect_on_empty = trivial_mf - empty_ps_mf
-            effect_on_ps = trivial_mf - without_trivial_mf
+            effect_on_ps = ps_mf - without_trivial_mf
             return np.abs(effect_on_ps - effect_on_empty)
 
 
@@ -170,8 +172,13 @@ class ExternalInfluence(Metric):
 
         presence_score = np.average(presence_influences)
         absence_score = np.average(absence_influences)
-        return presence_score - absence_score
+        return (absence_score, presence_score)
 
+
+    def get_single_score(self, ps: PS) -> float:
+        external_influence, internal_influence = self.get_external_internal_influence(ps)
+        # internal variables should be important, external variables should be not important
+        return internal_influence - external_influence
 
 
 

@@ -197,22 +197,24 @@ def explanation():
 
 
 def grid_search():
-    # hype = HyperparameterEvaluator(algorithms_to_test=["NSGAII", "NSGAIII", "MOEAD"],
-    #                                problems_to_test=["island_3", "island_5", "island_10", "RR_3", "RR_5", "RR_10"],
-    #                                pRef_sizes_to_test=[30000],
-    #                                population_sizes_to_test=[100, 200],
-    #                                pRef_origin_methods = ["SA+uniform", "SA"],
-    #                                ps_budget=30000,
-    #                                custom_crowding_operators_to_test = [True, False],
-    #                                ps_budgets_per_run_to_test=[1000, 3000, 5000])
-    hype = HyperparameterEvaluator(algorithms_to_test=["NSGAII"],
+    hype = HyperparameterEvaluator(algorithms_to_test=["NSGAII", "NSGAIII", "MOEAD", "SMS-EMOA"],
                                    problems_to_test=["collaboration_5", "insular_5", "RR_5"],
-                                   pRef_sizes_to_test=[20000],
-                                   population_sizes_to_test=[200],
-                                   pRef_origin_methods = ["uniform SA"],
+                                   pRef_sizes_to_test=[10000],
+                                   population_sizes_to_test=[50, 100, 200],
+                                   pRef_origin_methods = ["uniform", "SA", "uniform SA"],
                                    ps_budget=50000,
                                    custom_crowding_operators_to_test = [False, True],
-                                   ps_budgets_per_run_to_test=[2000, 5000, 10000])
+                                   ps_budgets_per_run_to_test=[1000, 2000, 3000, 5000, 10000])
+
+    # hype = HyperparameterEvaluator(algorithms_to_test=["NSGAII", "NSGAIII", "MOEAD", "SMS-EMOA"],
+    #                                problems_to_test=["collaboration_5", "insular_5", "RR_5"],
+    #                                pRef_sizes_to_test=[1000],
+    #                                population_sizes_to_test=[100],
+    #                                pRef_origin_methods = ["uniform", "SA", "uniform SA"],
+    #                                ps_budget=50,
+    #                                custom_crowding_operators_to_test = [False, True],
+    #                                ps_budgets_per_run_to_test=[100])
+
     hype.get_data(ignore_errors=True,
                   verbose=False)
 

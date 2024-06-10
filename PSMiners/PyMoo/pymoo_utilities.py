@@ -44,6 +44,7 @@ def get_pymoo_search_algorithm(which_algorithm: str,
                                crowding_operator: Survival,
                                crossover: Any,
                                mutation: Any):
+    """This is dogshit"""
     n_params = search_space.amount_of_parameters
     def get_ref_dirs():
         ref_dirs = get_reference_directions("das-dennis", 3, n_partitions=12)
@@ -64,34 +65,71 @@ def get_pymoo_search_algorithm(which_algorithm: str,
             return NSGA3(pop_size=pop_size, ref_dirs=get_ref_dirs(), sampling=sampling,
                          crossover=crossover, mutation=mutation, eliminate_duplicates=True)
     elif which_algorithm == "MOEAD":
-        return MOEAD(ref_dirs = get_ref_dirs(), sampling=sampling, crossover=crossover,
-            mutation=mutation, n_neighbors=n_params, prob_neighbor_mating=0.7)
+        if isinstance(crowding_operator, PyMooCustomCrowding):
+            return MOEAD(ref_dirs = get_ref_dirs(), sampling=sampling, crossover=crossover,
+            mutation=mutation, n_neighbors=n_params, survival = crowding_operator)
+        else:
+            return MOEAD(ref_dirs = get_ref_dirs(), sampling=sampling, crossover=crossover,
+                         mutation=mutation, n_neighbors=n_params)
     elif which_algorithm == "AGE-MOEA":
-        return AGEMOEA(pop_size=pop_size, sampling=sampling, crossover=crossover,
-                       mutation=mutation, eliminate_duplicates=True)
+        if isinstance(crowding_operator, PyMooCustomCrowding):
+            return AGEMOEA(pop_size=pop_size, sampling=sampling, crossover=crossover,
+                           mutation=mutation, eliminate_duplicates=True, survival = crowding_operator)
+        else:
+            return AGEMOEA(pop_size=pop_size, sampling=sampling, crossover=crossover,
+                           mutation=mutation, eliminate_duplicates=True)
     elif which_algorithm == "RVEA":
-        return RVEA(pop_size=pop_size, sampling=sampling, crossover=crossover,
-                    mutation=mutation, eliminate_duplicates=True,
-                    ref_dirs=get_ref_dirs())
+        if isinstance(crowding_operator, PyMooCustomCrowding):
+            return RVEA(pop_size=pop_size, sampling=sampling, crossover=crossover,
+                        mutation=mutation, eliminate_duplicates=True,
+                        ref_dirs=get_ref_dirs(), survival = crowding_operator)
+        else:
+            return RVEA(pop_size=pop_size, sampling=sampling, crossover=crossover,
+                        mutation=mutation, eliminate_duplicates=True,
+                        ref_dirs=get_ref_dirs())
     elif which_algorithm == "SPEA2":
-        return SPEA2(pop_size=pop_size, sampling=sampling, crossover=crossover,
-                    mutation=mutation, eliminate_duplicates=True,
-                    ref_dirs=get_ref_dirs())
+        if isinstance(crowding_operator, PyMooCustomCrowding):
+            return SPEA2(pop_size=pop_size, sampling=sampling, crossover=crossover,
+                         mutation=mutation, eliminate_duplicates=True,
+                         ref_dirs=get_ref_dirs(), survival = crowding_operator)
+        else:
+            return SPEA2(pop_size=pop_size, sampling=sampling, crossover=crossover,
+                        mutation=mutation, eliminate_duplicates=True,
+                        ref_dirs=get_ref_dirs())
     elif which_algorithm == "R-NSGA-III":
-        return RNSGA3(pop_size=pop_size, sampling=sampling, crossover=crossover,
-                    mutation=mutation, eliminate_duplicates=True,
-                      ref_points = get_ref_points(),
-                      pop_per_ref_point=pop_size//5)
+        if isinstance(crowding_operator, PyMooCustomCrowding):
+            return RNSGA3(pop_size=pop_size, sampling=sampling, crossover=crossover,
+                          mutation=mutation, eliminate_duplicates=True,
+                          ref_points = get_ref_points(),
+                          pop_per_ref_point=pop_size//5, survival = crowding_operator)
+        else:
+            return RNSGA3(pop_size=pop_size, sampling=sampling, crossover=crossover,
+                        mutation=mutation, eliminate_duplicates=True,
+                          ref_points = get_ref_points(),
+                          pop_per_ref_point=pop_size//5)
     elif which_algorithm == "SMS-EMOA":
-        return SMSEMOA(pop_size=pop_size, sampling=sampling, crossover=crossover,
-                    mutation=mutation, eliminate_duplicates=True, survival=crowding_operator)
+        if isinstance(crowding_operator, PyMooCustomCrowding):
+            return SMSEMOA(pop_size=pop_size, sampling=sampling, crossover=crossover,
+                           mutation=mutation, eliminate_duplicates=True, survival=crowding_operator)
+        else:
+            return SMSEMOA(pop_size=pop_size, sampling=sampling, crossover=crossover,
+                        mutation=mutation, eliminate_duplicates=True)
     elif which_algorithm == "R-NSGA-II":
-        return RNSGA2(pop_size=pop_size, sampling=sampling, crossover=crossover,
-                    mutation=mutation, eliminate_duplicates=True,
-                      ref_points = get_reference_directions("das-dennis", 3, n_partitions=7),
-                      epsilon=0.1,
-                      normalization='front',
-                      extreme_points_as_reference_points=False,
-                      weights=[1/3, 1/3, 1/3])
+        if isinstance(crowding_operator, PyMooCustomCrowding):
+            return RNSGA2(pop_size=pop_size, sampling=sampling, crossover=crossover,
+                            mutation=mutation, eliminate_duplicates=True,
+                              ref_points = get_reference_directions("das-dennis", 3, n_partitions=7),
+                              epsilon=0.1,
+                              normalization='front',
+                              extreme_points_as_reference_points=False,
+                              weights=[1/3, 1/3, 1/3], survival = crowding_operator)
+        else:
+            return RNSGA2(pop_size=pop_size, sampling=sampling, crossover=crossover,
+                          mutation=mutation, eliminate_duplicates=True,
+                          ref_points = get_reference_directions("das-dennis", 3, n_partitions=7),
+                          epsilon=0.1,
+                          normalization='front',
+                          extreme_points_as_reference_points=False,
+                          weights=[1/3, 1/3, 1/3])
     else:
         raise Exception(f"The algorithm {which_algorithm} was not recognised...")

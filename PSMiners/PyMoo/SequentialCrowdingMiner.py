@@ -9,6 +9,7 @@ from pymoo.optimize import minimize
 import utils
 from Core.EvaluatedPS import EvaluatedPS
 from Core.PRef import PRef
+from Core.PSMetric.Additivity import Influence
 from Core.TerminationCriteria import TerminationCriteria, PSEvaluationLimit, UnionOfCriteria, IterationLimit, \
     SearchSpaceIsCovered
 from PSMiners.AbstractPSMiner import AbstractPSMiner
@@ -108,6 +109,8 @@ class SequentialCrowdingMiner(AbstractPSMiner):
 
 
     def sort_by_metrics(self, pss: list[EvaluatedPS]) -> list[EvaluatedPS]:
+        external_influence_evaluator = Influence()
+        external_influence_evaluator.set_pRef(self.pRef)
         def get_atomicity(ps: EvaluatedPS) -> float:
             return ps.metric_scores[2]
 
@@ -117,8 +120,31 @@ class SequentialCrowdingMiner(AbstractPSMiner):
         def get_simplicity(ps: EvaluatedPS) -> float:
             return ps.metric_scores[0]
 
-        return utils.sort_by_combination_of(pss, key_functions=[get_simplicity, get_mean_fitness, get_atomicity], reverse=False)
 
+        def get_influence_delta(ps: EvaluatedPS) -> float:
+            return external_influence_evaluator.get_single_score(ps)
+
+        return utils.sort_by_combination_of(pss, key_functions=[get_influence_delta], reverse=True)
+
+    def plot_pss_to_sort(self, pss: list[EvaluatedPS]):
+        influence_evaluator = Influence()
+        influence_evaluator.set_pRef(self.pRef)
+
+
+        def get_EI(ps: EvaluatedPS) -> float:
+            return influence_evaluator.get_single_score(ps)
+        def get_mean_error(ps: EvaluatedPS) -> float:
+            return utils.get_mean_error(self.pRef.fitnesses_of_observations(ps))
+
+        def get_simplicity(ps: EvaluatedPS) -> float:
+            return ps.metric_scores[0]
+
+        other_metric = list(map(get_EI, pss))
+        simplicities = list(map(get_simplicity, pss))
+
+        externals, internals = utils.unzip([influence_evaluator.get_external_internal_influence(ps) for ps in pss])
+
+        utils.simple_scatterplot("simplicity", "influence", simplicities, other_metric)
     def step(self, verbose = False):
         algorithm = self.get_miner_algorithm()
         if verbose:
@@ -136,6 +162,7 @@ class SequentialCrowdingMiner(AbstractPSMiner):
         # debug
         #print("The sorted e_pss are")
         sorted_pss = self.sort_by_metrics(e_pss)
+        #self.plot_pss_to_sort(e_pss)
         # for ps in sorted_pss:
         #     print(ps)
 

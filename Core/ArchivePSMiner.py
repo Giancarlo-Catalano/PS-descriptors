@@ -10,7 +10,7 @@ from BenchmarkProblems.BenchmarkProblem import BenchmarkProblem
 from Core.EvaluatedPS import EvaluatedPS
 from Core.PRef import PRef
 from Core.PS import PS
-from Core.PSMetric.Additivity import ExternalInfluence
+from Core.PSMetric.Additivity import Influence
 from Core.PSMetric.Atomicity import Atomicity
 from Core.PSMetric.LocalPerturbation import BivariateLocalPerturbation
 from Core.PSMetric.MeanFitness import MeanFitness
@@ -191,7 +191,7 @@ class ArchivePSMiner(AbstractPSMiner):
         """
         return cls(population_size=300,
                    pRef=pRef,
-                   metrics=[Simplicity(), MeanFitness(), ExternalInfluence()],
+                   metrics=[Simplicity(), MeanFitness(), Influence()],
                    get_init=just_empty,
                    get_local=specialisations,
                    selection=truncation_selection)

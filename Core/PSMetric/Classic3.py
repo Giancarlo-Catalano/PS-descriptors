@@ -15,12 +15,13 @@ import utils
 from BenchmarkProblems.BenchmarkProblem import BenchmarkProblem
 from Core.PRef import PRef
 from Core.PS import PS, STAR
-from Core.PSMetric.Additivity import Additivity, ExternalInfluence, MeanError, MutualInformation
+from Core.PSMetric.Additivity import Additivity, Influence, MeanError, MutualInformation
 from Core.PSMetric.Atomicity import Atomicity
 from Core.PSMetric.BivariateANOVALinkage import BivariateANOVALinkage
 from Core.PSMetric.Linkage import Linkage
 from Core.PSMetric.LocalPerturbation import BivariateLocalPerturbation
 from Core.PSMetric.MeanFitness import MeanFitness
+from Core.PSMetric.Metric import Metric
 from Core.PSMetric.Simplicity import Simplicity
 from Core.custom_types import ArrayOfFloats
 from utils import announce
@@ -101,7 +102,7 @@ class Classic3PSEvaluator:
     mf_range: (float, float)
     atomicity_range: (float, float)
 
-    blp_atomicity_evaluator: MutualInformation
+    alternative_atomicity_evaluator: Metric
 
 
     @classmethod
@@ -127,8 +128,8 @@ class Classic3PSEvaluator:
         self.mf_range = self.get_mf_range(pRef)
         self.atomicity_range = self.get_atomicity_range(self.cached_isolated_benefits)
 
-        self.blp_atomicity_evaluator = MutualInformation()
-        self.blp_atomicity_evaluator.set_pRef(pRef)
+        self.alternative_atomicity_evaluator = MutualInformation()
+        self.alternative_atomicity_evaluator.set_pRef(pRef)
 
     @classmethod
     def get_normalised_fitness_array(cls, fitness_array: ArrayOfFloats) -> ArrayOfFloats:
@@ -194,22 +195,6 @@ class Classic3PSEvaluator:
                          if val != STAR])
 
 
-
-    def get_other_atomicity(self, ps: PS,
-                            rows_of_all_fixed: RowsOfPRef,
-                            except_for_one: list[RowsOfPRef]) -> float:
-
-        if ps.is_empty():
-            return -1000
-        def matches_with_one_error(row: np.ndarray):
-            errors = np.logical_and(ps.values != row, ps.values != -1)
-            return np.sum(errors) == 1
-
-        one_error_fitnesses = [fitness for fitness, row in zip(self.pRef.full_solution_matrix, self.pRef.fitness_array)
-                               if matches_with_one_error(row)]
-
-        return np.average(rows_of_all_fixed.fitnesses) - np.average(one_error_fitnesses)
-
     def get_atomicity_from_relevant_rows(self, ps: PS,
                                          rows_of_all_fixed: RowsOfPRef,
                                          except_for_one: list[RowsOfPRef]) -> float:
@@ -238,7 +223,7 @@ class Classic3PSEvaluator:
 
         simplicity = self.get_simplicity_of_PS(ps)
         mean_fitness = self.mf_of_rows(rows_all_fixed)
-        atomicity = self.blp_atomicity_evaluator.get_single_score(ps)
+        atomicity = self.alternative_atomicity_evaluator.get_single_score(ps)
 
         if not np.isfinite(mean_fitness):
             mean_fitness = invalid_value
@@ -281,7 +266,7 @@ class Classic3PSEvaluator:
         #                                                   rows_all_fixed,
         #                                                   excluding_one)
         # atomicity = utils.remap_in_range_0_1_knowing_range(atomicity, self.atomicity_range)
-        atomicity = self.blp_atomicity_evaluator.get_single_score(ps)
+        atomicity = self.alternative_atomicity_evaluator.get_single_score(ps)
 
         if not np.isfinite(mean_fitness):
             mean_fitness = invalid_value
