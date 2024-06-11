@@ -9,7 +9,7 @@ from pymoo.optimize import minimize
 import utils
 from Core.EvaluatedPS import EvaluatedPS
 from Core.PRef import PRef
-from Core.PSMetric.Additivity import Influence
+from Core.PSMetric.Additivity import Influence, sort_by_influence
 from Core.TerminationCriteria import TerminationCriteria, PSEvaluationLimit, UnionOfCriteria, IterationLimit, \
     SearchSpaceIsCovered
 from PSMiners.AbstractPSMiner import AbstractPSMiner
@@ -161,10 +161,10 @@ class SequentialCrowdingMiner(AbstractPSMiner):
         e_pss = self.output_of_miner_to_evaluated_ps(res)
         # debug
         #print("The sorted e_pss are")
-        sorted_pss = self.sort_by_metrics(e_pss)
+        sorted_pss = sort_by_influence(e_pss, self.pRef)
         #self.plot_pss_to_sort(e_pss)
-        # for ps in sorted_pss:
-        #     print(ps)
+        for ps in sorted_pss:
+            print(ps)
 
         amount_to_keep_per_run = 10 ## TODO remove this
         winners = sorted_pss[:amount_to_keep_per_run]

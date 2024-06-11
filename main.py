@@ -107,7 +107,7 @@ def get_bt_explainer() -> Detector:
 
 def get_gc_explainer():
     experimental_directory = r"C:\Users\gac8\PycharmProjects\PS-PDF\Experimentation\GC\Dummy"
-    problem_file = os.path.join(experimental_directory, "fibre.json")
+    problem_file = os.path.join(experimental_directory, "bert.json")
     problem = GraphColouring.from_file(problem_file)#GraphColouring.random(amount_of_colours=3, amount_of_nodes=5, chance_of_connection=0.40)
     problem.view()
     return Detector.from_folder(folder = experimental_directory,
@@ -191,9 +191,9 @@ def test_classic3(pRef: PRef):
 
 
 def explanation():
-    detector = get_problem_explainer()
-    detector.generate_files_with_default_settings(100000, 100000)
-    #detector.explanation_loop(amount_of_fs_to_propose=2, ps_show_limit=12, show_debug_info=True)
+    detector = get_gc_explainer()
+    detector.generate_files_with_default_settings(20000, 20000)
+    detector.explanation_loop(amount_of_fs_to_propose=2, ps_show_limit=12, show_debug_info=True)
 
 
 def grid_search():
@@ -241,10 +241,9 @@ def test_archive_miner():
 if __name__ == '__main__':
     logging.basicConfig(level=logging.INFO)
     warnings.showwarning = warn_with_traceback
+
     grid_search()
     #explanation()
-    #test_archive_miner()
-    #test_classic3(RoyalRoad(3, 4).get_reference_population(5000))#
 
 
 

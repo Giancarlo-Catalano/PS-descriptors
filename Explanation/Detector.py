@@ -11,6 +11,7 @@ from Core.EvaluatedPS import EvaluatedPS
 from Core.FullSolution import FullSolution
 from Core.PRef import PRef
 from Core.PS import PS, contains, STAR
+from Core.PSMetric.Additivity import sort_by_influence
 from Explanation.MinedPSManager import MinedPSManager
 from Explanation.PRefManager import PRefManager
 from Explanation.PSPropertyManager import PSPropertyManager
@@ -154,16 +155,18 @@ class Detector:
 
 
     def sort_pss(self, pss: list[EvaluatedPS]) -> list[EvaluatedPS]:
-        def get_atomicity(ps: EvaluatedPS) -> float:
-            return ps.metric_scores[2]
+        return sort_by_influence(pss, self.pRef)
 
-        def get_mean_fitness(ps: EvaluatedPS) -> float:
-            return ps.metric_scores[1]
-
-        def get_simplicity(ps: EvaluatedPS) -> float:
-            return ps.metric_scores[0]
-
-        return utils.sort_by_combination_of(pss, key_functions=[get_simplicity, get_mean_fitness, get_atomicity], reverse=False)
+        # def get_atomicity(ps: EvaluatedPS) -> float:
+        #     return ps.metric_scores[2]
+        #
+        # def get_mean_fitness(ps: EvaluatedPS) -> float:
+        #     return ps.metric_scores[1]
+        #
+        # def get_simplicity(ps: EvaluatedPS) -> float:
+        #     return ps.metric_scores[0]
+        #
+        # return utils.sort_by_combination_of(pss, key_functions=[get_simplicity, get_mean_fitness, get_atomicity], reverse=False)
 
     def explain_solution(self, solution: EvaluatedFS, shown_ps_max: int, must_contain: Optional[int] = None):
         contained_pss: list[EvaluatedPS] = self.get_contained_ps(solution, must_contain = must_contain)
@@ -268,13 +271,13 @@ class Detector:
                                              force_include_in_pRef: Optional[list[FullSolution]] = None):
 
         self.pRef_manager.generate_pRef_file(sample_size=pRef_size,
-                                             which_algorithm="uniform SA",
+                                             which_algorithm="uniform",
                                              force_include=force_include_in_pRef)
 
         self.mined_ps_manager.generate_ps_file(pRef = self.pRef,
-                                               population_size=600,
+                                               population_size=200,
                                                ps_budget_in_total=pss_budget,
-                                               ps_budget_per_run=pss_budget // 12)
+                                               ps_budget_per_run=pss_budget // 6)
         self.mined_ps_manager.generate_control_pss_file(samples_for_each_category=1000)
 
         self.ps_property_manager.generate_property_table_file(self.mined_ps_manager.pss, self.mined_ps_manager.control_pss)

@@ -122,16 +122,33 @@ class GraphColouring(BenchmarkProblem):
 
 
     def ps_to_properties(self, ps: PS) -> dict:
-        def contains_pair(pair):
+        def is_internal_edge(pair):
             a, b = pair
-            return ps[a] == STAR or ps[b] == STAR
+            return ps[a] != STAR and ps[b] != STAR
 
-        edge_count = len([pair for pair in self.connections
-                          if contains_pair(pair)])
+        def is_extenal_edge(pair):
+            a, b = pair
+            return (ps[a] != STAR and ps[b] == STAR) or (ps[b] != STAR and ps[a] == STAR)
 
-        colour_count = len(set(value for value in ps.values if value != STAR))
-        return {"edge_count": edge_count,
-                "colour_count": colour_count}
+        internal_edge_count = len([pair for pair in self.connections if is_internal_edge(pair)])
+
+        external_edge_count = len([pair for pair in self.connections if is_extenal_edge(pair)])
+
+        return {"internal_edge_count": internal_edge_count,
+                "external_edge_count": external_edge_count}
+
+
+    def repr_property(self, property_name:str, property_value:float, rank:(float, float), ps: PS):
+        #lower_rank, upper_rank = property_rank_range
+        is_low = rank < 0.5
+        rank_str = f"(rank = {int(rank * 100)}%)" # "~ {int(property_rank_range[1]*100)}%)"
+
+        if property_name == "internal_edge_count":
+            return f"The PS is {'NOT ' if is_low else ''}densely connected {rank_str}"
+        elif property_name == "external_edge_count":
+            return f"The PS is {'' if is_low else 'NOT '}isolated {rank_str}"
+        else:
+            raise ValueError(f"Did not recognise the property {property_name} in GC")
 
 
     @classmethod

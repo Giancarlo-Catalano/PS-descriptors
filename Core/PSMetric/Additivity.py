@@ -143,9 +143,9 @@ class Influence(Metric):
         ps_mf = self.mf(ps)
 
         if ps.is_empty():
-            return (0, 0)
+            return (100, 0)
         if ps.is_fully_fixed():
-            return (0,0)
+            return (100,0)
 
         def absence_influence_for_var_val(var: int, val: int) -> int:
             trivial_mf = self.trivial_means[var][val]
@@ -183,6 +183,10 @@ class Influence(Metric):
 
 
 
+def sort_by_influence(pss: list[PS], pRef: PRef) -> list[PS]:
+    evaluator = Influence()
+    evaluator.set_pRef(pRef)
+    return sorted(pss, key=lambda x:evaluator.get_single_score(x), reverse=True)
 
 
 class MutualInformation(Metric):
