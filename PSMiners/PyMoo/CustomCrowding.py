@@ -137,7 +137,7 @@ class PyMooPSSequentialCrowding(PyMooCustomCrowding):
         scores = np.array([np.average(self.foods[row]) if any(row) else 1
                            for row in where_fixed])
 
-        self.opt = [] # population[front_indexes]  # just to comply with Pymoo, ignore this
+        self.opt = population[front_indexes]  # just to comply with Pymoo, ignore this
 
         return scores
 
