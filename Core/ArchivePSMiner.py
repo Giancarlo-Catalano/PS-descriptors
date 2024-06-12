@@ -191,7 +191,7 @@ class ArchivePSMiner(AbstractPSMiner):
         """
         return cls(population_size=300,
                    pRef=pRef,
-                   metrics=[Simplicity(), MeanFitness(), Influence()],
+                   metrics=[Simplicity(), MeanFitness(), Atomicity()],
                    get_init=just_empty,
                    get_local=specialisations,
                    selection=truncation_selection)

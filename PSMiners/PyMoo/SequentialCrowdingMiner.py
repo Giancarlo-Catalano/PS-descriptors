@@ -29,6 +29,7 @@ class SequentialCrowdingMiner(AbstractPSMiner):
     winners_archive: list[EvaluatedPS]
 
     use_experimental_crowding_operator: bool
+    influence_metric: Influence
 
 
     def __init__(self,
@@ -36,7 +37,8 @@ class SequentialCrowdingMiner(AbstractPSMiner):
                  which_algorithm: str,
                  population_size_per_run: int,
                  budget_per_run: int,
-                 use_experimental_crowding_operator: bool = True):
+                 use_experimental_crowding_operator: bool = True,
+                 influence_metric: Optional[Influence] = None):
         super().__init__(pRef=pRef)
         self.which_algorithm = which_algorithm
         self.population_size_per_run = population_size_per_run
@@ -44,6 +46,12 @@ class SequentialCrowdingMiner(AbstractPSMiner):
         self.pymoo_problem = PSPyMooProblem(pRef)
         self.winners_archive = []
         self.use_experimental_crowding_operator = use_experimental_crowding_operator
+
+        if influence_metric is None:
+            influence_metric = Influence()
+            influence_metric.set_pRef(self.pRef)
+        self.influence_metric = influence_metric
+
 
     def __repr__(self):
         return (f"SequentialCrowdingMiner({self.which_algorithm = }, "
@@ -108,43 +116,40 @@ class SequentialCrowdingMiner(AbstractPSMiner):
                                                           already_obtained=self.winners_archive)
 
 
-    def sort_by_metrics(self, pss: list[EvaluatedPS]) -> list[EvaluatedPS]:
-        external_influence_evaluator = Influence()
-        external_influence_evaluator.set_pRef(self.pRef)
-        def get_atomicity(ps: EvaluatedPS) -> float:
-            return ps.metric_scores[2]
-
-        def get_mean_fitness(ps: EvaluatedPS) -> float:
-            return ps.metric_scores[1]
-
-        def get_simplicity(ps: EvaluatedPS) -> float:
-            return ps.metric_scores[0]
-
+    def sort_by_clarity(self, pss: list[EvaluatedPS]) -> list[EvaluatedPS]:
+        # def get_atomicity(ps: EvaluatedPS) -> float:
+        #     return ps.metric_scores[2]
+        #
+        # def get_mean_fitness(ps: EvaluatedPS) -> float:
+        #     return ps.metric_scores[1]
+        #
+        # def get_simplicity(ps: EvaluatedPS) -> float:
+        #     return ps.metric_scores[0]
 
         def get_influence_delta(ps: EvaluatedPS) -> float:
-            return external_influence_evaluator.get_single_score(ps)
+            return self.influence_metric.get_single_score(ps)
 
         return utils.sort_by_combination_of(pss, key_functions=[get_influence_delta], reverse=True)
 
-    def plot_pss_to_sort(self, pss: list[EvaluatedPS]):
-        influence_evaluator = Influence()
-        influence_evaluator.set_pRef(self.pRef)
+    # def plot_pss_to_sort(self, pss: list[EvaluatedPS]):
+    #     influence_evaluator = Influence()
+    #     influence_evaluator.set_pRef(self.pRef)
+    #
+    #
+    #     def get_EI(ps: EvaluatedPS) -> float:
+    #         return influence_evaluator.get_single_score(ps)
+    #     def get_mean_error(ps: EvaluatedPS) -> float:
+    #         return utils.get_mean_error(self.pRef.fitnesses_of_observations(ps))
+    #
+    #     def get_simplicity(ps: EvaluatedPS) -> float:
+    #         return ps.metric_scores[0]
+    #
+    #     other_metric = list(map(get_EI, pss))
+    #     simplicities = list(map(get_simplicity, pss))
+    #
+    #     externals, internals = utils.unzip([influence_evaluator.get_external_internal_influence(ps) for ps in pss])
 
-
-        def get_EI(ps: EvaluatedPS) -> float:
-            return influence_evaluator.get_single_score(ps)
-        def get_mean_error(ps: EvaluatedPS) -> float:
-            return utils.get_mean_error(self.pRef.fitnesses_of_observations(ps))
-
-        def get_simplicity(ps: EvaluatedPS) -> float:
-            return ps.metric_scores[0]
-
-        other_metric = list(map(get_EI, pss))
-        simplicities = list(map(get_simplicity, pss))
-
-        externals, internals = utils.unzip([influence_evaluator.get_external_internal_influence(ps) for ps in pss])
-
-        utils.simple_scatterplot("simplicity", "influence", simplicities, other_metric)
+    #    utils.simple_scatterplot("simplicity", "influence", simplicities, other_metric)
     def step(self, verbose = False):
         algorithm = self.get_miner_algorithm()
         if verbose:
@@ -161,12 +166,12 @@ class SequentialCrowdingMiner(AbstractPSMiner):
         e_pss = self.output_of_miner_to_evaluated_ps(res)
         # debug
         #print("The sorted e_pss are")
-        sorted_pss = sort_by_influence(e_pss, self.pRef)
+        sorted_pss = self.sort_by_clarity(e_pss)
         #self.plot_pss_to_sort(e_pss)
-        for ps in sorted_pss:
-            print(ps)
+        # for ps in sorted_pss:
+        #     print(ps)
 
-        amount_to_keep_per_run = 10 ## TODO remove this
+        amount_to_keep_per_run = 10
         winners = sorted_pss[:amount_to_keep_per_run]
 
         self.winners_archive.extend(winners)

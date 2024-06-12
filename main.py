@@ -208,15 +208,15 @@ def grid_search():
 
     hype = HyperparameterEvaluator(algorithms_to_test=["NSGAIII"],
                                    problems_to_test=["RR_5"],
-                                   pRef_sizes_to_test=[5000],
+                                   pRef_sizes_to_test=[10000],
                                    population_sizes_to_test=[100],
-                                   pRef_origin_methods = ["uniform"],
+                                   pRef_origin_methods = ["uniform", "SA", "uniform SA"],
                                    ps_budget=10000,
-                                   custom_crowding_operators_to_test = [True],
+                                   custom_crowding_operators_to_test = [False, True],
                                    ps_budgets_per_run_to_test=[3000])
 
     hype.get_data(ignore_errors=False,
-                  verbose=True)
+                  verbose=False)
 
 
 

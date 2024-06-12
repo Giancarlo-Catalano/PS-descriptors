@@ -12,6 +12,7 @@ from BenchmarkProblems.RoyalRoad import RoyalRoad
 from Core import TerminationCriteria
 from Core.PRef import PRef, plot_solutions_in_pRef
 from Core.PS import PS, STAR
+from Core.PSMetric.Additivity import Influence
 from Explanation.PRefManager import PRefManager
 from PSMiners.PyMoo.SequentialCrowdingMiner import SequentialCrowdingMiner
 import logging
@@ -105,6 +106,8 @@ class HyperparameterEvaluator:
                     pRef = PRefManager.generate_pRef(problem = bt_problem,
                                                      which_algorithm= pRef_origin_method,
                                                      sample_size=pRef_size)
+                    influence_evaluator = Influence()
+                    influence_evaluator.set_pRef(pRef)
                     if verbose:
                         plot_solutions_in_pRef(pRef, "dummy_name.png")
                     for miner_algorithm in self.algorithms_to_test:
@@ -124,7 +127,8 @@ class HyperparameterEvaluator:
                                                                         which_algorithm=miner_algorithm,
                                                                         population_size_per_run=population_size,
                                                                         budget_per_run=ps_budget_per_run,
-                                                                        use_experimental_crowding_operator=uses_custom_crowding_operator)
+                                                                        use_experimental_crowding_operator=uses_custom_crowding_operator,
+                                                                        influence_metric=influence_evaluator)
                                         eval_limit = TerminationCriteria.PSEvaluationLimit(self.ps_budget)
                                         finish_early_if_all_found = TerminationCriteria.UntilAllTargetsFound(targets)
                                         termination_criteria = TerminationCriteria.UnionOfCriteria(eval_limit, finish_early_if_all_found)
