@@ -1,4 +1,4 @@
-from typing import Any
+from typing import Any, Iterable
 
 import numpy as np
 from pymoo.core.survival import Survival
@@ -142,43 +142,45 @@ class PyMooPSSequentialCrowding(PyMooCustomCrowding):
         return scores
 
 
-class PyMooPSSequentialCrowdingDifferent(PyMooCustomCrowding):
-    coverage: np.ndarray
-    foods: np.ndarray
-    search_space: SearchSpace
+
+def distance_between_pss(ps_a: PS, ps_b: PS) -> float:
+    vals_a = ps_a.values
+    vals_b = ps_b.values
+    overlap_count = np.sum(np.logical_and(vals_a == vals_b, vals_a != STAR), dtype=float)
+    #fixed_count = np.sum(np.logical_or((vals_a != STAR), (vals_b != STAR)), dtype=float)
+    fixed_count = np.average((np.sum(vals_a != STAR), np.sum(vals_b != STAR)))
+
+    if fixed_count < 1:
+        return 1
+    return 1 - (overlap_count / fixed_count)
+
+class PyMooSequentialFitnessSharingCrowding(PyMooCustomCrowding):
+    archived_pss: set[PS]
+    sigma_shared: float
     opt: Any
 
-    def __init__(self, search_space: SearchSpace, already_obtained: list[PS], immediate = False):
-        self.search_space = search_space
+    def __init__(self, archived_pss: Iterable[PS], sigma_shared: float):
         super().__init__()
-        self.coverage = PyMooPSSequentialCrowding.get_coverage(self.search_space, already_obtained)
-        if immediate:
-            self.coverage = np.array([1 if x > 0 else 0 for x in self.coverage])
-        self.foods = (1 - self.coverage).reshape((-1, 1))
+        self.archived_pss = set(archived_pss)
+        self.sigma_shared = sigma_shared
         self.opt = []
 
 
-    @classmethod
-    def get_coverage(cls, search_space: SearchSpace, already_obtained: list[PS]):
-        if len(already_obtained) == 0:
-            return np.zeros(search_space.amount_of_parameters, dtype=float)
+    def is_too_close(self, ps_a: PS, ps_b: PS) -> bool:
+        return distance_between_pss(ps_a, ps_b) < self.sigma_shared
 
-        pop_matrix = np.array([ps.values for ps in already_obtained])
-        where_fixed = pop_matrix != STAR
-        counts = np.sum(where_fixed, axis=0)
-
-        return counts / len(already_obtained)
+    def get_crowding_score(self, ps: PS) -> float:
+        if len(self.archived_pss) == 0:
+            return 1
+        amount_of_close = len([archived for archived in self.archived_pss if self.is_too_close(ps, archived)])
+        return 1 - (amount_of_close / len(self.archived_pss))
 
 
     def get_crowding_scores_of_front(self, all_F, n_remove, population, front_indexes) -> np.ndarray:
-        pop_matrix = np.array([population[index].X for index in front_indexes])
-        where_fixed: np.ndarray = pop_matrix != STAR
-
-        scores = np.array([np.average(self.foods[row]) if any(row) else 1
-                           for row in where_fixed])
+        pss  = [PS(population[index].X) for index in front_indexes]
+        scores = np.array([self.get_crowding_score(ps) for ps in pss])
 
         self.opt = population[front_indexes]  # just to comply with Pymoo, ignore this
-
         return scores
 
 

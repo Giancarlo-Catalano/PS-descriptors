@@ -206,17 +206,17 @@ def grid_search():
     #                                custom_crowding_operators_to_test = [False, True],
     #                                ps_budgets_per_run_to_test=[1000, 2000, 3000, 5000, 10000])
 
-    hype = HyperparameterEvaluator(algorithms_to_test=["NSGAIII"],
-                                   problems_to_test=["RR_5"],
+    hype = HyperparameterEvaluator(algorithms_to_test=["NSGAII"],
+                                   problems_to_test=["collaboration_5"], #"RR_5", "insular_5"],
                                    pRef_sizes_to_test=[10000],
                                    population_sizes_to_test=[100],
                                    pRef_origin_methods = ["uniform", "SA", "uniform SA"],
-                                   ps_budget=10000,
-                                   custom_crowding_operators_to_test = [False, True],
+                                   ps_budget=20000,
+                                   custom_crowding_operators_to_test = [True],
                                    ps_budgets_per_run_to_test=[3000])
 
     hype.get_data(ignore_errors=False,
-                  verbose=False)
+                  verbose=True)
 
 
 
