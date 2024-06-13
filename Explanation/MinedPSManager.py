@@ -79,11 +79,10 @@ class MinedPSManager:
                                             budget_per_run=ps_budget_per_run,
                                             population_size_per_run=population_size,
                                             which_algorithm="NSGAII",
-                                            use_experimental_crowding_operator=False)  # TODO turn back on
+                                            use_experimental_crowding_operator=True)
 
         with announce(f"Running {algorithm} on {pRef} with {ps_budget_in_total =}", self.verbose):
             budget_limit = TerminationCriteria.PSEvaluationLimit(ps_limit=ps_budget_in_total)
-            coverage_limit = TerminationCriteria.SearchSpaceIsCovered()
             termination_criterion = budget_limit #TerminationCriteria.UnionOfCriteria(budget_limit, coverage_limit)
             algorithm.run(termination_criterion, verbose=self.verbose)
 

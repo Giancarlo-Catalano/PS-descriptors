@@ -98,11 +98,11 @@ def show_overall_system(benchmark_problem: BenchmarkProblem):
     print("And that concludes the showcase")
 
 def get_bt_explainer() -> Detector:
-    experimental_directory = r"C:\Users\gac8\PycharmProjects\PS-PDF\Experimentation\BT\MartinBT"
+    experimental_directory = r"C:\Users\gac8\PycharmProjects\PS-PDF\Experimentation\BT\Final"
     problem = EfficientBTProblem.from_default_files()
     return Detector.from_folder(problem=problem,
                                   folder=experimental_directory,
-                                  speciality_threshold=0.2,
+                                  speciality_threshold=0.1,
                                   verbose=True)
 
 def get_gc_explainer():
@@ -191,9 +191,9 @@ def test_classic3(pRef: PRef):
 
 
 def explanation():
-    detector = get_gc_explainer()
-    detector.generate_files_with_default_settings(20000, 20000)
-    detector.explanation_loop(amount_of_fs_to_propose=2, ps_show_limit=12, show_debug_info=True)
+    detector = get_bt_explainer()
+    detector.generate_files_with_default_settings(50000, 50000)
+    #detector.explanation_loop(amount_of_fs_to_propose=2, ps_show_limit=12, show_debug_info=True)
 
 
 def grid_search():
@@ -206,36 +206,17 @@ def grid_search():
     #                                custom_crowding_operators_to_test = [False, True],
     #                                ps_budgets_per_run_to_test=[1000, 2000, 3000, 5000, 10000])
 
-    hype = HyperparameterEvaluator(algorithms_to_test=["NSGAII"],
-                                   problems_to_test=["collaboration_5"], #"RR_5", "insular_5"],
+    hype = HyperparameterEvaluator(algorithms_to_test=["NSGAIII"],
+                                   problems_to_test=["collaboration_5", "RR_5", "insular_5"],
                                    pRef_sizes_to_test=[10000],
-                                   population_sizes_to_test=[100],
-                                   pRef_origin_methods = ["uniform", "SA", "uniform SA"],
-                                   ps_budget=20000,
+                                   population_sizes_to_test=[50, 100, 200],
+                                   pRef_origin_methods = ["SA", "uniform SA"],
+                                   ps_budget=50000,
                                    custom_crowding_operators_to_test = [True],
-                                   ps_budgets_per_run_to_test=[3000])
+                                   ps_budgets_per_run_to_test=[1000, 2000, 3000, 5000, 10000])
 
-    hype.get_data(ignore_errors=False,
-                  verbose=True)
-
-
-
-def test_archive_miner():
-    problem = RoyalRoad(5, 5)
-    print("Generating the pRef")
-    pRef = PRefManager.generate_pRef(problem = problem,
-                                     which_algorithm= "SA uniform",
-                                     sample_size=10000)
-
-    print("running the miner")
-    miner = ArchivePSMiner.with_default_settings(pRef)
-    miner.run(termination_criteria=PSEvaluationLimit(10000))
-    results = miner.get_results(100)
-    print("The results are")
-    for ps in results:
-        print(ps)
-
-
+    hype.get_data(ignore_errors=True,
+                  verbose=False)
 
 
 if __name__ == '__main__':

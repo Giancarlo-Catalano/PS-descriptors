@@ -13,7 +13,7 @@ from Core.PSMetric.Additivity import Influence, sort_by_influence
 from Core.TerminationCriteria import TerminationCriteria, PSEvaluationLimit, UnionOfCriteria, IterationLimit, \
     SearchSpaceIsCovered
 from PSMiners.AbstractPSMiner import AbstractPSMiner
-from PSMiners.PyMoo.CustomCrowding import PyMooPSSequentialCrowding, PyMooSequentialFitnessSharingCrowding
+from PSMiners.PyMoo.CustomCrowding import PyMooPSSequentialCrowding, PyMooDecisionSpaceSequentialCrowding
 from PSMiners.PyMoo.Operators import PSUniformMutation, PSUniformSampling, PSGeometricSampling
 from PSMiners.PyMoo.PSPyMooProblem import PSPyMooProblem
 from PSMiners.PyMoo.pymoo_utilities import get_pymoo_search_algorithm
@@ -91,7 +91,7 @@ class SequentialCrowdingMiner(AbstractPSMiner):
 
     def get_crowding_operator(self):
         if self.use_experimental_crowding_operator and len(self.winners_archive) > 0:
-            return PyMooSequentialFitnessSharingCrowding(archived_pss=self.winners_archive,sigma_shared=0.5)
+            return PyMooDecisionSpaceSequentialCrowding(archived_pss=self.winners_archive, sigma_shared=0.5)
         else:
             return RankAndCrowding()
 

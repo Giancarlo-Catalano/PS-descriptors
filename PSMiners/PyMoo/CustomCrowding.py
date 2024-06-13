@@ -154,7 +154,8 @@ def distance_between_pss(ps_a: PS, ps_b: PS) -> float:
         return 1
     return 1 - (overlap_count / fixed_count)
 
-class PyMooSequentialFitnessSharingCrowding(PyMooCustomCrowding):
+class PyMooDecisionSpaceSequentialCrowding(PyMooCustomCrowding):
+    """ This is the one!!!!!"""
     archived_pss: set[PS]
     sigma_shared: float
     opt: Any
