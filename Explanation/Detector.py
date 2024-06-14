@@ -11,8 +11,9 @@ from Core.EvaluatedPS import EvaluatedPS
 from Core.FullSolution import FullSolution
 from Core.PRef import PRef
 from Core.PS import PS, contains, STAR
-from Core.PSMetric.Additivity import sort_by_influence
+from Core.PSMetric.Additivity import sort_by_influence, MutualInformation
 from Explanation.MinedPSManager import MinedPSManager
+from Explanation.MutualInformationManager import MutualInformationManager
 from Explanation.PRefManager import PRefManager
 from Explanation.PSPropertyManager import PSPropertyManager
 
@@ -23,6 +24,7 @@ class Detector:
     pRef_manager: PRefManager   # manages a npz
     mined_ps_manager: MinedPSManager  # manages some npz files
     ps_property_manager: PSPropertyManager   # which will manage a csv
+    mutual_information_manager: MutualInformationManager # manages an npz
 
     minimum_acceptable_ps_size: int
     verbose: bool
@@ -35,6 +37,7 @@ class Detector:
                  ps_file: str,
                  control_ps_file: str,
                  properties_file: str,
+                 mutual_information_linkage_table_file: str,
                  speciality_threshold: float,
                  minimum_acceptable_ps_size: int = 2,
                  verbose = False):
@@ -50,6 +53,11 @@ class Detector:
                                                      property_table_file=properties_file,
                                                      verbose=verbose,
                                                      threshold=speciality_threshold)
+
+        self.mutual_information_manager = MutualInformationManager(linkage_table_file=mutual_information_linkage_table_file,
+                                                                   cached_mutual_information=None,
+                                                                   verbose=verbose)
+
         self.speciality_threshold = speciality_threshold
         self.minimum_acceptable_ps_size = minimum_acceptable_ps_size
         self.verbose = verbose
@@ -65,6 +73,7 @@ class Detector:
         ps_file = os.path.join(folder, "mined_ps.npz")
         control_ps_file = os.path.join(folder, "control_ps.npz")
         properties_file = os.path.join(folder, "ps_properties.csv")
+        mutual_information_linkage_file = os.path.join(folder, "linkage_table.npz")
 
         return cls(problem = problem,
                    pRef_file = pRef_file,
@@ -72,6 +81,7 @@ class Detector:
                    control_ps_file = control_ps_file,
                    properties_file = properties_file,
                    speciality_threshold = speciality_threshold,
+                   mutual_information_linkage_table_file = mutual_information_linkage_file,
                    verbose=verbose)
 
 
@@ -83,6 +93,10 @@ class Detector:
     @property
     def pRef(self) -> PRef:
         return self.pRef_manager.pRef
+
+    @property
+    def mutual_information_metric(self) -> MutualInformation:
+        return self.mutual_information_manager.mutual_information_metric
 
 
 
@@ -155,18 +169,26 @@ class Detector:
 
 
     def sort_pss(self, pss: list[EvaluatedPS]) -> list[EvaluatedPS]:
-        return sort_by_influence(pss, self.pRef)
+        #return sort_by_influence(pss, self.pRef)
 
-        # def get_atomicity(ps: EvaluatedPS) -> float:
-        #     return ps.metric_scores[2]
-        #
-        # def get_mean_fitness(ps: EvaluatedPS) -> float:
-        #     return ps.metric_scores[1]
-        #
-        # def get_simplicity(ps: EvaluatedPS) -> float:
-        #     return ps.metric_scores[0]
-        #
-        # return utils.sort_by_combination_of(pss, key_functions=[get_simplicity, get_mean_fitness, get_atomicity], reverse=False)
+        def get_atomicity(ps: EvaluatedPS) -> float:
+            return ps.metric_scores[2]
+
+        def get_mean_fitness(ps: EvaluatedPS) -> float:
+            return ps.metric_scores[1]
+
+        def get_simplicity(ps: EvaluatedPS) -> float:
+            return ps.metric_scores[0]
+
+        return utils.sort_by_combination_of(pss, key_functions=[get_mean_fitness, get_atomicity], reverse=False)
+
+
+    def get_explainability_percentage_of_solution(self, pss: list[PS]) -> float:
+        if len(pss) == 0:
+            return 0
+        used_vars = np.array([ps.values != STAR for ps in pss])
+        used_vars_count = used_vars.sum(axis=0, dtype=bool).sum(dtype=int)
+        return used_vars_count / len(pss[0])
 
     def explain_solution(self, solution: EvaluatedFS, shown_ps_max: int, must_contain: Optional[int] = None):
         contained_pss: list[EvaluatedPS] = self.get_contained_ps(solution, must_contain = must_contain)
@@ -174,6 +196,9 @@ class Detector:
 
         print(f"The solution \n"
               f"{utils.indent(self.problem.repr_fs(solution.full_solution))}")
+
+        explainability_coverage = self.get_explainability_percentage_of_solution(contained_pss)
+        print(f"It is {int(explainability_coverage*100)}% explainable")
 
         if len(contained_pss) > 0:
             print(f"contains the following PSs:")
@@ -270,14 +295,14 @@ class Detector:
                                              pss_budget: Optional[int] = 10000,
                                              force_include_in_pRef: Optional[list[FullSolution]] = None):
 
-        self.pRef_manager.generate_pRef_file(sample_size=pRef_size,
-                                             which_algorithm="uniform SA",
-                                             force_include=force_include_in_pRef)
-
-        self.mined_ps_manager.generate_ps_file(pRef = self.pRef,
-                                               population_size=50,
-                                               ps_budget_in_total=pss_budget,
-                                               ps_budget_per_run=2000)
+        # self.pRef_manager.generate_pRef_file(sample_size=pRef_size,
+        #                                      which_algorithm="uniform SA",
+        #                                      force_include=force_include_in_pRef)
+        #
+        # self.mined_ps_manager.generate_ps_file(pRef = self.pRef,
+        #                                        population_size=50,
+        #                                        ps_budget_in_total=pss_budget,
+        #                                        ps_budget_per_run=1000)
         self.mined_ps_manager.generate_control_pss_file(samples_for_each_category=1000)
 
         self.ps_property_manager.generate_property_table_file(self.mined_ps_manager.pss, self.mined_ps_manager.control_pss)

@@ -89,7 +89,7 @@ class PRefManager:
     def pRef(self) -> PRef:
         if self.cached_pRef is None:
             self.cached_pRef = PRef.load(self.pRef_file)
-            self.instantiate_evaluator()
+            #self.instantiate_evaluator()
             self.instantiate_mean()
         return self.cached_pRef
 

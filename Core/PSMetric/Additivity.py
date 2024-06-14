@@ -233,7 +233,7 @@ class MutualInformation(Metric):
 
         univariate_counts = [np.zeros(card) for card in self.sorted_pRef.search_space.cardinalities]
         cs = self.sorted_pRef.search_space.cardinalities
-        bivariate_count_table = [[np.zeros((c1, c2), dtype=int)
+        bivariate_count_table = [[np.zeros((c2, c1), dtype=int)
                                   for c1 in cs]
                                  for c2 in cs]
         def register_solution_for_univariate(solution: np.ndarray):
@@ -247,10 +247,14 @@ class MutualInformation(Metric):
                     value_b = solution[var_b]
                     bivariate_count_table[var_a][var_b][value_a, value_b] += 1
 
-        for _ in range(len(self.sorted_pRef.fitness_array)):
+
+        amount_of_samples = min(len(self.sorted_pRef.fitness_array), 10000)
+        for sample_number in range(amount_of_samples):
             sample = tournament_selection(2)
             register_solution_for_univariate(sample)
             register_solution_for_bivariate(sample)
+            if sample_number%(amount_of_samples // 100) == 0:
+                print(f"MI data gathering progress: {100*sample_number/amount_of_samples:.2f}%")
 
         def counts_to_probabilities(counts: np.ndarray):
             """ used for both arrays and matrices"""

@@ -7,6 +7,7 @@ import traceback
 import warnings
 
 import utils
+from BenchmarkProblems.BT.Worker import Worker
 from BenchmarkProblems.BenchmarkProblem import BenchmarkProblem
 from BenchmarkProblems.EfficientBTProblem.EfficientBTProblem import EfficientBTProblem
 from BenchmarkProblems.EfficientBTProblem.ManuallyConstructedBTInstances import get_bad_week_instance
@@ -16,7 +17,7 @@ from Core import TerminationCriteria
 from Core.ArchivePSMiner import ArchivePSMiner
 from Core.EvaluatedPS import EvaluatedPS
 from Core.Explainer import Explainer
-from Core.PRef import PRef
+from Core.PRef import PRef, plot_solutions_in_pRef
 from Core.PS import PS
 from Core.PSMetric.Classic3 import Classic3PSEvaluator
 from Core.PSMetric.Metric import Metric
@@ -192,8 +193,9 @@ def test_classic3(pRef: PRef):
 
 def explanation():
     detector = get_bt_explainer()
-    detector.generate_files_with_default_settings(50000, 50000)
-    #detector.explanation_loop(amount_of_fs_to_propose=2, ps_show_limit=12, show_debug_info=True)
+    #detector.ps_property_manager.generate_property_table_file(detector.mined_ps_manager.pss, detector.mined_ps_manager.control_pss)
+    #detector.generate_files_with_default_settings(50000, 50000)
+    detector.explanation_loop(amount_of_fs_to_propose=2, ps_show_limit=12, show_debug_info=True)
 
 
 def grid_search():
@@ -223,8 +225,8 @@ if __name__ == '__main__':
     logging.basicConfig(level=logging.INFO)
     warnings.showwarning = warn_with_traceback
 
-    grid_search()
-    #explanation()
+    #grid_search()
+    explanation()
 
 
 

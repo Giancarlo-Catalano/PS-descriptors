@@ -158,6 +158,17 @@ def get_coverage(cohort: Cohort) -> float:
     return np.average(total_pattern)   # happens to be equal to quantity_working_days / quantity_days
 
 
+
+def get_amount_of_covered_weekends(cohort: Cohort) -> (float, float):
+    covered_days = sum(member.chosen_rota_extended for member in cohort)
+    covered_days = np.array(covered_days, dtype = bool).reshape((-1, 7))
+    covered_saturdays = np.sum(covered_days[:, 5], dtype=float)
+    covered_sundays = np.sum(covered_days[:, 6], dtype=float)
+
+
+    return float(covered_saturdays), float(covered_sundays)
+
+
 class EfficientBTProblem(BTProblem):
     extended_patterns: list[FullPatternOptions]
     workers_by_skills: dict  # Skill -> set[worker index]
@@ -224,8 +235,10 @@ class EfficientBTProblem(BTProblem):
         mean_RCQ, mean_error_RCQ = utils.get_mean_and_mean_error(choice_amounts)
         mean_WWD, mean_error_WWD = utils.get_mean_and_mean_error(weekly_working_days)
         mean_RD, mean_error_RD = utils.get_mean_and_mean_error(rota_differences)
-        mean_WSP, mean_error_WSP = utils.get_mean_and_mean_error(working_saturday_proportions)
+        #mean_WSP, mean_error_WSP = utils.get_mean_and_mean_error(working_saturday_proportions)
         mean_SQ, mean_error_SQ = utils.get_mean_and_mean_error(skill_quantities)
+
+        covered_saturdays, covered_sundays = get_amount_of_covered_weekends(cohort)
 
 
         coverage = get_coverage(cohort)
@@ -234,13 +247,14 @@ class EfficientBTProblem(BTProblem):
 
         size = ps.fixed_count()
 
-        return {"mean_RCQ" : mean_RCQ,
+        return {#"mean_RCQ" : mean_RCQ,
                 #"mean_error_RCQ" : mean_error_RCQ,
                 #"mean_WWD" : mean_WWD,
                 #"mean_error_WWD" : mean_error_WWD,
                 "mean_RD" : mean_RD,
                 #"mean_error_RD" : mean_error_RD,
-                "mean_WSP" : mean_WSP,
+                "covered_sats" : covered_saturdays,
+                "covered_suns" : covered_sundays,
                 #"mean_error_WSP" : mean_error_WSP,
                 "mean_SQ": mean_SQ,
                 #"mean_error_SQ": mean_error_SQ,
@@ -284,11 +298,14 @@ class EfficientBTProblem(BTProblem):
             average_difference = np.average(get_hamming_distances(cohort))
             return (f"The selected rotas are {'SIMILAR' if is_low else 'DIFFERENT'} "
                     f"(avg diff = {average_difference:.2f}), {rank_str})")
-        elif property_name == "mean_WSP":
+        elif property_name == "covered_sats":
+            return (f"The selected rotas cover {'few' if is_low else 'many'} "
+                    f"Saturdays: {int(property_value)} are covered, {rank_str}")
+        elif property_name == "covered_suns":
             working_saturday_proportions = [member.get_proportion_of_working_saturdays() for member in cohort]
             covered_saturdays  = int(np.average(working_saturday_proportions) * len(cohort) * (self.calendar_length // 7))
             return (f"The selected rotas cover {'few' if is_low else 'many'} "
-                    f"Saturdays: {covered_saturdays} are covered, {rank_str}")
+                    f"Sundays: {int(property_value)} are covered, {rank_str}")
         elif property_name == "mean_SQ":
             return (f"The workers have {'FEW' if is_low else 'MANY'} skills, {rank_str}")
         elif property_name == "skill_diversity":
