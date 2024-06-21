@@ -169,7 +169,7 @@ class SequentialCrowdingMiner(AbstractPSMiner):
         # for ps in sorted_pss:
         #     print(ps)
 
-        amount_to_keep_per_run = 10
+        amount_to_keep_per_run = len(sorted_pss)
         winners = sorted_pss[:amount_to_keep_per_run]
 
         self.winners_archive.extend(winners)

@@ -6,6 +6,8 @@ import sys
 import traceback
 import warnings
 
+import numpy as np
+
 import utils
 from BenchmarkProblems.BT.Worker import Worker
 from BenchmarkProblems.BenchmarkProblem import BenchmarkProblem
@@ -80,8 +82,7 @@ def show_overall_system(benchmark_problem: BenchmarkProblem):
     new_solutions_to_produce = 12
     sampler = SA(fitness_function=benchmark_problem.fitness_function,
                    search_space=benchmark_problem.search_space,
-                   mutation_operator=SinglePointFSMutation(benchmark_problem.search_space),
-                   cooling_coefficient=0.9995)
+                   mutation_operator=SinglePointFSMutation(benchmark_problem.search_space))
 
     solutions = pRef.get_evaluated_FSs()
     solutions = list(set(solutions))
@@ -99,11 +100,35 @@ def show_overall_system(benchmark_problem: BenchmarkProblem):
     print("And that concludes the showcase")
 
 def get_bt_explainer() -> Detector:
-    experimental_directory = r"C:\Users\gac8\PycharmProjects\PS-PDF\Experimentation\BT\Final"
+    experimental_directory = r"C:\Users\gac8\PycharmProjects\PS-PDF\Experimentation\BT\Reattempt"
     problem = EfficientBTProblem.from_default_files()
+
+
+    def get_average_amount_of_working_hours(worker_index: int) -> float:
+        rotas = problem.extended_patterns[worker_index]
+        rota_quantity, _  = rotas.shape
+        return rotas.sum()/rota_quantity
+
+
+    # def get_mean_amount_of_worked_weekends(worker_index: int) -> float:
+    #     rotas = problem.extended_patterns[worker_index]
+    #     rota_quantity, _  = rotas.shape
+    #
+    #     def weekend_count_for_rota(rota: np.ndarray) -> float:
+    #         return rota.reshape(-1, 7)[:, 5:].sum(dtype=float)
+    #
+    #     return np.average(list(map(weekend_count_for_rota, rotas)))
+    #
+    #
+    # for worker_index in range(len(problem.workers)):
+    #     print(f"{get_average_amount_of_working_hours(worker_index)}\t{get_mean_amount_of_worked_weekends(worker_index)}")
+    #
+    # print("ALL done now :)")
+
+
     return Detector.from_folder(problem=problem,
                                   folder=experimental_directory,
-                                  speciality_threshold=0.1,
+                                  speciality_threshold=0.10,
                                   verbose=True)
 
 def get_gc_explainer():
@@ -113,7 +138,7 @@ def get_gc_explainer():
     problem.view()
     return Detector.from_folder(folder = experimental_directory,
                                   problem = problem,
-                                  speciality_threshold=0.20,
+                                  speciality_threshold=0.50,
                                   verbose=True)
 
 
@@ -194,8 +219,8 @@ def test_classic3(pRef: PRef):
 def explanation():
     detector = get_bt_explainer()
     #detector.ps_property_manager.generate_property_table_file(detector.mined_ps_manager.pss, detector.mined_ps_manager.control_pss)
-    #detector.generate_files_with_default_settings(50000, 50000)
-    detector.explanation_loop(amount_of_fs_to_propose=2, ps_show_limit=12, show_debug_info=True)
+    #detector.generate_files_with_default_settings(5000, 5000)
+    detector.explanation_loop(amount_of_fs_to_propose=2, ps_show_limit=100, show_debug_info=True)
 
 
 def grid_search():
@@ -208,17 +233,25 @@ def grid_search():
     #                                custom_crowding_operators_to_test = [False, True],
     #                                ps_budgets_per_run_to_test=[1000, 2000, 3000, 5000, 10000])
 
-    hype = HyperparameterEvaluator(algorithms_to_test=["NSGAIII"],
+    # hype = HyperparameterEvaluator(algorithms_to_test=["NSGAIII"],
+    #                                problems_to_test=["collaboration_5", "RR_5", "insular_5"],
+    #                                pRef_sizes_to_test=[10000],
+    #                                population_sizes_to_test=[50, 100, 200],
+    #                                pRef_origin_methods = ["SA", "uniform SA"],
+    #                                ps_budget=50000,
+    #                                custom_crowding_operators_to_test = [True],
+    #                                ps_budgets_per_run_to_test=[1000, 2000, 3000, 5000, 10000])
+    hype = HyperparameterEvaluator(algorithms_to_test=["NSGAII"],
                                    problems_to_test=["collaboration_5", "RR_5", "insular_5"],
                                    pRef_sizes_to_test=[10000],
-                                   population_sizes_to_test=[50, 100, 200],
-                                   pRef_origin_methods = ["SA", "uniform SA"],
+                                   population_sizes_to_test=[50],
+                                   pRef_origin_methods = ["uniform SA"],
                                    ps_budget=50000,
                                    custom_crowding_operators_to_test = [True],
-                                   ps_budgets_per_run_to_test=[1000, 2000, 3000, 5000, 10000])
+                                   ps_budgets_per_run_to_test=[1000, 3000])
 
     hype.get_data(ignore_errors=True,
-                  verbose=False)
+                  verbose=True)
 
 
 if __name__ == '__main__':

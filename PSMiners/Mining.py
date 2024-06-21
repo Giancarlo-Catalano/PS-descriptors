@@ -136,9 +136,7 @@ def obtain_pss(benchmark_problem: BenchmarkProblem,
 
 
     if verbose:
-        pRef_plot_name = os.path.join(folder, "pRef_plot.png")
-        print(f"Plotting the pRef in {pRef_plot_name}")
-        plot_solutions_in_pRef(pRef, pRef_plot_name)
+        plot_solutions_in_pRef(pRef)
 
 
 def view_3d_plot_of_pss(ps_file: str):

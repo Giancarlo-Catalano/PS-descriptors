@@ -149,12 +149,12 @@ class MinedPSManager:
         return sorted(pss, key=get_atomicity, reverse=False)
 
 
-
-    def get_coverage_stats(self) -> np.ndarray:
+    @classmethod
+    def get_coverage_stats(cls, pss: list[PS]) -> np.ndarray:
         def ps_to_fixed_values_tally(ps: PS) -> np.ndarray:
             return ps.values != STAR
 
-        return sum(ps_to_fixed_values_tally(ps) for ps in self.pss) / len(self.pss)
+        return sum(ps_to_fixed_values_tally(ps) for ps in pss) / len(pss)
 
 
 

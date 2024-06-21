@@ -4,6 +4,7 @@ import math
 from typing import TypeAlias
 
 import numpy as np
+import pandas as pd
 
 import utils
 from BenchmarkProblems import InverseGraphColouringProblem
@@ -215,7 +216,7 @@ class EfficientBTProblem(BTProblem):
 
         rota_score = np.sum([score_for_skill(skill) for skill in self.all_skills])
         preference_score = self.rota_preference_weight * quantity_of_unliked_rotas
-        return -(rota_score + preference_score) # to convert it to a maximisation task
+        return -(rota_score + preference_score)  # to convert it to a maximisation task
 
 
     def ps_to_properties(self, ps: PS) -> dict:
@@ -256,7 +257,7 @@ class EfficientBTProblem(BTProblem):
                 "covered_sats" : covered_saturdays,
                 "covered_suns" : covered_sundays,
                 #"mean_error_WSP" : mean_error_WSP,
-                "mean_SQ": mean_SQ,
+                #"mean_SQ": mean_SQ,
                 #"mean_error_SQ": mean_error_SQ,
                 "skill_diversity": skill_diversity,
                 "skill_coverage": skill_coverage,
@@ -274,7 +275,7 @@ class EfficientBTProblem(BTProblem):
     def repr_property(self, property_name:str, property_value:float, rank:(float, float), ps: PS):
         #lower_rank, upper_rank = property_rank_range
         is_low = rank < 0.5
-        rank_str = f"(rank = {int(rank * 100)}%)" # "~ {int(property_rank_range[1]*100)}%)"
+        rank_str = f"(pol. = {int(rank * 100)}%)" # "~ {int(property_rank_range[1]*100)}%)"
 
         cohort = ps_to_cohort(self, ps)
 
@@ -537,8 +538,39 @@ class EfficientBTProblem(BTProblem):
                                   rota_preference_weight=0)
 
 
+    def repr_fs(self, full_solution: FullSolution) -> str:
+        old_repr = super().repr_fs(full_solution)
+        chosen_patterns = self.get_chosen_patterns_from_fs(full_solution)
+        quantity_of_unliked_rotas = np.sum(full_solution.values != 0)
+
+        def ranges_for_skill(skill) -> list[(int, int)]:
+            indexes = self.workers_by_skills[skill]
+            summed_patterns: ExtendedPattern = np.sum([chosen_patterns[index] for index in indexes], axis=0)  # not np.sum because it doesn't support generators
+            summed_patterns = summed_patterns.reshape((-1, 7))
+            mins = np.min(summed_patterns, axis=0)
+            maxs = np.max(summed_patterns, axis=0)
+
+            return list(zip(mins, maxs))
 
 
+
+        final_str = old_repr + "\n" + f"{quantity_of_unliked_rotas = }\n"
+        for skill in sorted(self.all_skills):
+            final_str += f"{skill}:{ranges_for_skill(skill)}\n"
+
+
+        return final_str
+
+    def get_present_skills_in_pss(self, pss: list[PS]) -> pd.DataFrame:
+        all_skills = [f"SKILL_{i}" for i in range(len(self.all_skills))]  # so that they are in order
+
+        def get_which_skills_are_present_in_ps(ps: PS) -> np.ndarray:
+            cohort = ps_to_cohort(self, ps)
+            skills_present = set(skill for component in cohort for skill in component.worker.available_skills)
+            return np.array([skill in skills_present for skill in all_skills])
+
+        main_matrix = np.array([get_which_skills_are_present_in_ps(ps) for ps in pss])
+        return pd.DataFrame(main_matrix, columns=all_skills)
 
 
 

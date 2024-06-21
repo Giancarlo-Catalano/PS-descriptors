@@ -216,11 +216,9 @@ class PRef:
                        fitness_array = fitness_array,
                        search_space = search_space)
 
-def plot_solutions_in_pRef(pRef: PRef, filename: str):
+def plot_solutions_in_pRef(pRef: PRef):
     x_points, y_points = utils.unzip(list(enumerate(pRef.fitness_array)))
     fig = plt.figure()
     plt.plot(x_points, y_points)
     plt.show()
-    #plt.savefig(filename)
-    plt.close(fig)
 

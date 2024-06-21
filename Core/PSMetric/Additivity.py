@@ -248,7 +248,7 @@ class MutualInformation(Metric):
                     bivariate_count_table[var_a][var_b][value_a, value_b] += 1
 
 
-        amount_of_samples = min(len(self.sorted_pRef.fitness_array), 10000)
+        amount_of_samples = len(self.sorted_pRef.fitness_array)
         for sample_number in range(amount_of_samples):
             sample = tournament_selection(2)
             register_solution_for_univariate(sample)

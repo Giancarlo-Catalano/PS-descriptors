@@ -40,8 +40,7 @@ def pRef_from_SA(benchmark_problem: BenchmarkProblem,
                  max_trace: int) -> PRef:
     algorithm = SA(fitness_function=benchmark_problem.fitness_function,
                    search_space=benchmark_problem.search_space,
-                   mutation_operator=SinglePointFSMutation(benchmark_problem.search_space),
-                   cooling_coefficient=0.9995)
+                   mutation_operator=SinglePointFSMutation(benchmark_problem.search_space))
 
     solutions : list[EvaluatedFS] = []
 
@@ -85,8 +84,7 @@ def pRef_from_SA_best(benchmark_problem: BenchmarkProblem,
 
     algorithm = SA(fitness_function=benchmark_problem.fitness_function,
                    search_space=benchmark_problem.search_space,
-                   mutation_operator=SinglePointFSMutation(benchmark_problem.search_space),
-                   cooling_coefficient=0.9995)
+                   mutation_operator=SinglePointFSMutation(benchmark_problem.search_space))
 
     solutions = [algorithm.get_one() for _ in range(sample_size)]
     return PRef.from_evaluated_full_solutions(solutions, benchmark_problem.search_space)

@@ -30,7 +30,7 @@ class SA:
                  search_space: SearchSpace,
                  fitness_function: Callable,
                  mutation_operator: FSMutationOperator,
-                 cooling_coefficient = 0.99995):
+                 cooling_coefficient = 0.9995):
         self.search_space = search_space
         self.evaluator = FSEvaluator(fitness_function)
 

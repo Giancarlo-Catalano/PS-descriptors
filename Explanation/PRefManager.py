@@ -6,7 +6,7 @@ from scipy.stats import t
 
 from BenchmarkProblems.BenchmarkProblem import BenchmarkProblem
 from Core.FullSolution import FullSolution
-from Core.PRef import PRef
+from Core.PRef import PRef, plot_solutions_in_pRef
 from Core.PS import PS
 from Core.PSMetric.Classic3 import Classic3PSEvaluator
 from PSMiners.Mining import get_history_pRef
@@ -76,7 +76,8 @@ class PRefManager:
                                                      which_algorithm,
                                                      force_include=force_include,
                                                      verbose=self.verbose)
-        self.instantiate_evaluator()
+        plot_solutions_in_pRef(self.cached_pRef)
+        #self.instantiate_evaluator()
         self.instantiate_mean()
 
         with announce(f"Writing the pRef to {self.pRef_file}", self.verbose):

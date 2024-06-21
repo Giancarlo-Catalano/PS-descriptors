@@ -182,9 +182,9 @@ class Classic3PSEvaluator:
 
         for var in ps.get_fixed_variable_positions():
             value = ps[var]
-            # except_one_fixed = [subset_where_column_has_value(original, var, value)  # TODO uncomment these when using atomicity
-            #           for original in except_one_fixed]
-            # except_one_fixed.append(with_all_fixed.copy_with_invalidated_fitnesses())   # done temporarly since we don't use atomicity anymore
+            except_one_fixed = [subset_where_column_has_value(original, var, value)  # TODO uncomment these when using atomicity
+                      for original in except_one_fixed]
+            except_one_fixed.append(with_all_fixed.copy_with_invalidated_fitnesses())   # done temporarly since we don't use atomicity anymore
             with_all_fixed = subset_where_column_has_value(with_all_fixed, var, value)
 
         return with_all_fixed, except_one_fixed
