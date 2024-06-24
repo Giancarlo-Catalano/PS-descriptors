@@ -19,10 +19,6 @@ class Explainer:
     pRef: PRef
 
     mean_fitness_metric: MeanFitness
-    statistically_high_fitness_metric: SignificantlyHighAverage
-    local_importance_metric: UnivariateLocalPerturbation
-    local_linkage_metric: BivariateLocalPerturbation
-
     overall_average: float
 
     def __init__(self,
@@ -35,23 +31,15 @@ class Explainer:
         self.overall_average = np.average(self.pRef.fitness_array)
 
         self.mean_fitness_metric = MeanFitness()
-        self.statistically_high_fitness_metric = SignificantlyHighAverage()
-        self.local_importance_metric = UnivariateLocalPerturbation()
-        self.local_linkage_metric = BivariateLocalPerturbation()
 
-        for metric in [self.mean_fitness_metric, self.statistically_high_fitness_metric, self.local_importance_metric,
-                       self.local_linkage_metric]:
+        for metric in [self.mean_fitness_metric]:
             metric.set_pRef(self.pRef)
 
-    def t_test_for_mean_with_ps(self, ps: PS) -> (float, float):
-        return self.statistically_high_fitness_metric.get_p_value_and_sample_mean(ps)
-
     def get_small_description_of_ps(self, ps: PS) -> str:
-        p_value, _ = self.t_test_for_mean_with_ps(ps)
         observations, not_observations = self.pRef.fitnesses_of_observations_and_complement(ps)
         avg_when_present = np.average(observations)
         avg_when_absent = np.average(not_observations)
-        return f"{self.benchmark_problem.repr_ps(ps)}, avg when present = {avg_when_present:.2f}, avg when absent = {avg_when_absent:.2f}, p-value = {p_value:e}"
+        return f"{self.benchmark_problem.repr_ps(ps)}, avg when present = {avg_when_present:.2f}, avg when absent = {avg_when_absent:.2f}"
 
     def local_explanation_of_full_solution(self, full_solution: FullSolution):
         contained_pss = [ps for ps in self.ps_catalog
@@ -69,11 +57,6 @@ class Explainer:
         # local_importances = self.local_importance_metric.get_local_importance_array(fs_as_ps)
         # local_linkages = self.local_linkage_metric.get_local_linkage_table(fs_as_ps)
 
-    def local_explanation_of_ps(self, ps: PS):
-        local_importances = self.local_importance_metric.get_local_importance_array(ps)
-        local_linkages = self.local_linkage_metric.get_local_linkage_table(ps)
-
-        # TODO find a good way to display them
 
     @staticmethod
     def only_non_obscured_pss(pss: list[PS]) -> list[PS]:
