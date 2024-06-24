@@ -10,9 +10,7 @@ from BenchmarkProblems.BenchmarkProblem import BenchmarkProblem
 from Core.EvaluatedPS import EvaluatedPS
 from Core.PRef import PRef
 from Core.PS import PS
-from Core.PSMetric.Additivity import Influence
 from Core.PSMetric.Atomicity import Atomicity
-from Core.PSMetric.LocalPerturbation import BivariateLocalPerturbation
 from Core.PSMetric.MeanFitness import MeanFitness
 from Core.PSMetric.Metric import Metric
 from Core.PSMetric.Simplicity import Simplicity

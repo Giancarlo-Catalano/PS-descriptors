@@ -113,35 +113,6 @@ class SA:
         return trace
 
 
-    def get_one_with_attempts_original(self, max_trace: int) -> list[EvaluatedFS]:
-        trace = []
-        current_individual = EvaluatedFS(FullSolution.random(self.search_space), 0)
-        current_individual.fitness = self.evaluator.evaluate(current_individual.full_solution)
-
-        #current_best = current_individual
-        trace.append(copy.copy(current_individual))
-        temperature = 1
-
-
-        while temperature > 0.01 and len(trace) < max_trace:
-            new_candidate_solution = self.mutation_operator.mutated(current_individual.full_solution)
-            new_fitness = self.evaluator.evaluate(new_candidate_solution)
-            new_candidate = EvaluatedFS(new_candidate_solution, new_fitness)
-
-            passing_probability = acceptance_probability(new_candidate.fitness, current_individual.fitness, temperature)
-            if new_candidate > current_individual or random.random() < passing_probability:
-                current_individual = new_candidate
-                trace.append(copy.copy(current_individual))
-                #if current_individual > current_best:
-                #    current_best = current_individual
-
-
-
-            temperature *= self.cooling_coefficient
-
-        return trace
-
-
 
 
 

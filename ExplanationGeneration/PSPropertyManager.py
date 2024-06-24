@@ -52,7 +52,7 @@ class PSPropertyManager:
             properties_df["size"] = np.array([ps.fixed_count() for ps in itertools.chain(pss, control_pss)])
 
             properties_df.to_csv(self.property_table_file, index=False)
-        self.cached_properties = properties_df
+        self.cached_property_table = properties_df
 
     @classmethod
     def is_useful_property(cls, property_name: PropertyName):
@@ -132,13 +132,6 @@ class PSPropertyManager:
 
         return properties_and_p_values
 
-
-    def get_variables_properties_table(self):
-        output_file_name = self.property_table_file[:-4]+"_variables.csv"
-        dicts = [self.get_variable_properties_stats(i) for i in range(self.problem.search_space.amount_of_parameters)]
-        df = pd.DataFrame(dicts)
-        with announce(f"Writing the variable data to {output_file_name}"):
-            df.to_csv(output_file_name, index=False)
 
 
 
