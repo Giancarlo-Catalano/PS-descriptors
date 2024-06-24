@@ -13,7 +13,7 @@ from Core import TerminationCriteria
 from Core.PRef import PRef, plot_solutions_in_pRef
 from Core.PS import PS, STAR
 from Core.PSMetric.Additivity import Influence
-from Explanation.PRefManager import PRefManager
+from ExplanationGeneration.PRefManager import PRefManager
 from PSMiners.PyMoo.SequentialCrowdingMiner import SequentialCrowdingMiner
 import logging
 

@@ -8,8 +8,8 @@ from BenchmarkProblems.EfficientBTProblem.EfficientBTProblem import EfficientBTP
 from BenchmarkProblems.GraphColouring import GraphColouring
 from Core.FullSolution import FullSolution
 from Core.PS import PS
-from Explanation.Detector import Detector
-from Explanation.HyperparameterEvaluator import HyperparameterEvaluator
+from ExplanationGeneration.Detector import Detector
+from ExplanationGeneration.HyperparameterEvaluator import HyperparameterEvaluator
 
 
 def get_bt_explainer() -> Detector:

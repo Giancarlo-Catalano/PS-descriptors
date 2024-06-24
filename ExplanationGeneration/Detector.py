@@ -16,10 +16,10 @@ from Core.FullSolution import FullSolution
 from Core.PRef import PRef, plot_solutions_in_pRef
 from Core.PS import PS, contains, STAR
 from Core.PSMetric.Additivity import sort_by_influence, MutualInformation
-from Explanation.MinedPSManager import MinedPSManager
-from Explanation.MutualInformationManager import MutualInformationManager
-from Explanation.PRefManager import PRefManager
-from Explanation.PSPropertyManager import PSPropertyManager
+from ExplanationGeneration.MinedPSManager import MinedPSManager
+from ExplanationGeneration.MutualInformationManager import MutualInformationManager
+from ExplanationGeneration.PRefManager import PRefManager
+from ExplanationGeneration.PSPropertyManager import PSPropertyManager
 
 
 class ExplainedPS(PS):
