@@ -13,7 +13,7 @@ from ExplanationGeneration.HyperparameterEvaluator import HyperparameterEvaluato
 
 
 def get_bt_explainer() -> Detector:
-    experimental_directory = r"C:\Users\gac8\PycharmProjects\PS-PDF\Experimentation\BT\StaffRosteringProblemCache"
+    experimental_directory = r"C:\Users\gac8\PycharmProjects\PS-PDF\Experimentation\BT\Dummy"
     problem = EfficientBTProblem.from_default_files()
 
     return Detector.from_folder(problem=problem,
@@ -33,8 +33,8 @@ def get_gc_explainer():
 
 def explanation():
     detector = get_bt_explainer()
-    #detector.generate_files_with_default_settings(50000, 50000)
-    detector.explanation_loop(amount_of_fs_to_propose=2, ps_show_limit=1000, show_debug_info=True)
+    detector.generate_files_with_default_settings(500, 500)
+    #detector.explanation_loop(amount_of_fs_to_propose=2, ps_show_limit=1000, show_debug_info=True)
 
 
 def grid_search():
