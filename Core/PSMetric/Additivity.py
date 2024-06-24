@@ -8,7 +8,7 @@ import utils
 from Core.PRef import PRef
 from Core.PS import PS, STAR
 from Core.PSMetric.Metric import Metric
-from Core.custom_types import ArrayOfFloats
+
 
 class Influence(Metric):
     pRef: Optional[PRef]
