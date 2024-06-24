@@ -7,7 +7,7 @@ import shap
 
 def old_method():
     # Load the data
-    data = pd.read_csv(r'C:\Users\gac8\PycharmProjects\PS-PDF\Experimentation\BT\Final\pRefsolutions.csv')
+    data = pd.read_csv(r'/Experimentation/BT/Final/pRefsolutions.csv')
 
     # Separate features and target variable
     X = data.drop('Fitness', axis=1)
@@ -47,7 +47,7 @@ import lime.lime_tabular
 
 def new_method():
     # Load the data
-    data = pd.read_csv(r'C:\Users\gac8\PycharmProjects\PS-PDF\Experimentation\BT\Final\pRefsolutions.csv')
+    data = pd.read_csv(r'/Experimentation/BT/Final/pRefsolutions.csv')
 
     # subsample the data, at least for now
     data = data.sample(n=1000)
