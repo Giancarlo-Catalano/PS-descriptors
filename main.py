@@ -220,7 +220,7 @@ def explanation():
     detector = get_bt_explainer()
     #detector.ps_property_manager.generate_property_table_file(detector.mined_ps_manager.pss, detector.mined_ps_manager.control_pss)
     #detector.generate_files_with_default_settings(5000, 5000)
-    detector.explanation_loop(amount_of_fs_to_propose=2, ps_show_limit=100, show_debug_info=True)
+    detector.explanation_loop(amount_of_fs_to_propose=2, ps_show_limit=1000, show_debug_info=True)
 
 
 def grid_search():
