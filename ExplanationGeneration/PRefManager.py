@@ -8,7 +8,7 @@ from BenchmarkProblems.BenchmarkProblem import BenchmarkProblem
 from Core.FullSolution import FullSolution
 from Core.PRef import PRef, plot_solutions_in_pRef
 from Core.PS import PS
-from Core.PSMetric.Classic3 import Classic3PSEvaluator
+from Core.PSMetric.Classic3 import PSSearchMetricsEvaluator
 from PSMiners.Mining import get_history_pRef
 from utils import announce
 
@@ -19,7 +19,7 @@ class PRefManager:
 
     cached_pRef: Optional[PRef]
     pRef_mean: Optional[float]
-    evaluator: Optional[Classic3PSEvaluator]
+    evaluator: Optional[PSSearchMetricsEvaluator]
 
     def __init__(self,
                  problem: BenchmarkProblem,
@@ -59,7 +59,7 @@ class PRefManager:
         return PRef.concat(pRefs)
 
     def instantiate_evaluator(self):
-        self.evaluator = Classic3PSEvaluator(self.cached_pRef)
+        self.evaluator = PSSearchMetricsEvaluator(self.cached_pRef)
 
 
     def instantiate_mean(self):

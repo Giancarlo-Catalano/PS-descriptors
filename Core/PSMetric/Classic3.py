@@ -93,7 +93,7 @@ class RowsOfPRef:
 
 
 
-class Classic3PSEvaluator:
+class PSSearchMetricsEvaluator:
     pRef: PRef
     normalised_fitnesses: ArrayOfFloats
     cached_isolated_benefits: list[list[float]]
@@ -273,71 +273,5 @@ class Classic3PSEvaluator:
         if not np.isfinite(atomicity):
             mean_fitness = invalid_value
         return np.array([simplicity, mean_fitness, atomicity])
-
-
-    def get_atomicity_contributions(self, ps: PS, normalised = False) -> np.ndarray:
-        """ this function is used for explainability purposes, mainly"""
-        self.used_evaluations +=1
-
-        rows_of_all_fixed, except_for_one = self.get_relevant_rows_for_ps(ps)
-        pAB = self.normalised_mf_of_rows(rows_of_all_fixed)
-        if pAB == 0.0:
-            return np.array([0 for _ in ps.get_fixed_variable_positions()])
-
-        isolated = self.get_relevant_isolated_benefits(ps)
-        excluded = np.array([self.normalised_mf_of_rows(rows) for rows in except_for_one])
-
-        if len(isolated) == 0:  # ie we have the empty ps
-            return np.array([])
-
-        coefficients = np.log2(pAB / isolated * excluded)
-        if normalised:
-            return coefficients
-        else:
-            return pAB * coefficients
-
-
-def test_classic3(benchmark_problem: BenchmarkProblem,sample_size: int):
-    pRef = benchmark_problem.get_reference_population(sample_size)
-
-    metrics = [Simplicity(), MeanFitness(), Atomicity()]
-    for metric in metrics:
-        metric.set_pRef(pRef)
-    classic3 = Classic3PSEvaluator(pRef)
-
-
-    def get_control_values(ps: PS) -> (float, float, float):
-        return np.array(tuple(metric.get_single_score(ps) for metric in metrics))
-
-    def get_experimental_value(ps: PS) -> (float, float, float):
-        return np.array(classic3.get_S_MF_A(ps))
-
-
-    pss_to_evaluate = [PS.random(benchmark_problem.search_space, half_chance_star=True)
-                       for _ in range(10000)]
-
-    with announce(f"Calculating using the traditional metrics"):
-        control_results = [get_control_values(ps) for ps in pss_to_evaluate]
-
-    with announce(f"Calculating using the new metrics"):
-        experimental_results = [get_experimental_value(ps) for ps in pss_to_evaluate]
-
-    def significant_difference(cont, exper) -> bool:
-        error = abs(cont - exper)
-        if not all(np.isreal(error)):
-            return True
-        return sum(error) > 0.000001
-
-
-    for ps, c, e in zip(pss_to_evaluate, control_results, experimental_results):
-        if significant_difference(c, e):
-            print(f"The {ps} has a significant error: {c} vs {e}")
-
-
-
-
-
-
-
 
 
