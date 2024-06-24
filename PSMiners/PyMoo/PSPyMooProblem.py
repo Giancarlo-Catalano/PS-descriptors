@@ -3,19 +3,19 @@ from pymoo.core.problem import Problem
 
 from Core.PRef import PRef
 from Core.PS import PS
-from Core.PSMetric.Classic3 import Classic3PSEvaluator
+from Core.PSMetric.Classic3 import PSSearchMetricsEvaluator
 from Core.SearchSpace import SearchSpace
 
 
 class PSPyMooProblem(Problem):
     pRef: PRef
-    objectives_evaluator: Classic3PSEvaluator
+    objectives_evaluator: PSSearchMetricsEvaluator
 
 
     def __init__(self,
                  pRef: PRef):
         self.pRef = pRef
-        self.objectives_evaluator = Classic3PSEvaluator(self.pRef)
+        self.objectives_evaluator = PSSearchMetricsEvaluator(self.pRef)
 
         lower_bounds = np.full(shape=self.search_space.amount_of_parameters, fill_value=-1)  # the stars
         upper_bounds = self.search_space.cardinalities - 1

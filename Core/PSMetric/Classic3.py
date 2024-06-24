@@ -64,7 +64,7 @@ class RowsOfPRef:
         return RowsOfPRef(self.fsm, self.fitnesses)
 
 
-class Classic3PSEvaluator:
+class PSSearchMetricsEvaluator:
     pRef: PRef
     cached_isolated_benefits: list[list[float]]
     used_evaluations: int
