@@ -2,8 +2,8 @@ from typing import Optional
 
 import numpy as np
 
-from Core.PRef import PRef
-from Core.PSMetric.Additivity import MutualInformation
+from FirstPaper.PRef import PRef
+from FirstPaper.PSMetric.Additivity import MutualInformation
 from utils import announce
 
 

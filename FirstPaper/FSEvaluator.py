@@ -1,9 +1,9 @@
 from typing import TypeAlias, Callable
 
-from Core.EvaluatedFS import EvaluatedFS
-from Core.FullSolution import FullSolution
-from Core.PRef import PRef
-from Core.SearchSpace import SearchSpace
+from FirstPaper.EvaluatedFS import EvaluatedFS
+from FirstPaper.FullSolution import FullSolution
+from FirstPaper.PRef import PRef
+from FirstPaper.SearchSpace import SearchSpace
 
 Fitness: TypeAlias = float
 FitnessFunction: TypeAlias = Callable[[FullSolution], Fitness]

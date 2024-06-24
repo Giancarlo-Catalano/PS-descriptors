@@ -3,7 +3,7 @@ from typing import Iterable, Sized
 
 import numpy as np
 
-from Core.custom_types import ArrayOfInts
+from FirstPaper.custom_types import ArrayOfInts
 
 
 class SearchSpace(Sized):

@@ -6,11 +6,11 @@ import pandas as pd
 
 import utils
 from BenchmarkProblems.BenchmarkProblem import BenchmarkProblem
-from Core import TerminationCriteria
-from Core.EvaluatedPS import EvaluatedPS
-from Core.PRef import PRef, plot_solutions_in_pRef
-from Core.PS import PS
-from Core.ArchivePSMiner import ArchivePSMiner
+from FirstPaper import TerminationCriteria
+from FirstPaper.EvaluatedPS import EvaluatedPS
+from FirstPaper.PRef import PRef, plot_solutions_in_pRef
+from FirstPaper.PS import PS
+from FirstPaper.ArchivePSMiner import ArchivePSMiner
 from FSStochasticSearch.HistoryPRefs import uniformly_random_distribution_pRef, pRef_from_GA, pRef_from_SA, \
     pRef_from_GA_best, pRef_from_SA_best
 from PSMiners.AbstractPSMiner import AbstractPSMiner

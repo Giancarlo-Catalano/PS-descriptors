@@ -4,8 +4,8 @@ from typing import TypeAlias
 import numpy as np
 
 from BenchmarkProblems.BenchmarkProblem import BenchmarkProblem
-from Core.FullSolution import FullSolution
-from Core.SearchSpace import SearchSpace
+from FirstPaper.FullSolution import FullSolution
+from FirstPaper.SearchSpace import SearchSpace
 
 Clause: TypeAlias = np.ndarray
 

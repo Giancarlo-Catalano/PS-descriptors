@@ -1,8 +1,8 @@
-from Core.EvaluatedFS import EvaluatedFS
-from Core.FullSolution import FullSolution
-from Core.PRef import PRef
-from Core.PS import PS
-from Core.SearchSpace import SearchSpace
+from FirstPaper.EvaluatedFS import EvaluatedFS
+from FirstPaper.FullSolution import FullSolution
+from FirstPaper.PRef import PRef
+from FirstPaper.PS import PS
+from FirstPaper.SearchSpace import SearchSpace
 from utils import announce
 
 
@@ -11,8 +11,8 @@ class BenchmarkProblem:
     """ The main components of this class are:
      -  a search space: the combinatorial search space
      -  fitness_function: the fitness function to be MAXIMISED
-     -  get_targets: the ideal Core catalog
-     -  repr_pr: a way to represent the Core which makes sense for the problem (ie checkerboard would use a grid)
+     -  get_targets: the ideal FirstPaper catalog
+     -  repr_pr: a way to represent the FirstPaper which makes sense for the problem (ie checkerboard would use a grid)
      
      A useful related class to look at is UnitaryProblem
      """

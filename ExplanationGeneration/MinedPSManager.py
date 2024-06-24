@@ -3,10 +3,10 @@ from typing import Optional, Literal
 import numpy as np
 
 from BenchmarkProblems.BenchmarkProblem import BenchmarkProblem
-from Core import TerminationCriteria
-from Core.EvaluatedPS import EvaluatedPS
-from Core.PRef import PRef
-from Core.PS import PS, STAR
+from FirstPaper import TerminationCriteria
+from FirstPaper.EvaluatedPS import EvaluatedPS
+from FirstPaper.PRef import PRef
+from FirstPaper.PS import PS, STAR
 from PSMiners.AbstractPSMiner import AbstractPSMiner
 from PSMiners.Mining import write_evaluated_pss_to_file, load_pss, write_pss_to_file
 from PSMiners.PyMoo.SequentialCrowdingMiner import SequentialCrowdingMiner

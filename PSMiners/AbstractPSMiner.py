@@ -4,12 +4,12 @@ from math import ceil
 from typing import Optional, TypeAlias
 
 from BenchmarkProblems.BenchmarkProblem import BenchmarkProblem
-from Core.EvaluatedPS import EvaluatedPS
-from Core.FSEvaluator import FSEvaluator
-from Core.PRef import PRef
-from Core.PS import PS, STAR
-from Core.SearchSpace import SearchSpace
-from Core.TerminationCriteria import TerminationCriteria, PSEvaluationLimit
+from FirstPaper.EvaluatedPS import EvaluatedPS
+from FirstPaper.FSEvaluator import FSEvaluator
+from FirstPaper.PRef import PRef
+from FirstPaper.PS import PS, STAR
+from FirstPaper.SearchSpace import SearchSpace
+from FirstPaper.TerminationCriteria import TerminationCriteria, PSEvaluationLimit
 from utils import announce
 
 Population: TypeAlias = list[EvaluatedPS]

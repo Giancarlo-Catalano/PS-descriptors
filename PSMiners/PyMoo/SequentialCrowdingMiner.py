@@ -6,10 +6,10 @@ from pymoo.operators.survival.rank_and_crowding import RankAndCrowding
 from pymoo.optimize import minimize
 
 import utils
-from Core.EvaluatedPS import EvaluatedPS
-from Core.PRef import PRef
-from Core.PSMetric.Additivity import Influence
-from Core.TerminationCriteria import TerminationCriteria, PSEvaluationLimit, UnionOfCriteria, IterationLimit, \
+from FirstPaper.EvaluatedPS import EvaluatedPS
+from FirstPaper.PRef import PRef
+from FirstPaper.PSMetric.Additivity import Influence
+from FirstPaper.TerminationCriteria import TerminationCriteria, PSEvaluationLimit, UnionOfCriteria, IterationLimit, \
     SearchSpaceIsCovered
 from PSMiners.AbstractPSMiner import AbstractPSMiner
 from PSMiners.PyMoo.CustomCrowding import PyMooDecisionSpaceSequentialCrowding

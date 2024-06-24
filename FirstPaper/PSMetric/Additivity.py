@@ -5,9 +5,9 @@ from typing import Optional
 import numpy as np
 
 import utils
-from Core.PRef import PRef
-from Core.PS import PS, STAR
-from Core.PSMetric.Metric import Metric
+from FirstPaper.PRef import PRef
+from FirstPaper.PS import PS, STAR
+from FirstPaper.PSMetric.Metric import Metric
 
 
 class Influence(Metric):

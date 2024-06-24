@@ -1,10 +1,10 @@
 import numpy as np
 from pymoo.core.problem import Problem
 
-from Core.PRef import PRef
-from Core.PS import PS
-from Core.PSMetric.Classic3 import PSSearchMetricsEvaluator
-from Core.SearchSpace import SearchSpace
+from FirstPaper.PRef import PRef
+from FirstPaper.PS import PS
+from FirstPaper.PSMetric.Classic3 import PSSearchMetricsEvaluator
+from FirstPaper.SearchSpace import SearchSpace
 
 
 class PSPyMooProblem(Problem):

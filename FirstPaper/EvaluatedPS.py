@@ -1,7 +1,7 @@
 import functools
 from typing import Optional, Iterable
 
-from Core.PS import PS
+from FirstPaper.PS import PS
 
 
 @functools.total_ordering

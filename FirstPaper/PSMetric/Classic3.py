@@ -12,11 +12,11 @@ import numpy as np
 from numba import njit
 
 import utils
-from Core.PRef import PRef
-from Core.PS import PS, STAR
-from Core.PSMetric.Additivity import MutualInformation
-from Core.PSMetric.Metric import Metric
-from Core.custom_types import ArrayOfFloats
+from FirstPaper.PRef import PRef
+from FirstPaper.PS import PS, STAR
+from FirstPaper.PSMetric.Additivity import MutualInformation
+from FirstPaper.PSMetric.Metric import Metric
+from FirstPaper.custom_types import ArrayOfFloats
 
 
 @njit

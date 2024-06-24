@@ -2,9 +2,9 @@ from typing import Optional
 
 import numpy as np
 
-from Core.PRef import PRef
-from Core.PS import PS
-from Core.PSMetric.Metric import Metric
+from FirstPaper.PRef import PRef
+from FirstPaper.PS import PS
+from FirstPaper.PSMetric.Metric import Metric
 
 
 class MeanFitness(Metric):
@@ -35,7 +35,7 @@ class MeanFitness(Metric):
     def get_single_score_removed(self, ps: PS) -> float:
         observed_fitnesses = self.pRef.fitnesses_of_observations(ps)
         if len(observed_fitnesses) == 0:
-            # warnings.warn(f"The passed Core {ps} has no observations, and thus the MeanFitness could not be calculated")
+            # warnings.warn(f"The passed FirstPaper {ps} has no observations, and thus the MeanFitness could not be calculated")
             return -1
 
         return np.average(observed_fitnesses)
@@ -43,7 +43,7 @@ class MeanFitness(Metric):
     def get_single_score(self, ps: PS) -> float:
         observed_fitnesses = self.pRef.fitnesses_of_observations(ps)
         if len(observed_fitnesses) == 0:
-            # warnings.warn(f"The passed Core {ps} has no observations, and thus the MeanFitness could not be calculated")
+            # warnings.warn(f"The passed FirstPaper {ps} has no observations, and thus the MeanFitness could not be calculated")
             return 0
 
         return np.average(observed_fitnesses)
@@ -52,7 +52,7 @@ class MeanFitness(Metric):
     def get_single_normalised_score(self, ps: PS) -> float:
         observed_fitnesses = self.normalised_pRef.fitnesses_of_observations(ps)
         if len(observed_fitnesses) == 0:
-            # warnings.warn(f"The passed Core {ps} has no observations, and thus the MeanFitness could not be calculated")
+            # warnings.warn(f"The passed FirstPaper {ps} has no observations, and thus the MeanFitness could not be calculated")
             return 0
 
         return np.average(observed_fitnesses)

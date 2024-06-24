@@ -1,7 +1,7 @@
 from typing import Iterable, Any
 
 import utils
-from Core.FSEvaluator import Fitness
+from FirstPaper.FSEvaluator import Fitness
 
 
 class TerminationCriteria:

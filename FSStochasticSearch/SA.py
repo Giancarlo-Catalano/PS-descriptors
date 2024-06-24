@@ -4,12 +4,12 @@ from typing import Callable
 
 import numpy as np
 
-from Core.EvaluatedFS import EvaluatedFS
-from Core.FSEvaluator import FSEvaluator
-from Core.FullSolution import FullSolution
+from FirstPaper.EvaluatedFS import EvaluatedFS
+from FirstPaper.FSEvaluator import FSEvaluator
+from FirstPaper.FullSolution import FullSolution
 
 from FSStochasticSearch.Operators import FSMutationOperator
-from Core.SearchSpace import SearchSpace
+from FirstPaper.SearchSpace import SearchSpace
 
 
 def acceptance_probability(f_n, f_c, min_fitness, max_fitness, temperature) -> float:

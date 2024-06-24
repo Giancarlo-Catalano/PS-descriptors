@@ -8,7 +8,7 @@ from scipy.stats import stats
 
 import utils
 from BenchmarkProblems.BenchmarkProblem import BenchmarkProblem
-from Core.PS import PS
+from FirstPaper.PS import PS
 from utils import announce
 
 PropertyName: TypeAlias = str

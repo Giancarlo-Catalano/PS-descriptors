@@ -7,11 +7,11 @@ from matplotlib import pyplot as plt
 from numba import jit
 
 import utils
-from Core.EvaluatedFS import EvaluatedFS
-from Core.FullSolution import FullSolution
-from Core.PS import STAR, PS
-from Core.SearchSpace import SearchSpace
-from Core.custom_types import ArrayOfFloats, Fitness
+from FirstPaper.EvaluatedFS import EvaluatedFS
+from FirstPaper.FullSolution import FullSolution
+from FirstPaper.PS import STAR, PS
+from FirstPaper.SearchSpace import SearchSpace
+from FirstPaper.custom_types import ArrayOfFloats, Fitness
 
 
 @jit

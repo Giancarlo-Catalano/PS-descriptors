@@ -1,6 +1,6 @@
-from Core.PS import PS
-from Core.EvaluatedFS import EvaluatedFS
-from Core.PRef import PRef
+from FirstPaper.PS import PS
+from FirstPaper.EvaluatedFS import EvaluatedFS
+from FirstPaper.PRef import PRef
 
 
 def just_empty(pRef: PRef, quantity: int) -> list[PS]:

@@ -13,10 +13,10 @@ from BenchmarkProblems.BT.RotaPattern import RotaPattern, get_range_scores, Work
 from BenchmarkProblems.BT.Worker import Worker, Skill
 from BenchmarkProblems.GraphColouring import GraphColouring
 from BenchmarkProblems.RoyalRoad import RoyalRoad
-from Core.EvaluatedFS import EvaluatedFS
-from Core.FullSolution import FullSolution
-from Core.PS import PS, STAR
-from Core.custom_types import JSON
+from FirstPaper.EvaluatedFS import EvaluatedFS
+from FirstPaper.FullSolution import FullSolution
+from FirstPaper.PS import PS, STAR
+from FirstPaper.custom_types import JSON
 
 ExtendedPattern: TypeAlias = np.ndarray
 

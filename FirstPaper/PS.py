@@ -4,9 +4,9 @@ from typing import Iterable
 
 import numpy as np
 
-from Core.FullSolution import FullSolution
-from Core.SearchSpace import SearchSpace
-from Core.custom_types import ArrayOfInts
+from FirstPaper.FullSolution import FullSolution
+from FirstPaper.SearchSpace import SearchSpace
+from FirstPaper.custom_types import ArrayOfInts
 
 STAR = -1
 

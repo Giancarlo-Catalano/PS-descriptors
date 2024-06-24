@@ -6,8 +6,8 @@ import warnings
 import utils
 from BenchmarkProblems.EfficientBTProblem.EfficientBTProblem import EfficientBTProblem
 from BenchmarkProblems.GraphColouring import GraphColouring
-from Core.FullSolution import FullSolution
-from Core.PS import PS
+from FirstPaper.FullSolution import FullSolution
+from FirstPaper.PS import PS
 from ExplanationGeneration.Detector import Detector
 from ExplanationGeneration.HyperparameterEvaluator import HyperparameterEvaluator
 

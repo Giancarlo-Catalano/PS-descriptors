@@ -1,7 +1,7 @@
 from BenchmarkProblems.BenchmarkProblem import BenchmarkProblem
-from Core import TerminationCriteria
-from Core.EvaluatedFS import EvaluatedFS
-from Core.PRef import PRef
+from FirstPaper import TerminationCriteria
+from FirstPaper.EvaluatedFS import EvaluatedFS
+from FirstPaper.PRef import PRef
 from FSStochasticSearch.GA import GA
 from FSStochasticSearch.Operators import SinglePointFSMutation, TwoPointFSCrossover, TournamentSelection
 from FSStochasticSearch.SA import SA

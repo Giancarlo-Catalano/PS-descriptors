@@ -9,10 +9,10 @@ from BenchmarkProblems.EfficientBTProblem.EfficientBTProblem import EfficientBTP
 from BenchmarkProblems.GraphColouring import GraphColouring
 from BenchmarkProblems.InverseGraphColouringProblem import InverseGraphColouring
 from BenchmarkProblems.RoyalRoad import RoyalRoad
-from Core import TerminationCriteria
-from Core.PRef import PRef, plot_solutions_in_pRef
-from Core.PS import PS, STAR
-from Core.PSMetric.Additivity import Influence
+from FirstPaper import TerminationCriteria
+from FirstPaper.PRef import PRef, plot_solutions_in_pRef
+from FirstPaper.PS import PS, STAR
+from FirstPaper.PSMetric.Additivity import Influence
 from ExplanationGeneration.PRefManager import PRefManager
 from PSMiners.PyMoo.SequentialCrowdingMiner import SequentialCrowdingMiner
 import logging

@@ -5,10 +5,10 @@ import numpy as np
 from scipy.stats import t
 
 from BenchmarkProblems.BenchmarkProblem import BenchmarkProblem
-from Core.FullSolution import FullSolution
-from Core.PRef import PRef, plot_solutions_in_pRef
-from Core.PS import PS
-from Core.PSMetric.Classic3 import PSSearchMetricsEvaluator
+from FirstPaper.FullSolution import FullSolution
+from FirstPaper.PRef import PRef, plot_solutions_in_pRef
+from FirstPaper.PS import PS
+from FirstPaper.PSMetric.Classic3 import PSSearchMetricsEvaluator
 from PSMiners.Mining import get_history_pRef
 from utils import announce
 

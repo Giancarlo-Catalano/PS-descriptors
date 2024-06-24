@@ -5,8 +5,8 @@ from pymoo.core.survival import Survival
 from pymoo.util.nds.non_dominated_sorting import NonDominatedSorting
 from pymoo.util.randomized_argsort import randomized_argsort
 
-from Core.PS import STAR, PS
-from Core.SearchSpace import SearchSpace
+from FirstPaper.PS import STAR, PS
+from FirstPaper.SearchSpace import SearchSpace
 
 
 class PyMooCustomCrowding(Survival):

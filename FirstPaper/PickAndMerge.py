@@ -4,10 +4,10 @@ from typing import Iterable, Optional
 
 import numpy as np
 
-from Core.EvaluatedPS import EvaluatedPS
-from Core.PS import PS, STAR
-from Core.FullSolution import FullSolution
-from Core.SearchSpace import SearchSpace
+from FirstPaper.EvaluatedPS import EvaluatedPS
+from FirstPaper.PS import PS, STAR
+from FirstPaper.FullSolution import FullSolution
+from FirstPaper.SearchSpace import SearchSpace
 
 
 class PickAndMergeSampler:

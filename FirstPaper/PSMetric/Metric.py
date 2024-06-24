@@ -2,9 +2,9 @@ from typing import Iterable
 
 import numpy as np
 
-from Core.PRef import PRef
-from Core.PS import PS
-from Core.custom_types import ArrayOfFloats
+from FirstPaper.PRef import PRef
+from FirstPaper.PS import PS
+from FirstPaper.custom_types import ArrayOfFloats
 
 
 class Metric:

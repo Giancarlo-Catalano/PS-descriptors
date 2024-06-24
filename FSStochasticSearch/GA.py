@@ -3,12 +3,12 @@ import random
 from math import floor
 from typing import Callable, TypeAlias
 
-from Core import TerminationCriteria
+from FirstPaper import TerminationCriteria
 from BenchmarkProblems.BenchmarkProblem import BenchmarkProblem
-from Core.EvaluatedFS import EvaluatedFS
-from Core.FSEvaluator import FSEvaluator
-from Core.FullSolution import FullSolution
-from Core.SearchSpace import SearchSpace
+from FirstPaper.EvaluatedFS import EvaluatedFS
+from FirstPaper.FSEvaluator import FSEvaluator
+from FirstPaper.FullSolution import FullSolution
+from FirstPaper.SearchSpace import SearchSpace
 from FSStochasticSearch.Operators import FSMutationOperator, FSCrossoverOperator, FSSelectionOperator, TournamentSelection, \
     SinglePointFSMutation, TwoPointFSCrossover
 

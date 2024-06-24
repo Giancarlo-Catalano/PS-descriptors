@@ -2,14 +2,14 @@
 import numpy as np
 
 from BenchmarkProblems.BenchmarkProblem import BenchmarkProblem
-from Core.EvaluatedFS import EvaluatedFS
-from Core.FullSolution import FullSolution
-from Core.PS import PS, contains
-from Core.EvaluatedPS import EvaluatedPS
-from Core.PRef import PRef
-from Core.PSMetric.LocalPerturbation import UnivariateLocalPerturbation, BivariateLocalPerturbation
-from Core.PSMetric.MeanFitness import MeanFitness
-from Core.PSMetric.SignificantlyHighAverage import SignificantlyHighAverage
+from FirstPaper.EvaluatedFS import EvaluatedFS
+from FirstPaper.FullSolution import FullSolution
+from FirstPaper.PS import PS, contains
+from FirstPaper.EvaluatedPS import EvaluatedPS
+from FirstPaper.PRef import PRef
+from FirstPaper.PSMetric.LocalPerturbation import UnivariateLocalPerturbation, BivariateLocalPerturbation
+from FirstPaper.PSMetric.MeanFitness import MeanFitness
+from FirstPaper.PSMetric.SignificantlyHighAverage import SignificantlyHighAverage
 from utils import indent
 
 

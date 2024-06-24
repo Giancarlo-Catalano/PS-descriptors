@@ -16,7 +16,7 @@ from pymoo.operators.survival.rank_and_crowding import RankAndCrowding
 from pymoo.util.ref_dirs import get_reference_directions
 
 import utils
-from Core.SearchSpace import SearchSpace
+from FirstPaper.SearchSpace import SearchSpace
 from PSMiners.PyMoo.CustomCrowding import PyMooCustomCrowding
 
 

@@ -7,9 +7,9 @@ from BenchmarkProblems.BT.ReadFromFiles import get_dicts_from_RPD, make_roster_p
 from BenchmarkProblems.BT.RotaPattern import get_workers_present_each_day_of_the_week, get_range_scores
 from BenchmarkProblems.BT.Worker import Worker, WorkerVariables, Skill
 from BenchmarkProblems.BenchmarkProblem import BenchmarkProblem
-from Core.FullSolution import FullSolution
-from Core.PS import PS, STAR
-from Core.SearchSpace import SearchSpace
+from FirstPaper.FullSolution import FullSolution
+from FirstPaper.PS import PS, STAR
+from FirstPaper.SearchSpace import SearchSpace
 from resources.BT.names import names
 
 

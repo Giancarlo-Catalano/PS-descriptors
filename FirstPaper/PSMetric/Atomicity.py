@@ -2,11 +2,11 @@ from typing import Optional
 
 import numpy as np
 
-from Core import SearchSpace
-from Core.PRef import PRef
-from Core.PS import PS, STAR
-from Core.PSMetric.Metric import Metric
-from Core.custom_types import ArrayOfFloats
+from FirstPaper import SearchSpace
+from FirstPaper.PRef import PRef
+from FirstPaper.PS import PS, STAR
+from FirstPaper.PSMetric.Metric import Metric
+from FirstPaper.custom_types import ArrayOfFloats
 
 
 class Atomicity(Metric):

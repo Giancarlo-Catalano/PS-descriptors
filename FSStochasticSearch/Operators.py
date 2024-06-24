@@ -1,8 +1,8 @@
 import heapq
 import random
 
-from Core.FullSolution import FullSolution
-from Core.SearchSpace import SearchSpace
+from FirstPaper.FullSolution import FullSolution
+from FirstPaper.SearchSpace import SearchSpace
 
 
 class FSMutationOperator:

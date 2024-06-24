@@ -1,6 +1,6 @@
 import functools
 
-from Core.FullSolution import FullSolution
+from FirstPaper.FullSolution import FullSolution
 
 
 @functools.total_ordering

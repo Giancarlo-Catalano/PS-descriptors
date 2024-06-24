@@ -10,12 +10,12 @@ from matplotlib import pyplot as plt
 import utils
 from BenchmarkProblems.BenchmarkProblem import BenchmarkProblem
 from BenchmarkProblems.EfficientBTProblem.EfficientBTProblem import EfficientBTProblem
-from Core.EvaluatedFS import EvaluatedFS
-from Core.EvaluatedPS import EvaluatedPS
-from Core.FullSolution import FullSolution
-from Core.PRef import PRef, plot_solutions_in_pRef
-from Core.PS import PS, contains, STAR
-from Core.PSMetric.Additivity import sort_by_influence, MutualInformation
+from FirstPaper.EvaluatedFS import EvaluatedFS
+from FirstPaper.EvaluatedPS import EvaluatedPS
+from FirstPaper.FullSolution import FullSolution
+from FirstPaper.PRef import PRef, plot_solutions_in_pRef
+from FirstPaper.PS import PS, contains, STAR
+from FirstPaper.PSMetric.Additivity import sort_by_influence, MutualInformation
 from ExplanationGeneration.MinedPSManager import MinedPSManager
 from ExplanationGeneration.MutualInformationManager import MutualInformationManager
 from ExplanationGeneration.PRefManager import PRefManager

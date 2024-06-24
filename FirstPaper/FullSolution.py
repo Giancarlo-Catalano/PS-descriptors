@@ -3,8 +3,8 @@ from typing import Iterable
 
 import numpy as np
 
-from Core.SearchSpace import SearchSpace
-from Core.custom_types import ArrayOfInts
+from FirstPaper.SearchSpace import SearchSpace
+from FirstPaper.custom_types import ArrayOfInts
 
 
 class FullSolution:

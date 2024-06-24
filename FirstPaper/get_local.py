@@ -3,8 +3,8 @@ from typing import Callable
 
 import numpy as np
 
-from Core.PS import PS, STAR
-from Core.SearchSpace import SearchSpace
+from FirstPaper.PS import PS, STAR
+from FirstPaper.SearchSpace import SearchSpace
 
 
 def specialisations(ps: PS, search_space: SearchSpace) -> list[PS]:

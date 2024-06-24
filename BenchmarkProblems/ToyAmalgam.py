@@ -8,10 +8,10 @@ from BenchmarkProblems.OneMax import OneMax
 from BenchmarkProblems.ParityProblem import ParityProblem
 from BenchmarkProblems.RoyalRoad import RoyalRoad
 from BenchmarkProblems.Trapk import Trapk
-from Core.FullSolution import FullSolution
-from Core.PS import PS
-from Core.SearchSpace import SearchSpace
-from Core.custom_types import ArrayOfInts
+from FirstPaper.FullSolution import FullSolution
+from FirstPaper.PS import PS
+from FirstPaper.SearchSpace import SearchSpace
+from FirstPaper.custom_types import ArrayOfInts
 
 
 class ToyProblem(Enum):
