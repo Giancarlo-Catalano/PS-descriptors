@@ -11,7 +11,7 @@ from Explanation.HyperparameterEvaluator import HyperparameterEvaluator
 
 
 def get_bt_explainer() -> Detector:
-    experimental_directory = r"C:\Users\gac8\PycharmProjects\PS-PDF\Experimentation\BT\Reattempt"
+    experimental_directory = r"C:\Users\gac8\PycharmProjects\PS-PDF\Experimentation\BT\Final"
     problem = EfficientBTProblem.from_default_files()
 
     return Detector.from_folder(problem=problem,
