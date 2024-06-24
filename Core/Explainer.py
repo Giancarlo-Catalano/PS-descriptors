@@ -92,7 +92,7 @@ class Explainer:
                 try:
                     index = int(answer)
                 except ValueError:
-                    print("That didn't work, please retry")
+                    print("That didn't work...please retry!")
                     continue
                 solution_to_explain = evaluated_sampled_solutions[index]
                 self.local_explanation_of_full_solution(solution_to_explain.full_solution)
