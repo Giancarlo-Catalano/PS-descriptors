@@ -9,6 +9,10 @@ import pandas as pd
 from matplotlib import pyplot as plt
 from datetime import datetime
 import plotly.express as px
+import os
+import sys
+import traceback
+import warnings
 
 
 def unzip(zipped):
@@ -422,3 +426,10 @@ def make_interactive_3d_plot(first_metric, second_metric, third_metric, names: l
 
 def remap_in_range_0_1_knowing_range(value: float, known_range: (float, float)) -> float:
     return (value - known_range[0]) / (known_range[1] - known_range[0])
+
+
+def warn_with_traceback(message, category, filename, lineno, file=None, line=None):
+
+    log = file if hasattr(file,'write') else sys.stderr
+    traceback.print_stack(file=log)
+    log.write(warnings.formatwarning(message, category, filename, lineno, line))
