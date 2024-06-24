@@ -8,8 +8,7 @@ from Core.EvaluatedPS import EvaluatedPS
 from Core.PRef import PRef
 from Core.PS import PS, STAR
 from PSMiners.AbstractPSMiner import AbstractPSMiner
-from PSMiners.DEAP.DEAPPSMiner import DEAPPSMiner
-from PSMiners.Mining import get_ps_miner, write_evaluated_pss_to_file, load_pss, write_pss_to_file
+from PSMiners.Mining import write_evaluated_pss_to_file, load_pss, write_pss_to_file
 from PSMiners.PyMoo.SequentialCrowdingMiner import SequentialCrowdingMiner
 from utils import announce
 
@@ -34,41 +33,6 @@ class MinedPSManager:
         self.cached_control_pss = None
         self.cached_pss = None
         self.verbose = verbose
-
-
-    def mine_pss_old(self,
-                 pRef: PRef,
-                 ps_miner_method: Literal["classic", "NSGA", "NSGA_experimental_crowding", "SPEA2", "sequential"],
-                 ps_budget: int) -> list[EvaluatedPS]:
-        algorithm = get_ps_miner(pRef, which=ps_miner_method)
-
-        with announce(f"Running {algorithm} on {pRef} with {ps_budget =}", self.verbose):
-            budget_limit = TerminationCriteria.PSEvaluationLimit(ps_limit=ps_budget)
-            coverage_limit = TerminationCriteria.SearchSpaceIsCovered()
-            termination_criterion = budget_limit #TerminationCriteria.UnionOfCriteria(budget_limit, coverage_limit)
-            algorithm.run(termination_criterion, verbose=self.verbose)
-
-        result_ps = algorithm.get_results(None)
-        result_ps = AbstractPSMiner.without_duplicates(result_ps)
-        result_ps = [ps for ps in result_ps if not ps.is_empty()]
-
-        return result_ps
-
-
-
-
-    def generate_ps_file_old(self,
-                         pRef: PRef,
-                         ps_miner_method: Literal["classic", "NSGA", "NSGA_experimental_crowding", "SPEA2", "sequential"],
-                         ps_budget: int):
-
-        with announce(f"Mining the partial solutions using {ps_miner_method} and budget = {ps_budget}"):
-            self.cached_pss = self.mine_pss_old(pRef, ps_miner_method, ps_budget)
-
-
-
-        with announce(f"Writing the PSs onto {self.mined_ps_file}", self.verbose):
-            write_evaluated_pss_to_file(self.cached_pss, self.mined_ps_file)
 
     def mine_pss(self,
                  pRef: PRef,

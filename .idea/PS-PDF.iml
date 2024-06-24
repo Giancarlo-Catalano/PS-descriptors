@@ -2,8 +2,8 @@
 <module type="PYTHON_MODULE" version="4">
   <component name="NewModuleRootManager">
     <content url="file://$MODULE_DIR$">
-      <excludeFolder url="file://$MODULE_DIR$/Experimentation/GC/Dummy" />
       <excludeFolder url="file://$MODULE_DIR$/venv" />
+      <excludeFolder url="file://$MODULE_DIR$/Experimentation/GC/UseCase" />
     </content>
     <orderEntry type="jdk" jdkName="Python 3.10 (PS-PDF)" jdkType="Python SDK" />
     <orderEntry type="sourceFolder" forTests="false" />
