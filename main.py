@@ -52,14 +52,6 @@ def grid_search():
                   verbose=True)
 
 
-
-
-
-
-
-
-
-
 if __name__ == '__main__':
     logging.basicConfig(level=logging.INFO)
     warnings.showwarning = utils.warn_with_traceback
