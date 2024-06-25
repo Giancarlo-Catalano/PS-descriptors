@@ -14,22 +14,22 @@ from ExplanationGeneration.HyperparameterEvaluator import HyperparameterEvaluato
 
 def get_bt_explainer() -> Explainer:
     # this defines the directory where the Partial Solution files will be stored.
-    experimental_directory = r"C:\Users\gac8\PycharmProjects\PS-PDF\Experimentation\BT\StaffRosteringProblemCache"
+    ps_directory = os.path.join("Experimentation", "BT", "StaffRosteringProblemCache")
 
     # loads the problem as defined in some files, it should be resources/BT/MartinsInstance
     problem = EfficientBTProblem.from_default_files()
 
     return Explainer.from_folder(problem=problem,
-                                 folder=experimental_directory,
+                                 folder=ps_directory,
                                  speciality_threshold=0.10,  # this is the threshold for polarity as discussed in the paper
                                  verbose=True)
 
 def get_gc_explainer():
-    experimental_directory = r"C:\Users\gac8\PycharmProjects\PS-PDF\Experimentation\GC\Dummy"
-    problem_file = os.path.join(experimental_directory, "bert.json")
+    ps_directory = os.path.join("Experimentation", "BT", "Dummy")
+    problem_file = os.path.join(ps_directory, "bert.json")
     problem = GraphColouring.from_file(problem_file)
     problem.view()
-    return Explainer.from_folder(folder = experimental_directory,
+    return Explainer.from_folder(folder = ps_directory,
                                  problem = problem,
                                  speciality_threshold=0.50,
                                  verbose=True)

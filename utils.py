@@ -433,3 +433,12 @@ def warn_with_traceback(message, category, filename, lineno, file=None, line=Non
     log = file if hasattr(file,'write') else sys.stderr
     traceback.print_stack(file=log)
     log.write(warnings.formatwarning(message, category, filename, lineno, line))
+
+
+def make_path(original_path: str):
+    to_remove = r"C:\Users\gac8\PycharmProjects\PS-PDF"+"\\"
+    if not original_path.startswith(to_remove):
+        raise Exception("The string does not start right")
+    to_break = original_path[len(to_remove):]
+    words = to_break.split("\\")
+    return "os.path.join("+(", ".join(f"\"{w}\"" for w in words))+")"
