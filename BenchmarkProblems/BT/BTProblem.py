@@ -1,3 +1,5 @@
+import os.path
+
 import numpy as np
 import pandas as pd
 
@@ -54,11 +56,18 @@ class BTProblem(BenchmarkProblem):
 
     @classmethod
     def from_default_files(cls):
-        root = r"C:\Users\gac8\PycharmProjects\PS-PDF\resources\BT\MartinsInstance" + "\\"
-        return cls.from_csv_files(employee_data_file=root+"employeeData.csv",
-                                  employee_skills_file=root+"employeeSkillsData.csv",
-                                  rota_file=root+"rosterPatternDaysData.csv",
+        root = os.path.join("resources", "BT", "MartinsInstance")
+
+        return cls.from_csv_files(employee_data_file=os.path.join(root, "employeeData.csv"),
+                                  employee_skills_file=os.path.join(root, "employeeSkillsData.csv"),
+                                  rota_file=os.path.join(root, "rosterPatternDaysData.csv"),
                                   calendar_length=7*13)
+
+        # root = r"C:\Users\gac8\PycharmProjects\PS-PDF\resources\BT\MartinsInstance" + "\\"
+        # return cls.from_csv_files(employee_data_file=root+"employeeData.csv",
+        #                           employee_skills_file=root+"employeeSkillsData.csv",
+        #                           rota_file=root+"rosterPatternDaysData.csv",
+        #                           calendar_length=7*13)
 
     def to_json(self) -> dict:
         result = dict()
