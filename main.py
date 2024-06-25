@@ -40,7 +40,7 @@ def explanation():
 
     # to generate the files containing PSs, properties etc..
     # You should only run this once, since it is quite slow
-    #explainer.generate_files_with_default_settings(5000, 5000)
+    explainer.generate_files_with_default_settings(5000, 5000)
 
     # this starts the main explanation function, and uses the files generated above
     explainer.explanation_loop(amount_of_fs_to_propose=2, ps_show_limit=3, show_debug_info=True)

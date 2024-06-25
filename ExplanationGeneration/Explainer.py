@@ -333,14 +333,13 @@ class Explainer:
         print("Bye Bye!")
 
 
-
     def generate_files_with_default_settings(self,
                                              pRef_size: Optional[int] = 10000,
                                              pss_budget: Optional[int] = 10000,
                                              force_include_in_pRef: Optional[list[FullSolution]] = None):
-
-        answer = input("Are you sure you want to regenerate the files?")
-        if answer == "yessir":
+        answer = input("Are you sure you want to regenerate the files? It's a slow operation (type yes/no)")
+        if answer == "yes":
+            # generate the reference population
             self.pRef_manager.generate_pRef_file(sample_size=pRef_size,
                                                  which_algorithm="uniform SA",
                                                  force_include=force_include_in_pRef)
