@@ -7,13 +7,21 @@ from FirstPaper.FullSolution import FullSolution
 from FirstPaper.PS import PS, contains
 from FirstPaper.EvaluatedPS import EvaluatedPS
 from FirstPaper.PRef import PRef
-from FirstPaper.PSMetric.LocalPerturbation import UnivariateLocalPerturbation, BivariateLocalPerturbation
 from FirstPaper.PSMetric.MeanFitness import MeanFitness
-from FirstPaper.PSMetric.SignificantlyHighAverage import SignificantlyHighAverage
 from utils import indent
 
 
-class Explainer:
+class LegacyExplainer:
+    """
+    This is the prototype produced at the end of the first paper,
+    "Mining Potentially Explanatory Patterns via Partial Solutions"
+
+    https://doi.org/10.1145/3638530.3654318
+
+    This explainer
+    * uses the old archive-based miner
+    * only presents contained PSs, without descriptors
+    """
     benchmark_problem: BenchmarkProblem  # used mainly for repr_pr
     ps_catalog: list[EvaluatedPS]
     pRef: PRef

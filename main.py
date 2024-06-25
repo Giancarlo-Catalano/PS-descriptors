@@ -33,7 +33,7 @@ def get_gc_explainer():
 
 def explanation():
     detector = get_bt_explainer()
-    detector.generate_files_with_default_settings(500, 500)
+    detector.generate_files_with_default_settings(5000, 5000)
     #detector.explanation_loop(amount_of_fs_to_propose=2, ps_show_limit=1000, show_debug_info=True)
 
 
@@ -53,10 +53,15 @@ def grid_search():
 
 
 if __name__ == '__main__':
+
+    # the 2 lines below are just to see more detailed errors and logs
     logging.basicConfig(level=logging.INFO)
     warnings.showwarning = utils.warn_with_traceback
 
+    # this line is to run the tests as discussed in the paper
     #grid_search()
+
+    # this line is to run the explainer
     explanation()
 
 
