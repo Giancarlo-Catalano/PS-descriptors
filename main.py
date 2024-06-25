@@ -13,6 +13,10 @@ from ExplanationGeneration.HyperparameterEvaluator import HyperparameterEvaluato
 
 
 def get_bt_explainer() -> Explainer:
+    """
+    Loads the BT Staff Rostering problem instance
+    @return:
+    """
     # this defines the directory where the Partial Solution files will be stored.
     ps_directory = os.path.join("Experimentation", "BT", "StaffRosteringProblemCache")
 
@@ -26,7 +30,12 @@ def get_bt_explainer() -> Explainer:
                                  verbose=True)
 
 
-def get_gc_explainer():
+def get_gc_explainer() -> Explainer:
+    """
+    Constructs a Graph Colouring problem and its explainer.
+    The problem is the one used in the figure in the paper.
+    @return: The Explainer instance
+    """
     ps_directory = os.path.join("Experimentation", "BT", "Dummy")
     problem_file = os.path.join(ps_directory, "bert.json")
     problem = GraphColouring.from_file(problem_file)
@@ -37,7 +46,11 @@ def get_gc_explainer():
                                  verbose=True)
 
 
-def explanation():
+def explanation() -> None:
+    """
+    Loads the
+    @return: Nothing, it just prints things and manages files
+    """
     # constructing the explainer object, which determines the problem and the working directory
     explainer = get_bt_explainer()
 
@@ -49,7 +62,13 @@ def explanation():
     explainer.explanation_loop(amount_of_fs_to_propose=2, ps_show_limit=3, show_debug_info=True)
 
 
-def grid_search():
+def grid_search() -> None:
+    """
+    This function gathers the data that is discussed in the Results section of the paper.
+    It's grid search, so it's very slow!
+
+    The result is just printed to the console as a json, because it works well with Condor Cluster Computing
+    """
     # construct the set of parameters that will be used in the testing
     hype = HyperparameterEvaluator(algorithms_to_test=["NSGAII", "NSGAIII", "MOEAD", "SMS-EMOA"],
                                    problems_to_test=["collaboration_5", "insular_5", "RR_5"],
