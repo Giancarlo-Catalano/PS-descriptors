@@ -21,18 +21,21 @@ def get_bt_explainer() -> Explainer:
 
     return Explainer.from_folder(problem=problem,
                                  folder=ps_directory,
-                                 speciality_threshold=0.10,  # this is the threshold for polarity as discussed in the paper
+                                 speciality_threshold=0.10,
+                                 # this is the threshold for polarity as discussed in the paper
                                  verbose=True)
+
 
 def get_gc_explainer():
     ps_directory = os.path.join("Experimentation", "BT", "Dummy")
     problem_file = os.path.join(ps_directory, "bert.json")
     problem = GraphColouring.from_file(problem_file)
     problem.view()
-    return Explainer.from_folder(folder = ps_directory,
-                                 problem = problem,
+    return Explainer.from_folder(folder=ps_directory,
+                                 problem=problem,
                                  speciality_threshold=0.50,
                                  verbose=True)
+
 
 def explanation():
     # constructing the explainer object, which determines the problem and the working directory
@@ -52,9 +55,9 @@ def grid_search():
                                    problems_to_test=["collaboration_5", "insular_5", "RR_5"],
                                    pRef_sizes_to_test=[10000],
                                    population_sizes_to_test=[50, 100, 200],
-                                   pRef_origin_methods = ["uniform", "SA", "uniform SA"],
+                                   pRef_origin_methods=["uniform", "SA", "uniform SA"],
                                    ps_budget=50000,
-                                   custom_crowding_operators_to_test = [False, True],
+                                   custom_crowding_operators_to_test=[False, True],
                                    ps_budgets_per_run_to_test=[1000, 2000, 3000, 5000, 10000])
 
     hype.get_data(ignore_errors=True,
@@ -62,21 +65,12 @@ def grid_search():
 
 
 if __name__ == '__main__':
-
     # the 2 lines below are just to see more detailed errors and logs
     logging.basicConfig(level=logging.INFO)
     warnings.showwarning = utils.warn_with_traceback
 
     # this line is to run the tests as discussed in the paper
-    #grid_search()
+    # grid_search()
 
     # this line is to run the explainer
     explanation()
-
-
-
-
-
-
-
-
