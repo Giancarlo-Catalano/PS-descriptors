@@ -45,7 +45,7 @@ def pRef_from_SA(benchmark_problem: BenchmarkProblem,
     solutions : list[EvaluatedFS] = []
 
     while len(solutions) < sample_size:
-        solutions.extend(algorithm.get_one_with_attempts(max_trace= max_trace))
+        solutions.extend(algorithm.get_one_with_trace(max_trace= max_trace))
 
     solutions = solutions[:sample_size]
 
