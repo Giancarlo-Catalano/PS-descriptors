@@ -20,15 +20,18 @@ from utils import announce
 
 
 class SequentialCrowdingMiner(AbstractPSMiner):
-    which_algorithm: str
-    population_size_per_run: int
-    budget_per_run: int
+    """
+    This is the algorithm which produces partial solutions for a given reference population
+    """
+    which_algorithm: str   # the MO algorithm to use
+    population_size_per_run: int  # there are multiple MO runs, each with a population
+    budget_per_run: int  # and a budget
 
-    pymoo_problem: PSPyMooProblem
-    winners_archive: list[EvaluatedPS]
+    pymoo_problem: PSPyMooProblem  # the pymoo problem instance, the task of finding PSs
+    winners_archive: list[EvaluatedPS] # all the PSs returned by the runs
 
-    use_experimental_crowding_operator: bool
-    influence_metric: Influence
+    use_custom_crowding_operator: bool
+    influence_metric: Influence   # used to better sort PSs, for aesthetic reasons
 
 
     def __init__(self,
@@ -44,7 +47,7 @@ class SequentialCrowdingMiner(AbstractPSMiner):
         self.budget_per_run = budget_per_run
         self.pymoo_problem = PSPyMooProblem(pRef)
         self.winners_archive = []
-        self.use_experimental_crowding_operator = use_experimental_crowding_operator
+        self.use_custom_crowding_operator = use_experimental_crowding_operator
 
         if influence_metric is None:
             influence_metric = Influence()
@@ -89,9 +92,11 @@ class SequentialCrowdingMiner(AbstractPSMiner):
 
 
     def get_crowding_operator(self):
-        if self.use_experimental_crowding_operator and len(self.winners_archive) > 0:
+        if self.use_custom_crowding_operator and len(self.winners_archive) > 0:
+            # this is the crowding operator discussed in the paper
             return PyMooDecisionSpaceSequentialCrowding(archived_pss=self.winners_archive, sigma_shared=0.5)
         else:
+            # on the first run, we are forced to run the default crowding operator
             return RankAndCrowding()
 
     def get_miner_algorithm(self):
@@ -99,13 +104,17 @@ class SequentialCrowdingMiner(AbstractPSMiner):
                                           pop_size=self.population_size_per_run,
                                           sampling=PSGeometricSampling(),
                                           mutation=PSUniformMutation(self.search_space),
-                                          crossover=UniformCrossover(prob=0),
+                                          crossover=UniformCrossover(prob=0),  # as the first paper discussed, crossover is bad
                                           crowding_operator=self.get_crowding_operator(),
                                           search_space=self.search_space)
 
 
 
     def get_coverage(self):
+        """
+        This function is for reporting purposes only, and tells how many variables have appeared in PSs so far
+        @return: an array, with the proportions of how many times a variable appears in the archive
+        """
         if len(self.winners_archive) == 0:
             return np.zeros(self.search_space.amount_of_parameters)
         else:
@@ -159,6 +168,7 @@ class SequentialCrowdingMiner(AbstractPSMiner):
 
     @classmethod
     def with_default_settings(cls, pRef: PRef):
+        """ These are the settings that were found via the testing in the paper"""
         return cls(pRef = pRef,
                    budget_per_run = 1000,
                    population_size_per_run = 50,
