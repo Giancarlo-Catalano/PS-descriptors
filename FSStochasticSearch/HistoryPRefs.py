@@ -7,8 +7,18 @@ from FSStochasticSearch.Operators import SinglePointFSMutation, TwoPointFSCrosso
 from FSStochasticSearch.SA import SA
 
 
+"""
+This file contains many functions with which a Reference population could be generated.
+"""
+
 def uniformly_random_distribution_pRef(benchmark_problem: BenchmarkProblem,
                                        sample_size: int) -> PRef:
+    """
+    Res Ipsa Loquitur. The solutions are completely uniformly random
+    @param benchmark_problem: which provides the search space that will be sampled
+    @param sample_size: the amount of individuals that will be produced
+    @return: the referece population, as a PRef
+    """
     return benchmark_problem.get_reference_population(sample_size=sample_size)
 
 
@@ -38,6 +48,14 @@ def pRef_from_GA(benchmark_problem: BenchmarkProblem,
 def pRef_from_SA(benchmark_problem: BenchmarkProblem,
                  sample_size: int,
                  max_trace: int) -> PRef:
+    """
+    Returns the reference population composed of all the attempts from some SA runs.
+    Note that if the run ends and more individuals are needed, a new run will be used as well
+    @param benchmark_problem: whose search space is sampled
+    @param sample_size: the amount of individuals at the end
+    @param max_trace: max non-improving attempts in the SA (unused generally)
+    @return: the reference population, as a PRef
+    """
     algorithm = SA(fitness_function=benchmark_problem.fitness_function,
                    search_space=benchmark_problem.search_space,
                    mutation_operator=SinglePointFSMutation(benchmark_problem.search_space))
@@ -49,8 +67,6 @@ def pRef_from_SA(benchmark_problem: BenchmarkProblem,
 
     solutions = solutions[:sample_size]
 
-    # best_solution = max(solutions)
-    # df = benchmark_problem.details_of_solution(best_solution.full_solution)   # Experimental
     return PRef.from_evaluated_full_solutions(solutions, benchmark_problem.search_space)
 
 
@@ -80,7 +96,8 @@ def pRef_from_GA_best(benchmark_problem: BenchmarkProblem,
 def pRef_from_SA_best(benchmark_problem: BenchmarkProblem,
                  sample_size: int) -> PRef:
     """returns only the end results of each run of SA. There will be _sample\_size_ runs in total.
-    Note that this is significantly slower that using all of the attempts"""
+    Note that this is significantly slower that using all of the attempts
+    (This function is not used)"""
 
     algorithm = SA(fitness_function=benchmark_problem.fitness_function,
                    search_space=benchmark_problem.search_space,
