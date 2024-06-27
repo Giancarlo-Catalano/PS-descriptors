@@ -18,6 +18,9 @@ from resources.BT.names import names
 
 
 class BTProblem(BenchmarkProblem):
+    """ This is a class to encapsulate all of the details of the BT problem.
+    A naive but readable implementation is presented here, but it's necessary to implement a less readable
+    but more efficient version (EfficientBTProblem)"""
     calendar_length: int
     workers: list[Worker]
     weights: list[float]
