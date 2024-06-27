@@ -102,6 +102,7 @@ def sort_by_influence(pss: list[PS], pRef: PRef) -> list[PS]:
 
 class MutualInformation(Metric):
     """This is the metric discussed in the paper, which replaces LegacyAtomicity"""
+    """ we measure the mutual information regarding the probability of winning in a binary tournament selection"""
     sorted_pRef: Optional[PRef]
 
     univariate_probability_table: Optional[list]
