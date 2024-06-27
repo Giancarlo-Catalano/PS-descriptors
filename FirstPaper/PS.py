@@ -148,4 +148,14 @@ def contains(fs: FullSolution, ps: PS) -> bool:
     return all(x_psi_i in {STAR, x_i} for x_psi_i, x_i in zip(ps.values, fs.values))
 
 
+def write_pss_to_file(pss: list[PS], file: str):
+    """
+    Saves the partial solutions to a file
+    @param pss: The list of partial solutions to be stored, in order
+    @param file: the file to store the partial solutions in
+    @return: Nothing!
+    """
+    ps_matrix = np.array([ps.values for ps in pss])
+    np.savez(file, ps_matrix = ps_matrix)
+
 
