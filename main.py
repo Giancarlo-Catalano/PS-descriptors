@@ -18,7 +18,7 @@ def get_bt_explainer() -> Explainer:
     @return:
     """
     # this defines the directory where the Partial Solution files will be stored.
-    ps_directory = os.path.join("Experimentation", "BT", "StaffRosteringProblemCache")
+    ps_directory = os.path.join("ExplanatoryCachedData", "BT", "StaffRosteringProblemCache")
 
     # loads the problem as defined in some files, it should be resources/BT/MartinsInstance
     problem = EfficientBTProblem.from_default_files()
@@ -36,7 +36,7 @@ def get_gc_explainer() -> Explainer:
     The problem is the one used in the figure in the paper.
     @return: The Explainer instance
     """
-    ps_directory = os.path.join("Experimentation", "BT", "Dummy")
+    ps_directory = os.path.join("ExplanatoryCachedData", "BT", "Dummy")
     problem_file = os.path.join(ps_directory, "bert.json")
     problem = GraphColouring.from_file(problem_file)
     problem.view()
@@ -56,7 +56,7 @@ def explanation() -> None:
 
     # to generate the files containing PSs, properties etc..
     # You should only run this once, since it is quite slow
-    explainer.generate_files_with_default_settings(5000, 5000)
+    #explainer.generate_files_with_default_settings(5000, 5000)
 
     # this starts the main explanation function, and uses the files generated above
     explainer.explanation_loop(amount_of_fs_to_propose=2, ps_show_limit=3, show_debug_info=True)

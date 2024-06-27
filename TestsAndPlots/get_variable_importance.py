@@ -12,7 +12,7 @@ import lime.lime_tabular
 
 def new_method():
     # Load the data
-    data = pd.read_csv(r'/Experimentation/BT/Final/pRefsolutions.csv')
+    data = pd.read_csv(r'/ExplanatoryCachedData/BT/Final/pRefsolutions.csv')
 
     # subsample the data, at least for now
     data = data.sample(n=1000)
