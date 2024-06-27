@@ -20,13 +20,11 @@ from FirstPaper.PS import PS
 class EfficientBTProblem(BTProblem):
     extended_patterns: list[FullPatternOptions]
     workers_by_skills: dict  # Skill -> set[worker index]
-    use_faulty_fitness_function: bool
     rota_preference_weight: float
 
     def __init__(self,
                  workers: list[Worker],
                  calendar_length: int,
-                 use_faulty_fitness_function: bool = False,
                  weights: list[float] = None,
                  rota_preference_weight: float = 0.001):
         super().__init__(workers, calendar_length, weights=weights)
@@ -35,16 +33,21 @@ class EfficientBTProblem(BTProblem):
         self.workers_by_skills = {skill: {index for index, worker in enumerate(self.workers)
                                           if skill in worker.available_skills}
                                   for skill in self.all_skills}
-        self.use_faulty_fitness_function = use_faulty_fitness_function
         self.rota_preference_weight = rota_preference_weight
 
     def get_ranges_for_weekdays_for_skill(self, chosen_patterns: list[ExtendedPattern],
                                           skill: Skill) -> WeekRanges:
+        """
+        This is roughly the function Q from the paper
+        @param chosen_patterns: the patterns that were chosen in the full solution
+        @param skill: the skill for which we're getting the ranges
+        @return: the range vales for each day of the week
+        """
         indexes = self.workers_by_skills[skill]
         summed_patterns: ExtendedPattern = np.sum([chosen_patterns[index] for index in indexes],
                                                   axis=0)  # not np.sum because it doesn't support generators
         summed_patterns = summed_patterns.reshape((-1, 7))
-        return get_range_scores(summed_patterns, self.use_faulty_fitness_function)
+        return get_range_scores(summed_patterns)
 
     def aggregate_range_scores(self, range_scores: WeekRanges) -> float:
         return float(np.sum(day_range * weight for day_range, weight in zip(range_scores, self.weights)))
@@ -65,6 +68,11 @@ class EfficientBTProblem(BTProblem):
         return -(rota_score + preference_score)  # to convert it to a maximisation task
 
     def ps_to_properties(self, ps: PS) -> dict:
+        """
+         This function returns all the descriptors for a PS
+        @param ps: the PS to be explained
+        @return: a dictionary, with the various descriptor values, as a dictionary
+        """
         cohort = ps_to_cohort(self, ps)
 
         choice_amounts = [member.get_amount_of_choices() for member in cohort]
@@ -79,31 +87,19 @@ class EfficientBTProblem(BTProblem):
         skill_diversity = get_skill_variation(cohort)
         skill_coverage = get_skill_coverage(cohort)
 
-        return {  # "mean_RCQ" : mean_RCQ,
-            # "mean_error_RCQ" : mean_error_RCQ,
-            # "mean_WWD" : mean_WWD,
-            # "mean_error_WWD" : mean_error_WWD,
-            "mean_RD": mean_RD,
-            # "mean_error_RD" : mean_error_RD,
+        return {
+            "mean_RD": mean_RD, # rota difference
             "covered_sats": covered_saturdays,
             "covered_suns": covered_sundays,
-            # "mean_error_WSP" : mean_error_WSP,
-            # "mean_SQ": mean_SQ,
-            # "mean_error_SQ": mean_error_SQ,
             "skill_diversity": skill_diversity,
             "skill_coverage": skill_coverage,
-            # "day_coverage": coverage,
             "quantity_of_fav_rotas": quantity_of_fav_rotas
         }
 
-    def repr_extra_ps_info(self, ps: PS):
-        cohort = ps_to_cohort(self, ps)
-        mins_maxs = get_mins_and_maxs_for_weekdays(cohort)
-        weekdays = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"]
-        return f"The ranges are " + (", ".join(f"{weekday}:{min_max}" for weekday, min_max in zip(weekdays, mins_maxs)))
+
 
     def repr_property(self, property_name: str, property_value: float, rank: (float, float), ps: PS):
-        # lower_rank, upper_rank = property_rank_range
+        """A simple function to make the printing of property polarities more readable"""
         is_low = rank < 0.5
         rank_str = f"(pol. = {int(rank * 100)}%)"  # "~ {int(property_rank_range[1]*100)}%)"
 
@@ -113,18 +109,10 @@ class EfficientBTProblem(BTProblem):
             rota_choice_quantities = [member.get_amount_of_choices() for member in cohort]
             return (f"The workers have {'FEW' if is_low else 'MANY'} rota choices: {rota_choice_quantities} "
                     f"(mean = {np.average(rota_choice_quantities):.2f}, {rank_str})")
-        # elif property_name == "mean_error_RCQ":
-        #     rota_choice_quantities = [member.get_amount_of_choices() for member in cohort]
-        #     return (f"The workers have {'THE SAME' if is_low else 'DIFFERENT'} "
-        #             f"amounts of rota choices: {rota_choice_quantities} rank = {rank_str})")
         elif property_name == "mean_WWD":
             working_week_days = [member.get_mean_weekly_working_days() for member in cohort]
             return (f"The selected rotas have {'FEW' if is_low else 'MANY'} working days "
                     f"(avg per week, per worker: {working_week_days}, {rank_str})")
-        # elif property_name == "mean_error_WWD":
-        #     working_week_days = [member.get_mean_weekly_working_days() for member in cohort]
-        #     return (f"The selected rotas have {'FEW' if is_low else 'MANY'} working days  "
-        #             f"average per week, per worker: {working_week_days} rank = {rank_str})")
         elif property_name == "mean_RD":
             average_difference = np.average(get_hamming_distances(cohort))
             return (f"The selected rotas are {'SIMILAR' if is_low else 'DIFFERENT'} "
@@ -133,9 +121,6 @@ class EfficientBTProblem(BTProblem):
             return (f"The selected rotas cover {'few' if is_low else 'many'} "
                     f"Saturdays: {int(property_value)} are covered, {rank_str}")
         elif property_name == "covered_suns":
-            working_saturday_proportions = [member.get_proportion_of_working_saturdays() for member in cohort]
-            covered_saturdays = int(
-                np.average(working_saturday_proportions) * len(cohort) * (self.calendar_length // 7))
             return (f"The selected rotas cover {'few' if is_low else 'many'} "
                     f"Sundays: {int(property_value)} are covered, {rank_str}")
         elif property_name == "mean_SQ":
@@ -151,7 +136,11 @@ class EfficientBTProblem(BTProblem):
 
     @classmethod
     def from_Graph_Colouring(cls, gc: GraphColouring):
-
+        """
+        Generates the appropriate SR_GC problem
+        @param gc:  the graph colouring problem to be replicated
+        @return: the corresponding SR_GC instance
+        """
         working_week = [WorkDay.working_day(900, 1700) for _ in range(7)]
         not_working_week = [WorkDay.not_working() for _ in range(7)]
 
@@ -183,6 +172,11 @@ class EfficientBTProblem(BTProblem):
 
     @classmethod
     def from_RoyalRoad(cls, rr: RoyalRoad):
+        """
+        generates the SR_RR problems
+        @param rr: the royal road problem to be replicated
+        @return: the corresponding SR_RR instance
+        """
         amount_of_days = 7 * rr.clique_size
         master_rota_days = [WorkDay.working_day(900, 1700)
                             if i < 7 else WorkDay.not_working() for i in range(amount_of_days)]
@@ -203,8 +197,18 @@ class EfficientBTProblem(BTProblem):
         return EfficientBTProblem(workers=workers, calendar_length=amount_of_days,
                                   weights=[1 for _ in range(7)], rota_preference_weight=0)
 
-    def get_readable_property_name(self, property: str) -> str:
-        match property:
+
+    """ The functions below are not too important, and mostly for debugging"""
+
+    def repr_extra_ps_info(self, ps: PS):
+
+        cohort = ps_to_cohort(self, ps)
+        mins_maxs = get_mins_and_maxs_for_weekdays(cohort)
+        weekdays = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"]
+        return f"The ranges are " + (", ".join(f"{weekday}:{min_max}" for weekday, min_max in zip(weekdays, mins_maxs)))
+
+    def get_readable_property_name(self, property_name: str) -> str:
+        match property_name:
             case "mean_RCQ":
                 return "rota choice amount"
             case "mean_error_RCQ":
@@ -222,7 +226,7 @@ class EfficientBTProblem(BTProblem):
             case "quantity_of_fav_rotas":
                 return "preferred rota usage"
             case _:
-                return property
+                return property_name
 
     def print_stats_of_pss(self, pss: list[PS], full_solutions: list[EvaluatedFS]):
         cohorts = [ps_to_cohort(self, ps) for ps in pss]
