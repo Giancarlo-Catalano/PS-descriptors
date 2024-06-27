@@ -10,10 +10,18 @@ from BenchmarkProblems.BT.Worker import Worker
 from FirstPaper.PS import PS, STAR
 from FirstPaper.custom_types import JSON
 
+""" this file is to analyse the partial solutions relating to the staff rostering problem.
+A partial solution consists of workers and their assignments, and they are converted into 'cohorts' """
 ExtendedPattern: TypeAlias = np.ndarray
 
 
 def rota_to_extended_pattern(rota: RotaPattern, calendar_length: int) -> ExtendedPattern:
+    """
+    Duplicates a rota to match the calendar length
+    @param rota: the rota to be repeated
+    @param calendar_length: the target calendar length
+    @return: the working days, as numpy array of integers (0 or 1)
+    """
     pattern = np.array([day.working for day in rota.days], dtype=int)
     if len(pattern) >= calendar_length:
         return pattern[:calendar_length]
@@ -21,11 +29,13 @@ def rota_to_extended_pattern(rota: RotaPattern, calendar_length: int) -> Extende
     return np.tile(pattern, math.ceil(calendar_length / len(pattern)))[:calendar_length]
 
 
-def get_rotated_by_starting_week(full_pattern: ExtendedPattern, starting_week: int) -> ExtendedPattern:
-    return np.roll(full_pattern, -starting_week)
-
-
 def convert_worker_to_just_options(worker: Worker, calendar_length: int) -> np.ndarray:
+    """
+    Utility function to represent a worker to just its rota options, pre-extended for efficiency
+    @param worker:
+    @param calendar_length:
+    @return:
+    """
     return np.array([rota_to_extended_pattern(rota, calendar_length)
                      for rota in worker.available_rotas])
 
@@ -39,7 +49,6 @@ class CohortMember:
     worker: Worker
     chosen_rota_index: int
     chosen_rota_entended: ExtendedPattern
-
 
     def __init__(self,
                  worker: Worker,
@@ -61,20 +70,13 @@ class CohortMember:
         worker = Worker.from_json(element["worker"])
         return cls(worker=worker, rota_index=chosen_rota, calendar_length=calendar_length)
 
-
-    def get_amount_of_skills(self) -> int:
-        return len(self.worker.available_skills)
-
     def get_mean_weekly_working_days(self) -> int:
         total_working_days = np.sum(self.chosen_rota_extended)
         total_weeks = len(self.chosen_rota_extended) // 7
         return total_working_days / total_weeks
 
-
     def get_amount_of_choices(self) -> int:
         return len(self.worker.available_rotas)
-
-
 
     def get_proportion_of_working_saturdays(self) -> float:
         return np.average(self.chosen_rota_extended.reshape((-1, 7))[:, 5])
@@ -87,27 +89,14 @@ def ps_to_cohort(problem: BTProblem, ps: PS) -> Cohort:
     def fixed_var_to_cohort_member(var: int, val: int) -> CohortMember:
         worker = problem.workers[var]
         return CohortMember(worker, val, calendar_length=problem.calendar_length)
+
     return [fixed_var_to_cohort_member(var, val)
             for var, val in enumerate(ps.values)
             if val != STAR]
 
-
-def cohort_to_json(cohort: Cohort) -> JSON:
-    return [member.to_json() for member in cohort]
-
-
-def get_amount_of_shared_skills(cohort: Cohort) -> int:
-    if len(cohort) == 0:
-        return 0
-
-    skillsets = [component.worker.available_skills for component in cohort]
-    common_to_all = set.intersection(*skillsets)
-    return len(common_to_all)
-
-
 def get_skill_variation(cohort: Cohort) -> float:
     all_skills = set(skill for component in cohort
-                          for skill in component.worker.available_skills)
+                     for skill in component.worker.available_skills)
     sum_of_available_skills = sum(len(component.worker.available_skills) for component in cohort)
     return len(all_skills) / sum_of_available_skills
 
@@ -119,7 +108,6 @@ def get_skill_coverage(cohort: Cohort) -> float:
 
 
 def get_hamming_distances(cohort: Cohort) -> list[int]:
-
     def hamming_distance(component_a: CohortMember, component_b: CohortMember) -> int:
         rota_a = component_a.chosen_rota_extended
         rota_b = component_b.chosen_rota_extended
@@ -131,10 +119,10 @@ def get_hamming_distances(cohort: Cohort) -> list[int]:
         return [distance, distance]
 
     return [hamming_distance(a, b)
-               for a, b in itertools.combinations(cohort, 2)]
+            for a, b in itertools.combinations(cohort, 2)]
 
 
-def get_ranges_in_weekdays(cohort: Cohort, use_faulty_fitness_function = False) -> np.ndarray:
+def get_ranges_in_weekdays(cohort: Cohort, use_faulty_fitness_function=False) -> np.ndarray:
     total_pattern: np.ndarray = np.array(sum(member.chosen_rota_extended for member in cohort))
     total_pattern = total_pattern.reshape((-1, 7))
     return get_range_scores(total_pattern, use_faulty_fitness_function)
@@ -152,14 +140,13 @@ def get_coverage(cohort: Cohort) -> float:
     """returns the proportion of days in the calendar with at least one worker"""
     total_pattern = np.array(sum(member.chosen_rota_extended for member in cohort))
     total_pattern = np.minimum(total_pattern, 1)
-    return np.average(total_pattern)   # happens to be equal to quantity_working_days / quantity_days
+    return np.average(total_pattern)  # happens to be equal to quantity_working_days / quantity_days
 
 
 def get_amount_of_covered_weekends(cohort: Cohort) -> (float, float):
     covered_days = sum(member.chosen_rota_extended for member in cohort)
-    covered_days = np.array(covered_days, dtype = bool).reshape((-1, 7))
+    covered_days = np.array(covered_days, dtype=bool).reshape((-1, 7))
     covered_saturdays = np.sum(covered_days[:, 5], dtype=float)
     covered_sundays = np.sum(covered_days[:, 6], dtype=float)
-
 
     return float(covered_saturdays), float(covered_sundays)
