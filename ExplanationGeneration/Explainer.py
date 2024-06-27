@@ -15,7 +15,7 @@ from FirstPaper.EvaluatedPS import EvaluatedPS
 from FirstPaper.FullSolution import FullSolution
 from FirstPaper.PRef import PRef, plot_solutions_in_pRef
 from FirstPaper.PS import PS, contains, STAR
-from FirstPaper.PSMetric.Additivity import sort_by_influence, MutualInformation
+from FirstPaper.PSMetric.LinkageMetrics import sort_by_influence, MutualInformation
 from ExplanationGeneration.MinedPSManager import MinedPSManager
 from ExplanationGeneration.MutualInformationManager import MutualInformationManager
 from ExplanationGeneration.PRefManager import PRefManager
@@ -347,7 +347,7 @@ class Explainer:
             self.mined_ps_manager.generate_ps_file(pRef = self.pRef,
                                                    population_size=50,
                                                    ps_budget_in_total=pss_budget,
-                                                   ps_budget_per_run=1000)
+                                                   ps_budget_per_run=5000)  # TODO check if this is right
             self.mined_ps_manager.generate_control_pss_file(samples_for_each_category=1000)
 
             self.ps_property_manager.generate_property_table_file(self.mined_ps_manager.pss, self.mined_ps_manager.control_pss)

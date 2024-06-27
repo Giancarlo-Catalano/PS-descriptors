@@ -12,7 +12,7 @@ from BenchmarkProblems.RoyalRoad import RoyalRoad
 from FirstPaper import TerminationCriteria
 from FirstPaper.PRef import PRef, plot_solutions_in_pRef
 from FirstPaper.PS import PS, STAR
-from FirstPaper.PSMetric.Additivity import Influence
+from FirstPaper.PSMetric.LinkageMetrics import Influence
 from ExplanationGeneration.PRefManager import PRefManager
 from PSMiners.PyMoo.SequentialCrowdingMiner import SequentialCrowdingMiner
 import logging

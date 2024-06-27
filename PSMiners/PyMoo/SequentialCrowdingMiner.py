@@ -8,7 +8,7 @@ from pymoo.optimize import minimize
 import utils
 from FirstPaper.EvaluatedPS import EvaluatedPS
 from FirstPaper.PRef import PRef
-from FirstPaper.PSMetric.Additivity import Influence
+from FirstPaper.PSMetric.LinkageMetrics import Influence
 from FirstPaper.TerminationCriteria import TerminationCriteria, PSEvaluationLimit, UnionOfCriteria, IterationLimit, \
     SearchSpaceIsCovered
 from PSMiners.AbstractPSMiner import AbstractPSMiner

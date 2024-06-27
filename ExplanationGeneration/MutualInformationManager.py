@@ -3,7 +3,7 @@ from typing import Optional
 import numpy as np
 
 from FirstPaper.PRef import PRef
-from FirstPaper.PSMetric.Additivity import MutualInformation
+from FirstPaper.PSMetric.LinkageMetrics import MutualInformation
 from utils import announce
 
 

@@ -3,6 +3,7 @@ import random
 from typing import Optional
 
 import numpy as np
+from numba import njit
 
 import utils
 from FirstPaper.PRef import PRef
@@ -11,6 +12,9 @@ from FirstPaper.PSMetric.Metric import Metric
 
 
 class Influence(Metric):
+    """This metric is good for ordering PSs in terms of atomicity, but
+    * it's painfully slow...
+    * it's unstable for pss which are too fixed or too simple"""
     pRef: Optional[PRef]
     trivial_means: Optional[list[list[float]]]
     overall_mean: Optional[float]
@@ -97,6 +101,7 @@ def sort_by_influence(pss: list[PS], pRef: PRef) -> list[PS]:
 
 
 class MutualInformation(Metric):
+    """This is the metric discussed in the paper, which replaces LegacyAtomicity"""
     sorted_pRef: Optional[PRef]
 
     univariate_probability_table: Optional[list]
@@ -112,9 +117,7 @@ class MutualInformation(Metric):
         self.linkage_table = None
 
     def __repr__(self):
-        return "MutualInformation"#
-
-
+        return "MutualInformation"
 
     @classmethod
     def get_sorted_pRef(cls, pRef: PRef) -> PRef:
@@ -123,6 +126,7 @@ class MutualInformation(Metric):
         indexes, fitnesses = utils.unzip(indexed_fitnesses)
 
         new_matrix = pRef.full_solution_matrix[indexes]
+        new_matrix = np.array(new_matrix, dtype=np.uint8) # so that it takes less space
         return PRef(fitnesses, new_matrix, search_space=pRef.search_space)
     def set_pRef(self, pRef: PRef):
         self.sorted_pRef = self.get_sorted_pRef(pRef)
@@ -132,10 +136,17 @@ class MutualInformation(Metric):
 
     def calculate_probability_tables(self) -> (list, list):
         indexes = list(range(len(self.sorted_pRef.fitness_array)))
+        amount_of_solutions = len(self.sorted_pRef.fitness_array)
+        fsm = self.sorted_pRef.full_solution_matrix
         def tournament_selection(tournament_size: int) -> np.ndarray:
             picks = random.choices(indexes, k=tournament_size)
             winner_index = min(picks)
             return self.sorted_pRef.full_solution_matrix[winner_index]
+
+        def binary_tournament_selection() -> np.ndarray:
+            first, second = random.randrange(amount_of_solutions), random.randrange(amount_of_solutions)
+            winning_index = min(first, second)
+            return fsm[winning_index]
 
 
         univariate_counts = [np.zeros(card) for card in self.sorted_pRef.search_space.cardinalities]
@@ -143,25 +154,34 @@ class MutualInformation(Metric):
         bivariate_count_table = [[np.zeros((c2, c1), dtype=int)
                                   for c1 in cs]
                                  for c2 in cs]
-        def register_solution_for_univariate(solution: np.ndarray):
-            for var, value in enumerate(solution):
-                univariate_counts[var][value] += 1
+        n = len(cs)
+
+        def register_batch(solution_matrix: np.ndarray) -> None:
+
+            for var_a in range(n):
+                col_a = solution_matrix[:, var_a]
+
+                # register univariate counts
+                a_counts = np.unique(col_a, return_counts=True)
+                for val_a, count_for_val in zip(*a_counts):
+                    univariate_counts[var_a][val_a] += count_for_val
+
+                for var_b in range(var_a+1, n):
+                    cols_together = solution_matrix[:, [var_a, var_b]]
+                    raw_counts = np.unique(cols_together, axis=0, return_counts=True)
+                    for (val_a, val_b), count in zip(*raw_counts):
+                        bivariate_count_table[var_a][var_b][val_a, val_b] += count
+
+        with utils.announce("Getting information for Mutual Information", verbose=False):
+            batch_size = 12 * 1024 // (fsm.itemsize * n)
+            remaining_samples = amount_of_solutions
+            while remaining_samples > 0:
+                current_batch_size = min(remaining_samples, batch_size)
+                samples_matrix = np.array([binary_tournament_selection() for _ in range(current_batch_size)])
+                register_batch(samples_matrix)
+                remaining_samples -= current_batch_size
 
 
-        def register_solution_for_bivariate(solution: np.ndarray):
-            for var_a, value_a in enumerate(solution):
-                for var_b in range(var_a+1, len(solution)):
-                    value_b = solution[var_b]
-                    bivariate_count_table[var_a][var_b][value_a, value_b] += 1
-
-
-        amount_of_samples = len(self.sorted_pRef.fitness_array)
-        for sample_number in range(amount_of_samples):
-            sample = tournament_selection(2)
-            register_solution_for_univariate(sample)
-            register_solution_for_bivariate(sample)
-            if sample_number%(amount_of_samples // 100) == 0:
-                print(f"MI data gathering progress: {100*sample_number/amount_of_samples:.2f}%")
 
         def counts_to_probabilities(counts: np.ndarray):
             """ used for both arrays and matrices"""
@@ -169,9 +189,10 @@ class MutualInformation(Metric):
 
 
         univariate_probabilities = [counts_to_probabilities(var_counts) for var_counts in univariate_counts]
-        bivariate_probabilities = [[counts_to_probabilities(bivariate_count_table[var_a][var_b]) if var_b > var_a else None
-                                    for var_b in range(len(cs))]
-                                   for var_a in range(len(cs))]
+        bivariate_probabilities = [[counts_to_probabilities(bivariate_count_table[var_a][var_b])
+                                    if var_b > var_a else None
+                                    for var_b in range(n)]
+                                   for var_a in range(n)]
         return univariate_probabilities, bivariate_probabilities
 
     def get_linkage_between_vars(self, var_a:int, var_b:int) -> float:

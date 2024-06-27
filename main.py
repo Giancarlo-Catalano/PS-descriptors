@@ -47,6 +47,16 @@ def get_gc_explainer() -> Explainer:
                                  verbose=True)
 
 
+def get_debug_explainer():
+    ps_directory = os.path.join("ExplanatoryCachedData", "BT", "Dummy")
+    problem = GraphColouring.make_insular_instance(4)
+    #problem.view()
+    return Explainer.from_folder(folder=ps_directory,
+                                 problem=problem,
+                                 speciality_threshold=0.50,
+                                 verbose=True)
+
+
 def explanation() -> None:
     """
     Loads the
@@ -54,10 +64,11 @@ def explanation() -> None:
     """
     # constructing the explainer object, which determines the problem and the working directory
     explainer = get_bt_explainer()
+    explainer = get_debug_explainer()
 
     # to generate the files containing PSs, properties etc..
     # You should only run this once, since it is quite slow
-    explainer.generate_files_with_default_settings(5000, 5000)
+    explainer.generate_files_with_default_settings(50000, 10000)
 
     # this starts the main explanation function, and uses the files generated above
     explainer.explanation_loop(amount_of_fs_to_propose=2, ps_show_limit=3, show_debug_info=True)

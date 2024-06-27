@@ -1,4 +1,3 @@
-
 """
 This file is uniquely to implement the function get_S_MF_A,
 which stands for get Simplicity, Mean Fitness, Atomicity
@@ -14,7 +13,7 @@ from numba import njit
 import utils
 from FirstPaper.PRef import PRef
 from FirstPaper.PS import PS, STAR
-from FirstPaper.PSMetric.Additivity import MutualInformation
+from FirstPaper.PSMetric.LinkageMetrics import MutualInformation
 from FirstPaper.PSMetric.Metric import Metric
 from FirstPaper.custom_types import ArrayOfFloats
 
@@ -32,6 +31,7 @@ def filter_by_var_val(fsm: np.ndarray,
         new_fitnesses = fitnesses[which]
     return new_fsm, new_fitnesses
 
+
 class RowsOfPRef:
     fsm: np.ndarray
     fitnesses: Optional[ArrayOfFloats]
@@ -48,10 +48,9 @@ class RowsOfPRef:
 
     def filter_by_var_val(self, var: int, val: int):
         self.fsm, self.fitnesses = filter_by_var_val(self.fsm,
-                                                                                self.fitnesses,
-                                                                                var,
-                                                                                val)
-
+                                                     self.fitnesses,
+                                                     var,
+                                                     val)
 
     def get_mean_fitness(self) -> float:
         if self.fitnesses is None:
@@ -60,6 +59,7 @@ class RowsOfPRef:
         if len(self.fitnesses) == 0:
             return -np.inf
         return np.average(self.fitnesses)
+
     def copy(self):
         return RowsOfPRef(self.fsm, self.fitnesses)
 
@@ -68,20 +68,17 @@ class PSSearchMetricsEvaluator:
     pRef: PRef
     used_evaluations: int
 
-    alternative_atomicity_evaluator: Metric
-
+    atomicity_metric: Metric
 
     def __init__(self, pRef: PRef):
         self.pRef = pRef
 
         self.used_evaluations = 0
 
+        self.atomicity_metric = MutualInformation()
+        self.atomicity_metric.set_pRef(pRef)
 
-        self.alternative_atomicity_evaluator = MutualInformation()
-        self.alternative_atomicity_evaluator.set_pRef(pRef)
-
-
-    def mf_of_rows(self, which_rows: RowsOfPRef)->float:
+    def mf_of_rows(self, which_rows: RowsOfPRef) -> float:
         return which_rows.get_mean_fitness()
 
     def get_simplicity_of_PS(self, ps: PS) -> float:
@@ -99,7 +96,6 @@ class PSSearchMetricsEvaluator:
             result.filter_by_var_val(variable, value)
             return result
 
-
         with_all_fixed = RowsOfPRef.all_from_pRef(self.pRef)
         except_one_fixed = []
 
@@ -109,23 +105,18 @@ class PSSearchMetricsEvaluator:
 
         return with_all_fixed, except_one_fixed
 
-
-
-    def get_S_MF_A(self, ps: PS, invalid_value: float = 0) -> np.ndarray:   # it is 3 floats
+    def get_S_MF_A(self, ps: PS, invalid_value: float = 0) -> np.ndarray:  # it is 3 floats
         """this one is normalised"""
         self.used_evaluations += 1
         rows_all_fixed, excluding_one = self.get_relevant_rows_for_ps(ps)
 
-
         simplicity = self.get_simplicity_of_PS(ps)
 
         mean_fitness = self.mf_of_rows(rows_all_fixed)
-        atomicity = self.alternative_atomicity_evaluator.get_single_score(ps)
+        atomicity = self.atomicity_metric.get_single_score(ps)
 
         if not np.isfinite(mean_fitness) or np.isnan(mean_fitness):
             mean_fitness = invalid_value
         if not np.isfinite(atomicity):
             mean_fitness = invalid_value
         return np.array([simplicity, mean_fitness, atomicity])
-
-

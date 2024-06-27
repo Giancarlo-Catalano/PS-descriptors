@@ -10,7 +10,7 @@ from BenchmarkProblems.BenchmarkProblem import BenchmarkProblem
 from FirstPaper.EvaluatedPS import EvaluatedPS
 from FirstPaper.PRef import PRef
 from FirstPaper.PS import PS
-from FirstPaper.PSMetric.Atomicity import Atomicity
+from FirstPaper.PSMetric.LegacyAtomicity import Atomicity
 from FirstPaper.PSMetric.MeanFitness import MeanFitness
 from FirstPaper.PSMetric.Metric import Metric
 from FirstPaper.PSMetric.Simplicity import Simplicity
