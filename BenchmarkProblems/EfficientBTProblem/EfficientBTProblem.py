@@ -4,7 +4,7 @@ import pandas as pd
 import utils
 from BenchmarkProblems import InverseGraphColouringProblem
 from BenchmarkProblems.BT.BTProblem import BTProblem
-from BenchmarkProblems.BT.RotaPattern import RotaPattern, get_range_scores, WorkDay
+from BenchmarkProblems.BT.RotaPattern import RotaPattern, get_range_scores, WorkDay, range_score
 from BenchmarkProblems.BT.Worker import Worker, Skill
 from BenchmarkProblems.EfficientBTProblem.Cohort import ExtendedPattern, convert_worker_to_just_options, \
     FullPatternOptions, WeekRanges, Cohort, ps_to_cohort, get_skill_variation, get_skill_coverage, \
@@ -385,7 +385,11 @@ class EfficientBTProblem(BTProblem):
 
         final_str = old_repr + "\n" + f"{quantity_of_unliked_rotas = }\n"
         for skill in sorted(self.all_skills):
-            final_str += f"{skill}:{ranges_for_skill(skill)}\n"
+            ranges = ranges_for_skill(skill)
+            range_scores = np.array([range_score(min_amount, max_amount)
+                            for min_amount, max_amount in ranges])
+            fitness_for_skill = self.aggregate_range_scores(range_scores)
+            final_str += f"{skill}:{ranges_for_skill(skill)}, fitness = {fitness_for_skill:.2f}\n"
 
         return final_str
 

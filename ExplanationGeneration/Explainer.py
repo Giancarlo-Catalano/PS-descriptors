@@ -8,6 +8,7 @@ import pandas as pd
 from matplotlib import pyplot as plt
 
 import utils
+from BenchmarkProblems.BT.Worker import Worker
 from BenchmarkProblems.BenchmarkProblem import BenchmarkProblem
 from BenchmarkProblems.EfficientBTProblem.EfficientBTProblem import EfficientBTProblem
 from FirstPaper.EvaluatedFS import EvaluatedFS
@@ -20,6 +21,7 @@ from ExplanationGeneration.MinedPSManager import MinedPSManager
 from ExplanationGeneration.MutualInformationManager import MutualInformationManager
 from ExplanationGeneration.PRefManager import PRefManager
 from ExplanationGeneration.PSPropertyManager import PSPropertyManager
+from FirstPaper.custom_types import ArrayOfFloats
 
 
 class ExplainedPS(PS):
@@ -219,6 +221,11 @@ class Explainer:
         used_vars_count = used_vars.sum(axis=0, dtype=bool).sum(dtype=int)
         return used_vars_count / len(pss[0])
 
+
+    def get_variable_importance(self, pss: list[PS]) -> ArrayOfFloats:
+        return self.mined_ps_manager.get_coverage_stats(pss)
+
+
     def explain_solution(self, solution: EvaluatedFS, shown_ps_max: int, must_contain: Optional[int] = None):
         contained_pss = self.get_contained_ps(solution, must_contain = must_contain)
 
@@ -233,7 +240,7 @@ class Explainer:
         print(f"It is {int(explainability_coverage*100)}% explainable")
 
 
-        variable_importances = self.mined_ps_manager.get_coverage_stats(contained_pss)
+        variable_importances = self.get_variable_importance(contained_pss)
         print("The local variable importances are")
         print(utils.repr_with_precision(variable_importances, 4))
 
@@ -321,6 +328,8 @@ class Explainer:
                     self.handle_save_pRef_query()
                 elif answer in {"show_pref"}:
                     self.handle_show_pRef_query()
+                elif answer in {"secret"}:
+                    self.handle_secret_query()
                 elif answer in {"n", "no", "exit", "q", "quit"}:
                     finish = True
                 else:
@@ -411,15 +420,26 @@ class Explainer:
                 print(f"{ps}")
 
 
+    def handle_secret_query(self):
+        print("SHhhhhhh!")
         if isinstance(self.problem, EfficientBTProblem):
             print("Producing the table!!!")
-            final_table = self.problem.get_present_skills_in_pss(self.pss)
-            saturday_coverages = self.ps_property_manager.property_table["covered_sats"]
-            sunday_coverages =self.ps_property_manager.property_table["covered_suns"]
+            all_skills = [f"SKILL_{i}" for i in range(len(self.problem.all_skills))]  # so that they are in order
 
-            destination = r"C:\Users\gac8\PycharmProjects\PS-PDF\Experimentation\BT\Final\skill_table.csv"
-            final_table["saturday_coverage"] = saturday_coverages
-            final_table["sunday_coverage"] = sunday_coverages
+            def get_which_skills_are_present_in_worker(worker: Worker) -> np.ndarray:
+                return np.array([skill in worker.available_skills for skill in all_skills], dtype=int)
+
+            main_matrix = np.array([get_which_skills_are_present_in_worker(w) for w in self.problem.workers])
+            final_table = pd.DataFrame(main_matrix, columns=all_skills)
+
+            variable_importance = self.get_variable_importance(self.pss)
+            rota_counts = [len(worker.available_rotas) for worker in self.problem.workers]
+            skill_counts = [len(worker.available_skills) for worker in self.problem.workers]
+
+            final_table["rota_counts"] = rota_counts
+            final_table["skill_counts"] = skill_counts
+            final_table["variable_importance"] = variable_importance
+            destination = r"C:\Users\gac8\PycharmProjects\PS-PDF\resources\temp\importance_table.csv"
 
             final_table.to_csv(destination, index=False)
 

@@ -3,7 +3,7 @@ import scipy.stats as stats
 import statsmodels.api as sm
 
 # Load the data
-data = pd.read_csv(r'C:\Users\gac8\Downloads\reattempt_worker_properties.csv')
+data = pd.read_csv(r'C:\Users\gac8\PycharmProjects\PS-PDF\resources\temp\importance_table.csv')
 
 
 def test_between_columns(col_a: str, col_b: str) -> None:
@@ -26,16 +26,9 @@ def test_between_columns(col_a: str, col_b: str) -> None:
 
 
 
-pairs_to_test = [["local_freq", "rota_quantity"],
-                 ["local_freq", "skill_count"],
-                 ["local_freq", "working_days"],
-                 ["local_freq", "working_weekends"],
-                 ["local_freq", "LIME"],
-                 ["global_freq", "rota_quantity"],
-                 ["global_freq", "skill_count"],
-                 ["global_freq", "working_days"],
-                 ["global_freq", "working_weekends"],
-                 ["global_freq", "LIME"]]
+pairs_to_test = [(f"SKILL_{n}", "variable_importance") for n in range(18)]
+pairs_to_test.extend([("rota_counts","variable_importance"),
+                      ("skill_counts", "variable_importance")])
 
 
 for first_col, second_col in pairs_to_test:

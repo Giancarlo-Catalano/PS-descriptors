@@ -18,7 +18,7 @@ def get_bt_explainer() -> Explainer:
     @return:
     """
     # this defines the directory where the Partial Solution files will be stored.
-    use_dummy = True
+    use_dummy = False
     ps_directory = os.path.join("ExplanatoryCachedData", "BT", "Dummy" if use_dummy else "StaffRosteringProblemCache")
 
     # loads the problem as defined in some files, it should be resources/BT/MartinsInstance
@@ -64,11 +64,10 @@ def explanation() -> None:
     """
     # constructing the explainer object, which determines the problem and the working directory
     explainer = get_bt_explainer()
-    explainer = get_debug_explainer()
 
     # to generate the files containing PSs, properties etc..
     # You should only run this once, since it is quite slow
-    explainer.generate_files_with_default_settings(50000, 10000)
+    #explainer.generate_files_with_default_settings(50000, 10000)
 
     # this starts the main explanation function, and uses the files generated above
     explainer.explanation_loop(amount_of_fs_to_propose=2, ps_show_limit=3, show_debug_info=True)
