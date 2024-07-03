@@ -1,5 +1,5 @@
 from BenchmarkProblems.UnitaryProblem import UnitaryProblem
-from Core.FullSolution import FullSolution
+from FirstPaper.FullSolution import FullSolution
 
 
 class OneMax(UnitaryProblem):

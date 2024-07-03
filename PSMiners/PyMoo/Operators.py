@@ -8,7 +8,7 @@ from pymoo.operators.crossover.sbx import SBX
 from pymoo.operators.mutation.pm import PolynomialMutation
 from pymoo.operators.sampling.rnd import FloatRandomSampling
 
-from Core.SearchSpace import SearchSpace
+from FirstPaper.SearchSpace import SearchSpace
 
 
 

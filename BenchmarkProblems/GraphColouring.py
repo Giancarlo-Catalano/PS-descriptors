@@ -5,9 +5,9 @@ from typing import TypeAlias, Iterable, Optional
 
 import utils
 from BenchmarkProblems.BenchmarkProblem import BenchmarkProblem
-from Core.FullSolution import FullSolution
-from Core.PS import PS, STAR
-from Core.SearchSpace import SearchSpace
+from FirstPaper.FullSolution import FullSolution
+from FirstPaper.PS import PS, STAR
+from FirstPaper.SearchSpace import SearchSpace
 import graphviz
 import networkx as nx
 import matplotlib.pyplot as plt

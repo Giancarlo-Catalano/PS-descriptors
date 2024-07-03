@@ -3,9 +3,9 @@ import random
 import numpy as np
 
 from BenchmarkProblems.BenchmarkProblem import BenchmarkProblem
-from Core.FullSolution import FullSolution
-from Core.PS import PS, STAR
-from Core.SearchSpace import SearchSpace
+from FirstPaper.FullSolution import FullSolution
+from FirstPaper.PS import PS, STAR
+from FirstPaper.SearchSpace import SearchSpace
 
 
 class RoyalRoadWithOverlaps(BenchmarkProblem):

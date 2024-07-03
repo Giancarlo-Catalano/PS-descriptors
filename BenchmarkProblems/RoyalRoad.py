@@ -1,8 +1,8 @@
 import numpy as np
 
 from BenchmarkProblems.UnitaryProblem import UnitaryProblem
-from Core.FullSolution import FullSolution
-from Core.PS import PS
+from FirstPaper.FullSolution import FullSolution
+from FirstPaper.PS import PS
 
 
 class RoyalRoad(UnitaryProblem):

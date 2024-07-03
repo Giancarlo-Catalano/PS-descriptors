@@ -1,3 +1,5 @@
+import os.path
+
 import numpy as np
 import pandas as pd
 
@@ -7,15 +9,18 @@ from BenchmarkProblems.BT.ReadFromFiles import get_dicts_from_RPD, make_roster_p
 from BenchmarkProblems.BT.RotaPattern import get_workers_present_each_day_of_the_week, get_range_scores
 from BenchmarkProblems.BT.Worker import Worker, WorkerVariables, Skill
 from BenchmarkProblems.BenchmarkProblem import BenchmarkProblem
-from Core.FullSolution import FullSolution
-from Core.PS import PS, STAR
-from Core.SearchSpace import SearchSpace
+from FirstPaper.FullSolution import FullSolution
+from FirstPaper.PS import PS, STAR
+from FirstPaper.SearchSpace import SearchSpace
 from resources.BT.names import names
 
 
 
 
 class BTProblem(BenchmarkProblem):
+    """ This is a class to encapsulate all of the details of the BT problem.
+    A naive but readable implementation is presented here, but it's necessary to implement a less readable
+    but more efficient version (EfficientBTProblem)"""
     calendar_length: int
     workers: list[Worker]
     weights: list[float]
@@ -54,11 +59,18 @@ class BTProblem(BenchmarkProblem):
 
     @classmethod
     def from_default_files(cls):
-        root = r"C:\Users\gac8\PycharmProjects\PS-PDF\resources\BT\MartinsInstance" + "\\"
-        return cls.from_csv_files(employee_data_file=root+"employeeData.csv",
-                                  employee_skills_file=root+"employeeSkillsData.csv",
-                                  rota_file=root+"rosterPatternDaysData.csv",
+        root = os.path.join("resources", "BT", "MartinsInstance")
+
+        return cls.from_csv_files(employee_data_file=os.path.join(root, "employeeData.csv"),
+                                  employee_skills_file=os.path.join(root, "employeeSkillsData.csv"),
+                                  rota_file=os.path.join(root, "rosterPatternDaysData.csv"),
                                   calendar_length=7*13)
+
+        # root = r"C:\Users\gac8\PycharmProjects\PS-PDF\resources\BT\MartinsInstance" + "\\"
+        # return cls.from_csv_files(employee_data_file=root+"employeeData.csv",
+        #                           employee_skills_file=root+"employeeSkillsData.csv",
+        #                           rota_file=root+"rosterPatternDaysData.csv",
+        #                           calendar_length=7*13)
 
     def to_json(self) -> dict:
         result = dict()

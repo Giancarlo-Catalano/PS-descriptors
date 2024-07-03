@@ -5,9 +5,8 @@ from pymoo.core.survival import Survival
 from pymoo.util.nds.non_dominated_sorting import NonDominatedSorting
 from pymoo.util.randomized_argsort import randomized_argsort
 
-import utils
-from Core.PS import STAR, PS
-from Core.SearchSpace import SearchSpace
+from FirstPaper.PS import STAR, PS
+from FirstPaper.SearchSpace import SearchSpace
 
 
 class PyMooCustomCrowding(Survival):
@@ -88,61 +87,6 @@ class PyMooCustomCrowding(Survival):
         return pop[survivors]
 
 
-
-class PyMooPSGenotypeCrowding(PyMooCustomCrowding):
-    def get_crowding_scores_of_front(self, all_F, n_remove, population, front_indexes) -> np.ndarray:
-        #print("Called PyMooPSGenotypeCrowding.get_crowding_scores_of_front")
-
-        pop_matrix = np.array([ind.X for ind in population])
-        where_fixed: np.ndarray = pop_matrix != STAR
-        counts = np.sum(where_fixed, axis=0)
-        foods = (1 / counts).reshape((-1, 1))
-        scores = np.array([np.average(foods[row]) for row in where_fixed[front_indexes]])
-        return scores
-
-
-class PyMooPSSequentialCrowding(PyMooCustomCrowding):
-    coverage: np.ndarray
-    foods: np.ndarray
-    search_space: SearchSpace
-    opt: Any
-
-    def __init__(self, search_space: SearchSpace, already_obtained: list[PS], immediate = False):
-        self.search_space = search_space
-        super().__init__()
-        self.coverage = PyMooPSSequentialCrowding.get_coverage(self.search_space, already_obtained)
-        if immediate:
-            self.coverage = np.array([1 if x > 0 else 0 for x in self.coverage])
-        #self.foods = (1 - self.coverage).reshape((-1, 1))
-        self.foods = 1/((self.coverage * len(already_obtained))+1).reshape((-1, 1))
-        self.opt = []
-
-
-    @classmethod
-    def get_coverage(cls, search_space: SearchSpace, already_obtained: list[PS]):
-        if len(already_obtained) == 0:
-            return np.zeros(search_space.amount_of_parameters, dtype=float)
-
-        pop_matrix = np.array([ps.values for ps in already_obtained])
-        where_fixed = pop_matrix != STAR
-        counts = np.sum(where_fixed, axis=0)
-
-        return counts / len(already_obtained)
-
-
-    def get_crowding_scores_of_front(self, all_F, n_remove, population, front_indexes) -> np.ndarray:
-        pop_matrix = np.array([population[index].X for index in front_indexes])
-        where_fixed: np.ndarray = pop_matrix != STAR
-
-        scores = np.array([np.average(self.foods[row]) if any(row) else 1
-                           for row in where_fixed])
-
-        self.opt = population[front_indexes]  # just to comply with Pymoo, ignore this
-
-        return scores
-
-
-
 def distance_between_pss(ps_a: PS, ps_b: PS) -> float:
     vals_a = ps_a.values
     vals_b = ps_b.values
@@ -185,20 +129,7 @@ class PyMooDecisionSpaceSequentialCrowding(PyMooCustomCrowding):
         return scores
 
 
-
-
-class AggressivePyMooPSSequentialCrowding(PyMooCustomCrowding):  # just for debu
-    search_space: SearchSpace
-    elite: list[PS]
-    opt: Any
-
-    def __init__(self, search_space: SearchSpace, already_obtained: list[PS], immediate = False):
-        self.search_space = search_space
-        super().__init__()
-        self.elite  = already_obtained
-        self.opt = []
-
-    @classmethod  # for legacy reasons
+    @classmethod
     def get_coverage(cls, search_space: SearchSpace, already_obtained: list[PS]):
         if len(already_obtained) == 0:
             return np.zeros(search_space.amount_of_parameters, dtype=float)
@@ -208,26 +139,6 @@ class AggressivePyMooPSSequentialCrowding(PyMooCustomCrowding):  # just for debu
         counts = np.sum(where_fixed, axis=0)
 
         return counts / len(already_obtained)
-
-
-
-    def get_offence_score_for_ps(self, ps: PS) -> int:
-
-        def is_offended(from_elite: PS) -> bool:
-            return any((from_elite.values != STAR) & (ps.values != STAR))
-
-        return len([from_elite for from_elite in self.elite if is_offended(from_elite)])
-
-
-    def get_crowding_scores_of_front(self, all_F, n_remove, population, front_indexes) -> np.ndarray:
-        # note to self: 1 is good, 0 is bad
-        pss = [PS(individual.X) for individual in population[front_indexes]]
-        offence_scores: list[int] = [self.get_offence_score_for_ps(ps) for ps in pss]
-        final_scores = utils.remap_array_in_zero_one(-np.array(offence_scores))
-        self.opt = population[front_indexes]  # just to comply with Pymoo, ignore this
-
-        return final_scores
-
 
 
 

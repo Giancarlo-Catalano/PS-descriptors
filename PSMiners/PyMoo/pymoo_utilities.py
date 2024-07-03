@@ -16,7 +16,7 @@ from pymoo.operators.survival.rank_and_crowding import RankAndCrowding
 from pymoo.util.ref_dirs import get_reference_directions
 
 import utils
-from Core.SearchSpace import SearchSpace
+from FirstPaper.SearchSpace import SearchSpace
 from PSMiners.PyMoo.CustomCrowding import PyMooCustomCrowding
 
 
@@ -44,7 +44,7 @@ def get_pymoo_search_algorithm(which_algorithm: str,
                                crowding_operator: Survival,
                                crossover: Any,
                                mutation: Any):
-    """This is dogshit"""
+    """This is not well written, but it is necessary..."""
     n_params = search_space.amount_of_parameters
     def get_ref_dirs():
         ref_dirs = get_reference_directions("das-dennis", 3, n_partitions=12)

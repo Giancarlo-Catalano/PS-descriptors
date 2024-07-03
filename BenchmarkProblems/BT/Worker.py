@@ -2,7 +2,7 @@ import warnings
 from typing import Optional, TypeAlias
 
 from BenchmarkProblems.BT.RotaPattern import RotaPattern
-from Core.custom_types import JSON
+from FirstPaper.custom_types import JSON
 
 Skill: TypeAlias = str
 
