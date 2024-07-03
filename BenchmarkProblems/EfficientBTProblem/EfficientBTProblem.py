@@ -81,7 +81,7 @@ class EfficientBTProblem(BTProblem):
 
         quantity_of_fav_rotas = len([worker for worker in cohort if worker.chosen_rota_index == 0])
 
-        mean_RD, mean_error_RD = np.average(rota_differences)
+        mean_RD = np.average(rota_differences)
         covered_saturdays, covered_sundays = get_amount_of_covered_weekends(cohort)
 
         skill_diversity = get_skill_variation(cohort)
@@ -98,41 +98,41 @@ class EfficientBTProblem(BTProblem):
 
 
 
-    def repr_property(self, property_name: str, property_value: float, rank: (float, float), ps: PS):
+    def repr_descriptor(self, descriptor_name: str, descriptor_value: float, polarity: (float, float), ps: PS):
         """A simple function to make the printing of property polarities more readable"""
-        is_low = rank < 0.5
-        rank_str = f"(pol. = {int(rank * 100)}%)"  # "~ {int(property_rank_range[1]*100)}%)"
+        is_low = polarity < 0.5
+        rank_str = f"(pol. = {int(polarity * 100)}%)"  # "~ {int(property_rank_range[1]*100)}%)"
 
         cohort = ps_to_cohort(self, ps)
 
-        if property_name == "mean_RCQ":
+        if descriptor_name == "mean_RCQ":
             rota_choice_quantities = [member.get_amount_of_choices() for member in cohort]
             return (f"The workers have {'FEW' if is_low else 'MANY'} rota choices: {rota_choice_quantities} "
                     f"(mean = {np.average(rota_choice_quantities):.2f}, {rank_str})")
-        elif property_name == "mean_WWD":
+        elif descriptor_name == "mean_WWD":
             working_week_days = [member.get_mean_weekly_working_days() for member in cohort]
             return (f"The selected rotas have {'FEW' if is_low else 'MANY'} working days "
                     f"(avg per week, per worker: {working_week_days}, {rank_str})")
-        elif property_name == "mean_RD":
+        elif descriptor_name == "mean_RD":
             average_difference = np.average(get_hamming_distances(cohort))
             return (f"The selected rotas are {'SIMILAR' if is_low else 'DIFFERENT'} "
                     f"(avg diff = {average_difference:.2f}), {rank_str})")
-        elif property_name == "covered_sats":
+        elif descriptor_name == "covered_sats":
             return (f"The selected rotas cover {'few' if is_low else 'many'} "
-                    f"Saturdays: {int(property_value)} are covered, {rank_str}")
-        elif property_name == "covered_suns":
+                    f"Saturdays: {int(descriptor_value)} are covered, {rank_str}")
+        elif descriptor_name == "covered_suns":
             return (f"The selected rotas cover {'few' if is_low else 'many'} "
-                    f"Sundays: {int(property_value)} are covered, {rank_str}")
-        elif property_name == "mean_SQ":
+                    f"Sundays: {int(descriptor_value)} are covered, {rank_str}")
+        elif descriptor_name == "mean_SQ":
             return (f"The workers have {'FEW' if is_low else 'MANY'} skills, {rank_str}")
-        elif property_name == "skill_diversity":
+        elif descriptor_name == "skill_diversity":
             return (f"The skills are {'SIMILAR' if is_low else 'DIVERSE'}, {rank_str}")
-        elif property_name == "skill_coverage":
+        elif descriptor_name == "skill_coverage":
             return (f"The skills cover a {'NARROW' if is_low else 'WIDE'} range, {rank_str}")
-        elif property_name == "quantity_of_fav_rotas":
+        elif descriptor_name == "quantity_of_fav_rotas":
             return (f"{'FEW' if is_low else 'MANY'} workers got their preferred rota, {rank_str}")
         else:
-            raise ValueError(f"Did not recognise the property {property_name} in EfficientBTProblem")
+            raise ValueError(f"Did not recognise the property {descriptor_name} in EfficientBTProblem")
 
     @classmethod
     def from_Graph_Colouring(cls, gc: GraphColouring):

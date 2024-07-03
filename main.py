@@ -5,9 +5,6 @@ import warnings
 
 import utils
 from BenchmarkProblems.EfficientBTProblem.EfficientBTProblem import EfficientBTProblem
-from BenchmarkProblems.GraphColouring import GraphColouring
-from FirstPaper.FullSolution import FullSolution
-from FirstPaper.PS import PS
 from ExplanationGeneration.Explainer import Explainer
 from ExplanationGeneration.HyperparameterEvaluator import HyperparameterEvaluator
 
@@ -26,35 +23,25 @@ def get_bt_explainer() -> Explainer:
 
     return Explainer.from_folder(problem=problem,
                                  folder=ps_directory,
-                                 speciality_threshold=0.10,
+                                 polarity_threshold=0.10,
                                  # this is the threshold for polarity as discussed in the paper
                                  verbose=True)
 
-
-def get_gc_explainer() -> Explainer:
-    """
-    Constructs a Graph Colouring problem and its explainer.
-    The problem is the one used in the figure in the paper.
-    @return: The Explainer instance
-    """
-    ps_directory = os.path.join("ExplanatoryCachedData", "BT", "Dummy")
-    problem_file = os.path.join(ps_directory, "bert.json")
-    problem = GraphColouring.from_file(problem_file)
-    problem.view()
-    return Explainer.from_folder(folder=ps_directory,
-                                 problem=problem,
-                                 speciality_threshold=0.50,
-                                 verbose=True)
-
-
-def get_debug_explainer():
-    ps_directory = os.path.join("ExplanatoryCachedData", "BT", "Dummy")
-    problem = GraphColouring.make_insular_instance(4)
-    #problem.view()
-    return Explainer.from_folder(folder=ps_directory,
-                                 problem=problem,
-                                 speciality_threshold=0.50,
-                                 verbose=True)
+# commented out so that you don't have to install extra things
+# def get_gc_explainer() -> Explainer:
+#     """
+#     Constructs a Graph Colouring problem and its explainer.
+#     The problem is the one used in the figure in the paper.
+#     @return: The Explainer instance
+#     """
+#     ps_directory = os.path.join("ExplanatoryCachedData", "BT", "Dummy")
+#     problem_file = os.path.join(ps_directory, "bert.json")
+#     problem = GraphColouring.from_file(problem_file)
+#     problem.view()
+#     return Explainer.from_folder(folder=ps_directory,
+#                                  problem=problem,
+#                                  speciality_threshold=0.50,
+#                                  verbose=True)
 
 
 def explanation() -> None:

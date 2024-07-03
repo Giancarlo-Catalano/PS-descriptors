@@ -16,6 +16,7 @@ import warnings
 
 
 def unzip(zipped):
+    """ a simpler but slighly slower alternative is zip(*zipped)"""
     if len(zipped) == 0:
         return []
 

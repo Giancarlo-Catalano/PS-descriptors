@@ -87,7 +87,7 @@ class Explainer:
     def from_folder(cls,
                     problem: BenchmarkProblem,
                     folder: str,
-                    speciality_threshold = 0.1,
+                    polarity_threshold = 0.1,
                     verbose = False):
         pRef_file = os.path.join(folder, "pRef.npz")
         ps_file = os.path.join(folder, "mined_ps.npz")
@@ -100,7 +100,7 @@ class Explainer:
                    ps_file = ps_file,
                    control_ps_file = control_ps_file,
                    properties_file = properties_file,
-                   speciality_threshold = speciality_threshold,
+                   speciality_threshold = polarity_threshold,
                    mutual_information_linkage_table_file = mutual_information_linkage_file,
                    verbose=verbose)
 
@@ -134,7 +134,7 @@ class Explainer:
     def get_properties_string(self, ps: PS) -> str:
         pvrs = self.ps_property_manager.get_significant_properties_of_ps(ps)
         pvrs = self.ps_property_manager.sort_pvrs_by_rank(pvrs)
-        return "\n".join(self.problem.repr_property(name, value, rank, ps)
+        return "\n".join(self.problem.repr_descriptor(name, value, rank, ps)
                                    for name, value, rank in pvrs)
 
     def get_contributions_string(self, ps: PS) -> str:
@@ -154,7 +154,7 @@ class Explainer:
 
         pvrs = self.ps_property_manager.get_significant_properties_of_ps(ps)
         pvrs = self.ps_property_manager.sort_pvrs_by_rank(pvrs)
-        explanations.extend(self.problem.repr_property(name, value, rank, ps)
+        explanations.extend(self.problem.repr_descriptor(name, value, rank, ps)
                             for name, value, rank in pvrs)
 
         return ExplainedPS(ps.values, explanations)
@@ -304,11 +304,13 @@ class Explainer:
 
         finish = False
         while not finish:
-            answer = input("Type a command from [s, v, vs, plotvar, global], or n to exit: ")
+            answer = input("Type a command from (h for help), or n to exit: ")
             answer = answer.lower()
             try:
                 #TODO convert this into a match statement
-                if answer in {"s", "sol", "solution"}:
+                if answer in {"h", "help", "?", "man"}:
+                    self.handle_help_query()
+                elif answer in {"s", "sol", "solution"}:
                     self.handle_solution_query(solutions, ps_show_limit)
                 elif answer in {"v", "var", "variable"}:
                     self.handle_variable_query()
@@ -502,7 +504,20 @@ class Explainer:
         # Show plot
         plt.show()
 
+    def handle_help_query(self):
+        """
+        Prints all the commands that can be used in the explainer
+        """
+        commands = {"h/help/?/man": "shows the commands available in the program",
+                    "s/sol/solution": "explains a solution",
+                    "v/var/variable": "explains properties about a specific variable, eg recurring descriptors",
+                    "vs/variable in solution": "same as s, but the shown PSs must contain the specified variable",
+                    "pss/ps/partial solutions": "shows all the partial solutions known by the system",
+                    "pv/plotvar": "given a variable and a descriptor, it will plot it against the control distribution",
+                    "n/no/exit/q/quit": "quits the application"}
 
+        for key, descr in commands.items():
+            print(key, ":\t\t", descr)
 
 
 
