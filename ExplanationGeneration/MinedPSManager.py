@@ -94,7 +94,7 @@ class MinedPSManager:
             self.cached_control_pss = self.generate_control_pss(samples_for_each_category)
 
         with announce(f"Writing the control PSs onto the file {self.control_pss_file}"):
-            write_pss_to_file(self.cached_pss, self.control_pss_file)
+            write_pss_to_file(self.cached_control_pss, self.control_pss_file)
 
 
     @property

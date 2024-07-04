@@ -49,13 +49,11 @@ class BenchmarkProblem:
     def get_global_optima_fitness(self) -> float:
         raise Exception("An implementation of BenchmarkProblem does not implement get_global_optima_fitness")
 
-
-    def ps_to_properties(self, ps: PS) -> dict:
+    def descriptors_of_ps(self, ps: PS) -> dict:
         raise NotImplemented(f"The class {self.__repr__()} does not implement .ps_to_properties")
 
-    def repr_descriptor(self, descriptor_name:str, descriptor_value:str, polarity:float, ps: PS):
+    def repr_descriptor(self, descriptor_name: str, descriptor_value: str, polarity: float, ps: PS):
         start = f"{descriptor_name} = {descriptor_value:.2f} is "
-
 
         if polarity == 0:
             end = "the lowest observed"
@@ -68,18 +66,15 @@ class BenchmarkProblem:
 
         return start + end
 
-
     def repr_extra_ps_info(self, ps: PS):
         return f"PS has {ps.fixed_count()} fixed variables"
 
     def repr_property_globally(self, k, v, r):
         raise NotImplemented
 
-
     def get_readable_property_name(self, property: str) -> str:
         """default behaviour is to just return the raw property name"""
         return property
-
 
     def print_stats_of_pss(self, pss: list[PS], full_solutions: list[EvaluatedFS]) -> str:
         raise NotImplemented
@@ -87,7 +82,5 @@ class BenchmarkProblem:
     def get_problem_specific_global_information(self, solutions: list[FullSolution]):
         raise NotImplemented
 
-
     def print_stats_of_full_solutions(self, param: list[FullSolution]):
         raise NotImplemented
-

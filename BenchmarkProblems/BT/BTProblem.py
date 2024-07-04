@@ -136,13 +136,14 @@ class BTProblem(BenchmarkProblem):
 
     def repr_ps(self, ps: PS) -> str:
         variables = self.get_variables_from_ps(ps)
+        #worker_numbers = ps.get_fixed_variable_positions()
         def repr_skills(available_skills: set[str]):
             if len(available_skills) > 0 and not next(iter(available_skills)).startswith("SKILL_"):
                 return f"{available_skills}"
             integers = [int(skill.removeprefix("SKILL_")) for skill in available_skills]
             return f"{sorted(integers)}"
-        return utils.indent("\n".join(f"{w.name} (Skills {repr_skills(w.available_skills)}, #rotas = {len(w.available_rotas)}): rota#{wv.which_rota}"
-                                      for w, wv in zip(self.workers, variables)
+        return utils.indent("\n".join(f"(#{w_n}){w.name} (Skills {repr_skills(w.available_skills)}, #rotas = {len(w.available_rotas)}): rota#{wv.which_rota}"
+                                      for w, w_n, wv in zip(self.workers, range(len(self.workers)), variables)
                                       if wv.which_rota is not None))
 
 

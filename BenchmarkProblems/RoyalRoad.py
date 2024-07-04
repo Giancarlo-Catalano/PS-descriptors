@@ -25,7 +25,7 @@ class RoyalRoad(UnitaryProblem):
         return FullSolution([1 for _ in range(clique_size)])
 
 
-    def ps_to_properties(self, ps: PS) -> dict:
+    def descriptors_of_ps(self, ps: PS) -> dict:
         return {"Functionality": 0}
 
 

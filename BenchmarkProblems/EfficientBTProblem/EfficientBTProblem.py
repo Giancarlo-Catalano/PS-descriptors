@@ -67,7 +67,7 @@ class EfficientBTProblem(BTProblem):
         preference_score = self.rota_preference_weight * quantity_of_unliked_rotas
         return -(rota_score + preference_score)  # to convert it to a maximisation task
 
-    def ps_to_properties(self, ps: PS) -> dict:
+    def descriptors_of_ps(self, ps: PS) -> dict:
         """
          This function returns all the descriptors for a PS
         @param ps: the PS to be explained
@@ -205,7 +205,7 @@ class EfficientBTProblem(BTProblem):
         cohort = ps_to_cohort(self, ps)
         mins_maxs = get_mins_and_maxs_for_weekdays(cohort)
         weekdays = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"]
-        return f"The ranges are " + (", ".join(f"{weekday}:{min_max}" for weekday, min_max in zip(weekdays, mins_maxs)))
+        return "---" #f"The ranges are " + (", ".join(f"{weekday}:{min_max}" for weekday, min_max in zip(weekdays, mins_maxs)))
 
     def get_readable_property_name(self, property_name: str) -> str:
         match property_name:
@@ -225,6 +225,10 @@ class EfficientBTProblem(BTProblem):
                 return "collective coverage of skills"
             case "quantity_of_fav_rotas":
                 return "preferred rota usage"
+            case "covered_sats":
+                return "Saturdays with allocated workers"
+            case "covered_suns":
+                return "Sundays with allocated workers"
             case _:
                 return property_name
 
