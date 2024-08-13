@@ -205,7 +205,7 @@ class MutualInformation(Metric):
         self.linkage_table = None
 
     def __repr__(self):
-        return "MutualInformation"#
+        return "MutualInformation"
 
 
 
@@ -262,7 +262,8 @@ class MutualInformation(Metric):
 
 
         univariate_probabilities = [counts_to_probabilities(var_counts) for var_counts in univariate_counts]
-        bivariate_probabilities = [[counts_to_probabilities(bivariate_count_table[var_a][var_b]) if var_b > var_a else None
+        bivariate_probabilities = [[counts_to_probabilities(bivariate_count_table[var_a][var_b])
+                                    if var_b > var_a else None
                                     for var_b in range(len(cs))]
                                    for var_a in range(len(cs))]
         return univariate_probabilities, bivariate_probabilities
@@ -274,6 +275,9 @@ class MutualInformation(Metric):
             p_b = self.univariate_probability_table[var_b][value_b]
 
             p_a_b = self.bivariate_probability_table[var_a][var_b][value_a, value_b]
+
+            if p_a_b == 0:
+                return 0
             return p_a_b * np.log(p_a_b/(p_a * p_b))
 
 
@@ -281,6 +285,10 @@ class MutualInformation(Metric):
         return sum(mutual_information(value_a, value_b)
                    for value_a in range(ss.cardinalities[var_a])
                    for value_b in range(ss.cardinalities[var_b]))
+
+    def get_univariate_entropies(self) -> np.ndarray:
+        as_array = np.array(self.univariate_probability_table)
+        return np.sum(-1 * as_array * np.log(as_array), axis=1)
 
     def get_linkage_table(self) -> np.ndarray:
         param_count = self.sorted_pRef.search_space.amount_of_parameters
@@ -291,6 +299,18 @@ class MutualInformation(Metric):
 
         table += table.T
 
+        # def univariate_joint_entropy(var_index: int) -> float:
+        #     values = self.univariate_probability_table[var_index]
+        #     individual_mutual_infos = values * np.log(1/values)
+        #     return np.sum(individual_mutual_infos)
+        #
+        # diagonal_values = np.array([univariate_joint_entropy(i)
+        #                             for i in range(self.sorted_pRef.search_space.amount_of_parameters)])
+        # np.fill_diagonal(table, diagonal_values)
+        #
+        #
+        # table += np.identity(self.sorted_pRef.search_space.amount_of_parameters) * self.get_univariate_entropies()
+
         return table
 
     def get_linkages_in_ps(self, ps: PS) -> list[float]:
@@ -298,7 +318,12 @@ class MutualInformation(Metric):
         return [self.linkage_table[var_a, var_b] for var_a, var_b in itertools.combinations(fixed_vars, r=2)]
 
     def get_single_score(self, ps: PS) -> float:
-        linkages = self.get_linkages_in_ps(ps)
-        if len(linkages) == 0:
+        fixed_count = ps.fixed_count()
+        if fixed_count >= 2:
+            linkages = self.get_linkages_in_ps(ps)
+            return np.median(linkages)
+        elif fixed_count == 0:
             return 0
-        return np.median(linkages)
+        elif fixed_count == 1:
+            [fixed_position] = ps.get_fixed_variable_positions()
+            return self.linkage_table[fixed_position][fixed_position]

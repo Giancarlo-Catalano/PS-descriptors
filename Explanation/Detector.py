@@ -295,14 +295,14 @@ class Detector:
                                              pss_budget: Optional[int] = 10000,
                                              force_include_in_pRef: Optional[list[FullSolution]] = None):
 
-        # self.pRef_manager.generate_pRef_file(sample_size=pRef_size,
-        #                                      which_algorithm="uniform SA",
-        #                                      force_include=force_include_in_pRef)
-        #
-        # self.mined_ps_manager.generate_ps_file(pRef = self.pRef,
-        #                                        population_size=50,
-        #                                        ps_budget_in_total=pss_budget,
-        #                                        ps_budget_per_run=1000)
+        self.pRef_manager.generate_pRef_file(sample_size=pRef_size,
+                                             which_algorithm="uniform SA",
+                                             force_include=force_include_in_pRef)
+
+        self.mined_ps_manager.generate_ps_file(pRef = self.pRef,
+                                               population_size=50,
+                                               ps_budget_in_total=pss_budget,
+                                               ps_budget_per_run=1000)
         self.mined_ps_manager.generate_control_pss_file(samples_for_each_category=1000)
 
         self.ps_property_manager.generate_property_table_file(self.mined_ps_manager.pss, self.mined_ps_manager.control_pss)

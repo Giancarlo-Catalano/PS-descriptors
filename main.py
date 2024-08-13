@@ -27,6 +27,10 @@ from Explanation.HyperparameterEvaluator import HyperparameterEvaluator
 from Explanation.PRefManager import PRefManager
 from FSStochasticSearch.Operators import SinglePointFSMutation
 from FSStochasticSearch.SA import SA
+from LCS.test_LCS import test_LCS
+from LinkageExperiments.LocalLinkage import test_local_linkage
+from LinkageExperiments.VariableImportance import test_variable_importance, test_interaction, \
+    test_multivariate_importance
 from PSMiners.DEAP.DEAPPSMiner import DEAPPSMiner
 from PSMiners.Mining import get_history_pRef
 from utils import announce, indent
@@ -107,9 +111,10 @@ def get_bt_explainer() -> Detector:
                                   verbose=True)
 
 def get_gc_explainer():
-    experimental_directory = r"C:\Users\gac8\PycharmProjects\PS-PDF\Experimentation\GC\Dummy"
-    problem_file = os.path.join(experimental_directory, "bert.json")
-    problem = GraphColouring.from_file(problem_file)#GraphColouring.random(amount_of_colours=3, amount_of_nodes=5, chance_of_connection=0.40)
+    experimental_directory = os.path.join("Experimentation", "GC", "Dummy")
+    # problem_file = os.path.join(experimental_directory, "bert.json")
+    # problem = GraphColouring.from_file(problem_file)#
+    problem = GraphColouring.random(amount_of_colours=3, amount_of_nodes=7, chance_of_connection=0.40)
     problem.view()
     return Detector.from_folder(folder = experimental_directory,
                                   problem = problem,
@@ -192,9 +197,9 @@ def test_classic3(pRef: PRef):
 
 
 def explanation():
-    detector = get_bt_explainer()
+    detector = get_gc_explainer()
     #detector.ps_property_manager.generate_property_table_file(detector.mined_ps_manager.pss, detector.mined_ps_manager.control_pss)
-    #detector.generate_files_with_default_settings(50000, 50000)
+    detector.generate_files_with_default_settings(5000, 5000)
     detector.explanation_loop(amount_of_fs_to_propose=2, ps_show_limit=12, show_debug_info=True)
 
 
@@ -226,7 +231,20 @@ if __name__ == '__main__':
     warnings.showwarning = warn_with_traceback
 
     #grid_search()
-    explanation()
+    #explanation()
+
+    # test_LCS(optimisation_problem= RoyalRoad(5, 4),
+    #          rule_population_size=1000,
+    #          solution_count=1000,
+    #          training_repeats=60)
+
+    # test_multivariate_importance()
+
+    test_local_linkage()
+
+    print("Submitting to github")
+
+
 
 
 
