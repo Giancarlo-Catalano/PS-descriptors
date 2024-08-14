@@ -2,8 +2,8 @@ import numpy as np
 
 from Core.FullSolution import FullSolution
 from Core.PS import STAR
-from LCS.RuleEvolver import RuleEvolver
-from LCS.Rule import Rule, OutputClass
+from OwnLCS.RuleEvolver import RuleEvolver
+from OwnLCS.Rule import Rule, OutputClass
 
 
 class RuleManager:
@@ -60,13 +60,15 @@ class RuleManager:
         if (self.training_iteration) % self.evolve_new_individuals_interval == 0:
             self.rule_population = self.rule_evolver.online_evolution_step(self.rule_population, match_set, correct_set)
 
+        # applies subsumption, ie removes redundant rules
+        if (self.training_iteration) % self.subsumption_interval == 0:
+            self.rule_population = self.apply_subsumption(self.rule_population)
+
         # does truncation selection
         if (self.training_iteration) % self.truncation_selection_interval == 0:
             self.rule_population = self.rule_evolver.restrict_population_size(self.rule_population)
 
-        # applies subsumption, ie removes redundant rules
-        if (self.training_iteration) % self.subsumption_interval == 0:
-            self.rule_population = self.apply_subsumption(self.rule_population)
+
 
     def get_amount_of_rules_for_covering(self) -> int:
         return self.rule_evolver.search_space.amount_of_parameters

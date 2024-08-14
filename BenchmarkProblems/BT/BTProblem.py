@@ -54,8 +54,8 @@ class BTProblem(BenchmarkProblem):
 
     @classmethod
     def from_default_files(cls):
-        #root = r"C:\Users\gac8\PycharmProjects\PS-PDF\resources\BT\MartinsInstance" + "\\"
-        root = r"/Users/gian/PycharmProjects/PS-PDF/resources/BT/MartinsInstance/"
+        root = r"C:\Users\gac8\PycharmProjects\PS-PDF\resources\BT\MartinsInstance" + "\\"
+        #root = r"/Users/gian/PycharmProjects/PS-PDF/resources/BT/MartinsInstance/"
         return cls.from_csv_files(employee_data_file=root+"employeeData.csv",
                                   employee_skills_file=root+"employeeSkillsData.csv",
                                   rota_file=root+"rosterPatternDaysData.csv",

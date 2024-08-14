@@ -1,14 +1,15 @@
 import copy
 import random
+from typing import TypeAlias
 
 from Core.FullSolution import FullSolution
 from Core.PS import PS, STAR
 from Core.SearchSpace import SearchSpace
-from LCS.Rule import Rule
-from LCS.RuleEvaluator import RuleEvaluator
+from OwnLCS.Rule import Rule
+from OwnLCS.RuleEvaluator import RuleEvaluator
 from utils import sort_by_combination_of
 
-type OutputClass = int
+OutputClass: TypeAlias = int
 class RuleEvolver:
     population_size: int
     search_space: SearchSpace

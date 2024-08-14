@@ -1,7 +1,9 @@
+from typing import TypeAlias
+
 from Core.FullSolution import FullSolution
 from Core.PS import PS, contains
 
-type OutputClass = int
+OutputClass: TypeAlias = int
 
 
 class Rule:

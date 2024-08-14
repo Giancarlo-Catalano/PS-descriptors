@@ -1,18 +1,22 @@
 import itertools
 import random
-from typing import Optional
+from typing import Optional, TypeAlias
 
 import numpy as np
 
 import utils
+from BenchmarkProblems.EfficientBTProblem.EfficientBTProblem import EfficientBTProblem
+from BenchmarkProblems.MultiPlexerProblem import MultiPlexerProblem
 from BenchmarkProblems.RoyalRoad import RoyalRoad
 from BenchmarkProblems.RoyalRoadWithOverlaps import RoyalRoadWithOverlaps
 from BenchmarkProblems.Trapk import Trapk
+from Core.EvaluatedPS import EvaluatedPS
 from Core.PRef import PRef
 from Core.PS import PS, STAR
 from Core.PSMetric.Metric import Metric
+from Core.SearchSpace import SearchSpace
 
-type LinkageHolder = dict[tuple, float]
+LinkageHolder: TypeAlias = dict[tuple, float]
 
 class LocalLinkage(Metric):
     sorted_pRef: Optional[PRef]
@@ -156,7 +160,7 @@ class JustVariance(Metric):
             return 0
 
         if ps.fixed_count() == 1:
-            return self.global_variance - self.get_variance(ps)
+            return self.global_variance-self.get_variance(ps)
 
         univariate_pss = [PS.empty(self.pRef.search_space).with_fixed_value(var, val)
                           for var, val in enumerate(ps.values)
@@ -168,8 +172,162 @@ class JustVariance(Metric):
         return self.global_variance - np.sum(univariate_variances) + local_variance
 
 
+class BivariateVariance(Metric):
+    global_variance: Optional[float]
+    univariate_variance_dict: Optional[dict[(int, int), float]]
+    bivariate_variance_dict: Optional[dict[(int, int, int, int), float]]
+
+    pRef: Optional[PRef]
+
+    univariate_importances: Optional[dict[(int, int), float]]
+    bivariate_linkages: Optional[dict[(int, int, int, int), float]]
+
+
+    def __init__(self):
+        self.global_variance = None
+        self.univariate_variance_dict = None
+        self.bivariate_variance_dict = None
+        self.pRef = None
+
+        self.univariate_importances = None
+        self.bivariate_linkages = None
+
+        super().__init__()
+
+    def set_pRef(self, pRef: PRef):
+        self.pRef = pRef
+        self.global_variance = float(np.var(self.pRef.fitness_array))
+        self.univariate_variance_dict, self.bivariate_variance_dict = self.get_variance_dicts()
+        self.univariate_importances = self.get_univariate_importance()
+        self.bivariate_linkages = self.get_bivariate_linkages()
+
+    def get_variance_dicts(self) -> (dict, dict):
+        sols = self.pRef.full_solution_matrix
+        fitnesses = self.pRef.fitness_array
+        cardinalities = self.pRef.search_space.cardinalities
+        def get_rows_with_var_val(var: int, val: int) -> np.ndarray:
+            return sols[:, var] == val
+
+        univariate_rows = {(var, val): get_rows_with_var_val(var, val)
+                           for var, cardinality in enumerate(cardinalities)
+                           for val in range(cardinality)}
+
+        def get_variance_of_rows(rows: np.ndarray) -> float:
+            return float(np.var(fitnesses[rows]))
+
+        univariate_variances: dict[(int, int), float] = {var_val: get_variance_of_rows(univariate_rows[var_val])
+                                for var_val in univariate_rows}
+
+        def get_bivariate_rows(var_a:int, val_a:int, var_b:int, val_b:int) -> np.ndarray:
+            var_a_rows = univariate_rows[(var_a, val_a)]
+            var_b_rows = univariate_rows[(var_b, val_b)]
+            return np.logical_and(var_a_rows, var_b_rows)
+
+        bivariate_variances = {(var_a, val_a, var_b, val_b):
+                                   get_variance_of_rows(get_bivariate_rows(var_a, val_a, var_b, val_b))
+                               for (var_a, val_a) in univariate_variances
+                               for (var_b, val_b) in univariate_variances
+                               if var_a < var_b}
+
+        return univariate_variances, bivariate_variances
+
+    def get_univariate_importance(self):
+        #return self.global_variance - self.univariate_variance_dict  # I'm not sure how to preprocess it to match the scales of the linkage dict
+        return {key: self.global_variance - value
+                for key, value in self.univariate_variance_dict.items()}
+
+    def get_bivariate_linkages(self):
+        def get_linkage(var_a, val_a, var_b, val_b) -> float:
+            variance_a = self.univariate_variance_dict[(var_a, val_a)]
+            variance_b = self.univariate_variance_dict[(var_b, val_b)]
+            return self.global_variance - variance_a - variance_b + self.bivariate_variance_dict[(var_a, val_a, var_b, val_b)]
+
+        return {key: get_linkage(*key)
+                for key in self.bivariate_variance_dict}
+
+
+    def get_single_score(self, ps: PS) -> float:
+        fixed_count = ps.fixed_count()
+        fixed_vars = ps.get_fixed_variable_positions()
+        if fixed_count > 1:
+            def get_linkage_of_pair(var_a, var_b) -> float:
+                if var_a == var_b:
+                    return self.univariate_importances[(var_a, ps[var_a])]
+                else:
+                    return self.bivariate_linkages[(var_a, ps[var_a], var_b, ps[var_b])]
+
+            return np.average([get_linkage_of_pair(var_a, var_b)
+                               for var_a, var_b in itertools.combinations(fixed_vars, r=2)])
+        else:
+            return 0
+        # elif fixed_count ==1:
+        #     return 0
+        #     # var = fixed_vars[0]
+        #     # return (-self.global_variance+self.univariate_importances[(var, ps[var])])/2
+        # else:
+        #     return self.global_variance
+
+
+class MarkovianSampler:
+    transition_matrix: np.ndarray
+    iterations: int
+    search_space: SearchSpace
+
+    def __init__(self,
+                 transition_matrix: np.ndarray,
+                 iterations: int,
+                 search_space: SearchSpace):
+        self.transition_matrix = transition_matrix
+        self.iterations = iterations
+        self.search_space = search_space
+
+    @classmethod
+    def from_linkage_metric(cls, linkage_metric: BivariateVariance, iterations: int = 5):
+        transition_matrix = cls.get_transition_matrix(linkage_metric)
+        return cls(transition_matrix, iterations, linkage_metric.pRef.search_space)
+
+    @classmethod
+    def get_transition_matrix(cls, linkage_metric: BivariateVariance) -> np.ndarray:
+        ss = linkage_metric.pRef.search_space
+        cumulative_starts = np.cumsum(ss.cardinalities)-ss.cardinalities[0] # so that it starts from 0
+        var_positions = {(var, val): cumulative_starts[var]+val
+                         for var, card in enumerate(ss.cardinalities)
+                         for val in range(card)}
+        table_size = sum(ss.cardinalities)
+
+        transition_matrix = np.zeros(shape= (table_size, table_size))
+
+        for var_a, var_b in itertools.combinations_with_replacement(range(ss.amount_of_parameters), r=2):
+            for val_a in range(ss.cardinalities[var_a]):
+                position_a = var_positions[(var_a, val_a)]
+                for val_b in range(ss.cardinalities[var_b]):
+                    position_b = var_positions[(var_b, val_b)]
+
+                    ps = PS.empty(ss).with_fixed_value(var_a, val_a).with_fixed_value(var_b, val_b)
+                    variance = linkage_metric.get_single_score(ps)
+                    transition_matrix[position_a, position_b] = variance
+
+        transition_matrix += np.triu(transition_matrix).T
+
+        univariate_importances = [linkage_metric.univariate_importances[(var, val)]
+                                  for var, card in enumerate(ss.cardinalities)
+                                  for val in range(card)]
+
+        np.fill_diagonal(transition_matrix, univariate_importances)
+
+        # normalise the columns
+        for column_index in range(table_size):
+            column = transition_matrix[:, column_index]
+            column -= np.min(column)
+            transition_matrix[:, column_index] = column / np.sum(column)
+
+        return transition_matrix
+
+
+
 def test_local_linkage():
-    problem = RoyalRoadWithOverlaps(5, 5, 20)
+    problem = RoyalRoad(4, 4)
+
     pRef = problem.get_reference_population(sample_size=10000)
 
     n = problem.search_space.amount_of_parameters
@@ -178,14 +336,27 @@ def test_local_linkage():
     #linkage_metric = LocalLinkage()
     #linkage_metric.set_pRef(pRef)
 
-    linkage_metric = JustVariance(pRef)
-    for var_a, var_b in (itertools.combinations(range(n), r=2)):
+    linkage_metric = BivariateVariance()
+    linkage_metric.set_pRef(pRef)
+    for var_a, var_b in itertools.product(range(n), range(n)):
         ps = PS.empty(problem.search_space)
         ps = ps.with_fixed_value(var_a, 1)
         ps = ps.with_fixed_value(var_b, 1)
         linkage = linkage_metric.get_single_score(ps)
         linkage_table[var_a, var_b] = linkage
 
-    linkage_table += linkage_table.T
+
+
+    random_pss = [PS.random(half_chance_star=True, search_space=problem.search_space) for _ in range(10000)]
+    random_pss = [EvaluatedPS(ps.values, metric_scores=(linkage_metric.get_single_score(ps),))
+                  for ps in random_pss]
+    for ps in random_pss:
+        ps.aggregated_score = ps.metric_scores[0]
+
+    random_pss.sort(key=lambda x: x.metric_scores, reverse=True)
+    random_pss = random_pss[:100]
+
+
+    sampler = MarkovianSampler.from_linkage_metric(linkage_metric, iterations=4)
 
     print("All done!")

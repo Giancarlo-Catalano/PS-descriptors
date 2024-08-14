@@ -1,17 +1,17 @@
 import random
 from collections import defaultdict
-from typing import Literal
+from typing import Literal, TypeAlias
 
 import numpy as np
 
 import utils
 from Core.EvaluatedFS import EvaluatedFS
 from Core.FullSolution import FullSolution
-from LCS.Rule import Rule
-from LCS.RuleManager import RuleManager
+from OwnLCS.Rule import Rule
+from OwnLCS.RuleManager import RuleManager
 from utils import get_count_report
 
-type OutputClass = int
+OutputClass: TypeAlias = int
 
 
 class OnlineLearner:

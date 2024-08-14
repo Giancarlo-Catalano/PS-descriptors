@@ -1,107 +1,110 @@
-import random
+from typing import Optional
 
-import numpy as np
+import xcs
+
+import logging
+
+from xcs.bitstrings import BitString
+from xcs.scenarios import ScenarioObserver, MUXProblem, Scenario
 
 from BenchmarkProblems.BenchmarkProblem import BenchmarkProblem
-from Core.EvaluatedFS import EvaluatedFS
+from BenchmarkProblems.RoyalRoad import RoyalRoad
 from Core.FullSolution import FullSolution
-from Core.PSMetric.Additivity import MutualInformation
-from Core.PSMetric.MeanFitness import MeanFitness
-from Core.PSMetric.Simplicity import Simplicity
-from LCS.OnlineLearner import OnlineLearner, OutputClass
-from LCS.RuleEvaluator import RuleEvaluator
-from LCS.RuleEvolver import RuleEvolver
-from LCS.RuleManager import RuleManager
 
 
-def test_LCS(optimisation_problem: BenchmarkProblem,
-             rule_population_size: int,
-             solution_count: int,
-             training_repeats: int):
-
-    print("Genertating the PRef")
-    pRef = optimisation_problem.get_reference_population(10000)
-
-    print("Constructing the rule evaluator")
-    rule_evaluator = RuleEvaluator.from_pRef(pRef)
-
-    print("Constructing the rule evolver")
-    rule_evolver = RuleEvolver(population_size=rule_population_size,
-                               search_space=optimisation_problem.search_space,
-                               rule_evaluator=rule_evaluator)
-
-    print("Constructing the rule_manager")
-    rule_manager = RuleManager(rule_evolver=rule_evolver,
-                               rule_population=[],
-                               evolve_new_individuals_interval=20,
-                               subsumption_interval=100,
-                               truncation_selection_interval=500)
-
-    print("Constructing the online learner")
-    #initial_solutions = [FullSolution.random(optimisation_problem.search_space) for _ in range(6)]
-    learner = OnlineLearner(solutions_and_fitnesses=[], #[EvaluatedFS(s, optimisation_problem.fitness_function(s)) for s in initial_solutions],
-                            rule_manager=rule_manager,
-                            tournaments_per_new_solution = training_repeats)
+def test_if_library_works():
+    logging.root.setLevel(logging.INFO)
+    xcs.test()
 
 
-    def train_with_tournaments():
+def test_manually():
+    scenario = ScenarioObserver(MUXProblem(50000))
+    algorithm = xcs.XCSAlgorithm()
 
-        print("Training the learner using tournaments")
-        for instance_number in range(solution_count):
-            random_solution = FullSolution.random(optimisation_problem.search_space)
-            fitness = optimisation_problem.fitness_function(random_solution)
-            evaluated_solution = EvaluatedFS(random_solution, fitness)
-            learner.pass_new_solution(evaluated_solution)
+    algorithm.exploration_probability = .1
+    algorithm.discount_factor = 0
+    algorithm.do_ga_subsumption = True
+    algorithm.do_action_set_subsumption = True
 
-            if instance_number % 100 == 99:
-                print(f"Progress:{round((instance_number / solution_count) * 100)}%")
-                rule_manager.rule_population = rule_manager.apply_subsumption(rule_manager.rule_population)
+    model = algorithm.new_model(scenario)
 
+    # training
+    model.run(scenario, learn=True)
 
-    def train_using_percentages(batches: int = 1):
-        print("Training the learner using percentages")
-        pRef = optimisation_problem.get_reference_population(solution_count)
-
-        # adjust the fitnesses
-        values_present = sorted(list(set(pRef.fitness_array)))
-        conversion_dict = {value: position/(len(values_present)-1)
-                           for position, value in enumerate(values_present)}
-        new_fitnesses = np.array([conversion_dict[value] for value in pRef.fitness_array])
-        pRef.fitness_array = new_fitnesses
-
-        adjusted_solutions = pRef.get_evaluated_FSs()
+    print(model)
 
 
-        def get_training_instance(e_fs: EvaluatedFS) -> (FullSolution, OutputClass):
-            sent_class = random.random() < e_fs.fitness
-            return (e_fs, sent_class)
-
-        for batch_iteration in range(batches):
-            print(f"Training on batch #{batch_iteration}")
-            batch = list(map(get_training_instance, adjusted_solutions))
-            learner.rule_manager.apply_training_batch(batch)
-
-            # learner.rule_manager.apply_subsumption()
 
 
-    train_using_percentages(training_repeats)
-    # train_with_tournaments()
+class XSCProblemWrapper(Scenario):
+
+    input_size: int
+    possible_actions: tuple
+    initial_training_cycles: int
+    remaining_cycles: int
+
+    original_problem: BenchmarkProblem
 
 
-    print("Training has concluded")
-    print("Now we test the learner")
+    last_fitness = Optional[float]
 
 
-    print("The rules at the end are")
-    learner.rule_manager.rule_population.sort(key=lambda x:x.amount_of_matches, reverse=True)
-    for rule in learner.rule_manager.rule_population:
-        print(rule)
+    def __init__(self,
+                 original_problem: BenchmarkProblem,
+                 training_cycles: int = 1000):
+        self.original_problem = original_problem
 
-    for _ in range(24):
-        random_solution = FullSolution.random(optimisation_problem.search_space)
-        fitness = optimisation_problem.fitness_function(random_solution)
+        self.input_size = self.original_problem.search_space.amount_of_parameters
+        self.possible_actions = (True, False)
+        self.initial_training_cycles = training_cycles
+        self.remaining_cycles = training_cycles
 
-        guessed_optimality = learner.guess_probability_of_optimality(random_solution)
-        print(f"For the solution {optimisation_problem.repr_fs(random_solution)}")
-        print(f"With fitness {fitness}")
-        print(f"The learner guessed {guessed_optimality}")
+        self.last_fitness = None
+
+
+    @property
+    def is_dynamic(self):
+        return False
+
+    def get_possible_actions(self):
+        return self.possible_actions
+
+    def reset(self):
+        self.remaining_cycles = self.initial_training_cycles
+
+    def more(self):
+        return self.remaining_cycles > 0
+
+    def sense(self):
+        # the tutorial stores the "fitness" of the solution as well..?
+        full_solution = FullSolution.random(self.original_problem.search_space)
+        bitstring = BitString(full_solution.values)
+        fitness = self.original_problem.fitness_function(full_solution)
+        self.last_fitness = fitness
+        return bitstring
+
+    def execute(self, action):
+        self.remaining_cycles -= 1
+
+        fitness_threshold = 0
+        fitness_is_good = self.last_fitness > fitness_threshold
+        return action == fitness_is_good
+
+
+def test_custom_problem():
+    original_problem = RoyalRoad(3, 4)
+    wrapped_problem = XSCProblemWrapper(original_problem, training_cycles=50000)
+    scenario = ScenarioObserver(wrapped_problem)
+    algorithm = xcs.XCSAlgorithm()
+
+    algorithm.exploration_probability = .5
+    algorithm.discount_factor = 0
+    algorithm.do_ga_subsumption = True
+    algorithm.do_action_set_subsumption = True
+
+    model = algorithm.new_model(scenario)
+
+    # training
+    model.run(scenario, learn=True)
+
+    print(model)
