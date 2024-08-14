@@ -27,4 +27,4 @@ class EvaluatedFS(FullSolution):
 
 
     def __hash__(self):
-        return hash(self.full_solution)
+        return super().__hash__()

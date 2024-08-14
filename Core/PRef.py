@@ -105,7 +105,7 @@ class PRef:
     @classmethod
     def from_evaluated_full_solutions(cls, evaluated_fss: Iterable[EvaluatedFS],
                                       search_space: SearchSpace):
-        fss, fitnesses = utils.unzip([(e_fs.full_solution, e_fs.fitness) for e_fs in evaluated_fss])
+        fss, fitnesses = utils.unzip([(e_fs, e_fs.fitness) for e_fs in evaluated_fss])
         return cls.from_full_solutions(fss, fitnesses, search_space)
 
     @classmethod

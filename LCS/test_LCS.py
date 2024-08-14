@@ -45,7 +45,6 @@ class XSCProblemWrapper(Scenario):
 
     original_problem: BenchmarkProblem
 
-
     last_fitness = Optional[float]
 
 

@@ -66,7 +66,7 @@ class SA:
     def get_one_with_attempts(self, max_trace: int, consecutive_fail_termination = 100000) -> list[EvaluatedFS]:
         trace = []
         current_individual = EvaluatedFS(FullSolution.random(self.search_space), 0)
-        current_individual.fitness = self.evaluator.evaluate(current_individual.full_solution)
+        current_individual.fitness = self.evaluator.evaluate(current_individual)
 
         current_best = current_individual
         trace.append(copy.copy(current_individual))
@@ -79,7 +79,7 @@ class SA:
 
         while temperature > 0.01 and consecutive_fails < consecutive_fail_termination and len(trace) < max_trace:
 
-            new_candidate_solution = self.mutation_operator.mutated(current_individual.full_solution)
+            new_candidate_solution = self.mutation_operator.mutated(current_individual)
             new_fitness = self.evaluator.evaluate(new_candidate_solution)
             new_candidate = EvaluatedFS(new_candidate_solution, new_fitness)
 
