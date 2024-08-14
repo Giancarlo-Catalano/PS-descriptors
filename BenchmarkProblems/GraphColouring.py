@@ -8,7 +8,6 @@ from BenchmarkProblems.BenchmarkProblem import BenchmarkProblem
 from Core.FullSolution import FullSolution
 from Core.PS import PS, STAR
 from Core.SearchSpace import SearchSpace
-import graphviz
 import networkx as nx
 import matplotlib.pyplot as plt
 

@@ -5,6 +5,7 @@ import traceback
 import warnings
 
 from LCS.test_LCS import test_if_library_works, test_manually, test_custom_problem
+from LightweightLocalPSMiner.LocalPSSearch import test_lightweight_miner
 from LightweightLocalPSMiner.SolutionRowCacher import test_solution_row_cacher
 
 
@@ -31,7 +32,10 @@ if __name__ == '__main__':
 
     #test_custom_problem()
 
-    test_solution_row_cacher()
+    #test_solution_row_cacher()
+
+
+    test_lightweight_miner()
 
 
 

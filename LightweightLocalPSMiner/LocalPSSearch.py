@@ -5,6 +5,7 @@ from pymoo.operators.crossover.sbx import SimulatedBinaryCrossover
 from pymoo.operators.mutation.bitflip import BitflipMutation
 from pymoo.optimize import minimize
 
+from BenchmarkProblems.RoyalRoad import RoyalRoad
 from Core.EvaluatedPS import EvaluatedPS
 from Core.FullSolution import FullSolution
 from Core.PS import PS
@@ -36,6 +37,34 @@ def local_ps_search(to_explain: FullSolution,
                    termination=('n_evals', ps_budget),
                    verbose=verbose)
 
-    result_pss = [EvaluatedPS(values, metric_scores=ms) for values, ms in zip(res.X, res.F)]
+    result_pss = [EvaluatedPS(problem.individual_to_ps(values).values, metric_scores=ms) for values, ms in zip(res.X, res.F)]
 
     return result_pss
+
+
+
+def test_lightweight_miner():
+    problem = RoyalRoad(4, 4)
+
+    already_mined = [PS([1,1,1,1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1]),
+                     PS([-1,-1,-1,-1,1,1,1,1,-1,-1,-1,-1,-1,-1,-1,-1])]
+
+    to_explain = FullSolution([1 for i in range(16)])
+
+    pRef = problem.get_reference_population(10000)
+
+    ps_evaluator = FastPSEvaluator(pRef)
+
+    results = local_ps_search(to_explain = to_explain,
+                              to_avoid=already_mined,
+                              ps_evaluator = ps_evaluator,
+                              ps_budget=3000,
+                              population_size=50,
+                              verbose=True)
+
+    print("results of search:")
+    results.sort(key=lambda x: x.metric_scores[2])
+    for result in results:
+        print(result)
+
+

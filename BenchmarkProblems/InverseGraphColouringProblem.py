@@ -1,18 +1,11 @@
-import itertools
-import json
-import random
-from typing import TypeAlias, Iterable, Optional
-
 import numpy as np
 
-import utils
 from BenchmarkProblems.BenchmarkProblem import BenchmarkProblem
 from Core.FullSolution import FullSolution
-from Core.PS import PS, STAR
+from Core.PS import PS
 from Core.SearchSpace import SearchSpace
-import graphviz
-import networkx as nx
-import matplotlib.pyplot as plt
+
+
 class InverseGraphColouring(BenchmarkProblem):
     amount_of_colours: int
     clique_size: int
