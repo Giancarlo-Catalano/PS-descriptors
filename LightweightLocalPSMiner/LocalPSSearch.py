@@ -1,0 +1,41 @@
+from typing import Iterable
+
+from pymoo.algorithms.moo.nsga2 import NSGA2
+from pymoo.operators.crossover.sbx import SimulatedBinaryCrossover
+from pymoo.operators.mutation.bitflip import BitflipMutation
+from pymoo.optimize import minimize
+
+from Core.EvaluatedPS import EvaluatedPS
+from Core.FullSolution import FullSolution
+from Core.PS import PS
+from LightweightLocalPSMiner.FastPSEvaluator import FastPSEvaluator
+from LightweightLocalPSMiner.LocalPSSearchProblem import LocalPSPymooProblem
+from LightweightLocalPSMiner.Operators import LocalPSGeometricSampling, UnexplainedCrowdingOperator
+from PSMiners.AbstractPSMiner import AbstractPSMiner
+
+def local_ps_search(to_explain: FullSolution,
+                    to_avoid: Iterable[PS],
+                    ps_evaluator: FastPSEvaluator,
+                    ps_budget: int,
+                    population_size: int,
+                    verbose=True) -> list[PS]:
+    problem = LocalPSPymooProblem(to_explain,
+                                  ps_evaluator)
+
+    # before_run_budget = ps_evaluator.used_evaluations
+
+    algorithm = NSGA2(pop_size=population_size,
+                      sampling=LocalPSGeometricSampling(),
+                      crossover=SimulatedBinaryCrossover(prob=0),
+                      mutation=BitflipMutation(prob=0.5, prob_var=0.3),
+                      eliminate_duplicates=True,
+                      survival=UnexplainedCrowdingOperator(to_avoid))
+
+    res = minimize(problem,
+                   algorithm,
+                   termination=('n_evals', ps_budget),
+                   verbose=verbose)
+
+    result_pss = [EvaluatedPS(values, metric_scores=ms) for values, ms in zip(res.X, res.F)]
+
+    return result_pss
