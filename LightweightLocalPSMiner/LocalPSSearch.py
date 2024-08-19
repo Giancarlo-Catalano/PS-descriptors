@@ -27,17 +27,19 @@ def local_ps_search(to_explain: FullSolution,
 
     algorithm = NSGA2(pop_size=population_size,
                       sampling=LocalPSGeometricSampling(),
-                      crossover=SimulatedBinaryCrossover(prob=0),
-                      mutation=BitflipMutation(prob=0.5, prob_var=0.3),
-                      eliminate_duplicates=True,
-                      survival=UnexplainedCrowdingOperator(to_avoid))
+                      crossover=SimulatedBinaryCrossover(prob=0.5),
+                      mutation=BitflipMutation(prob=1/problem.n_var),
+                      # eliminate_duplicates=True,
+                      # survival=UnexplainedCrowdingOperator(to_avoid)
+                      )
 
     res = minimize(problem,
                    algorithm,
                    termination=('n_evals', ps_budget),
                    verbose=verbose)
 
-    result_pss = [EvaluatedPS(problem.individual_to_ps(values).values, metric_scores=ms) for values, ms in zip(res.X, res.F)]
+    result_pss = [EvaluatedPS(problem.individual_to_ps(values).values, metric_scores=ms)
+                  for values, ms in zip(res.X, res.F)]
 
     return result_pss
 

@@ -321,9 +321,9 @@ class MutualInformation(Metric):
         fixed_count = ps.fixed_count()
         if fixed_count >= 2:
             linkages = self.get_linkages_in_ps(ps)
-            return np.median(linkages)
-        elif fixed_count == 0:
+            return np.average(linkages)
+        else:
             return 0
-        elif fixed_count == 1:
-            [fixed_position] = ps.get_fixed_variable_positions()
-            return self.linkage_table[fixed_position][fixed_position]
+        # elif fixed_count == 1:
+        #     [fixed_position] = ps.get_fixed_variable_positions()
+        #     return self.linkage_table[fixed_position][fixed_position]
