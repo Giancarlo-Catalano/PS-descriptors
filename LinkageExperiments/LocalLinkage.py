@@ -6,7 +6,6 @@ import numpy as np
 
 import utils
 from BenchmarkProblems.EfficientBTProblem.EfficientBTProblem import EfficientBTProblem
-from BenchmarkProblems.MultiPlexerProblem import MultiPlexerProblem
 from BenchmarkProblems.RoyalRoad import RoyalRoad
 from BenchmarkProblems.RoyalRoadWithOverlaps import RoyalRoadWithOverlaps
 from BenchmarkProblems.Trapk import Trapk

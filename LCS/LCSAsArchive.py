@@ -1,10 +1,11 @@
 from xcs.scenarios import ScenarioObserver
 
+from BenchmarkProblems.MultiPlexerProblem import MediumMultiPlexerProblem
 from BenchmarkProblems.RoyalRoad import RoyalRoad
 from Core.PS import PS
 from Explanation.PRefManager import PRefManager
 from LCS.CustomXCSAlgorithm import CustomXCSAlgorithm
-from LCS.XCSProblemTournamenter import XSCProblemTournamenter
+from LCS.XCSProblemTournamenter import XCSProblemTournamenter
 from LightweightLocalPSMiner.FastPSEvaluator import FastPSEvaluator
 from utils import announce
 
@@ -33,16 +34,16 @@ def check_linkage_metric(ps_evaluator: FastPSEvaluator):
 
 
 def run_LCS_as_archive():
-    optimisation_problem = RoyalRoad(5, 4)
+    optimisation_problem = MediumMultiPlexerProblem()
     pRef = PRefManager.generate_pRef(problem=optimisation_problem,
                                     sample_size=1000,
                                     which_algorithm="SA uniform")
 
     ps_evaluator = FastPSEvaluator(pRef)
 
-    xcs_problem = XSCProblemTournamenter(optimisation_problem, pRef = pRef, training_cycles=10000)
+    xcs_problem = XCSProblemTournamenter(optimisation_problem, pRef = pRef, training_cycles=10000)
     scenario = ScenarioObserver(xcs_problem)
-    algorithm = CustomXCSAlgorithm(ps_evaluator)
+    algorithm = CustomXCSAlgorithm(ps_evaluator, xcs_problem)
 
     algorithm.crossover_probability = 0
     algorithm.deletion_threshold = 10000

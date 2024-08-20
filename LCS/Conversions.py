@@ -11,12 +11,12 @@ from Core.EvaluatedFS import EvaluatedFS
 from Core.FullSolution import FullSolution
 from Core.PRef import PRef
 from Core.PS import PS, STAR
-from LCS.XCSProblemTournamenter import XSCProblemTournamenter
+from LCS.XCSProblemTournamenter import XCSProblemTournamenter
 from LightweightLocalPSMiner.FastPSEvaluator import FastPSEvaluator
 from LightweightLocalPSMiner.LocalPSSearch import local_ps_search
 
 
-def rule_to_ps(bitcondition: BitCondition) -> PS:
+def condition_to_ps(bitcondition: BitCondition) -> PS:
     bits = bitcondition.bits
     mask = bitcondition.mask
 
@@ -25,15 +25,21 @@ def rule_to_ps(bitcondition: BitCondition) -> PS:
     ps_values[where_unset] = STAR
     return PS(ps_values)
 
-def ps_to_rule(algorithm,
-                  ps :PS,
-                  action) -> xcs.ClassifierRule:
+def rule_to_ps(rule: xcs.ClassifierRule) -> PS:
+    return condition_to_ps(rule.condition)
+
+
+def ps_to_condition(ps: PS) -> BitCondition:
     bits = ps.values.copy()
     mask = ps.values != STAR
     bits[~mask] = 0
 
+    return BitCondition(bits, mask)
+def ps_to_rule(algorithm,
+                  ps :PS,
+                  action) -> xcs.ClassifierRule:
     return xcs.XCSClassifierRule(
-        BitCondition(bits, mask),
+        ps_to_condition(ps),
         action,
         algorithm,
         0)
@@ -61,31 +67,32 @@ def get_match_set(model: xcs.ClassifierSet, situation) -> xcs.MatchSet:
 
 
 def get_pss_from_action_set(action_set: xcs.ActionSet) -> list[PS]:
-    pass
+    rules = action_set._rules
+    return list(map(condition_to_ps, rules))
 
-    def get_lcs_objects(optimisation_problem: BenchmarkProblem, pRef: PRef):
-        xcs_problem = XSCProblemTournamenter(optimisation_problem, pRef = pRef, training_cycles=pRef.sample_size)
-        scenario = ScenarioObserver(xcs_problem)
-        algorithm = xcs.XCSAlgorithm()
+def get_lcs_objects(optimisation_problem: BenchmarkProblem, pRef: PRef):
+    xcs_problem = XCSProblemTournamenter(optimisation_problem, pRef = pRef, training_cycles=pRef.sample_size)
+    scenario = ScenarioObserver(xcs_problem)
+    algorithm = xcs.XCSAlgorithm()
 
-        algorithm.crossover_probability = 0
-        algorithm.deletion_threshold = 10000
-        algorithm.discount_factor = 0
-        algorithm.do_action_set_subsumption = True
-        algorithm.do_ga_subsumption = False
-        algorithm.exploration_probability = 0
-        algorithm.max_population_size = 50
-        algorithm.exploration_probability = 0
-        algorithm.minimum_actions = 1
-        # algorithm.exploration_probability = 0
-        # algorithm.discount_factor = 0
-        # algorithm.do_ga_subsumption = True
-        # algorithm.do_action_set_subsumption = True
-        # algorithm.mutation_probability = False
+    algorithm.crossover_probability = 0
+    algorithm.deletion_threshold = 10000
+    algorithm.discount_factor = 0
+    algorithm.do_action_set_subsumption = True
+    algorithm.do_ga_subsumption = False
+    algorithm.exploration_probability = 0
+    algorithm.max_population_size = 50
+    algorithm.exploration_probability = 0
+    algorithm.minimum_actions = 1
+    # algorithm.exploration_probability = 0
+    # algorithm.discount_factor = 0
+    # algorithm.do_ga_subsumption = True
+    # algorithm.do_action_set_subsumption = True
+    # algorithm.mutation_probability = False
 
-        model = algorithm.new_model(scenario)
+    model = algorithm.new_model(scenario)
 
-        return xcs_problem, scenario, algorithm, model
+    return xcs_problem, scenario, algorithm, model
 
 
 def run_model_assuming_not_dynamic(model: xcs.ClassifierSet, scenario: Scenario):
@@ -112,7 +119,7 @@ def run_model_assuming_not_dynamic(model: xcs.ClassifierSet, scenario: Scenario)
 def get_rules_in_model(model: xcs.ClassifierSet) -> list[(PS, Any)]:
     result = model._population
 
-    pss = map(rule_to_ps, result)  # result is a dictionary, where the keys are bitconditions. We convert each to a ps
+    pss = map(condition_to_ps, result)  # result is a dictionary, where the keys are bitconditions. We convert each to a ps
     actions = [list(assigned_actions) for assigned_actions in result.values()]
 
     return list(zip(pss, actions))
@@ -153,27 +160,32 @@ def get_matched_pss(model: xcs.ClassifierSet, solution: EvaluatedFS) -> list[PS]
                        for condition in model._population
                         if condition(situation)]
 
-    pss = [rule_to_ps(bc) for bc in rule_population]
+    pss = [condition_to_ps(bc) for bc in rule_population]
     return pss
 
 
 
 
-def get_solution_coverage(match_set: xcs.MatchSet) -> float:
-    all_rules = match_set
-    masks = np.array([np.array(rule.condition.mask) for rule in all_rules])
+def get_solution_coverage(match_set: xcs.MatchSet, action) -> float:
+    action_set = get_action_set(match_set, action)
+    rules = list(action_set._rules)  # these are conditions, for some reason
+    masks = np.array([np.array(condition.mask) for condition in rules])
     if len(masks) == 0:
         return 0
-    covered_vars = np.logical_and(masks, axis=1)
+    covered_vars = np.sum(masks, axis=0, dtype=bool)
     return np.average(covered_vars)
 
 
 def get_action_set(match_set: xcs.MatchSet, action) -> xcs.ActionSet:
-    return match_set[action]
-
+    def make_empty_action_set():
+        return xcs.ActionSet(model = match_set.model,
+                             situation=match_set.situation,
+                             action=action,
+                             rules = dict())
+    return match_set._action_sets.get(action, make_empty_action_set())
 
 def get_lcs_objects(optimisation_problem: BenchmarkProblem, pRef: PRef):
-    xcs_problem = XSCProblemTournamenter(optimisation_problem, pRef = pRef, training_cycles=10000)
+    xcs_problem = XCSProblemTournamenter(optimisation_problem, pRef = pRef, training_cycles=10000)
     scenario = ScenarioObserver(xcs_problem)
     algorithm = xcs.XCSAlgorithm()
 
@@ -193,7 +205,6 @@ def get_lcs_objects(optimisation_problem: BenchmarkProblem, pRef: PRef):
     model = algorithm.new_model(scenario)
 
     return xcs_problem, scenario, algorithm, model
-
 
 
 
