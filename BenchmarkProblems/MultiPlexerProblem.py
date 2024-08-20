@@ -21,7 +21,7 @@ class MediumMultiPlexerProblem(BenchmarkProblem):
 
     def fitness_function(self, fs: FullSolution) -> float:
         values = fs.values
-        index = values[0]*4+values[1]*2+values[0]
+        index = values[0]*4+values[1]*2+values[2]
         return float(values[index+3])
 
 
