@@ -1,6 +1,7 @@
 import xcs
 from xcs.bitstrings import BitCondition
 
+import utils
 from Core.FullSolution import FullSolution
 from Core.PS import PS, STAR
 from LCS.XCSProblemTournamenter import XCSProblemTournamenter
@@ -8,6 +9,7 @@ from LCS.Conversions import get_solution_coverage, situation_to_fs, get_pss_from
     ps_to_condition
 from LightweightLocalPSMiner.FastPSEvaluator import FastPSEvaluator
 from LightweightLocalPSMiner.LocalPSSearch import local_ps_search
+from utils import sort_by_combination_of
 
 
 # model.run()
@@ -41,7 +43,6 @@ class CustomXCSAlgorithm(xcs.XCSAlgorithm):
         action_set = get_action_set(match_set, action)
         already_found_pss = get_pss_from_action_set(action_set)
         solution = FullSolution(match_set.situation)
-        print(f"Covering for {self.xcs_problem.current_solution}, action = {action}")
         if action:
             self.ps_evaluator.set_to_maximise_fitness()
         else:
@@ -51,10 +52,15 @@ class CustomXCSAlgorithm(xcs.XCSAlgorithm):
                               to_avoid=already_found_pss,
                               population_size=50,
                               ps_evaluator=self.ps_evaluator,
-                              ps_budget = 300,
+                              ps_budget = 500,
                               verbose=False)
-        winning_ps = min(pss, key=lambda x: x.metric_scores[2]) # there's some messing with the signs
+        winning_ps = min(pss, key=lambda x: x.metric_scores[1]) # there's some messing with the signs
+        # pss = sort_by_combination_of(pss, key_functions=[lambda x: x.metric_scores[0],
+        #                                                  lambda x: x.metric_scores[1],
+        #                                                  lambda x: x.metric_scores[2]])
         #winning_ps = pss[0]
+
+        print(f"Covering for {self.xcs_problem.current_solution}, action = {int(action)}, yielded {winning_ps}")
 
         return xcs.XCSClassifierRule(
             ps_to_condition(winning_ps),

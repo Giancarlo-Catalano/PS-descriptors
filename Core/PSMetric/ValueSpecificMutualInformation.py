@@ -5,6 +5,7 @@ from typing import Optional
 import numpy as np
 
 import utils
+from Core.FullSolution import FullSolution
 from Core.PRef import PRef
 from Core.PS import PS
 from Core.PSMetric.Metric import Metric
@@ -17,6 +18,7 @@ class ValueSpecificMutualInformation(Metric):
     bivariate_probability_table: Optional[list]
 
     linkage_dict: Optional[dict[(int, int, int, int), float]]
+    univariate_dict: Optional[dict[(int, int), float]]
 
     def __init__(self):
         super().__init__()
@@ -24,6 +26,7 @@ class ValueSpecificMutualInformation(Metric):
         self.univariate_probability_table = None
         self.bivariate_probability_table = None
         self.linkage_dict = None
+        self.univariate_dict = None
 
     def __repr__(self):
         return "ValueSpecificMutualInformation"
@@ -33,6 +36,7 @@ class ValueSpecificMutualInformation(Metric):
 
         self.univariate_probability_table, self.bivariate_probability_table = self.calculate_probability_tables()
         self.linkage_dict = self.get_linkage_dict()
+        self.univariate_dict = self.get_univariate_dict()
 
     def calculate_probability_tables(self) -> (list, list):
 
@@ -105,13 +109,48 @@ class ValueSpecificMutualInformation(Metric):
         return [self.linkage_dict[(var_a, ps[var_a], var_b, ps[var_b])]
                 for var_a, var_b in itertools.combinations(fixed_vars, r=2)]
 
+
+    def get_univariate_dict(self) -> dict[(int, int), float]:
+        all_varvals = [(var, val)
+                       for var, card in enumerate(self.pRef.search_space.cardinalities)
+                       for val in range(card)]
+
+        def get_linkage_unordered(var_a, val_a, var_b, val_b) -> float:
+            if var_a > var_b:
+                return self.linkage_dict[(var_b, val_b, var_a, val_a)]
+            else:
+                return self.linkage_dict[(var_a, val_a, var_b, val_b)]
+
+        def univariate_for_varval(var, val) -> float:
+            return np.average([get_linkage_unordered(var, val, o_var, o_val)
+                               for o_var, o_val in all_varvals
+                               if o_var != var])
+
+        return {(var, val) : univariate_for_varval(var, val)
+                for (var, val) in all_varvals}
+
     def get_single_score(self, ps: PS) -> float:
         fixed_count = ps.fixed_count()
         if fixed_count >= 2:
             linkages = self.get_linkages_in_ps(ps)
             return np.average(linkages)
+        elif fixed_count == 1:
+            [fixed_position] = ps.get_fixed_variable_positions()
+            return self.univariate_dict[(fixed_position, ps[fixed_position])]
         else:
             return 0
-        # elif fixed_count == 1:
-        #     [fixed_position] = ps.get_fixed_variable_positions()
-        #     return self.linkage_table[fixed_position][fixed_position]
+
+
+    def get_linkage_table_for_solution(self, fs: FullSolution) -> np.ndarray:
+        # this is mainly for debug
+        n = len(fs)
+        result = np.zeros(shape=(n, n), dtype = float)
+        for a, b in itertools.combinations(range(n), r=2):
+            result[a, b] = self.linkage_dict[(a, fs.values[a], b, fs.values[b])]
+
+        result += result.T
+
+        for var, val in enumerate(fs.values):
+            result[var, var] = self.univariate_dict[(var, val)]
+
+        return result

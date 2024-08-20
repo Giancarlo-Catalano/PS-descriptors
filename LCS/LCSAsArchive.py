@@ -1,14 +1,16 @@
 from xcs.scenarios import ScenarioObserver
 
+from BenchmarkProblems.BinVal import BinVal
 from BenchmarkProblems.MultiPlexerProblem import MediumMultiPlexerProblem
 from BenchmarkProblems.RoyalRoad import RoyalRoad
+from BenchmarkProblems.Trapk import Trapk
 from Core.PS import PS
 from Explanation.PRefManager import PRefManager
 from LCS.CustomXCSAlgorithm import CustomXCSAlgorithm
 from LCS.XCSProblemTournamenter import XCSProblemTournamenter
 from LightweightLocalPSMiner.FastPSEvaluator import FastPSEvaluator
 from utils import announce
-
+from Core.FullSolution import FullSolution
 
 def check_linkage_metric(ps_evaluator: FastPSEvaluator):
     atomicity_metric = ps_evaluator.atomicity_metric
@@ -34,23 +36,27 @@ def check_linkage_metric(ps_evaluator: FastPSEvaluator):
 
 
 def run_LCS_as_archive():
-    optimisation_problem = MediumMultiPlexerProblem()
+    optimisation_problem = RoyalRoad(4, 4)
     pRef = PRefManager.generate_pRef(problem=optimisation_problem,
-                                    sample_size=1000,
-                                    which_algorithm="SA uniform")
+                                    sample_size=10000,
+                                    which_algorithm="uniform")
 
     ps_evaluator = FastPSEvaluator(pRef)
 
-    xcs_problem = XCSProblemTournamenter(optimisation_problem, pRef = pRef, training_cycles=10000)
+    xcs_problem = XCSProblemTournamenter(optimisation_problem, pRef = pRef, training_cycles=1000)
     scenario = ScenarioObserver(xcs_problem)
     algorithm = CustomXCSAlgorithm(ps_evaluator, xcs_problem)
 
-    algorithm.crossover_probability = 0
-    algorithm.deletion_threshold = 10000
-    algorithm.discount_factor = 0
-    algorithm.do_action_set_subsumption = True
-    algorithm.do_ga_subsumption = False
-    algorithm.exploration_probability = 0
+    # algorithm.crossover_probability = 0
+    # algorithm.deletion_threshold = 10000
+    # algorithm.discount_factor = 0
+    # algorithm.do_action_set_subsumption = True
+    # algorithm.do_ga_subsumption = False
+    # algorithm.exploration_probability = 0
+    # algorithm.ga_threshold = 100000
+    # algorithm.max_population_size = 50
+    # algorithm.exploration_probability = 0
+    # algorithm.minimum_actions = 1
 
     model = algorithm.new_model(scenario)
 

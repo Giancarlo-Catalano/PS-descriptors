@@ -431,3 +431,7 @@ def get_count_report(iterable: Iterable) -> dict:
         result_dict[item] = result_dict[item]+1
 
     return result_dict
+
+
+def third(x):
+    return x[2]
