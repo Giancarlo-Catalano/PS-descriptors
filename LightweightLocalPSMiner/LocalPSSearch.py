@@ -29,8 +29,8 @@ def local_ps_search(to_explain: FullSolution,
                       sampling=LocalPSGeometricSampling(),
                       crossover=SimulatedBinaryCrossover(prob=0.5),
                       mutation=BitflipMutation(prob=1/problem.n_var),
-                      # eliminate_duplicates=True,
-                      # survival=UnexplainedCrowdingOperator(to_avoid)
+                      eliminate_duplicates=True,
+                      survival=UnexplainedCrowdingOperator(to_avoid)
                       )
 
     res = minimize(problem,

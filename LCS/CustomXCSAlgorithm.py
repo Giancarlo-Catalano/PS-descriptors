@@ -2,6 +2,7 @@ import xcs
 from xcs.bitstrings import BitCondition
 
 import utils
+from Core.EvaluatedFS import EvaluatedFS
 from Core.FullSolution import FullSolution
 from Core.PS import PS, STAR
 from LCS.XCSProblemTournamenter import XCSProblemTournamenter
@@ -47,6 +48,9 @@ class CustomXCSAlgorithm(xcs.XCSAlgorithm):
             self.ps_evaluator.set_to_maximise_fitness()
         else:
             self.ps_evaluator.set_to_minimise_fitness()
+
+        fitness = self.xcs_problem.original_problem.fitness_function(solution) # TODO recycle it from before
+        self.ps_evaluator.atomicity_metric.set_solution(EvaluatedFS(solution, fitness))
 
         pss = local_ps_search(to_explain = solution,
                               to_avoid=already_found_pss,

@@ -1,9 +1,13 @@
+import random
+
+import numpy as np
 from xcs.scenarios import ScenarioObserver
 
 from BenchmarkProblems.BinVal import BinVal
 from BenchmarkProblems.MultiPlexerProblem import MediumMultiPlexerProblem
 from BenchmarkProblems.RoyalRoad import RoyalRoad
 from BenchmarkProblems.Trapk import Trapk
+from Core.EvaluatedFS import EvaluatedFS
 from Core.PS import PS
 from Explanation.PRefManager import PRefManager
 from LCS.CustomXCSAlgorithm import CustomXCSAlgorithm
@@ -14,25 +18,68 @@ from Core.FullSolution import FullSolution
 
 def check_linkage_metric(ps_evaluator: FastPSEvaluator):
     atomicity_metric = ps_evaluator.atomicity_metric
+    atomicity_metric.set_solution(EvaluatedFS(FullSolution([1]*16), 16))
 
-    nnny = PS(([-1] * 12)+([1]*4))
-    ynnn = PS(([1]*4)+([-1] * 12))
-    ynny = PS(([1]*4)+([-1] * 8)+([1]*4))
+    to_test = ["1111 **** **** ****",
+               "111* **** **** ****",
+               "11** **** **** ****",
+               "1*** **** **** ****",
+               "1111 **** **** 1111",
+               "1111 **** **** 11**",
+               "11** 11** 11** ****",
+               "1*** 1*** 1*** 1***",
+               "0000 **** **** ****",
+               "000* **** **** ****",
+               "00** **** **** ****",
+               "0*** **** **** ****",
+               "0000 **** **** 0000",
+               "0000 **** **** 00**",
+               "00** 00** 00** ****",
+               "0*** 0*** 0*** 0***",
+               ]
 
-    nnno = PS(([-1] * 12)+([0]*4))
-    onnn = PS(([0]*4)+([-1] * 12))
-    onno = PS(([0]*4)+([-1] * 8)+([0]*4))
-
-    single_o = PS(([0]*1)+([-1] * 11))
+    to_test = [PS.from_string(s) for s in to_test]
 
 
     def print_linkage(ps: PS):
-        atomicity = atomicity_metric.get_single_score(ps)
-        print(f"The atomicity for {ps} is {atomicity}")
+        atomicity = atomicity_metric.get_atomicity_score(ps)
+        independence = atomicity_metric.get_independence_score(ps)
+        print(f"{ps}\t{atomicity}\t{independence}")
 
-    for ps in [nnny, ynnn, ynny, nnno, onnn, onno, single_o]:
+    for ps in to_test:
         print_linkage(ps)
 
+def show_categories_of_linkage(ps_evaluator: FastPSEvaluator):
+    atomicity_metric = ps_evaluator.atomicity_metric
+    solution = EvaluatedFS(FullSolution([1]*8 + [0]*8), 16)
+    atomicity_metric.set_solution(solution)
+
+    def random_subset() -> PS:
+        threshold = 0.7 #random.random()
+        mask = np.random.random(len(solution)) < threshold
+        values = solution.values.copy()
+        values[mask] = -1
+        return PS(values)
+
+    sorted_by_signs = {(atom, indep): []
+                       for atom in (True, False)
+                       for indep in (True, False)}
+
+    for _ in range(120):
+        ps = random_subset()
+        atomicity = atomicity_metric.get_atomicity_score(ps)
+        independence = atomicity_metric.get_independence_score(ps)
+
+        if atomicity == 0 or independence == 0:
+            print(f"discarding {ps} because {atomicity = }, {independence =}")
+        else:
+            sorted_by_signs[(atomicity > 0, independence>0)].append(ps)
+
+
+    for atom, indep in sorted_by_signs:
+        print(f"{atom = }, {indep = }")
+        for ps in sorted_by_signs[(atom, indep)]:
+            print(ps)
 
 
 def run_LCS_as_archive():
@@ -42,6 +89,9 @@ def run_LCS_as_archive():
                                     which_algorithm="uniform")
 
     ps_evaluator = FastPSEvaluator(pRef)
+
+    show_categories_of_linkage(ps_evaluator)
+    check_linkage_metric(ps_evaluator)
 
     xcs_problem = XCSProblemTournamenter(optimisation_problem, pRef = pRef, training_cycles=1000)
     scenario = ScenarioObserver(xcs_problem)

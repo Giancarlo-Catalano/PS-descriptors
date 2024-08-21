@@ -144,6 +144,19 @@ class PS:
         self.values[key] = value
 
 
+    @classmethod
+    def from_string(cls, string: str):
+        # first remove any spaces
+        without_spaces = "".join(string.split())
+        def char_to_value(char: str) -> int:
+            if char == "*":
+                return STAR
+            else:
+                return int(char)
+        return cls(map(char_to_value, without_spaces))
+
+
+
 def contains(fs: FullSolution, ps: PS) -> bool:
     return all(x_psi_i in {STAR, x_i} for x_psi_i, x_i in zip(ps.values, fs.values))
 

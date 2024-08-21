@@ -5,9 +5,10 @@ from typing import Optional
 import numpy as np
 
 import utils
+from Core.EvaluatedFS import EvaluatedFS
 from Core.FullSolution import FullSolution
 from Core.PRef import PRef
-from Core.PS import PS
+from Core.PS import PS, STAR
 from Core.PSMetric.Metric import Metric
 
 
@@ -154,3 +155,179 @@ class ValueSpecificMutualInformation(Metric):
             result[var, var] = self.univariate_dict[(var, val)]
 
         return result
+
+
+class SolutionSpecificMutualInformation(Metric):
+    pRef: Optional[PRef]
+    solution: Optional[FullSolution]
+
+    univariate_probability_table: Optional[list]
+    bivariate_probability_table: Optional[list]
+
+    linkage_table: Optional[np.ndarray]
+
+    def __init__(self):
+        super().__init__()
+        self.solution = None
+        self.pRef = None
+        self.univariate_probability_table = None
+        self.bivariate_probability_table = None
+        self.linkage_table = None
+        # self.univariate_dict = self.get_univariate_dict()
+
+    def __repr__(self):
+        return "SolutionSpecificMutualInformation"
+
+    def set_pRef(self, pRef: PRef):
+        self.pRef = pRef
+
+    def set_solution(self, solution: FullSolution):
+        assert self.pRef is not None
+        self.solution = solution
+        self.univariate_probability_table, self.bivariate_probability_table = self.calculate_probability_tables()
+        self.linkage_table = self.get_linkage_table_for_solution()
+
+    def calculate_probability_tables(self) -> (list, list):
+
+        amount_of_samples = 1000
+
+        indexes = np.random.randint(self.pRef.sample_size, size=amount_of_samples)
+        fitnesses = self.pRef.fitness_array[indexes]
+        who_won = fitnesses > np.roll(fitnesses, 1)#self.solution.fitness  # note > and not >=. This is preferred because some problems have heavy fitness collisions
+        winning_indexes = indexes[who_won]
+        winning_solutions = self.pRef.full_solution_matrix[winning_indexes, :]
+        #wins_for_main_solution = np.sum(~who_won)
+
+
+        univariate_counts = [np.zeros(card) for card in self.pRef.search_space.cardinalities]
+        cs = self.pRef.search_space.cardinalities
+        bivariate_count_table = [[np.zeros((c2, c1), dtype=int)
+                                  for c1 in cs]
+                                 for c2 in cs]
+        def register_solution_for_univariate(solution: np.ndarray):
+            for var, value in enumerate(solution):
+                univariate_counts[var][value] += 1
+
+        def register_solution_for_bivariate(solution: np.ndarray):
+            for var_a, value_a in enumerate(solution):
+                for var_b in range(var_a+1, len(solution)):
+                    value_b = solution[var_b]
+                    bivariate_count_table[var_a][var_b][value_a, value_b] += 1
+
+        for sample_number, sample in enumerate(winning_solutions):
+            register_solution_for_univariate(sample)
+            register_solution_for_bivariate(sample)
+            # if sample_number%((len(winning_solutions) // 100)+1) == 0:
+            #    print(f"MI data gathering progress: {100*sample_number/len(winning_solutions):.2f}%")
+
+        # for _ in range(wins_for_main_solution):
+        #     register_solution_for_univariate(self.solution.values)
+        #     register_solution_for_bivariate(self.solution.values)
+
+        def counts_to_probabilities(counts: np.ndarray):
+            """ used for both arrays and matrices"""
+            return (counts / np.sum(counts))
+
+
+        univariate_probabilities = [counts_to_probabilities(var_counts) for var_counts in univariate_counts]
+        bivariate_probabilities = [[counts_to_probabilities(bivariate_count_table[var_a][var_b])
+                                    if var_b > var_a else None
+                                    for var_b in range(len(cs))]
+                                   for var_a in range(len(cs))]
+        return univariate_probabilities, bivariate_probabilities
+
+    def mutual_information(self, var_a, val_a, var_b, val_b) -> float:
+        p_a = self.univariate_probability_table[var_a][val_a]
+        p_b = self.univariate_probability_table[var_b][val_b]
+
+        p_a_b = self.bivariate_probability_table[var_a][var_b][val_a, val_b]
+
+        if p_a_b == 0:
+            return 0
+        return p_a_b * np.log(p_a_b/(p_a * p_b))
+
+
+    def get_linkage_table_for_solution(self) -> np.ndarray:
+        n = self.pRef.search_space.amount_of_parameters
+        result = np.zeros(shape=(n, n), dtype = float)
+        for a, b in itertools.combinations(range(n), r=2):
+            result[a, b] = self.mutual_information(a,
+                                                   self.solution.values[a],
+                                                   b,
+                                                   self.solution.values[b])
+
+        result += result.T
+
+        sums_of_linkages = np.sum(result, axis=0)
+        averages = sums_of_linkages / (n-1)
+        np.fill_diagonal(result, averages)
+
+        return result
+
+    def get_linkages_in_ps(self, ps: PS) -> list[float]:
+        fixed_vars = ps.get_fixed_variable_positions()
+        return [self.linkage_table[var_a, var_b]
+                for var_a, var_b in itertools.combinations(fixed_vars, r=2)]
+
+
+    def get_univariate_dict(self) -> dict[(int, int), float]:
+        all_varvals = [(var, val)
+                       for var, card in enumerate(self.pRef.search_space.cardinalities)
+                       for val in range(card)]
+
+        def get_linkage_unordered(var_a, val_a, var_b, val_b) -> float:
+            if var_a > var_b:
+                return self.linkage_dict[(var_b, val_b, var_a, val_a)]
+            else:
+                return self.linkage_dict[(var_a, val_a, var_b, val_b)]
+
+        def univariate_for_varval(var, val) -> float:
+            return np.average([get_linkage_unordered(var, val, o_var, o_val)
+                               for o_var, o_val in all_varvals
+                               if o_var != var])
+
+        return {(var, val) : univariate_for_varval(var, val)
+                for (var, val) in all_varvals}
+
+    def get_single_score(self, ps: PS) -> float:
+        fixed_count = ps.fixed_count()
+        if fixed_count >= 2:
+            linkages = self.get_linkages_in_ps(ps)
+            return np.average(linkages)
+        elif fixed_count == 1:
+            [fixed_position] = ps.get_fixed_variable_positions()
+            return self.linkage_table[fixed_position, fixed_position]
+        else:
+            return 0
+
+
+    def get_atomicity_score(self, ps: PS) -> float:
+        fixed_count = ps.fixed_count()
+        fixed_vars = ps.get_fixed_variable_positions()
+        def weakest_internal_linkage_for(var) -> float:
+            return min(self.linkage_table[var, other] for other in fixed_vars if other != var)
+
+        if fixed_count > 1:
+            weakest_links = np.array([weakest_internal_linkage_for(var) for var in fixed_vars])
+            return np.average(weakest_links)
+        else:
+            return 0
+
+    def get_dependence_score(self, ps: PS) -> float:
+        fixed_count = ps.fixed_count()
+        fixed_vars = ps.get_fixed_variable_positions()
+        unfixed_vars = [index for index, val in enumerate(ps.values) if val == STAR]
+        def strongest_external_linkage_for(var) -> float:
+            return max(self.linkage_table[var, other] for other in unfixed_vars)
+
+        if len(unfixed_vars) > 1:
+            strongest_links_for = np.array([strongest_external_linkage_for(var) for var in fixed_vars])
+            return np.average(strongest_links_for)
+        else:
+            return 0
+
+
+
+
+
+

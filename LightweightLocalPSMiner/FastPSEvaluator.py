@@ -4,7 +4,8 @@ from Core.PSMetric.Additivity import MutualInformation
 from Core.PSMetric.Classic3 import Classic3PSEvaluator
 from Core.PSMetric.Metric import Metric
 from Core.PSMetric.Simplicity import Simplicity
-from Core.PSMetric.ValueSpecificMutualInformation import ValueSpecificMutualInformation
+from Core.PSMetric.ValueSpecificMutualInformation import ValueSpecificMutualInformation, \
+    SolutionSpecificMutualInformation
 from LightweightLocalPSMiner.SolutionRowCacher import CachedRowsNode, fast_get_mean_fitness
 from LinkageExperiments.LocalLinkage import BivariateVariance
 
@@ -24,7 +25,7 @@ class FastPSEvaluator:
         self.pRef = pRef
         self.sign_of_fitness = sign_of_fitness
         self.row_cacher_root_node = CachedRowsNode.root_node_from_pRef(pRef)
-        self.atomicity_metric = ValueSpecificMutualInformation()
+        self.atomicity_metric = SolutionSpecificMutualInformation()
         self.atomicity_metric.set_pRef(pRef)
         self.simplicity_metric = Simplicity()
 
