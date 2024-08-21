@@ -95,7 +95,24 @@ def local_tm_ps_search(to_explain: FullSolution,
     result_pss = [EvaluatedPS(problem.individual_to_ps(values).values, metric_scores=ms)
                   for values, ms in zip(res.X, res.F)]
 
-    return result_pss
+    # then we arrange them in such a way that if a really good one is found, it will be the first one
+
+    correct_sign_pss = []
+    wrong_signs = []
+    for ps in result_pss:
+        a, d = ps.metric_scores
+        if a < 0 and d > 0:
+            correct_sign_pss.append(ps)
+        else:
+            wrong_signs.append(ps)
+
+    def get_atomicity_minus_dependence(ps: EvaluatedPS) -> float:
+        a, d = ps.metric_scores
+        return a-d
+    correct_sign_pss.sort(key=get_atomicity_minus_dependence, reverse=True)
+    wrong_signs.sort(key=get_atomicity_minus_dependence, reverse=True)
+
+    return correct_sign_pss+wrong_signs
 
 def test_local_search():
     problem = Trapk(4, 4)
@@ -127,4 +144,3 @@ def test_local_search():
         if a < 0 and d > 0:
             print(result)
 
-test_local_search()

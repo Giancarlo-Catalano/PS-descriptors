@@ -78,3 +78,6 @@ class XCSProblemTournamenter(Scenario):
         self.remaining_cycles -= 1
 
         return self.is_current_better == action
+
+    def get_current_outcome(self):
+        return self.is_current_better

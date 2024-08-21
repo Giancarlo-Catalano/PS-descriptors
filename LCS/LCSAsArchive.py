@@ -1,6 +1,8 @@
 import random
 
 import numpy as np
+import xcs
+from xcs.bitstrings import BitString
 from xcs.scenarios import ScenarioObserver
 
 from BenchmarkProblems.BinVal import BinVal
@@ -11,8 +13,10 @@ from Core.EvaluatedFS import EvaluatedFS
 from Core.PS import PS
 from Explanation.PRefManager import PRefManager
 from LCS.CustomXCSAlgorithm import CustomXCSAlgorithm
+from LCS.XCSProblemTopAndBottom import XCSProblemTopAndBottom
 from LCS.XCSProblemTournamenter import XCSProblemTournamenter
 from LightweightLocalPSMiner.FastPSEvaluator import FastPSEvaluator
+from LightweightLocalPSMiner.TwoMetrics import TMEvaluator
 from utils import announce
 from Core.FullSolution import FullSolution
 
@@ -82,31 +86,35 @@ def show_categories_of_linkage(ps_evaluator: FastPSEvaluator):
             print(ps)
 
 
+def use_model_for_prediction(model: xcs.ClassifierSet, solution: FullSolution) -> dict:
+    as_input = BitString(solution.values)
+    match_set = model.match(as_input)
+    selected_action = match_set.select_action()
+
+
+
 def run_LCS_as_archive():
     optimisation_problem = RoyalRoad(4, 4)
     pRef = PRefManager.generate_pRef(problem=optimisation_problem,
                                     sample_size=10000,
-                                    which_algorithm="uniform")
+                                    which_algorithm="uniform SA")
 
-    ps_evaluator = FastPSEvaluator(pRef)
+    ps_evaluator = TMEvaluator(pRef)
 
-    show_categories_of_linkage(ps_evaluator)
-    check_linkage_metric(ps_evaluator)
-
-    xcs_problem = XCSProblemTournamenter(optimisation_problem, pRef = pRef, training_cycles=1000)
+    xcs_problem = XCSProblemTopAndBottom(optimisation_problem, pRef = pRef, training_cycles=1000)
     scenario = ScenarioObserver(xcs_problem)
     algorithm = CustomXCSAlgorithm(ps_evaluator, xcs_problem)
 
-    # algorithm.crossover_probability = 0
-    # algorithm.deletion_threshold = 10000
-    # algorithm.discount_factor = 0
-    # algorithm.do_action_set_subsumption = True
-    # algorithm.do_ga_subsumption = False
-    # algorithm.exploration_probability = 0
-    # algorithm.ga_threshold = 100000
-    # algorithm.max_population_size = 50
-    # algorithm.exploration_probability = 0
-    # algorithm.minimum_actions = 1
+    algorithm.crossover_probability = 0
+    algorithm.deletion_threshold = 10000
+    algorithm.discount_factor = 0
+    algorithm.do_action_set_subsumption = True
+    algorithm.do_ga_subsumption = False
+    algorithm.exploration_probability = 0
+    algorithm.ga_threshold = 100000
+    algorithm.max_population_size = 50
+    algorithm.exploration_probability = 0
+    algorithm.minimum_actions = 1
 
     model = algorithm.new_model(scenario)
 
@@ -115,6 +123,28 @@ def run_LCS_as_archive():
 
     print("The model is")
     print(model)
+
+
+
+
+    # solutions_to_evaluate = [FullSolution.random(optimisation_problem.search_space) for _ in range(120)]
+    solutions_to_evaluate = [FullSolution([1]*16)]
+
+    for solution in solutions_to_evaluate:
+        as_input = BitString(solution.values)
+        match_set = model.match(as_input)
+        selected_action = match_set.select_action()
+
+        actual_fitness = optimisation_problem.fitness_function(solution)
+
+        print("The match set is")
+        for item in match_set:
+            print(f"\t{item}")
+            for rule in match_set[item]:
+                print(rule)
+        print(f"Solution: {solution}, predicted: {selected_action}, fitness:{actual_fitness}")
+
+
 
 
 run_LCS_as_archive()
