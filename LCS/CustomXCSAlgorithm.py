@@ -47,10 +47,10 @@ class CustomXCSAlgorithm(xcs.XCSAlgorithm):
         self.ps_evaluator.set_solution(solution)
 
         pss = local_tm_ps_search(to_explain = solution,
-                              to_avoid=[], #already_found_pss,
+                              to_avoid=already_found_pss,
                               population_size=50,
                               ps_evaluator=self.ps_evaluator,
-                              ps_budget = 1000,
+                              ps_budget = 500,
                               verbose=False)
         winning_ps = pss[0]
 

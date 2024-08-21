@@ -90,6 +90,17 @@ def use_model_for_prediction(model: xcs.ClassifierSet, solution: FullSolution) -
     as_input = BitString(solution.values)
     match_set = model.match(as_input)
     selected_action = match_set.select_action()
+    rules = list(match_set[selected_action])
+
+    def get_rule_quality(rule):
+        return rule.prediction_weight
+
+    rules.sort(key=get_rule_quality)
+
+    result = {"selected_action": selected_action,
+              "rules": rules}
+
+    return result
 
 
 
@@ -105,16 +116,16 @@ def run_LCS_as_archive():
     scenario = ScenarioObserver(xcs_problem)
     algorithm = CustomXCSAlgorithm(ps_evaluator, xcs_problem)
 
-    algorithm.crossover_probability = 0
-    algorithm.deletion_threshold = 10000
-    algorithm.discount_factor = 0
-    algorithm.do_action_set_subsumption = True
-    algorithm.do_ga_subsumption = False
-    algorithm.exploration_probability = 0
-    algorithm.ga_threshold = 100000
-    algorithm.max_population_size = 50
-    algorithm.exploration_probability = 0
-    algorithm.minimum_actions = 1
+    # algorithm.crossover_probability = 0
+    # algorithm.deletion_threshold = 10000
+    # algorithm.discount_factor = 0
+    # algorithm.do_action_set_subsumption = True
+    # algorithm.do_ga_subsumption = False
+    # algorithm.exploration_probability = 0
+    # algorithm.ga_threshold = 100000
+    # algorithm.max_population_size = 50
+    # algorithm.exploration_probability = 0
+    # algorithm.minimum_actions = 1
 
     model = algorithm.new_model(scenario)
 
@@ -137,12 +148,22 @@ def run_LCS_as_archive():
 
         actual_fitness = optimisation_problem.fitness_function(solution)
 
+        result_dict = use_model_for_prediction(model, solution)
+        rules = result_dict["rules"]
+        for rule in rules:
+            print(rule)
+
         print("The match set is")
-        for item in match_set:
-            print(f"\t{item}")
-            for rule in match_set[item]:
-                print(rule)
+        # for item in match_set:
+        #     print(f"\t{item}")
+        #     for rule in match_set[item]:
+        #         print(rule)
         print(f"Solution: {solution}, predicted: {selected_action}, fitness:{actual_fitness}")
+
+        # print("The actual result is")
+        # result_dict = use_model_for_prediction(model, solution)
+        # for key in result_dict:
+        #     print(f"{key}:\n\t{result_dict[key]}")
 
 
 
