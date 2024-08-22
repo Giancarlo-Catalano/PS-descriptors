@@ -180,11 +180,11 @@ class SolutionSpecificMutualInformation(Metric):
 
     def set_pRef(self, pRef: PRef):
         self.pRef = pRef
+        self.univariate_probability_table, self.bivariate_probability_table = self.calculate_probability_tables()
 
     def set_solution(self, solution: FullSolution):
         assert self.pRef is not None
         self.solution = solution
-        self.univariate_probability_table, self.bivariate_probability_table = self.calculate_probability_tables()
         self.linkage_table = self.get_linkage_table_for_solution()
 
     def calculate_probability_tables(self) -> (list, list):
