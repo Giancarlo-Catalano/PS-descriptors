@@ -13,7 +13,8 @@ from Core.EvaluatedPS import EvaluatedPS
 from Core.FullSolution import FullSolution
 from Core.PRef import PRef
 from Core.PS import PS
-from Core.PSMetric.ValueSpecificMutualInformation import SolutionSpecificMutualInformation
+from Core.PSMetric.ValueSpecificMutualInformation import SolutionSpecificMutualInformation, \
+    FasterSolutionSpecificMutualInformation
 from LightweightLocalPSMiner.FastPSEvaluator import FastPSEvaluator
 from LightweightLocalPSMiner.LocalPSSearch import local_ps_search
 from LightweightLocalPSMiner.LocalPSSearchProblem import LocalPSPymooProblem
@@ -28,7 +29,7 @@ class TMEvaluator:
     def __init__(self,
                  pRef: PRef):
         self.used_evaluations = 0
-        self.metric = SolutionSpecificMutualInformation()
+        self.metric = FasterSolutionSpecificMutualInformation()
         self.metric.set_pRef(pRef)
 
 

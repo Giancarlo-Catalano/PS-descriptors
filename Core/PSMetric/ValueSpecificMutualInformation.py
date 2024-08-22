@@ -328,6 +328,61 @@ class SolutionSpecificMutualInformation(Metric):
 
 
 
+class FasterSolutionSpecificMutualInformation(SolutionSpecificMutualInformation):
+
+    def __init__(self):
+        super().__init__()
+
+    def set_pRef(self, pRef: PRef):
+        self.pRef = pRef
+        self.univariate_probability_table, self.bivariate_probability_table = self.calculate_probability_tables()
+
+
+
+    def calculate_probability_tables(self) -> (list, list):
+
+        full_solutions = self.pRef.get_evaluated_FSs()
+        full_solutions.sort()
+
+        solution_matrix = np.array([solution.values for solution in full_solutions])
+
+        ss = self.pRef.search_space
+        cs = ss.cardinalities
+        univariate_counts = [np.zeros(card, dtype=int) for card in cs]
+        bivariate_count_table = [[np.zeros((c2, c1), dtype=int)
+                                  for c1 in cs]
+                                 for c2 in cs]
+
+        # from here on, rank is a high value when the solution is good, a low value when it's bad
+        # ie global optima = size_of_pRef, global minima = 0 for a maximisation problem
+        def register_solution_for_univariate(solution: np.ndarray, rank: int):
+            for var, value in enumerate(solution):
+                univariate_counts[var][value] += rank
+
+        def register_solution_for_bivariate(solution: np.ndarray, rank: int):
+            for var_a, value_a in enumerate(solution):
+                for var_b in range(var_a+1, len(solution)):
+                    value_b = solution[var_b]
+                    bivariate_count_table[var_a][var_b][value_a, value_b] += rank
+
+        for rank, sample in enumerate(solution_matrix):
+            register_solution_for_univariate(sample, rank)
+            register_solution_for_bivariate(sample, rank)
+
+        def counts_to_probabilities(counts: np.ndarray):
+            """ used for both arrays and matrices"""
+            return (counts / np.sum(counts))
+
+
+        univariate_probabilities = [counts_to_probabilities(var_counts) for var_counts in univariate_counts]
+        bivariate_probabilities = [[counts_to_probabilities(bivariate_count_table[var_a][var_b])
+                                    if var_b > var_a else None
+                                    for var_b in range(len(cs))]
+                                   for var_a in range(len(cs))]
+        return univariate_probabilities, bivariate_probabilities
+
+
+
 
 
 
