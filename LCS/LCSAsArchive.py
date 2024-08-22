@@ -117,7 +117,7 @@ def run_LCS_as_archive():
 
     ps_evaluator = TMEvaluator(pRef)
 
-    xcs_problem = XCSProblemTopAndBottom(optimisation_problem, pRef = pRef, training_cycles=1000)
+    xcs_problem = XCSProblemTopAndBottom(optimisation_problem, pRef = pRef, training_cycles=10000, tail_size = 1000)
     scenario = ScenarioObserver(xcs_problem)
     algorithm = CustomXCSAlgorithm(ps_evaluator, xcs_problem)
 
@@ -144,7 +144,7 @@ def run_LCS_as_archive():
 
 
     # solutions_to_evaluate = [FullSolution.random(optimisation_problem.search_space) for _ in range(120)]
-    solutions_to_evaluate = [FullSolution([1]*16)]
+    solutions_to_evaluate = [FullSolution([1]*optimisation_problem.search_space.amount_of_parameters)]
 
     for solution in solutions_to_evaluate:
         as_input = BitString(solution.values)

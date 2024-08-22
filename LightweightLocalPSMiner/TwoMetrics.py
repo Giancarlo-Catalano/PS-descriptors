@@ -88,8 +88,8 @@ def local_tm_ps_search(to_explain: FullSolution,
                       sampling=LocalPSGeometricSampling(),
                       crossover=SimulatedBinaryCrossover(prob=0.5),
                       mutation=BitflipMutation(prob=1/problem.n_var),
-                      #eliminate_duplicates=True,
-                      #survival=UnexplainedCrowdingOperator(to_avoid)
+                      eliminate_duplicates=True,
+                      survival=UnexplainedCrowdingOperator(to_avoid)
                       )
 
     res = minimize(problem,
@@ -118,13 +118,13 @@ def local_tm_ps_search(to_explain: FullSolution,
     #wrong_signs.sort(key=get_atomicity_minus_dependence, reverse=True)
 
     budget_after_run = ps_evaluator.used_evaluations
-    print(f"The budget used for this run was {budget_after_run-budget_before_run}")
-    print(f"The pss with the correct sign are {len(correct_sign_pss)}")
-    for ps in correct_sign_pss:
-        print("\t", ps)
-    print(f"The pss with the wrong sign are {len(wrong_signs)}")
-    for ps in wrong_signs:
-        print("\t", ps)
+    # print(f"The budget used for this run was {budget_after_run-budget_before_run}")
+    # print(f"The pss with the correct sign are {len(correct_sign_pss)}")
+    # for ps in correct_sign_pss:
+    #     print("\t", ps)
+    # print(f"The pss with the wrong sign are {len(wrong_signs)}")
+    # for ps in wrong_signs:
+    #     print("\t", ps)
 
     if len(correct_sign_pss) > 0:
         return correct_sign_pss

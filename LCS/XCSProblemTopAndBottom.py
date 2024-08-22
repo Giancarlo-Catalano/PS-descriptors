@@ -25,12 +25,14 @@ class XCSProblemTopAndBottom(Scenario):
 
     remaining_cycles: int
     total_training_cycles: int
+    tail_size: int
 
 
     def __init__(self,
                  original_problem: BenchmarkProblem,
                  pRef: PRef,
-                 training_cycles: int = 1000):
+                 training_cycles: int = 1000,
+                 tail_size: int = 1000):
         self.original_problem = original_problem
 
         self.input_size = self.original_problem.search_space.amount_of_parameters
@@ -49,6 +51,7 @@ class XCSProblemTopAndBottom(Scenario):
 
         self.remaining_cycles = training_cycles
         self.total_training_cycles = training_cycles
+        self.tail_size = tail_size
 
 
     @property
@@ -85,7 +88,7 @@ class XCSProblemTopAndBottom(Scenario):
             print("Met the midpoint, resetting the internal index")
             self.reset_internal_index()
 
-        if self.current_index > 1000:
+        if self.current_index > self.tail_size:
             print("Reached the end of extreme solutions, resetting the index")
             self.reset_internal_index()
 
@@ -108,4 +111,4 @@ class XCSProblemTopAndBottom(Scenario):
     def get_current_outcome(self):
         return self.currently_showing_a_good_solution
     def execute(self, action):
-        return self.currently_showing_a_good_solution == action
+        return float(self.currently_showing_a_good_solution == action)
