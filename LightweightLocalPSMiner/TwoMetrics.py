@@ -23,16 +23,21 @@ from LightweightLocalPSMiner.Operators import LocalPSGeometricSampling, Unexplai
 class TMEvaluator:
 
     metric: SolutionSpecificMutualInformation
+    used_evaluations: int
 
     def __init__(self,
                  pRef: PRef):
+        self.used_evaluations = 0
         self.metric = SolutionSpecificMutualInformation()
         self.metric.set_pRef(pRef)
 
+
     def get_A_D(self, ps: PS) -> (float, float):
+        self.used_evaluations += 1
         atomicity = self.metric.get_atomicity_score(ps)
         dependence = self.metric.get_dependence_score(ps)
-        return  -atomicity, dependence
+
+        return -atomicity, dependence
 
 
     def set_solution(self, solution: FullSolution):
@@ -77,14 +82,14 @@ def local_tm_ps_search(to_explain: FullSolution,
     problem = TMLocalPymooProblem(to_explain,
                                   ps_evaluator)
 
-    # before_run_budget = ps_evaluator.used_evaluations
+    budget_before_run = ps_evaluator.used_evaluations
 
     algorithm = NSGA2(pop_size=population_size,
                       sampling=LocalPSGeometricSampling(),
                       crossover=SimulatedBinaryCrossover(prob=0.5),
                       mutation=BitflipMutation(prob=1/problem.n_var),
-                      eliminate_duplicates=True,
-                      survival=UnexplainedCrowdingOperator(to_avoid)
+                      #eliminate_duplicates=True,
+                      #survival=UnexplainedCrowdingOperator(to_avoid)
                       )
 
     res = minimize(problem,
@@ -100,7 +105,7 @@ def local_tm_ps_search(to_explain: FullSolution,
     correct_sign_pss = []
     wrong_signs = []
     for ps in result_pss:
-        a, d = ps.metric_scores
+        a, d  = ps.metric_scores
         if a < 0 and d > 0:
             correct_sign_pss.append(ps)
         else:
@@ -108,11 +113,23 @@ def local_tm_ps_search(to_explain: FullSolution,
 
     def get_atomicity_minus_dependence(ps: EvaluatedPS) -> float:
         a, d = ps.metric_scores
-        return a-d
-    correct_sign_pss.sort(key=get_atomicity_minus_dependence, reverse=True)
-    wrong_signs.sort(key=get_atomicity_minus_dependence, reverse=True)
+        return -d + a
+    #correct_sign_pss.sort(key=get_atomicity_minus_dependence, reverse=True)
+    #wrong_signs.sort(key=get_atomicity_minus_dependence, reverse=True)
 
-    return correct_sign_pss+wrong_signs
+    budget_after_run = ps_evaluator.used_evaluations
+    print(f"The budget used for this run was {budget_after_run-budget_before_run}")
+    print(f"The pss with the correct sign are {len(correct_sign_pss)}")
+    for ps in correct_sign_pss:
+        print("\t", ps)
+    print(f"The pss with the wrong sign are {len(wrong_signs)}")
+    for ps in wrong_signs:
+        print("\t", ps)
+
+    if len(correct_sign_pss) > 0:
+        return correct_sign_pss
+    else:
+        return wrong_signs
 
 def test_local_search():
     problem = Trapk(4, 4)

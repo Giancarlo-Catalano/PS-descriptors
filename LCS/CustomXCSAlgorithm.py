@@ -1,9 +1,12 @@
 import xcs
+from xcs import scenarios
 from xcs.scenarios import Scenario
 
 from Core.FullSolution import FullSolution
+from Core.PS import PS
 from LCS.Conversions import get_solution_coverage, get_pss_from_action_set, get_action_set, \
     ps_to_condition
+from LCS.CustomXCSClassifierSet import CustomXCSClassiferSet
 from LCS.XCSProblemTournamenter import XCSProblemTournamenter
 from LightweightLocalPSMiner.TwoMetrics import TMEvaluator, local_tm_ps_search
 
@@ -38,7 +41,7 @@ class CustomXCSAlgorithm(xcs.XCSAlgorithm):
         return should_cover
 
 
-    def cover(self, match_set: xcs.MatchSet) -> xcs.ClassifierRule:
+    def cover_with_many(self, match_set: xcs.MatchSet) -> list[xcs.ClassifierRule]:
         #return super().cover(match_set)
         action = self.xcs_problem.get_current_outcome()
         action_set = get_action_set(match_set, action)
@@ -50,15 +53,27 @@ class CustomXCSAlgorithm(xcs.XCSAlgorithm):
                               to_avoid=already_found_pss,
                               population_size=50,
                               ps_evaluator=self.ps_evaluator,
-                              ps_budget = 500,
+                              ps_budget = 1000,
                               verbose=False)
-        winning_ps = pss[0]
 
-        print(f"Covering for {self.xcs_problem.current_solution}, action = {int(action)}, yielded {winning_ps}")
+        print(f"Covering for {self.xcs_problem.current_solution}, action = {int(action)}, yielded {pss}")
 
-        return xcs.XCSClassifierRule(
-            ps_to_condition(winning_ps),
+        def ps_to_rule(ps: PS) -> xcs.XCSClassifierRule:
+            return xcs.XCSClassifierRule(
+            ps_to_condition(ps),
             action,
             self,
             match_set.model.time_stamp)
+
+        return list(map(ps_to_rule, pss))
+
+
+    def new_model(self, scenario):
+        # modified because it needs to return an instance of CustomXCSClassifier
+        assert isinstance(scenario, scenarios.Scenario)
+        return CustomXCSClassiferSet(self, scenario.get_possible_actions())
+
+
+
+
 

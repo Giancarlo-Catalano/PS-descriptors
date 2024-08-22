@@ -6,6 +6,7 @@ from xcs.bitstrings import BitString
 from xcs.scenarios import ScenarioObserver
 
 from BenchmarkProblems.BinVal import BinVal
+from BenchmarkProblems.GraphColouring import GraphColouring
 from BenchmarkProblems.MultiPlexerProblem import MediumMultiPlexerProblem
 from BenchmarkProblems.RoyalRoad import RoyalRoad
 from BenchmarkProblems.Trapk import Trapk
@@ -105,7 +106,11 @@ def use_model_for_prediction(model: xcs.ClassifierSet, solution: FullSolution) -
 
 
 def run_LCS_as_archive():
-    optimisation_problem = RoyalRoad(4, 4)
+    optimisation_problem = RoyalRoad(4, 4) #GraphColouring.random(amount_of_colours=3, amount_of_nodes=6, chance_of_connection=0.4)
+    #optimisation_problem = GraphColouring.random(amount_of_colours=3, amount_of_nodes=14, chance_of_connection=0.4)
+
+    if isinstance(optimisation_problem, GraphColouring):
+        optimisation_problem.view()
     pRef = PRefManager.generate_pRef(problem=optimisation_problem,
                                     sample_size=10000,
                                     which_algorithm="uniform SA")
