@@ -14,7 +14,7 @@ from utils import announce
 def run_LCS_as_archive():
     # the optimisation problem to be solved
 
-    optimisation_problem = RoyalRoad(4, 4) #GraphColouring.random(amount_of_colours=3, amount_of_nodes=6, chance_of_connection=0.4)
+    optimisation_problem = RoyalRoad(3, 4) #GraphColouring.random(amount_of_colours=3, amount_of_nodes=6, chance_of_connection=0.4)
     # optimisation_problem = GraphColouring.random(amount_of_colours=3, amount_of_nodes=14, chance_of_connection=0.4)
     # optimisation_problem = Trapk(4, 5)
     # optimisation_problem = CheckerBoard(4, 4)
@@ -27,7 +27,7 @@ def run_LCS_as_archive():
     # e.g uniform SA means that 50% is from random search, 50% is from Simulated Annealing
     pRef = PRefManager.generate_pRef(problem=optimisation_problem,
                                     sample_size=10000,  # these are the Solution evaluations
-                                    which_algorithm="uniform GA")
+                                    which_algorithm="uniform")
 
     # Evaluates Linkage and keeps track of PS evaluations used
     ps_evaluator = TMEvaluator(pRef)
