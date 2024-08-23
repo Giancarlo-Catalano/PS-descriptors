@@ -11,27 +11,9 @@ from LCS.XCSProblemTopAndBottom import XCSProblemTopAndBottom
 from LightweightLocalPSMiner.TwoMetrics import TMEvaluator
 from utils import announce
 
-
-def use_model_for_prediction(model: xcs.ClassifierSet, solution: FullSolution) -> dict:
-    as_input = BitString(solution.values)
-    match_set = model.match(as_input)
-    selected_action = match_set.select_action()
-    rules = list(match_set[selected_action])
-
-    def get_rule_quality(rule):
-        return rule.prediction_weight
-
-    rules.sort(key=get_rule_quality)
-
-    result = {"selected_action": selected_action,
-              "rules": rules}
-
-    return result
-
-
-
 def run_LCS_as_archive():
     # the optimisation problem to be solved
+
     optimisation_problem = RoyalRoad(4, 4) #GraphColouring.random(amount_of_colours=3, amount_of_nodes=6, chance_of_connection=0.4)
     # optimisation_problem = GraphColouring.random(amount_of_colours=3, amount_of_nodes=14, chance_of_connection=0.4)
     # optimisation_problem = Trapk(4, 5)
@@ -82,19 +64,16 @@ def run_LCS_as_archive():
     print("The model is")
     print(model)
 
-    # We requst to evaluate on the best and worst solutions
+    # We request to evaluate on the best and worst solutions
     solutions_to_evaluate = [xcs_problem.all_solutions[0], xcs_problem.all_solutions[-1]]
 
 
     for solution in solutions_to_evaluate:
-        as_input = BitString(solution.values)
-        match_set = model.match(as_input)
-
-        result_dict = use_model_for_prediction(model, solution)
+        result_dict = model.predict(solution)
         rules = result_dict["rules"]
 
         print(f"Solution: {solution}, "
-              f"predicted: {match_set.select_action()}, "
+              f"predicted: {result_dict['prediction']}, "
               f"fitness:{optimisation_problem.fitness_function(solution)}")
         for rule in rules:
             print(rule)

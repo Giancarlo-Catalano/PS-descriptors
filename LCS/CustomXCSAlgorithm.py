@@ -9,11 +9,11 @@ from Core.PS import PS
 from LCS.Conversions import get_pss_from_action_set, get_action_set, \
     ps_to_condition
 from LCS.CustomXCSClassifierSet import CustomXCSClassiferSet
-from LCS.XCSProblemTournamenter import XCSProblemTournamenter
 from LightweightLocalPSMiner.TwoMetrics import TMEvaluator, local_tm_ps_search
 
+
 def get_solution_coverage(match_set: xcs.MatchSet, action) -> float:
-    # checks how much of the situation is covered by the action set
+    """ Checks how much of the situation is covered by the action set, as a percentage """
     action_set = get_action_set(match_set, action)
     rules = list(action_set._rules)  # these are conditions, for some reason
     masks = np.array([np.array(condition.mask) for condition in rules])
@@ -59,7 +59,7 @@ class CustomXCSAlgorithm(xcs.XCSAlgorithm):
         return self.ps_evaluator.is_ps_beneficial(ps)
 
     def cover_with_many(self, match_set: xcs.MatchSet) -> list[xcs.ClassifierRule]:
-        """ This si a replacement for the .cover function. The main difference is that this returns many rules"""
+        """ This is a replacement for the .cover function. The main difference is that this returns many rules"""
 
         # get the PSs in the action set
         suggested_action = self.xcs_problem.get_current_outcome()
