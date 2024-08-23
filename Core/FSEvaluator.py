@@ -24,7 +24,7 @@ class FSEvaluator:
 
     def evaluate_population(self, population: list[EvaluatedFS]) -> list[EvaluatedFS]:
         for individual in population:
-            individual.fitness = self.evaluate(individual.full_solution)
+            individual.fitness = self.evaluate(individual)
         return population
 
     def generate_pRef_from_full_solutions(self,

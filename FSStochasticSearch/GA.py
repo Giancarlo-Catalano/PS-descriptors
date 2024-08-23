@@ -75,12 +75,12 @@ class GA:
     def make_new_child(self) -> EvaluatedFS:
         if random.random() < self.crossover_rate:
             # do crossover
-            mother = self.select_one().full_solution
-            father = self.select_one().full_solution
+            mother = self.select_one()
+            father = self.select_one()
 
             child_ps = self.mutation_operator.mutated(self.crossover_operator.crossed(mother, father))
         else:
-            child_ps = self.mutation_operator.mutated(self.select_one().full_solution)
+            child_ps = self.mutation_operator.mutated(self.select_one())
         return EvaluatedFS(child_ps, 0)
 
     def make_new_evaluated_population(self) -> list[EvaluatedFS]:

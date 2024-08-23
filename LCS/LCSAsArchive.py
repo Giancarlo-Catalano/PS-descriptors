@@ -107,6 +107,7 @@ def use_model_for_prediction(model: xcs.ClassifierSet, solution: FullSolution) -
 
 
 def run_LCS_as_archive():
+    # the optimisation problem to be solved
     optimisation_problem = RoyalRoad(4, 4) #GraphColouring.random(amount_of_colours=3, amount_of_nodes=6, chance_of_connection=0.4)
     # optimisation_problem = GraphColouring.random(amount_of_colours=3, amount_of_nodes=14, chance_of_connection=0.4)
     # optimisation_problem = Trapk(4, 5)
@@ -114,9 +115,13 @@ def run_LCS_as_archive():
 
     if isinstance(optimisation_problem, GraphColouring):
         optimisation_problem.view()
+
+    # generates the 'Reference Population', which I call the pRef.
+    # the "which algorithm" parameter indicates how this is obtained (there may be multiple sources)
+    # e.g uniform SA means that 50% is from random search, 50% is from Simulated Annealing
     pRef = PRefManager.generate_pRef(problem=optimisation_problem,
                                     sample_size=10000,
-                                    which_algorithm="uniform SA")
+                                    which_algorithm="uniform GA")
 
     ps_evaluator = TMEvaluator(pRef)
 
