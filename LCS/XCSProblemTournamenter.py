@@ -9,6 +9,9 @@ from Core.PRef import PRef
 
 
 class XCSProblemTournamenter(Scenario):
+    """ this is an old classs which was used to train the XCS.
+      It simply picks solutions at random, compares them,
+      and presents the winner with class 1, and the loser with class 0"""
 
     input_size: int
     possible_actions: tuple
@@ -21,7 +24,6 @@ class XCSProblemTournamenter(Scenario):
     previous_solution: EvaluatedFS
     current_solution: EvaluatedFS
     is_current_better: bool
-
 
     def randomly_pick_solution(self) -> EvaluatedFS:
         return random.choice(self.all_solutions)
@@ -42,7 +44,6 @@ class XCSProblemTournamenter(Scenario):
         self.current_solution = self.randomly_pick_solution()
         self.obtain_new_solution()
 
-
     @property
     def is_dynamic(self):
         return False
@@ -61,7 +62,7 @@ class XCSProblemTournamenter(Scenario):
         candidate = None
         while True:
             candidate = self.randomly_pick_solution()
-            if candidate.fitness != self.current_solution.fitness: # TODO make them within a threshold
+            if candidate.fitness != self.current_solution.fitness:  # TODO make them within a threshold
                 break
 
         self.previous_solution = self.current_solution

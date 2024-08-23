@@ -12,6 +12,8 @@ from BenchmarkProblems.RoyalRoad import RoyalRoad
 from Core.FullSolution import FullSolution
 
 
+""" this file is just to check if XCS all works as intended"""
+
 def test_if_library_works():
     logging.root.setLevel(logging.INFO)
     xcs.test()
@@ -34,10 +36,7 @@ def test_manually():
     print(model)
 
 
-
-
 class XSCProblemWrapper(Scenario):
-
     input_size: int
     possible_actions: tuple
     initial_training_cycles: int
@@ -46,7 +45,6 @@ class XSCProblemWrapper(Scenario):
     original_problem: BenchmarkProblem
 
     last_fitness = Optional[float]
-
 
     def __init__(self,
                  original_problem: BenchmarkProblem,
@@ -59,7 +57,6 @@ class XSCProblemWrapper(Scenario):
         self.remaining_cycles = training_cycles
 
         self.last_fitness = None
-
 
     @property
     def is_dynamic(self):
