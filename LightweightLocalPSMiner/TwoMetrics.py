@@ -7,18 +7,14 @@ from pymoo.operators.crossover.sbx import SimulatedBinaryCrossover
 from pymoo.operators.mutation.bitflip import BitflipMutation
 from pymoo.optimize import minimize
 
-from BenchmarkProblems.RoyalRoad import RoyalRoad
 from BenchmarkProblems.Trapk import Trapk
 from Core.EvaluatedPS import EvaluatedPS
 from Core.FullSolution import FullSolution
 from Core.PRef import PRef
 from Core.PS import PS
-from Core.PSMetric.MeanFitness import MeanFitness, ChanceOfGood, FitnessDelta
+from Core.PSMetric.MeanFitness import FitnessDelta
 from Core.PSMetric.ValueSpecificMutualInformation import SolutionSpecificMutualInformation, \
     FasterSolutionSpecificMutualInformation
-from LightweightLocalPSMiner.FastPSEvaluator import FastPSEvaluator
-from LightweightLocalPSMiner.LocalPSSearch import local_ps_search
-from LightweightLocalPSMiner.LocalPSSearchProblem import LocalPSPymooProblem
 from LightweightLocalPSMiner.Operators import LocalPSGeometricSampling, ObjectiveSpaceAvoidance
 
 
@@ -54,6 +50,7 @@ class TMEvaluator:
 
 
     def is_ps_beneficial(self, ps: PS) -> bool:
+        self.used_evaluations += 1
         return self.mean_fitness_metric.get_single_score(ps) > 0
 
 class TMLocalPymooProblem(Problem):
@@ -95,7 +92,6 @@ def local_tm_ps_search(to_explain: FullSolution,
     problem = TMLocalPymooProblem(to_explain,
                                   ps_evaluator)
 
-    budget_before_run = ps_evaluator.used_evaluations
 
     algorithm = NSGA2(pop_size=population_size,
                       sampling=LocalPSGeometricSampling(),

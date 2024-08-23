@@ -122,7 +122,7 @@ def run_LCS_as_archive():
 
     xcs_problem = XCSProblemTopAndBottom(optimisation_problem, pRef = pRef, training_cycles=3000, tail_size = 1000)
     scenario = ScenarioObserver(xcs_problem)
-    algorithm = CustomXCSAlgorithm(ps_evaluator, xcs_problem)
+    algorithm = CustomXCSAlgorithm(ps_evaluator, xcs_problem, verbose=True)
 
     # algorithm.crossover_probability = 0
     # algorithm.deletion_threshold = 10000
