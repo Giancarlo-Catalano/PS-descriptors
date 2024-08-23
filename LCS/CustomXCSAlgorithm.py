@@ -48,8 +48,8 @@ class CustomXCSAlgorithm(xcs.XCSAlgorithm):
 
     def cover_with_many(self, match_set: xcs.MatchSet) -> list[xcs.ClassifierRule]:
         #return super().cover(match_set)
-        action = self.xcs_problem.get_current_outcome()
-        action_set = get_action_set(match_set, action)
+        suggested_action = self.xcs_problem.get_current_outcome()
+        action_set = get_action_set(match_set, suggested_action)
         already_found_pss = get_pss_from_action_set(action_set)
         solution = FullSolution(match_set.situation)
         self.ps_evaluator.set_solution(solution)
@@ -64,10 +64,10 @@ class CustomXCSAlgorithm(xcs.XCSAlgorithm):
         actions = [self.get_appropriate_action_for_ps(ps) for ps in pss]
 
         optimisation_problem: BenchmarkProblem = self.xcs_problem.original_problem
-        print(f"Covering for {optimisation_problem.repr_fs(self.xcs_problem.current_solution)}, action = {int(action)}, yielded:")
-        for ps, action in zip(pss, actions):
+        print(f"Covering for {optimisation_problem.repr_fs(self.xcs_problem.current_solution)}, action = {int(suggested_action)}, yielded:")
+        for ps, ps_action in zip(pss, actions):
             delta = self.ps_evaluator.mean_fitness_metric.get_single_score(ps)
-            print(f"\t{optimisation_problem.repr_ps(ps)} -> {action}  ({delta = })")
+            print(f"\t{optimisation_problem.repr_ps(ps)} -> {ps_action}  ({delta = :.3f}), {'(DISCARDED)' if ps_action !=suggested_action else ''}")
 
 
 
@@ -78,7 +78,9 @@ class CustomXCSAlgorithm(xcs.XCSAlgorithm):
             self,
             match_set.model.time_stamp)
 
-        return [ps_to_rule(ps, action) for ps, action in zip(pss, actions)]
+        return [ps_to_rule(ps, action)
+                for ps, action in zip(pss, actions)
+                if action == suggested_action]  # only allow rules that match the action
 
 
     def new_model(self, scenario):
