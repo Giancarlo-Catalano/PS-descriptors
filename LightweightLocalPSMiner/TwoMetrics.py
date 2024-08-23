@@ -13,6 +13,7 @@ from Core.EvaluatedPS import EvaluatedPS
 from Core.FullSolution import FullSolution
 from Core.PRef import PRef
 from Core.PS import PS
+from Core.PSMetric.MeanFitness import MeanFitness, ChanceOfGood, FitnessDelta
 from Core.PSMetric.ValueSpecificMutualInformation import SolutionSpecificMutualInformation, \
     FasterSolutionSpecificMutualInformation
 from LightweightLocalPSMiner.FastPSEvaluator import FastPSEvaluator
@@ -23,26 +24,37 @@ from LightweightLocalPSMiner.Operators import LocalPSGeometricSampling, Unexplai
 
 class TMEvaluator:
 
-    metric: SolutionSpecificMutualInformation
+    linkage_metric: SolutionSpecificMutualInformation
+    mean_fitness_metric: FitnessDelta
+    global_mean_fitness: float
     used_evaluations: int
 
     def __init__(self,
                  pRef: PRef):
         self.used_evaluations = 0
-        self.metric = FasterSolutionSpecificMutualInformation()
-        self.metric.set_pRef(pRef)
+        self.linkage_metric = FasterSolutionSpecificMutualInformation()
+        self.linkage_metric.set_pRef(pRef)
+
+        self.mean_fitness_metric = FitnessDelta()
+        self.mean_fitness_metric.set_pRef(pRef)
+
+        self.global_mean_fitness = np.average(pRef.fitness_array)
 
 
     def get_A_D(self, ps: PS) -> (float, float):
         self.used_evaluations += 1
-        atomicity = self.metric.get_atomicity_score(ps)
-        dependence = self.metric.get_dependence_score(ps)
+        atomicity = self.linkage_metric.get_atomicity_score(ps)
+        dependence = self.linkage_metric.get_dependence_score(ps)
 
         return -atomicity, dependence
 
 
     def set_solution(self, solution: FullSolution):
-        self.metric.set_solution(solution)
+        self.linkage_metric.set_solution(solution)
+
+
+    def is_ps_beneficial(self, ps: PS) -> bool:
+        return self.mean_fitness_metric.get_single_score(ps) > 0
 
 class TMLocalPymooProblem(Problem):
 

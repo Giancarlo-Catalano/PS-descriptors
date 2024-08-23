@@ -58,6 +58,48 @@ class MeanFitness(Metric):
         return np.average(observed_fitnesses)
 
 
+
+class FitnessDelta(Metric):
+    pRef: Optional[PRef]
+
+    total_fitness: Optional[float]
+
+
+    def __init__(self):
+        self.pRef = None
+        self.total_fitness = None
+        super().__init__()
+
+    def __repr__(self):
+        return "FitnessDelta"
+
+
+    def set_pRef(self, pRef: PRef):
+        self.pRef = pRef
+        self.total_fitness = np.sum(pRef.fitness_array)
+
+
+    def get_mean_fitness_delta(self, ps: PS) -> float:
+        fitnesses_when_present = self.pRef.fitnesses_of_observations(ps)
+        if len(fitnesses_when_present) == 0:
+            # no datapoints match the solution
+            return 0 # TODO consider a better panic value
+        if len(fitnesses_when_present) == self.pRef.sample_size:
+            # all datapoints match the solution
+            return 0
+
+        sum_of_fitnesses_when_present = np.sum(fitnesses_when_present)
+        sum_of_fitnesses_when_absent = self.total_fitness - sum_of_fitnesses_when_present
+        mean_fitness_when_present = sum_of_fitnesses_when_present / len(fitnesses_when_present)
+        mean_fitness_when_absent = sum_of_fitnesses_when_absent / (self.pRef.sample_size - len(fitnesses_when_present))
+
+        return mean_fitness_when_present - mean_fitness_when_absent
+
+
+    def get_single_score(self, ps: PS) -> float:
+        return self.get_mean_fitness_delta(ps)
+
+
 class ChanceOfGood(Metric):
     pRef: Optional[PRef]
     median_fitness: Optional[float]

@@ -2,6 +2,7 @@ import xcs
 from xcs import scenarios
 from xcs.scenarios import Scenario
 
+from BenchmarkProblems.BenchmarkProblem import BenchmarkProblem
 from Core.FullSolution import FullSolution
 from Core.PS import PS
 from LCS.Conversions import get_solution_coverage, get_pss_from_action_set, get_action_set, \
@@ -41,6 +42,10 @@ class CustomXCSAlgorithm(xcs.XCSAlgorithm):
         return should_cover
 
 
+    def get_appropriate_action_for_ps(self, ps: PS):
+        return self.ps_evaluator.is_ps_beneficial(ps)
+
+
     def cover_with_many(self, match_set: xcs.MatchSet) -> list[xcs.ClassifierRule]:
         #return super().cover(match_set)
         action = self.xcs_problem.get_current_outcome()
@@ -56,16 +61,24 @@ class CustomXCSAlgorithm(xcs.XCSAlgorithm):
                               ps_budget = 1000,
                               verbose=False)
 
-        print(f"Covering for {self.xcs_problem.current_solution}, action = {int(action)}, yielded {pss}")
+        actions = [self.get_appropriate_action_for_ps(ps) for ps in pss]
 
-        def ps_to_rule(ps: PS) -> xcs.XCSClassifierRule:
+        optimisation_problem: BenchmarkProblem = self.xcs_problem.original_problem
+        print(f"Covering for {optimisation_problem.repr_fs(self.xcs_problem.current_solution)}, action = {int(action)}, yielded:")
+        for ps, action in zip(pss, actions):
+            delta = self.ps_evaluator.mean_fitness_metric.get_single_score(ps)
+            print(f"\t{optimisation_problem.repr_ps(ps)} -> {action}  ({delta = })")
+
+
+
+        def ps_to_rule(ps: PS, action) -> xcs.XCSClassifierRule:
             return xcs.XCSClassifierRule(
             ps_to_condition(ps),
             action,
             self,
             match_set.model.time_stamp)
 
-        return list(map(ps_to_rule, pss))
+        return [ps_to_rule(ps, action) for ps, action in zip(pss, actions)]
 
 
     def new_model(self, scenario):
