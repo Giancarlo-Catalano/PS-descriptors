@@ -3,6 +3,7 @@ import xcs
 from xcs import scenarios
 from xcs.scenarios import Scenario
 
+import utils
 from BenchmarkProblems.BenchmarkProblem import BenchmarkProblem
 from Core.FullSolution import FullSolution
 from Core.PS import PS
@@ -72,7 +73,7 @@ class CustomXCSAlgorithm(xcs.XCSAlgorithm):
 
         # search for the appropriate patterns using NSGAII (using Pymoo)
         pss = local_tm_ps_search(to_explain=solution,
-                                 to_avoid=already_found_pss,
+                                 to_avoid=[], # already_found_pss,
                                  population_size=30,
                                  ps_evaluator=self.ps_evaluator,
                                  ps_budget=1000,
@@ -84,16 +85,15 @@ class CustomXCSAlgorithm(xcs.XCSAlgorithm):
         if self.verbose:
             optimisation_problem: BenchmarkProblem = self.xcs_problem.original_problem
             print(
-                f"Covering for {optimisation_problem.repr_fs(self.xcs_problem.current_solution)}, action = {int(suggested_action)}, yielded:")
+                f"Covering for \n", utils.indent(f"{optimisation_problem.repr_fs(self.xcs_problem.current_solution)}, action = {int(suggested_action)}, yielded:"))
             for ps, ps_action in zip(pss, actions):
                 a, d = ps.metric_scores
                 delta = self.ps_evaluator.mean_fitness_metric.get_single_score(ps)
-                print(
-                    f"\t{optimisation_problem.repr_ps(ps)} -> {int(ps_action)},"
-                    f" internal = {a:.3f}, external = {d:.3f},"
+                print(utils.indent(
+                    f"{optimisation_problem.repr_ps(ps)} -> {int(ps_action)},"
+                    f" internal = {-a:.3f}, external = {-d:.3f},"
                     f" ({delta = :.3f} "
-                    f" {'(DISAGREES)' if ps_action != suggested_action else ''})"
-                )
+                    f" {'(DISAGREES)' if ps_action != suggested_action else ''})"))
 
         def ps_to_rule(ps: PS, action) -> xcs.XCSClassifierRule:
             return xcs.XCSClassifierRule(
