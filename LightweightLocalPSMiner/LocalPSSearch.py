@@ -11,7 +11,7 @@ from Core.FullSolution import FullSolution
 from Core.PS import PS
 from LightweightLocalPSMiner.FastPSEvaluator import FastPSEvaluator
 from LightweightLocalPSMiner.LocalPSSearchProblem import LocalPSPymooProblem
-from LightweightLocalPSMiner.Operators import LocalPSGeometricSampling, UnexplainedCrowdingOperator
+from LightweightLocalPSMiner.Operators import LocalPSGeometricSampling, ObjectiveSpaceAvoidance
 from PSMiners.AbstractPSMiner import AbstractPSMiner
 
 def local_ps_search(to_explain: FullSolution,
@@ -30,7 +30,7 @@ def local_ps_search(to_explain: FullSolution,
                       crossover=SimulatedBinaryCrossover(prob=0.5),
                       mutation=BitflipMutation(prob=1/problem.n_var),
                       eliminate_duplicates=True,
-                      survival=UnexplainedCrowdingOperator(to_avoid)
+                      survival=ObjectiveSpaceAvoidance(to_avoid)
                       )
 
     res = minimize(problem,

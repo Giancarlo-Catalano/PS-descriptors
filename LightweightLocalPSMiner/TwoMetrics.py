@@ -19,7 +19,7 @@ from Core.PSMetric.ValueSpecificMutualInformation import SolutionSpecificMutualI
 from LightweightLocalPSMiner.FastPSEvaluator import FastPSEvaluator
 from LightweightLocalPSMiner.LocalPSSearch import local_ps_search
 from LightweightLocalPSMiner.LocalPSSearchProblem import LocalPSPymooProblem
-from LightweightLocalPSMiner.Operators import LocalPSGeometricSampling, UnexplainedCrowdingOperator
+from LightweightLocalPSMiner.Operators import LocalPSGeometricSampling, ObjectiveSpaceAvoidance
 
 
 class TMEvaluator:
@@ -102,7 +102,7 @@ def local_tm_ps_search(to_explain: FullSolution,
                       crossover=SimulatedBinaryCrossover(prob=0.5),
                       mutation=BitflipMutation(prob=1/problem.n_var),
                       eliminate_duplicates=True,
-                      survival=UnexplainedCrowdingOperator(to_avoid)
+                      survival=ObjectiveSpaceAvoidance(to_avoid)
                       )
 
     res = minimize(problem,

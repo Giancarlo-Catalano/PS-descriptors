@@ -24,7 +24,7 @@ class LocalPSGeometricSampling(FloatRandomSampling):
 
 
 
-class UnexplainedCrowdingOperator(PyMooCustomCrowding):
+class ObjectiveSpaceAvoidance(PyMooCustomCrowding):
     masks_to_avoid: list[np.ndarray]
     sigma_shared: float
     opt: Any

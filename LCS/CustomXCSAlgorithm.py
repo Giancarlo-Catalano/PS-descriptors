@@ -67,7 +67,7 @@ class CustomXCSAlgorithm(xcs.XCSAlgorithm):
         print(f"Covering for {optimisation_problem.repr_fs(self.xcs_problem.current_solution)}, action = {int(suggested_action)}, yielded:")
         for ps, ps_action in zip(pss, actions):
             delta = self.ps_evaluator.mean_fitness_metric.get_single_score(ps)
-            print(f"\t{optimisation_problem.repr_ps(ps)} -> {ps_action}  ({delta = :.3f}), {'(DISCARDED)' if ps_action !=suggested_action else ''}")
+            print(f"\t{optimisation_problem.repr_ps(ps)} -> {ps_action}  ({delta = :.3f}), {'(DISAGREES)' if ps_action !=suggested_action else ''}")
 
 
 
@@ -80,7 +80,8 @@ class CustomXCSAlgorithm(xcs.XCSAlgorithm):
 
         return [ps_to_rule(ps, action)
                 for ps, action in zip(pss, actions)
-                if action == suggested_action]  # only allow rules that match the action
+                # if action == suggested_action
+                ]  # only allow rules that match the action
 
 
     def new_model(self, scenario):

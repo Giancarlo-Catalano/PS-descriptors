@@ -309,6 +309,9 @@ class SolutionSpecificMutualInformation(Metric):
         if len(fixed_vars) > 1:
             weakest_links = np.array([weakest_internal_linkage_for(var) for var in fixed_vars])
             return np.average(weakest_links)
+        elif len(fixed_vars) ==1:
+            var = fixed_vars[0]
+            return self.linkage_table[var, var]
         else:
             return 0
 
@@ -321,6 +324,9 @@ class SolutionSpecificMutualInformation(Metric):
         if (len(unfixed_vars) > 0) and (len(fixed_vars) > 0): # maybe this should be zero?
             strongest_links = np.array([strongest_external_linkage_for(var) for var in fixed_vars])
             return np.average(strongest_links)
+        elif len(fixed_vars) == 1:
+            var = fixed_vars[0]
+            return strongest_external_linkage_for(var)
         else:
             return 0
 
