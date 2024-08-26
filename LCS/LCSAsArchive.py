@@ -24,17 +24,17 @@ def set_settings_for_lcs_algorithm(algorithm: xcs.XCSAlgorithm) -> None:
     # algorithm.do_ga_subsumption = False
     # algorithm.exploration_probability = 0
     # algorithm.ga_threshold = 100000
-    algorithm.max_population_size = 50
+    # algorithm.max_population_size = 50
     # algorithm.exploration_probability = 0
     # algorithm.minimum_actions = 1
 
 def run_LCS_as_archive(verbose: bool = False):
     # the optimisation problem to be solved
 
-    # optimisation_problem = RoyalRoad(3, 4) #GraphColouring.random(amount_of_colours=3, amount_of_nodes=6, chance_of_connection=0.4)
+    # optimisation_problem = RoyalRoad(5, 4)
     # optimisation_problem = GraphColouring.random(amount_of_colours=3, amount_of_nodes=14, chance_of_connection=0.4)
-    optimisation_problem = Trapk(4, 5)
-    # optimisation_problem = CheckerBoard(4, 4)
+    # optimisation_problem = Trapk(6, 5)
+    optimisation_problem = CheckerBoard(4, 4)
 
     if isinstance(optimisation_problem, GraphColouring):
         optimisation_problem.view()
@@ -48,7 +48,7 @@ def run_LCS_as_archive(verbose: bool = False):
                                      verbose=verbose)
 
     # Evaluates Linkage and keeps track of PS evaluations used
-    ps_evaluator = TMEvaluator(pRef)
+    ps_evaluator = TMEvaluator(pRef, use_value_specific_linkage=False)
 
     # shows, alternating, the best and worst solutions. The best solutions have class 1 and the worst have class 0.
     xcs_problem = XCSProblemTopAndBottom(optimisation_problem,
@@ -87,6 +87,6 @@ def run_LCS_as_archive(verbose: bool = False):
         for rule in rules:
             print(rule)
 
-run_LCS_as_archive(verbose=False)
+run_LCS_as_archive(verbose=True)
 
 

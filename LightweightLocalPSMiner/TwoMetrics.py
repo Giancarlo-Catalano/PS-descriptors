@@ -28,9 +28,13 @@ class TMEvaluator:
     used_evaluations: int
 
     def __init__(self,
-                 pRef: PRef):
+                 pRef: PRef,
+                 use_value_specific_linkage: bool = False):
         self.used_evaluations = 0
-        self.linkage_metric = NotValueSpecificMI()
+        if use_value_specific_linkage:
+            self.linkage_metric = FasterSolutionSpecificMutualInformation()
+        else:
+            self.linkage_metric = NotValueSpecificMI()
         self.linkage_metric.set_pRef(pRef)
 
         self.delta_fitness_metric = FitnessDelta()

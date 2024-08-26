@@ -1,11 +1,8 @@
 import itertools
-import random
 from typing import Optional
 
 import numpy as np
 
-import utils
-from Core.EvaluatedFS import EvaluatedFS
 from Core.FullSolution import FullSolution
 from Core.PRef import PRef
 from Core.PS import PS, STAR
@@ -45,38 +42,36 @@ class ValueSpecificMutualInformation(Metric):
 
         indexes = np.random.randint(self.pRef.sample_size, size=amount_of_samples)
         fitnesses = self.pRef.fitness_array[indexes]
-        who_won = fitnesses > np.roll(fitnesses, 1)  # note > and not >=. This is preferred because some problems have heavy fitness collisions
+        who_won = fitnesses > np.roll(fitnesses,
+                                      1)  # note > and not >=. This is preferred because some problems have heavy fitness collisions
         winning_indexes = indexes[who_won]
         winning_solutions = self.pRef.full_solution_matrix[winning_indexes, :]
-
 
         univariate_counts = [np.zeros(card) for card in self.pRef.search_space.cardinalities]
         cs = self.pRef.search_space.cardinalities
         bivariate_count_table = [[np.zeros((c2, c1), dtype=int)
                                   for c1 in cs]
                                  for c2 in cs]
+
         def register_solution_for_univariate(solution: np.ndarray):
             for var, value in enumerate(solution):
                 univariate_counts[var][value] += 1
 
-
         def register_solution_for_bivariate(solution: np.ndarray):
             for var_a, value_a in enumerate(solution):
-                for var_b in range(var_a+1, len(solution)):
+                for var_b in range(var_a + 1, len(solution)):
                     value_b = solution[var_b]
                     bivariate_count_table[var_a][var_b][value_a, value_b] += 1
-
 
         for sample_number, sample in enumerate(winning_solutions):
             register_solution_for_univariate(sample)
             register_solution_for_bivariate(sample)
-            if sample_number%(len(winning_solutions) // 100) == 0:
-                print(f"MI data gathering progress: {100*sample_number/len(winning_solutions):.2f}%")
+            if sample_number % (len(winning_solutions) // 100) == 0:
+                print(f"MI data gathering progress: {100 * sample_number / len(winning_solutions):.2f}%")
 
         def counts_to_probabilities(counts: np.ndarray):
             """ used for both arrays and matrices"""
             return (counts / np.sum(counts))
-
 
         univariate_probabilities = [counts_to_probabilities(var_counts) for var_counts in univariate_counts]
         bivariate_probabilities = [[counts_to_probabilities(bivariate_count_table[var_a][var_b])
@@ -93,7 +88,7 @@ class ValueSpecificMutualInformation(Metric):
 
         if p_a_b == 0:
             return 0
-        return p_a_b * np.log(p_a_b/(p_a * p_b))
+        return p_a_b * np.log(p_a_b / (p_a * p_b))
 
     def get_linkage_dict(self) -> dict[(int, int, int, int), float]:
         ss = self.pRef.search_space
@@ -109,7 +104,6 @@ class ValueSpecificMutualInformation(Metric):
         fixed_vars = ps.get_fixed_variable_positions()
         return [self.linkage_dict[(var_a, ps[var_a], var_b, ps[var_b])]
                 for var_a, var_b in itertools.combinations(fixed_vars, r=2)]
-
 
     def get_univariate_dict(self) -> dict[(int, int), float]:
         all_varvals = [(var, val)
@@ -127,7 +121,7 @@ class ValueSpecificMutualInformation(Metric):
                                for o_var, o_val in all_varvals
                                if o_var != var])
 
-        return {(var, val) : univariate_for_varval(var, val)
+        return {(var, val): univariate_for_varval(var, val)
                 for (var, val) in all_varvals}
 
     def get_single_score(self, ps: PS) -> float:
@@ -141,11 +135,10 @@ class ValueSpecificMutualInformation(Metric):
         else:
             return 0
 
-
     def get_linkage_table_for_solution(self, fs: FullSolution) -> np.ndarray:
         # this is mainly for debug
         n = len(fs)
-        result = np.zeros(shape=(n, n), dtype = float)
+        result = np.zeros(shape=(n, n), dtype=float)
         for a, b in itertools.combinations(range(n), r=2):
             result[a, b] = self.linkage_dict[(a, fs.values[a], b, fs.values[b])]
 
@@ -193,24 +186,25 @@ class SolutionSpecificMutualInformation(Metric):
 
         indexes = np.random.randint(self.pRef.sample_size, size=amount_of_samples)
         fitnesses = self.pRef.fitness_array[indexes]
-        who_won = fitnesses > np.roll(fitnesses, 1)#self.solution.fitness  # note > and not >=. This is preferred because some problems have heavy fitness collisions
+        who_won = fitnesses > np.roll(fitnesses,
+                                      1)  # self.solution.fitness  # note > and not >=. This is preferred because some problems have heavy fitness collisions
         winning_indexes = indexes[who_won]
         winning_solutions = self.pRef.full_solution_matrix[winning_indexes, :]
-        #wins_for_main_solution = np.sum(~who_won)
-
+        # wins_for_main_solution = np.sum(~who_won)
 
         univariate_counts = [np.zeros(card) for card in self.pRef.search_space.cardinalities]
         cs = self.pRef.search_space.cardinalities
         bivariate_count_table = [[np.zeros((c2, c1), dtype=int)
                                   for c1 in cs]
                                  for c2 in cs]
+
         def register_solution_for_univariate(solution: np.ndarray):
             for var, value in enumerate(solution):
                 univariate_counts[var][value] += 1
 
         def register_solution_for_bivariate(solution: np.ndarray):
             for var_a, value_a in enumerate(solution):
-                for var_b in range(var_a+1, len(solution)):
+                for var_b in range(var_a + 1, len(solution)):
                     value_b = solution[var_b]
                     bivariate_count_table[var_a][var_b][value_a, value_b] += 1
 
@@ -228,7 +222,6 @@ class SolutionSpecificMutualInformation(Metric):
             """ used for both arrays and matrices"""
             return (counts / np.sum(counts))
 
-
         univariate_probabilities = [counts_to_probabilities(var_counts) for var_counts in univariate_counts]
         bivariate_probabilities = [[counts_to_probabilities(bivariate_count_table[var_a][var_b])
                                     if var_b > var_a else None
@@ -244,12 +237,11 @@ class SolutionSpecificMutualInformation(Metric):
 
         if p_a_b == 0:
             return 0
-        return p_a_b * np.log(p_a_b/(p_a * p_b))
-
+        return p_a_b * np.log(p_a_b / (p_a * p_b))
 
     def get_linkage_table_for_solution(self) -> np.ndarray:
         n = self.pRef.search_space.amount_of_parameters
-        result = np.zeros(shape=(n, n), dtype = float)
+        result = np.zeros(shape=(n, n), dtype=float)
         for a, b in itertools.combinations(range(n), r=2):
             result[a, b] = self.mutual_information(a,
                                                    self.solution.values[a],
@@ -259,7 +251,7 @@ class SolutionSpecificMutualInformation(Metric):
         result += result.T
 
         sums_of_linkages = np.sum(result, axis=0)
-        averages = sums_of_linkages / (n-1)
+        averages = sums_of_linkages / (n - 1)
         np.fill_diagonal(result, averages)
 
         return result
@@ -268,7 +260,6 @@ class SolutionSpecificMutualInformation(Metric):
         fixed_vars = ps.get_fixed_variable_positions()
         return [self.linkage_table[var_a, var_b]
                 for var_a, var_b in itertools.combinations(fixed_vars, r=2)]
-
 
     def get_univariate_dict(self) -> dict[(int, int), float]:
         all_varvals = [(var, val)
@@ -286,7 +277,7 @@ class SolutionSpecificMutualInformation(Metric):
                                for o_var, o_val in all_varvals
                                if o_var != var])
 
-        return {(var, val) : univariate_for_varval(var, val)
+        return {(var, val): univariate_for_varval(var, val)
                 for (var, val) in all_varvals}
 
     def get_single_score(self, ps: PS) -> float:
@@ -300,16 +291,16 @@ class SolutionSpecificMutualInformation(Metric):
         else:
             return 0
 
-
     def get_atomicity_score(self, ps: PS) -> float:
         fixed_vars = ps.get_fixed_variable_positions()
+
         def weakest_internal_linkage_for(var) -> float:
             return min(self.linkage_table[var, other] for other in fixed_vars if other != var)
 
         if len(fixed_vars) > 1:
             weakest_links = np.array([weakest_internal_linkage_for(var) for var in fixed_vars])
             return np.average(weakest_links)
-        elif len(fixed_vars) ==1:
+        elif len(fixed_vars) == 1:
             var = fixed_vars[0]
             return self.linkage_table[var, var]
         else:
@@ -318,10 +309,11 @@ class SolutionSpecificMutualInformation(Metric):
     def get_dependence_score(self, ps: PS) -> float:
         fixed_vars = ps.get_fixed_variable_positions()
         unfixed_vars = [index for index, val in enumerate(ps.values) if val == STAR]
+
         def strongest_external_linkage_for(var) -> float:
             return max(self.linkage_table[var, other] for other in unfixed_vars)
 
-        if (len(unfixed_vars) > 0) and (len(fixed_vars) > 0): # maybe this should be zero?
+        if (len(unfixed_vars) > 0) and (len(fixed_vars) > 0):  # maybe this should be zero?
             strongest_links = np.array([strongest_external_linkage_for(var) for var in fixed_vars])
             return np.average(strongest_links)
         elif len(fixed_vars) == 1:
@@ -329,7 +321,6 @@ class SolutionSpecificMutualInformation(Metric):
             return strongest_external_linkage_for(var)
         else:
             return 0
-
 
 
 class FasterSolutionSpecificMutualInformation(SolutionSpecificMutualInformation):
@@ -340,8 +331,6 @@ class FasterSolutionSpecificMutualInformation(SolutionSpecificMutualInformation)
     def set_pRef(self, pRef: PRef):
         self.pRef = pRef
         self.univariate_probability_table, self.bivariate_probability_table = self.calculate_probability_tables()
-
-
 
     def calculate_probability_tables(self) -> (list, list):
 
@@ -365,7 +354,7 @@ class FasterSolutionSpecificMutualInformation(SolutionSpecificMutualInformation)
 
         def register_solution_for_bivariate(solution: np.ndarray, rank: int):
             for var_a, value_a in enumerate(solution):
-                for var_b in range(var_a+1, len(solution)):
+                for var_b in range(var_a + 1, len(solution)):
                     value_b = solution[var_b]
                     bivariate_count_table[var_a][var_b][value_a, value_b] += rank
 
@@ -377,14 +366,12 @@ class FasterSolutionSpecificMutualInformation(SolutionSpecificMutualInformation)
             """ used for both arrays and matrices"""
             return (counts / np.sum(counts))
 
-
         univariate_probabilities = [counts_to_probabilities(var_counts) for var_counts in univariate_counts]
         bivariate_probabilities = [[counts_to_probabilities(bivariate_count_table[var_a][var_b])
                                     if var_b > var_a else None
                                     for var_b in range(len(cs))]
                                    for var_a in range(len(cs))]
         return univariate_probabilities, bivariate_probabilities
-
 
     # def get_linkage_table_for_solution(self) -> np.ndarray:
     #     #  this is temporary, TODO remove me
@@ -410,6 +397,7 @@ class FasterSolutionSpecificMutualInformation(SolutionSpecificMutualInformation)
 
 class NotValueSpecificMI(FasterSolutionSpecificMutualInformation):
     linkage_table: Optional[np.ndarray]
+
     def __init__(self):
         self.linkage_table = None
         super().__init__()
@@ -418,16 +406,13 @@ class NotValueSpecificMI(FasterSolutionSpecificMutualInformation):
         super().set_pRef(pRef)
         self.linkage_table = self.get_linkage_table()
 
-
     def set_solution(self, solution: FullSolution):
-        pass  #  so that the linkage table does not get overwritten
-
+        pass  # so that the linkage table does not get overwritten
 
     def get_linkage_table(self) -> np.ndarray:
-        #  this is temporary, TODO remove me
         def get_linkage_between_vars(var_a: int, var_b: int) -> float:
             ss = self.pRef.search_space
-            return max(self.mutual_information(var_a, value_a, var_b, value_b)
+            return sum(self.mutual_information(var_a, value_a, var_b, value_b)
                        for value_a in range(ss.cardinalities[var_a])
                        for value_b in range(ss.cardinalities[var_b]))
 
@@ -443,7 +428,3 @@ class NotValueSpecificMI(FasterSolutionSpecificMutualInformation):
         np.fill_diagonal(result, averages)
 
         return result
-
-
-
-
