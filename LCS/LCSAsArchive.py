@@ -20,22 +20,22 @@ def set_settings_for_lcs_algorithm(algorithm: xcs.XCSAlgorithm) -> None:
     # algorithm.crossover_probability = 0
     # algorithm.deletion_threshold = 10000
     # algorithm.discount_factor = 0
-    # algorithm.do_action_set_subsumption = True
+    algorithm.do_action_set_subsumption = True
     # algorithm.do_ga_subsumption = False
     # algorithm.exploration_probability = 0
     # algorithm.ga_threshold = 100000
-    # algorithm.max_population_size = 50
-    # algorithm.exploration_probability = 0
+    algorithm.max_population_size = 50
+    algorithm.exploration_probability = 0
     # algorithm.minimum_actions = 1
 
 
 def run_LCS_as_archive(verbose: bool = False):
     # the optimisation problem to be solved
 
-    optimisation_problem = RoyalRoad(5, 4)
+    #optimisation_problem = RoyalRoad(5, 4)
     # optimisation_problem = GraphColouring.random(amount_of_colours=3, amount_of_nodes=14, chance_of_connection=0.4)
-    # optimisation_problem = Trapk(6, 5)
-    # optimisation_problem = CheckerBoard(4, 4)
+    #optimisation_problem = Trapk(6, 5)
+    optimisation_problem = CheckerBoard(4, 4)
 
     if isinstance(optimisation_problem, GraphColouring):
         optimisation_problem.view()
@@ -45,7 +45,7 @@ def run_LCS_as_archive(verbose: bool = False):
     # e.g uniform SA means that 50% is from random search, 50% is from Simulated Annealing
     pRef = PRefManager.generate_pRef(problem=optimisation_problem,
                                      sample_size=10000,  # these are the Solution evaluations
-                                     which_algorithm="uniform",
+                                     which_algorithm="uniform SA",
                                      verbose=verbose)
 
     # Evaluates Linkage and keeps track of PS evaluations used
@@ -55,13 +55,17 @@ def run_LCS_as_archive(verbose: bool = False):
     # The best solutions have class 1 and the worst have class 0.
     xcs_problem = XCSProblemTopAndBottom(optimisation_problem,
                                          pRef=pRef,  # where it gets the solutions from
-                                         training_cycles=3000,  # how many solutions to show (might repeat)
-                                         tail_size=1000)  # eg show the top n and worst n
+                                         training_cycles=100,  # how many solutions to show (might repeat)
+                                         tail_size=30)  # eg show the top n and worst n
 
     scenario = ScenarioObserver(xcs_problem)
 
     # my custom XCS algorithm, which just overrides when covering is required, and how it happens
-    algorithm = CustomXCSAlgorithm(ps_evaluator, xcs_problem, verbose=verbose)
+    algorithm = CustomXCSAlgorithm(ps_evaluator,
+                                   xcs_problem,
+                                   coverage_covering_threshold=0.8,
+                                   covering_search_budget=1000,
+                                   verbose = verbose)
 
     set_settings_for_lcs_algorithm(algorithm)
 

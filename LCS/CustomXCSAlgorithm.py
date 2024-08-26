@@ -36,6 +36,7 @@ class CustomXCSAlgorithm(xcs.XCSAlgorithm):
 
     ps_evaluator: TMEvaluator  # to evaluate the linkage of a rule
     coverage_covering_threshold: float  # how much a scenario needs to be covered by rules ([0, 1])
+    covering_search_budget: int
     xcs_problem: Scenario
 
     verbose: bool
@@ -44,11 +45,13 @@ class CustomXCSAlgorithm(xcs.XCSAlgorithm):
                  ps_evaluator: TMEvaluator,
                  xcs_problem: Scenario,
                  coverage_covering_threshold: float = 0.5,
+                 covering_search_budget: int = 1000,
                  verbose: bool = False,
                  ):
         self.ps_evaluator = ps_evaluator
         self.coverage_covering_threshold = coverage_covering_threshold
         self.xcs_problem = xcs_problem
+        self.covering_search_budget = covering_search_budget
         self.verbose = verbose
         super().__init__()
 
@@ -69,7 +72,9 @@ class CustomXCSAlgorithm(xcs.XCSAlgorithm):
     def return_most_appropriate_pss(self,
                                     pss: list[PS],
                                     suggested_action,
-                                    consistency_threshold: float = 0.05) -> (list[PS], bool, float):
+                                    consistency_threshold: float = 0.05,
+                                    restrict_consistency: bool = True,
+                                    restrict_action: bool = True) -> (list[PS], bool, float):
 
         deltas = [self.ps_evaluator.delta_fitness_metric.get_mean_fitness_delta(ps) for ps in pss]
         actions = [delta > 0 for delta in deltas]
@@ -96,23 +101,25 @@ class CustomXCSAlgorithm(xcs.XCSAlgorithm):
         if len(items) < 1:
             raise Exception("There should be at least one ps found!")
 
-        # remove the entries with bad consistency
-        good_consistency = [(ps, action, p_value)
-                            for (ps, action, p_value) in items if p_value < consistency_threshold]
+        if restrict_consistency:
+            # remove the entries with bad consistency
+            good_consistency = [(ps, action, p_value)
+                                for (ps, action, p_value) in items if p_value < consistency_threshold]
 
-        if len(good_consistency) > 1:
-            items = good_consistency  # but never allow items to be empty!
-        elif self.verbose:
-                print("Ignoring consistency constraint to prevent empty covering")
+            if len(good_consistency) > 1:
+                items = good_consistency  # but never allow items to be empty!
+            elif self.verbose:
+                    print("Ignoring consistency constraint to prevent empty covering")
 
-        # remove the entries with the wrong action
-        correct_action = [(ps, action, p_value)
-                          for (ps, action, p_value) in items if action == suggested_action]
+        if restrict_action:
+            # remove the entries with the wrong action
+            correct_action = [(ps, action, p_value)
+                              for (ps, action, p_value) in items if action == suggested_action]
 
-        if len(correct_action) > 1:
-            items = correct_action  # but never allow items to be empty!
-        elif self.verbose:
-            print("Ignoring action constraint to prevent empty covering")
+            if len(correct_action) > 1:
+                items = correct_action  # but never allow items to be empty!
+            elif self.verbose:
+                print("Ignoring action constraint to prevent empty covering")
 
         return items
 
@@ -131,14 +138,14 @@ class CustomXCSAlgorithm(xcs.XCSAlgorithm):
         # search for the appropriate patterns using NSGAII (using Pymoo)
         with utils.announce("Mining the PSs...", True):
             pss = local_tm_ps_search(to_explain=solution,
-                                     to_avoid=already_found_pss,
-                                     population_size=30,
+                                     to_avoid=[], # already_found_pss,
+                                     population_size=30, # TODO parametrize this
                                      ps_evaluator=self.ps_evaluator,
-                                     ps_budget=500,
-                                     verbose=True)
+                                     ps_budget=self.covering_search_budget,
+                                     verbose=False)
 
         # find the most appropriate actions for each new rule
-        eligible_items = self.return_most_appropriate_pss(pss, suggested_action)
+        eligible_items = self.return_most_appropriate_pss(pss, suggested_action, restrict_action=False)
         assert(len(eligible_items) > 0)
 
         def ps_to_rule(ps: PS, action) -> xcs.XCSClassifierRule:
