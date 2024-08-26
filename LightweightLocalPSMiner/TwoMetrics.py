@@ -13,26 +13,31 @@ from Core.FullSolution import FullSolution
 from Core.PRef import PRef
 from Core.PS import PS
 from Core.PSMetric.MeanFitness import FitnessDelta
+from Core.PSMetric.SignificantlyHighAverage import SignificantlyHighAverage, MannWhitneyU
 from Core.PSMetric.ValueSpecificMutualInformation import SolutionSpecificMutualInformation, \
-    FasterSolutionSpecificMutualInformation
+    FasterSolutionSpecificMutualInformation, NotValueSpecificMI
 from LightweightLocalPSMiner.Operators import LocalPSGeometricSampling, ObjectiveSpaceAvoidance
 
 
 class TMEvaluator:
 
     linkage_metric: SolutionSpecificMutualInformation
-    mean_fitness_metric: FitnessDelta
+    delta_fitness_metric: FitnessDelta
+    fitness_p_value_metric: MannWhitneyU
     global_mean_fitness: float
     used_evaluations: int
 
     def __init__(self,
                  pRef: PRef):
         self.used_evaluations = 0
-        self.linkage_metric = FasterSolutionSpecificMutualInformation()
+        self.linkage_metric = NotValueSpecificMI()
         self.linkage_metric.set_pRef(pRef)
 
-        self.mean_fitness_metric = FitnessDelta()
-        self.mean_fitness_metric.set_pRef(pRef)
+        self.delta_fitness_metric = FitnessDelta()
+        self.delta_fitness_metric.set_pRef(pRef)
+
+        self.fitness_p_value_metric = MannWhitneyU()
+        self.fitness_p_value_metric.set_pRef(pRef)
 
         self.global_mean_fitness = np.average(pRef.fitness_array)
 
@@ -51,7 +56,7 @@ class TMEvaluator:
 
     def is_ps_beneficial(self, ps: PS) -> bool:
         self.used_evaluations += 1
-        return self.mean_fitness_metric.get_single_score(ps) > 0
+        return self.delta_fitness_metric.get_single_score(ps) > 0
 
 class TMLocalPymooProblem(Problem):
 
@@ -126,7 +131,7 @@ def local_tm_ps_search(to_explain: FullSolution,
     #correct_sign_pss.sort(key=get_atomicity_minus_dependence, reverse=True)
     #wrong_signs.sort(key=get_atomicity_minus_dependence, reverse=True)
 
-    budget_after_run = ps_evaluator.used_evaluations
+    # budget_after_run = ps_evaluator.used_evaluations
     # print(f"The budget used for this run was {budget_after_run-budget_before_run}")
     # print(f"The pss with the correct sign are {len(correct_sign_pss)}")
     # for ps in correct_sign_pss:
@@ -134,6 +139,11 @@ def local_tm_ps_search(to_explain: FullSolution,
     # print(f"The pss with the wrong sign are {len(wrong_signs)}")
     # for ps in wrong_signs:
     #     print("\t", ps)
+
+    if verbose:
+        print(f"The search for PSs in {to_explain} resulted in ")
+        for ps in result_pss:
+            print("\t", ps)
 
     if len(correct_sign_pss) > 0:
         return correct_sign_pss

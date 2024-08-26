@@ -386,6 +386,63 @@ class FasterSolutionSpecificMutualInformation(SolutionSpecificMutualInformation)
         return univariate_probabilities, bivariate_probabilities
 
 
+    # def get_linkage_table_for_solution(self) -> np.ndarray:
+    #     #  this is temporary, TODO remove me
+    #     def get_linkage_between_vars(var_a: int, var_b: int) -> float:
+    #         ss = self.pRef.search_space
+    #         return max(self.mutual_information(var_a, value_a, var_b, value_b)
+    #                    for value_a in range(ss.cardinalities[var_a])
+    #                    for value_b in range(ss.cardinalities[var_b]))
+    #
+    #     n = self.pRef.search_space.amount_of_parameters
+    #     result = np.zeros(shape=(n, n), dtype=float)
+    #     for a, b in itertools.combinations(range(n), r=2):
+    #         result[a, b] = get_linkage_between_vars(a, b)
+    #
+    #     result += result.T
+    #
+    #     sums_of_linkages = np.sum(result, axis=0)
+    #     averages = sums_of_linkages / (n - 1)
+    #     np.fill_diagonal(result, averages)
+    #
+    #     return result
+
+
+class NotValueSpecificMI(FasterSolutionSpecificMutualInformation):
+    linkage_table: Optional[np.ndarray]
+    def __init__(self):
+        self.linkage_table = None
+        super().__init__()
+
+    def set_pRef(self, pRef: PRef):
+        super().set_pRef(pRef)
+        self.linkage_table = self.get_linkage_table()
+
+
+    def set_solution(self, solution: FullSolution):
+        pass  #  so that the linkage table does not get overwritten
+
+
+    def get_linkage_table(self) -> np.ndarray:
+        #  this is temporary, TODO remove me
+        def get_linkage_between_vars(var_a: int, var_b: int) -> float:
+            ss = self.pRef.search_space
+            return max(self.mutual_information(var_a, value_a, var_b, value_b)
+                       for value_a in range(ss.cardinalities[var_a])
+                       for value_b in range(ss.cardinalities[var_b]))
+
+        n = self.pRef.search_space.amount_of_parameters
+        result = np.zeros(shape=(n, n), dtype=float)
+        for a, b in itertools.combinations(range(n), r=2):
+            result[a, b] = get_linkage_between_vars(a, b)
+
+        result += result.T
+
+        sums_of_linkages = np.sum(result, axis=0)
+        averages = sums_of_linkages / (n - 1)
+        np.fill_diagonal(result, averages)
+
+        return result
 
 
 

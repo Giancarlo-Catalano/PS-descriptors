@@ -145,6 +145,8 @@ class PRef:
     def fitnesses_of_observations_other_experimental(self, ps: PS) -> np.ndarray:
         return get_relevant_rows_in_matrix_shortcircuit(self.full_solution_matrix, self.fitness_array, ps.values)
     def fitnesses_of_observations_and_complement(self, ps: PS) -> (ArrayOfFloats, ArrayOfFloats):
+        """Returns the fitnesses for the rows where the ps is present,
+        and the fitnesses for the rows where it's not present"""
         selected_rows = np.full(shape=self.fitness_array.shape, fill_value=True, dtype=bool)
 
         for variable_index, variable_value in enumerate(ps.values):

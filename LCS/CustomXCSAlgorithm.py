@@ -47,11 +47,13 @@ class CustomXCSAlgorithm(xcs.XCSAlgorithm):
         super().__init__()
 
     def covering_is_required(self, match_set: xcs.MatchSet) -> bool:
-        coverage = get_solution_coverage(match_set, self.xcs_problem.get_current_outcome())
-        should_cover = coverage < self.coverage_covering_threshold
+        true_action_coverage = get_solution_coverage(match_set, True)
+        false_action_coverage = get_solution_coverage(match_set, False)
+        should_cover = true_action_coverage < self.coverage_covering_threshold
 
         if self.verbose:
-            print(f"Coverage for {FullSolution(match_set.situation)} is {int(coverage * 100)}%")
+            print(f"Coverage for {FullSolution(match_set.situation)} (action = True) is {int(true_action_coverage * 100)}%")
+            print(f"Coverage for {FullSolution(match_set.situation)} (action = False) is {int(false_action_coverage * 100)}%")
         return should_cover
 
     def get_appropriate_action_for_ps(self, ps: PS):
@@ -59,7 +61,7 @@ class CustomXCSAlgorithm(xcs.XCSAlgorithm):
         """ The current implementation checks the average fitness of the ps"""
         return self.ps_evaluator.is_ps_beneficial(ps)
 
-    def cover_with_many(self, match_set: xcs.MatchSet) -> list[xcs.ClassifierRule]:
+    def cover_with_many(self, match_set: xcs.MatchSet, consistency_threshold: float = 0.005) -> list[xcs.ClassifierRule]:
         """ This is a replacement for the .cover function. The main difference is that this returns many rules"""
 
         # get the PSs in the action set
@@ -74,26 +76,30 @@ class CustomXCSAlgorithm(xcs.XCSAlgorithm):
         # search for the appropriate patterns using NSGAII (using Pymoo)
         pss = local_tm_ps_search(to_explain=solution,
                                  to_avoid=[], # already_found_pss,
-                                 population_size=30,
+                                 population_size=50,
                                  ps_evaluator=self.ps_evaluator,
                                  ps_budget=1000,
-                                 verbose=False)
+                                 verbose=self.verbose)
 
         # find the most appropriate actions for each new rule
-        actions = [self.get_appropriate_action_for_ps(ps) for ps in pss]
+        deltas = [self.ps_evaluator.delta_fitness_metric.get_mean_fitness_delta(ps) for ps in pss]
+        actions = [delta > 0 for delta in deltas]
+        p_values = [self.ps_evaluator.fitness_p_value_metric.test_effect(ps, supposed_beneficial=suggested_action)
+                    for ps, suggested_action in zip(pss, actions)]
 
         if self.verbose:
             optimisation_problem: BenchmarkProblem = self.xcs_problem.original_problem
             print(
                 f"Covering for \n", utils.indent(f"{optimisation_problem.repr_fs(self.xcs_problem.current_solution)}, action = {int(suggested_action)}, yielded:"))
-            for ps, ps_action in zip(pss, actions):
+            for ps, delta, action, p_value in zip(pss, deltas, actions, p_values):
                 a, d = ps.metric_scores
-                delta = self.ps_evaluator.mean_fitness_metric.get_single_score(ps)
                 print(utils.indent(
-                    f"{optimisation_problem.repr_ps(ps)} -> {int(ps_action)},"
+                    f"{optimisation_problem.repr_ps(ps)} -> {int(action)},"
                     f" internal = {-a:.3f}, external = {-d:.3f},"
-                    f" ({delta = :.3f} "
-                    f" {'(DISAGREES)' if ps_action != suggested_action else ''})"))
+                    f" ({delta = :.3f},"
+                    f" {p_value = :.3f}"
+                    f" {'(DISAGREES)' if action != suggested_action else ''}"
+                    f" {'(REJECTED)' if p_value > consistency_threshold else ''})"))
 
         def ps_to_rule(ps: PS, action) -> xcs.XCSClassifierRule:
             return xcs.XCSClassifierRule(
@@ -103,8 +109,9 @@ class CustomXCSAlgorithm(xcs.XCSAlgorithm):
                 match_set.model.time_stamp)
 
         return [ps_to_rule(ps, action)
-                for ps, action in zip(pss, actions)
-                # if action == suggested_action  # if you uncomment this line, you only allow rules that match the action
+                for ps, action, p_value in zip(pss, actions, p_values)
+                if p_value < consistency_threshold
+                if action == suggested_action  # if you uncomment this line, you only allow rules that match the action
                 ]
 
     def new_model(self, scenario):
