@@ -79,3 +79,11 @@ def get_action_set(match_set: xcs.MatchSet, action) -> xcs.ActionSet:
                              rules=dict())
 
     return match_set._action_sets.get(action, make_empty_action_set())
+
+
+def get_conditions_in_match_set(match_set: xcs.MatchSet) -> list[BitCondition]:
+    all_rules = []
+    for action in match_set:
+        all_rules.extend(match_set[action])
+
+    return all_rules

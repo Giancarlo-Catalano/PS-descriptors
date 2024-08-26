@@ -8,16 +8,21 @@ from BenchmarkProblems.BenchmarkProblem import BenchmarkProblem
 from Core.FullSolution import FullSolution
 from Core.PS import PS
 from LCS.Conversions import get_pss_from_action_set, get_action_set, \
-    ps_to_condition
+    ps_to_condition, get_conditions_in_match_set
 from LCS.CustomXCSClassifierSet import CustomXCSClassiferSet
 from LightweightLocalPSMiner.TwoMetrics import TMEvaluator, local_tm_ps_search
 
 
 def get_solution_coverage(match_set: xcs.MatchSet, action) -> float:
     """ Checks how much of the situation is covered by the action set, as a percentage """
-    action_set = get_action_set(match_set, action)
-    rules = list(action_set._rules)  # these are conditions, for some reason
-    masks = np.array([np.array(condition.mask) for condition in rules])
+
+    if action is not None:
+        action_set = get_action_set(match_set, action)
+        conditions = list(action_set._rules)  # these are conditions, for some reason
+    else:
+        rules = get_conditions_in_match_set(match_set)
+        conditions = [rule.condition for rule in rules]
+    masks = np.array([np.array(condition.mask) for condition in conditions])
     if len(masks) == 0:
         return 0
     covered_vars = np.sum(masks, axis=0, dtype=bool)
@@ -48,15 +53,12 @@ class CustomXCSAlgorithm(xcs.XCSAlgorithm):
         super().__init__()
 
     def covering_is_required(self, match_set: xcs.MatchSet) -> bool:
-        true_action_coverage = get_solution_coverage(match_set, True)
-        false_action_coverage = get_solution_coverage(match_set, False)
-        should_cover = true_action_coverage < self.coverage_covering_threshold
+        action = self.xcs_problem.get_current_outcome()
+        coverage = get_solution_coverage(match_set, action = None)  # action = None means that we don't care
+        should_cover = coverage < self.coverage_covering_threshold
 
         if self.verbose:
-            print(
-                f"Coverage for {FullSolution(match_set.situation)} (action = True) is {int(true_action_coverage * 100)}%")
-            print(
-                f"Coverage for {FullSolution(match_set.situation)} (action = False) is {int(false_action_coverage * 100)}%")
+            print(f"Coverage for {FullSolution(match_set.situation)} (action = {action}) is {int(coverage * 100)}%")
         return should_cover
 
     def get_appropriate_action_for_ps(self, ps: PS):
@@ -67,7 +69,7 @@ class CustomXCSAlgorithm(xcs.XCSAlgorithm):
     def return_most_appropriate_pss(self,
                                     pss: list[PS],
                                     suggested_action,
-                                    consistency_threshold: float = 0.005) -> (list[PS], bool, float):
+                                    consistency_threshold: float = 0.05) -> (list[PS], bool, float):
 
         deltas = [self.ps_evaluator.delta_fitness_metric.get_mean_fitness_delta(ps) for ps in pss]
         actions = [delta > 0 for delta in deltas]
@@ -85,7 +87,7 @@ class CustomXCSAlgorithm(xcs.XCSAlgorithm):
                 print(utils.indent(
                     f"{optimisation_problem.repr_ps(ps)} -> {int(action)},"
                     f" internal = {-a:.3f}, external = {-d:.3f},"
-                    f" delta = {delta},"
+                    f" delta = {delta:.3f},"
                     f" {p_value = :.3f}"
                     f" {'(DISAGREES)' if action != suggested_action else ''}"
                     f" {'(INCONSISTENT)' if p_value > consistency_threshold else ''})"))
