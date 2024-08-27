@@ -218,6 +218,13 @@ class PRef:
                        fitness_array = fitness_array,
                        search_space = search_space)
 
+    @classmethod
+    def unique(cls, pRef):
+        """ removes duplicate entries"""
+        all_solutions = pRef.get_evaluated_FSs()
+        all_solutions = list(set(all_solutions))
+        return PRef.from_evaluated_full_solutions(all_solutions, pRef.search_space)
+
 def plot_solutions_in_pRef(pRef: PRef, filename: str):
     x_points, y_points = utils.unzip(list(enumerate(pRef.fitness_array)))
     fig = plt.figure()

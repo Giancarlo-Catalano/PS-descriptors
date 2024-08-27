@@ -7,6 +7,7 @@ from BenchmarkProblems.GraphColouring import GraphColouring
 from BenchmarkProblems.RoyalRoad import RoyalRoad
 from BenchmarkProblems.Trapk import Trapk
 from Core.FullSolution import FullSolution
+from Core.PRef import PRef
 from Explanation.PRefManager import PRefManager
 from LCS.CustomXCSAlgorithm import CustomXCSAlgorithm
 from LCS.XCSProblemTopAndBottom import XCSProblemTopAndBottom
@@ -32,9 +33,9 @@ def set_settings_for_lcs_algorithm(algorithm: xcs.XCSAlgorithm) -> None:
 def run_LCS_as_archive(verbose: bool = False):
     # the optimisation problem to be solved
 
-    # optimisation_problem = RoyalRoad(5, 4)
+    optimisation_problem = RoyalRoad(5, 4)
     # optimisation_problem = GraphColouring.random(amount_of_colours=3, amount_of_nodes=14, chance_of_connection=0.4)
-    optimisation_problem = Trapk(4, 5)
+    # optimisation_problem = Trapk(4, 5)
     # optimisation_problem = CheckerBoard(4, 4)
 
     if isinstance(optimisation_problem, GraphColouring):
@@ -48,6 +49,9 @@ def run_LCS_as_archive(verbose: bool = False):
                                      which_algorithm="uniform SA",
                                      verbose=verbose)
 
+    pRef = PRef.unique(pRef)
+    print(f"After removing duplicate entries, pRef has {pRef.sample_size} samples")
+
     # Evaluates Linkage and keeps track of PS evaluations used
     ps_evaluator = TMEvaluator(pRef)
 
@@ -55,8 +59,8 @@ def run_LCS_as_archive(verbose: bool = False):
     # The best solutions have class 1 and the worst have class 0.
     xcs_problem = XCSProblemTopAndBottom(optimisation_problem,
                                          pRef=pRef,  # where it gets the solutions from
-                                         training_cycles=100,  # how many solutions to show (might repeat)
-                                         tail_size=30)  # eg show the top n and worst n
+                                         training_cycles=1000,  # how many solutions to show (might repeat)
+                                         tail_size=1000)  # eg show the top n and worst n
 
     scenario = ScenarioObserver(xcs_problem)
 
@@ -71,6 +75,7 @@ def run_LCS_as_archive(verbose: bool = False):
 
     # This is a custom model, at the time fo this comment it's CustomXCSClassiferSet
     model = algorithm.new_model(scenario)
+    model.verbose = True
 
     with announce("Running the model"):
         model.run(scenario, learn=True)

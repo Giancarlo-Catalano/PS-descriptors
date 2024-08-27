@@ -2,16 +2,25 @@ from xcs import ClassifierSet, MatchSet
 from xcs.bitstrings import BitString
 
 from Core.FullSolution import FullSolution
+from LCS.Conversions import condition_to_ps
 
 
 class CustomXCSClassiferSet(ClassifierSet):
     """ this class overrides ClassifierSet so that when covering is required I can add more than one rule at a time"""
     """ (In XCS it seems that you can only generate one new rule per covering...)"""
 
-    """ Other than that, the changes are minmal"""
+    """ Other than that, the changes are minimal"""
 
-    def __init__(self,algorithm, possible_actions):
+    verbose: bool
+
+
+    def __init__(self,
+                 algorithm,
+                 possible_actions,
+                 verbose = False
+                 ):
         super().__init__(algorithm, possible_actions)
+        self.verbose = verbose
 
 
 
@@ -51,6 +60,13 @@ class CustomXCSClassiferSet(ClassifierSet):
             # Add the new classifier, getting back a list of the rule(s)
             # which had to be removed to make room for it.
             replaced = [removed for rule in rules for removed in self.add(rule) ]   # MODIFIED
+            if self.verbose and len(replaced) > 0:
+                print("In adding those rules, the following were removed")
+                for replaced_rule in replaced:
+                    ps = condition_to_ps(replaced_rule.condition)
+                    action = replaced_rule.action
+                    print(f"---->{ps} -> {action}")
+
 
             # Remove the rules that were removed the population from the
             # action set, as well. Note that they may not appear in the

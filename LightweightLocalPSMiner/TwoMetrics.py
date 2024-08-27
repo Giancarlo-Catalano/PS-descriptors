@@ -30,8 +30,8 @@ class TMEvaluator:
     def __init__(self,
                  pRef: PRef):
         self.used_evaluations = 0
-        # self.linkage_metric = FasterSolutionSpecificMutualInformation()
-        self.linkage_metric = LocalVarianceLinkage(similarity_threshold=0.5)
+        self.linkage_metric = FasterSolutionSpecificMutualInformation()
+        # self.linkage_metric = LocalVarianceLinkage(similarity_threshold=0.5)
         self.linkage_metric.set_pRef(pRef)
 
         self.delta_fitness_metric = FitnessDelta()

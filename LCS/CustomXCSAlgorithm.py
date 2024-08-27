@@ -1,3 +1,5 @@
+import random
+
 import numpy as np
 import xcs
 from xcs import scenarios
@@ -8,7 +10,7 @@ from BenchmarkProblems.BenchmarkProblem import BenchmarkProblem
 from Core.FullSolution import FullSolution
 from Core.PS import PS
 from LCS.Conversions import get_pss_from_action_set, get_action_set, \
-    ps_to_condition, get_conditions_in_match_set
+    ps_to_condition, get_conditions_in_match_set, condition_to_ps
 from LCS.CustomXCSClassifierSet import CustomXCSClassiferSet
 from LightweightLocalPSMiner.TwoMetrics import TMEvaluator, local_tm_ps_search
 
@@ -141,7 +143,7 @@ class CustomXCSAlgorithm(xcs.XCSAlgorithm):
         # search for the appropriate patterns using NSGAII (using Pymoo)
         with utils.announce("Mining the PSs...", True):
             pss = local_tm_ps_search(to_explain=solution,
-                                     to_avoid=[], # already_found_pss,
+                                     to_avoid=[], # already_found_pss, # uncomment to avoid already found pss
                                      population_size=50, # TODO parametrize this
                                      ps_evaluator=self.ps_evaluator,
                                      ps_budget=self.covering_search_budget,
@@ -165,3 +167,45 @@ class CustomXCSAlgorithm(xcs.XCSAlgorithm):
         # modified because it needs to return an instance of CustomXCSClassifier
         assert isinstance(scenario, scenarios.Scenario)
         return CustomXCSClassiferSet(self, scenario.get_possible_actions())
+
+
+    def _action_set_subsumption(self, action_set):
+        """Perform action set subsumption."""
+        # this is identical to the original in XCSAlgorithm, but with some more printing
+        # Select a condition with maximum bit count among those having
+        # sufficient experience and sufficiently low error.
+        selected_rule = None
+        selected_bit_count = None
+        for rule in action_set:
+            if not (rule.experience > self.subsumption_threshold and
+                    rule.error < self.error_threshold):
+                continue
+            bit_count = rule.condition.count()
+            if (selected_rule is None or
+                    bit_count > selected_bit_count or
+                    (bit_count == selected_bit_count and
+                     random.randrange(2))):
+                selected_rule = rule
+                selected_bit_count = bit_count
+
+        # If no rule was found satisfying the requirements, return
+        # early.
+        if selected_rule is None:
+            return
+
+        # Subsume each rule which the selected rule generalizes. When a
+        # rule is subsumed, all instances of the subsumed rule are replaced
+        # with instances of the more general one in the population.
+        to_remove = []
+        for rule in action_set:
+            if (selected_rule is not rule and
+                    selected_rule.condition(rule.condition)):
+                selected_rule.numerosity += rule.numerosity
+                action_set.model.discard(rule, rule.numerosity)
+                to_remove.append(rule)
+                if self.verbose:
+                    big_fish = condition_to_ps(selected_rule.condition)
+                    small_fish = condition_to_ps(rule.condition)
+                    print(f"\t{big_fish} consumed {small_fish}")
+        for rule in to_remove:
+            action_set.remove(rule)
