@@ -109,7 +109,7 @@ class LocalVarianceLinkage(BivariateLinkage):
         similarity_counts = np.sum(similarity_matrix, axis=1)
         similarity_count_threshold = round(self.similarity_threshold * self.n_vars)
 
-        eligible_rows = similarity_counts <= similarity_count_threshold
+        eligible_rows = similarity_counts >= similarity_count_threshold
 
         rows_returned = similarity_matrix[eligible_rows]
         fitnesses_returned = self.pRef.fitness_array[eligible_rows]
