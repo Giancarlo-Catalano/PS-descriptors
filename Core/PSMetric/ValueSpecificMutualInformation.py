@@ -7,6 +7,7 @@ from Core.FullSolution import FullSolution
 from Core.PRef import PRef
 from Core.PS import PS, STAR
 from Core.PSMetric.Metric import Metric
+from LinkageExperiments.LocalVarianceLinkage import BivariateLinkage
 
 
 class ValueSpecificMutualInformation(Metric):
@@ -291,7 +292,7 @@ class SolutionSpecificMutualInformation(Metric):
         else:
             return 0
 
-    def get_atomicity_score(self, ps: PS) -> float:
+    def get_atomicity(self, ps: PS) -> float:
         fixed_vars = ps.get_fixed_variable_positions()
 
         def weakest_internal_linkage_for(var) -> float:
@@ -306,7 +307,7 @@ class SolutionSpecificMutualInformation(Metric):
         else:
             return 0
 
-    def get_dependence_score(self, ps: PS) -> float:
+    def get_dependence(self, ps: PS) -> float:
         fixed_vars = ps.get_fixed_variable_positions()
         unfixed_vars = [index for index, val in enumerate(ps.values) if val == STAR]
 
@@ -323,7 +324,7 @@ class SolutionSpecificMutualInformation(Metric):
             return 0
 
 
-class FasterSolutionSpecificMutualInformation(SolutionSpecificMutualInformation):
+class FasterSolutionSpecificMutualInformation(SolutionSpecificMutualInformation,BivariateLinkage):
 
     def __init__(self):
         super().__init__()

@@ -58,7 +58,7 @@ class BivariateLinkage:
         else:
             return 0
 
-    def get_independence(self, ps: PS) -> float:
+    def get_dependence(self, ps: PS) -> float:
         fixed_vars = ps.get_fixed_variable_positions()
         unfixed_vars = [index for index, val in enumerate(ps.values) if val == STAR]
 
@@ -82,7 +82,7 @@ class LocalVarianceLinkage(BivariateLinkage):
     linkage_table: Optional[np.ndarray]
     current_solution: Optional[FullSolution]
 
-    def __init__(self, similarity_threshold: float = 0.5):
+    def __init__(self, similarity_threshold: float = 0.8):
         super().__init__()
         self.linkage_table = None
         self.current_solution = None
@@ -96,6 +96,28 @@ class LocalVarianceLinkage(BivariateLinkage):
         univariate_variances, bivariate_variances = self.get_linkage_structures(similarity_rows, fitnesses)
         self.linkage_table = self.get_linkage_tables_from_variances(univariate_variances,
                                                                     bivariate_variances)
+
+        # debug
+        #univariate_vars, bivariate_vars = self.get_debug_variance_tables(univariate_variances, bivariate_variances)
+        #print("You should be debugging")
+
+
+    def get_debug_variance_tables(self,
+                                  univariate_variances: dict,
+                                  bivariate_variances: dict) -> (np.ndarray, np.ndarray):
+        univariate_importances = np.zeros(shape=self.n_vars)
+        bivariate_table = np.zeros(shape=(self.n_vars, self.n_vars))
+
+        for key in univariate_variances:
+            univariate_importances[key] = univariate_variances[key]
+
+        for key in bivariate_variances:
+            bivariate_table[key] = bivariate_variances[key]
+
+        bivariate_table += bivariate_table.T
+        np.fill_diagonal(bivariate_table, univariate_importances)
+
+        return univariate_importances, bivariate_table
 
     def get_close_solution_data(self) -> (np.ndarray, np.ndarray):
         """ finds all the solutions that are similar enough to the current solution,
@@ -205,4 +227,4 @@ def test_local_variance_linkage():
         print("You should be debugging right now")
 
 
-test_local_variance_linkage()
+#test_local_variance_linkage()

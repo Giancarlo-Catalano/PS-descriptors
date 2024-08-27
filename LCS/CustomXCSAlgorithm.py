@@ -88,6 +88,8 @@ class CustomXCSAlgorithm(xcs.XCSAlgorithm):
                 utils.indent(f"{optimisation_problem.repr_fs(self.xcs_problem.current_solution)}, "
                              f"action = {int(suggested_action)}, yielded:"))
             for ps, delta, action, p_value in zip(pss, deltas, actions, p_values):
+                if ps.is_empty():
+                    continue
                 a, d = ps.metric_scores
                 print(utils.indent(
                     f"{optimisation_problem.repr_ps(ps)} -> {int(action)},"
@@ -98,6 +100,7 @@ class CustomXCSAlgorithm(xcs.XCSAlgorithm):
                     f" {'(INCONSISTENT)' if p_value > consistency_threshold else ''})"))
 
         items = list(zip(pss, actions, p_values))
+        items = [item for item in items if not item[0].is_empty()] # remove the empty PS
         if len(items) < 1:
             raise Exception("There should be at least one ps found!")
 
@@ -139,7 +142,7 @@ class CustomXCSAlgorithm(xcs.XCSAlgorithm):
         with utils.announce("Mining the PSs...", True):
             pss = local_tm_ps_search(to_explain=solution,
                                      to_avoid=[], # already_found_pss,
-                                     population_size=30, # TODO parametrize this
+                                     population_size=50, # TODO parametrize this
                                      ps_evaluator=self.ps_evaluator,
                                      ps_budget=self.covering_search_budget,
                                      verbose=False)

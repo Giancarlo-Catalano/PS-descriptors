@@ -17,24 +17,21 @@ from Core.PSMetric.SignificantlyHighAverage import SignificantlyHighAverage, Man
 from Core.PSMetric.ValueSpecificMutualInformation import SolutionSpecificMutualInformation, \
     FasterSolutionSpecificMutualInformation, NotValueSpecificMI
 from LightweightLocalPSMiner.Operators import LocalPSGeometricSampling, ObjectiveSpaceAvoidance
+from LinkageExperiments.LocalVarianceLinkage import LocalVarianceLinkage, BivariateLinkage
 
 
 class TMEvaluator:
-
-    linkage_metric: SolutionSpecificMutualInformation
+    linkage_metric: BivariateLinkage
     delta_fitness_metric: FitnessDelta
     fitness_p_value_metric: MannWhitneyU
     global_mean_fitness: float
     used_evaluations: int
 
     def __init__(self,
-                 pRef: PRef,
-                 use_value_specific_linkage: bool = False):
+                 pRef: PRef):
         self.used_evaluations = 0
-        if use_value_specific_linkage:
-            self.linkage_metric = FasterSolutionSpecificMutualInformation()
-        else:
-            self.linkage_metric = NotValueSpecificMI()
+        # self.linkage_metric = FasterSolutionSpecificMutualInformation()
+        self.linkage_metric = LocalVarianceLinkage(similarity_threshold=0.5)
         self.linkage_metric.set_pRef(pRef)
 
         self.delta_fitness_metric = FitnessDelta()
@@ -45,25 +42,22 @@ class TMEvaluator:
 
         self.global_mean_fitness = np.average(pRef.fitness_array)
 
-
     def get_A_D(self, ps: PS) -> (float, float):
         self.used_evaluations += 1
-        atomicity = self.linkage_metric.get_atomicity_score(ps)
-        dependence = self.linkage_metric.get_dependence_score(ps)
+        atomicity = self.linkage_metric.get_atomicity(ps)
+        dependence = self.linkage_metric.get_dependence(ps)
 
         return -atomicity, dependence
 
-
     def set_solution(self, solution: FullSolution):
         self.linkage_metric.set_solution(solution)
-
 
     def is_ps_beneficial(self, ps: PS) -> bool:
         self.used_evaluations += 1
         return self.delta_fitness_metric.get_single_score(ps) > 0
 
-class TMLocalPymooProblem(Problem):
 
+class TMLocalPymooProblem(Problem):
     tm_evaluator: TMEvaluator
 
     def __init__(self,
@@ -75,8 +69,8 @@ class TMLocalPymooProblem(Problem):
 
         n_var = len(solution_to_explain.values)
         lower_bounds = np.full(shape=n_var, fill_value=0)  # the stars
-        upper_bounds = lower_bounds+1
-        super().__init__(n_var = n_var,
+        upper_bounds = lower_bounds + 1
+        super().__init__(n_var=n_var,
                          n_obj=2,
                          n_ieq_constr=0,
                          xl=lower_bounds,
@@ -93,19 +87,18 @@ class TMLocalPymooProblem(Problem):
 
 
 def local_tm_ps_search(to_explain: FullSolution,
-                    to_avoid: Iterable[PS],
-                    ps_evaluator: TMEvaluator,
-                    ps_budget: int,
-                    population_size: int,
-                    verbose=True) -> list[PS]:
+                       to_avoid: Iterable[PS],
+                       ps_evaluator: TMEvaluator,
+                       ps_budget: int,
+                       population_size: int,
+                       verbose=True) -> list[PS]:
     problem = TMLocalPymooProblem(to_explain,
                                   ps_evaluator)
-
 
     algorithm = NSGA2(pop_size=population_size,
                       sampling=LocalPSGeometricSampling(),
                       crossover=SimulatedBinaryCrossover(prob=0.5),
-                      mutation=BitflipMutation(prob=1/problem.n_var),
+                      mutation=BitflipMutation(prob=1 / problem.n_var),
                       eliminate_duplicates=True,
                       survival=ObjectiveSpaceAvoidance(to_avoid)
                       )
@@ -123,7 +116,7 @@ def local_tm_ps_search(to_explain: FullSolution,
     correct_sign_pss = []
     wrong_signs = []
     for ps in result_pss:
-        a, d  = ps.metric_scores
+        a, d = ps.metric_scores
         if a < 0 and d > 0:
             correct_sign_pss.append(ps)
         else:
@@ -132,8 +125,9 @@ def local_tm_ps_search(to_explain: FullSolution,
     def get_atomicity_minus_dependence(ps: EvaluatedPS) -> float:
         a, d = ps.metric_scores
         return -d + a
-    #correct_sign_pss.sort(key=get_atomicity_minus_dependence, reverse=True)
-    #wrong_signs.sort(key=get_atomicity_minus_dependence, reverse=True)
+
+    # correct_sign_pss.sort(key=get_atomicity_minus_dependence, reverse=True)
+    # wrong_signs.sort(key=get_atomicity_minus_dependence, reverse=True)
 
     # budget_after_run = ps_evaluator.used_evaluations
     # print(f"The budget used for this run was {budget_after_run-budget_before_run}")
@@ -154,11 +148,12 @@ def local_tm_ps_search(to_explain: FullSolution,
     else:
         return wrong_signs
 
+
 def test_local_search():
     problem = Trapk(4, 4)
 
-    already_mined = [] #[PS([1,1,1,1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1]),
-                     #PS([-1,-1,-1,-1,1,1,1,1,-1,-1,-1,-1,-1,-1,-1,-1])]
+    already_mined = []  # [PS([1,1,1,1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1]),
+    # PS([-1,-1,-1,-1,1,1,1,1,-1,-1,-1,-1,-1,-1,-1,-1])]
 
     to_explain = FullSolution([1, 1, 1, 1, 0, 0, 0, 0, 1, 0, 1, 0, 1, 1, 1, 0])
 
@@ -166,21 +161,20 @@ def test_local_search():
 
     tm_evaluator = TMEvaluator(pRef)
 
-    results = local_tm_ps_search(to_explain = to_explain,
-                              to_avoid=already_mined,
-                              ps_evaluator = tm_evaluator,
-                              ps_budget=1000,
-                              population_size=50,
-                              verbose=True)
+    results = local_tm_ps_search(to_explain=to_explain,
+                                 to_avoid=already_mined,
+                                 ps_evaluator=tm_evaluator,
+                                 ps_budget=1000,
+                                 population_size=50,
+                                 verbose=True)
 
     print("results of search:")
     for result in results:
         print(result)
 
     print("The results by dependence-atomicity are")
-    results.sort(key=lambda x: x.metric_scores[0]-x.metric_scores[1], reverse=True)
+    results.sort(key=lambda x: x.metric_scores[0] - x.metric_scores[1], reverse=True)
     for result in results:
         a, d = result.metric_scores
         if a < 0 and d > 0:
             print(result)
-
