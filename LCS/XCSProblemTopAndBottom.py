@@ -83,8 +83,8 @@ class XCSProblemTopAndBottom(Scenario):
 
     def obtain_new_solution(self):
         if self.currently_showing_a_good_solution:
-            new_solution = self.all_solutions[(len(self.all_solutions)//2)-(self.currently_showing_a_good_solution + 1)] # restore to original
-            #new_solution = self.all_solutions[(self.currently_showing_a_good_solution + 1)]
+            # new_solution = self.all_solutions[(len(self.all_solutions)//2)-(self.currently_showing_a_good_solution + 1)] # restore to original
+            new_solution = self.all_solutions[-(self.currently_showing_a_good_solution + 1)]
             self.currently_showing_a_good_solution = False
         else:
             self.current_index += 1
