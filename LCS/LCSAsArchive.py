@@ -19,15 +19,16 @@ def set_settings_for_lcs_algorithm(algorithm: xcs.XCSAlgorithm) -> None:
     """Simply sets the settings that are best for my purposes"""
     # play with these settings ad lib. Leaving the defaults seems to work :--)
     # algorithm.crossover_probability = 0
-    # algorithm.deletion_threshold = 10000
+    algorithm.deletion_threshold = 20  #  minimum age before a rule can be pruned away
     # algorithm.discount_factor = 0
     algorithm.do_action_set_subsumption = True
-    # algorithm.do_ga_subsumption = False
+    algorithm.do_ga_subsumption = True
     # algorithm.exploration_probability = 0
-    # algorithm.ga_threshold = 100000
+    #algorithm.ga_threshold = 100000
     algorithm.max_population_size = 50
-    algorithm.exploration_probability = 0
+    # algorithm.exploration_probability = 0
     # algorithm.minimum_actions = 1
+    algorithm.subsumption_threshold = 50  # minimum age before a rule can subsume another
 
 
 def run_LCS_as_archive(verbose: bool = False):
@@ -68,7 +69,7 @@ def run_LCS_as_archive(verbose: bool = False):
     algorithm = CustomXCSAlgorithm(ps_evaluator,
                                    xcs_problem,
                                    coverage_covering_threshold=0.8,
-                                   covering_search_budget=1000,
+                                   covering_search_budget=2000,
                                    verbose = verbose)
 
     set_settings_for_lcs_algorithm(algorithm)

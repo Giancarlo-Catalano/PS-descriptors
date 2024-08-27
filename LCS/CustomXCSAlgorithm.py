@@ -59,7 +59,7 @@ class CustomXCSAlgorithm(xcs.XCSAlgorithm):
 
     def covering_is_required(self, match_set: xcs.MatchSet) -> bool:
         action = self.xcs_problem.get_current_outcome()
-        coverage = get_solution_coverage(match_set, action = None)  # action = None means that we don't care
+        coverage = get_solution_coverage(match_set, action=None)  # action = None means that we don't care
         should_cover = coverage < self.coverage_covering_threshold
 
         if self.verbose:
@@ -102,7 +102,7 @@ class CustomXCSAlgorithm(xcs.XCSAlgorithm):
                     f" {'(INCONSISTENT)' if p_value > consistency_threshold else ''})"))
 
         items = list(zip(pss, actions, p_values))
-        items = [item for item in items if not item[0].is_empty()] # remove the empty PS
+        items = [item for item in items if not item[0].is_empty()]  # remove the empty PS
         if len(items) < 1:
             raise Exception("There should be at least one ps found!")
 
@@ -114,7 +114,7 @@ class CustomXCSAlgorithm(xcs.XCSAlgorithm):
             if len(good_consistency) > 1:
                 items = good_consistency  # but never allow items to be empty!
             elif self.verbose:
-                    print("Ignoring consistency constraint to prevent empty covering")
+                print("Ignoring consistency constraint to prevent empty covering")
 
         if restrict_action:
             # remove the entries with the wrong action
@@ -143,15 +143,15 @@ class CustomXCSAlgorithm(xcs.XCSAlgorithm):
         # search for the appropriate patterns using NSGAII (using Pymoo)
         with utils.announce("Mining the PSs...", True):
             pss = local_tm_ps_search(to_explain=solution,
-                                     to_avoid=[], # already_found_pss, # uncomment to avoid already found pss
-                                     population_size=50, # TODO parametrize this
+                                     to_avoid=already_found_pss,  # uncomment to avoid already found pss
+                                     population_size=50,  # TODO parametrize this
                                      ps_evaluator=self.ps_evaluator,
                                      ps_budget=self.covering_search_budget,
                                      verbose=False)
 
         # find the most appropriate actions for each new rule
         eligible_items = self.return_most_appropriate_pss(pss, suggested_action, restrict_action=False)
-        assert(len(eligible_items) > 0)
+        assert (len(eligible_items) > 0)
 
         def ps_to_rule(ps: PS, action) -> xcs.XCSClassifierRule:
             return xcs.XCSClassifierRule(
@@ -168,12 +168,12 @@ class CustomXCSAlgorithm(xcs.XCSAlgorithm):
         assert isinstance(scenario, scenarios.Scenario)
         return CustomXCSClassiferSet(self, scenario.get_possible_actions())
 
-
-    def _action_set_subsumption(self, action_set):
+    def traditional_subsumption(self,
+                                action_set):  # this is identical to the original in XCSAlgorithm, but with some more printing
         """Perform action set subsumption."""
-        # this is identical to the original in XCSAlgorithm, but with some more printing
         # Select a condition with maximum bit count among those having
         # sufficient experience and sufficiently low error.
+
         selected_rule = None
         selected_bit_count = None
         for rule in action_set:
@@ -206,6 +206,43 @@ class CustomXCSAlgorithm(xcs.XCSAlgorithm):
                 if self.verbose:
                     big_fish = condition_to_ps(selected_rule.condition)
                     small_fish = condition_to_ps(rule.condition)
-                    print(f"\t{big_fish} consumed {small_fish}")
+                    print(f"\t{big_fish}(err = {selected_rule.error}) consumed {small_fish}(err = {rule.error})")
         for rule in to_remove:
             action_set.remove(rule)
+
+    def custom_subsumption(self, action_set):
+        eligible_rules = [rule for rule in action_set
+                          if rule.experience > self.subsumption_threshold
+                          if rule.error < self.error_threshold]
+        if len(eligible_rules) == 0:
+            return
+
+        # select the rule with the highest bit count
+        winning_rule = max(eligible_rules, key=lambda x: x.condition.count())
+
+        def should_be_removed(rule) -> bool:
+            return (rule is not winning_rule) and \
+                winning_rule.condition(rule.condition) and \
+                rule.error > winning_rule.error
+
+        rules_to_remove = []
+
+        def mark_for_removal(rule) -> None:
+            winning_rule.numerosity += rule.numerosity
+            action_set.model.discard(rule, rule.numerosity)
+            rules_to_remove.append(rule)
+
+        for rule in action_set:
+            if should_be_removed(rule):
+                mark_for_removal(rule)
+                if self.verbose:
+                    big_fish = condition_to_ps(winning_rule.condition)
+                    small_fish = condition_to_ps(rule.condition)
+                    print(f"\t{big_fish}(err = {winning_rule.error}) consumed {small_fish}(err = {rule.error})")
+
+        for rule in rules_to_remove:
+            action_set.remove(rule)
+
+    def _action_set_subsumption(self, action_set):
+        """Perform action set subsumption."""
+        self.custom_subsumption(action_set)

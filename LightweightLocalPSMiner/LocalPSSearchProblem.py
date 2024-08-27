@@ -15,7 +15,6 @@ class LocalPSPymooProblem(Problem):
 
     solution_to_explain: FullSolution
 
-
     def __init__(self,
                  solution_to_explain: FullSolution,
                  objectives_evaluator: FastPSEvaluator):
@@ -24,8 +23,8 @@ class LocalPSPymooProblem(Problem):
 
         n_var = len(solution_to_explain.values)
         lower_bounds = np.full(shape=n_var, fill_value=0)  # the stars
-        upper_bounds = lower_bounds+1
-        super().__init__(n_var = n_var,
+        upper_bounds = lower_bounds + 1
+        super().__init__(n_var=n_var,
                          n_obj=3,
                          n_ieq_constr=0,
                          xl=lower_bounds,
@@ -39,5 +38,3 @@ class LocalPSPymooProblem(Problem):
         """ I believe that since this class inherits from Problem, x should be a group of solutions, and not just one"""
         metrics = np.array([self.objectives_evaluator.get_S_MF_A(self.individual_to_ps(row)) for row in X])
         out["F"] = -metrics  # minus sign because it's a maximisation task
-
-

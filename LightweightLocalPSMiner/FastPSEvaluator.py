@@ -37,15 +37,14 @@ class FastPSEvaluator:
     def set_to_maximise_fitness(self):
         self.sign_of_fitness = 1
 
-
     def get_mean_fitness(self, ps: PS) -> float:
-        return self.sign_of_fitness*fast_get_mean_fitness(ps, self.row_cacher_root_node)
+        return self.sign_of_fitness * fast_get_mean_fitness(ps, self.row_cacher_root_node)
 
     def get_S_MF_A(self, ps: PS) -> (float, float, float):
         simplicity = self.simplicity_metric.get_single_score(ps)
         mean_fitness = self.get_mean_fitness(ps)
         atomicity = self.atomicity_metric.get_single_score(ps)
 
-        self.used_evaluations +=1
+        self.used_evaluations += 1
 
         return simplicity, mean_fitness, atomicity

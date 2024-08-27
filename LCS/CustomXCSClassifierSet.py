@@ -63,9 +63,10 @@ class CustomXCSClassiferSet(ClassifierSet):
             if self.verbose and len(replaced) > 0:
                 print("In adding those rules, the following were removed")
                 for replaced_rule in replaced:
-                    ps = condition_to_ps(replaced_rule.condition)
-                    action = replaced_rule.action
-                    print(f"---->{ps} -> {action}")
+                    print(replaced_rule)
+                    # ps = condition_to_ps(replaced_rule.condition)
+                    # action = replaced_rule.action
+                    # print(f"---->{ps} -> {action}")
 
 
             # Remove the rules that were removed the population from the
