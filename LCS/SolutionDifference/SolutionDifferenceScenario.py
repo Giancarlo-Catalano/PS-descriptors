@@ -134,6 +134,8 @@ class SolutionDifferenceScenario(Scenario):
         # return the current solution
         # the tutorial stores the "fitness" of the solution as well..?
         self.remaining_cycles -= 1
+        self.current_solution_pair_index+=1
+        self.current_winner, self.current_loser = self.solution_pairs_to_consider[self.current_solution_pair_index]
 
         if self.verbose and ((self.remaining_cycles + 1) % 100 == 0):
             print(f"remaining: {self.remaining_cycles}")

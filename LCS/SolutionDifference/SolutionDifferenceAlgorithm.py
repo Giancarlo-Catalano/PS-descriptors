@@ -60,6 +60,7 @@ class SolutionDifferenceAlgorithm(xcs.XCSAlgorithm):
         # search for the appropriate patterns using NSGAII (using Pymoo)
         with utils.announce("Mining the PSs...", True):
             pss = local_restricted_tm_ps_search(to_explain=winner,
+                                                pss_to_avoid=[],
                                                 must_include_mask=difference_mask,
                                                 population_size=50,  # TODO parametrize this
                                                 ps_evaluator=self.ps_evaluator,
