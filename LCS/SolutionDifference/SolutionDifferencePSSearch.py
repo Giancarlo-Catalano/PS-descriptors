@@ -56,7 +56,7 @@ class TMLocalRestrictedPymooProblem(Problem):
         out["F"] = metrics
 
 
-        rows_that_satisfy_mask = np.any(X[self.difference_variables], axis=1)
+        rows_that_satisfy_mask = np.any(X[:, self.difference_variables], axis=1)
         out["G"] = rows_that_satisfy_mask - 0.5   # if the constraint is not satisfied, G = -0.5, otherwise +0.5
 
 def local_restricted_tm_ps_search(to_explain: FullSolution,
