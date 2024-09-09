@@ -147,3 +147,5 @@ class SolutionDifferenceScenario(Scenario):
 
         # TODO make a comment here when mature
         return bool(is_in_winner)
+
+

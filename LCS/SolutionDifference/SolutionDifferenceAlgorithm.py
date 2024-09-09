@@ -16,6 +16,7 @@ from LCS.SolutionDifference.SolutionDifferenceModel import SolutionDifferenceMod
 from LCS.SolutionDifference.SolutionDifferencePSSearch import local_restricted_tm_ps_search
 from LCS.SolutionDifference.SolutionDifferenceScenario import SolutionDifferenceScenario
 from LightweightLocalPSMiner.TwoMetrics import TMEvaluator, local_tm_ps_search
+from ReimplementedXCS.CombinatorialRules import CombinatorialCondition
 
 
 class SolutionDifferenceAlgorithm(xcs.XCSAlgorithm):
@@ -39,6 +40,7 @@ class SolutionDifferenceAlgorithm(xcs.XCSAlgorithm):
         self.xcs_problem = xcs_problem
         self.covering_search_budget = covering_search_budget
         self.verbose = verbose
+        self.minimum_actions = 1 # otherwise it causes behaviour which I don't understand in XCSAlgorithm.covering_is_required
         super().__init__()
 
     def cover_with_many(self, match_set: xcs.MatchSet) -> list[xcs.ClassifierRule]:
@@ -71,7 +73,7 @@ class SolutionDifferenceAlgorithm(xcs.XCSAlgorithm):
 
         def ps_to_rule(ps: PS) -> xcs.XCSClassifierRule:
             return xcs.XCSClassifierRule(
-                ps_to_condition(ps),
+                CombinatorialCondition.from_ps_values(ps.values), # NOTE that this is the customised rule
                 True,
                 self,
                 match_set.model.time_stamp)
@@ -161,3 +163,200 @@ class SolutionDifferenceAlgorithm(xcs.XCSAlgorithm):
     def _action_set_subsumption(self, action_set):
         """Perform action set subsumption."""
         self.traditional_subsumption(action_set)
+
+
+    def update_attributes_of_rule(self,
+                                  rule: xcs.ClassifierRule,
+                                  action_set_size: int,
+                                  payoff: float):
+        # modification of a section in XCSAlgorithm.distribute_payoff
+        rule.experience += 1
+
+        update_rate = max(self.learning_rate, 1 / rule.experience)
+
+        rule.average_reward += (payoff - rule.average_reward) * update_rate
+
+        rule.error += (abs(payoff - rule.average_reward) - rule.error) * update_rate
+
+        rule.action_set_size += (action_set_size - rule.action_set_size) * update_rate
+
+    def update_action_set_fitnesses(self,
+                                  action_set: xcs.ActionSet):
+        # modification of XCSAlgorithm._update_fitness
+
+        def get_rule_accuracy(rule):
+            if rule.error < self.error_threshold:
+                return 1
+            else:
+                return self.accuracy_coefficient * (rule.error / self.error_threshold) ** -self.accuracy_power
+
+
+        accuracies = list(map(get_rule_accuracy, action_set))
+        total_accuracy = sum(accuracy * rule.numerosity for rule, accuracy in zip(action_set, accuracies))
+
+        if total_accuracy < 1e-5:
+            total_accuracy = 1  # to prevent a division by zero, as implemented in the original
+
+        total_accuracy = total_accuracy or 1
+
+        # then update every rule
+        for rule, accuracy in zip(action_set, accuracies):
+            proposed_new_fitness = (accuracy * rule.numerosity / total_accuracy - rule.fitness)
+            rule.fitness += self.learning_rate * proposed_new_fitness
+
+
+    def update_match_set_timestamps(self, match_set: xcs.MatchSet):
+        # Modification of the initial part of XCSAlgorithm.update(match_set)
+        # The original function does too many things, so I'm breaking it up
+
+        # Increment the iteration counter.
+        match_set.model.update_time_stamp()
+
+        def update_action_set_timestamps(action_set: xcs.ActionSet):
+            average_time_passed = (
+                    match_set.model.time_stamp -
+                    self._get_average_time_stamp(action_set)
+            )
+            if average_time_passed <= self.ga_threshold:
+                return
+
+            # Update the time step for each rule to indicate that they were
+            # updated by the GA.
+            self._set_timestamps(action_set)
+
+
+        update_action_set_timestamps(match_set[True])
+        update_action_set_timestamps(match_set[False])
+
+    def apply_payoff_to_match_set(self, match_set: xcs.MatchSet, which_action, payoff: float, enable_reproduction: bool):
+        # modification of MatchSet.apply_payoff
+        if match_set._closed:  # this is, to be honest, stupid but I'll keep it in
+            raise ValueError("The payoff for this match set has already been applied.")
+
+        action_set = match_set[which_action]
+        action_set_size = sum(rule.numerosity for rule in action_set)
+
+        # Update the average reward, error, and action set size of each
+        # rule participating in the action set.
+        for rule in action_set:
+            self.update_attributes_of_rule(rule, action_set_size=action_set_size, payoff=payoff)
+
+        # Update the fitness of the rules.
+        self.update_action_set_fitnesses(action_set)
+
+        # If the parameters so indicate, perform action set subsumption.
+        if self.do_action_set_subsumption:
+            self._action_set_subsumption(action_set)
+
+        # this is where the .update methods would be
+        self.update_match_set_timestamps(match_set)
+        if enable_reproduction:
+            self.introduce_rules_via_reproduction(action_set)
+
+        # end of original .update method
+
+    def introduce_rules_via_reproduction(self, action_set: xcs.ActionSet):
+
+        # This is the second part of the XCSAlgorithm.update function
+        # it has not been modified, although condition.crossover_with has been overwritten as a uniform crossover
+
+        # Select two parents from the action set, with probability
+        # proportionate to their fitness.
+        parent1 = self._select_parent(action_set)
+        parent2 = self._select_parent(action_set)
+
+        # With the probability specified in the parameters, apply the
+        # crossover operator to the parents. Otherwise, just take the
+        # parents unchanged.
+        if random.random() < self.crossover_probability:
+            condition1, condition2 = parent1.condition.crossover_with(
+                parent2.condition
+            )
+        else:
+            condition1, condition2 = parent1.condition, parent2.condition
+
+        # Apply the mutation operator to each child, randomly flipping
+        # their mask bits with a small probability.
+        background_solution = action_set.situation[0]
+        condition1.mutate(point_mutation_probability=self.mutation_probability, background_solution = background_solution)
+        condition2.mutate(point_mutation_probability=self.mutation_probability, background_solution = background_solution)
+
+        # If the newly generated children are already present in the
+        # population (or if they should be subsumed due to GA subsumption)
+        # then simply increment the numerosities of the existing rules in
+        # the population.
+        new_children = []
+        for condition in condition1, condition2:
+            # If the parameters specify that GA subsumption should be
+            # performed, look for an accurate parent that can subsume the
+            # new child.
+            if self.do_ga_subsumption:
+                subsumed = False
+                for parent in parent1, parent2:
+                    should_subsume = (
+                            (parent.experience >
+                             self.subsumption_threshold) and
+                            parent.error < self.error_threshold and
+                            parent.condition(condition)
+                    )
+                    if should_subsume:
+                        if parent in action_set.model:
+                            parent.numerosity += 1
+                            self.prune(action_set.model)
+                        else:
+                            # Sometimes the parent is removed from a
+                            # previous subsumption
+                            parent.numerosity = 1
+                            action_set.model.add(parent)
+                        subsumed = True
+                        break
+                if subsumed:
+                    continue
+
+            # Provided the child has not already been subsumed and it is
+            # present in the population, just increment its numerosity.
+            # Otherwise, if the child has neither been subsumed nor does it
+            # already exist, remember it so we can add it to the classifier
+            # set in just a moment.
+            child = xcs.XCSClassifierRule(
+                condition,
+                action_set.action,
+                self,
+                action_set.model.time_stamp
+            )
+            if child in action_set.model:
+                action_set.model.add(child)
+            else:
+                new_children.append(child)
+
+        # If there were any children which weren't subsumed and weren't
+        # already present in the classifier set, add them.
+        if new_children:
+            average_reward = .5 * (
+                    parent1.average_reward +
+                    parent2.average_reward
+            )
+
+            error = .5 * (parent1.error + parent2.error)
+
+            # .1 * (average fitness of parents)
+            fitness = .05 * (
+                    parent1.fitness +
+                    parent2.fitness
+            )
+
+            for child in new_children:
+                child.average_reward = average_reward
+                child.error = error
+                child.fitness = fitness
+                action_set.model.add(child)
+
+    def covering_is_required(self, match_set):
+        # Modification of XCSAlgorithm.covering_is_required
+
+        amount_in_correct_action_set = len(match_set[True]._rules)  # I am really getting annoyed at this library...
+
+        if self.minimum_actions is None:
+            return amount_in_correct_action_set < 1
+        else:
+            return amount_in_correct_action_set < self.minimum_actions

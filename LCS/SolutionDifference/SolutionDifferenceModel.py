@@ -1,10 +1,7 @@
 import xcs
-from xcs import ClassifierSet, MatchSet
-from xcs.bitstrings import BitString
+from xcs import ClassifierSet, MatchSet, scenarios
 
 from Core.EvaluatedFS import EvaluatedFS
-from Core.FullSolution import FullSolution
-from LCS.Conversions import condition_to_ps
 
 
 class SolutionDifferenceModel(ClassifierSet):
@@ -46,9 +43,8 @@ class SolutionDifferenceModel(ClassifierSet):
         for rule in new_rules:  # MODIFIED
             by_action[True][rule.condition] = rule
 
-        # Reconstruct the match set with the modifications we just
-        # made.
-        by_action = self.remove_empty_entries_from_dict(by_action)  # silly library
+        # Reconstruct the match set with the modifications we just made.
+        # by_action = self.remove_empty_entries_from_dict(by_action)  # silly library
         return MatchSet(self, old_match_set.situation, by_action)
 
     @classmethod
@@ -78,7 +74,7 @@ class SolutionDifferenceModel(ClassifierSet):
             for action, rule in actions.items():
                 by_action[matches_winner][condition] = rule  # the action is whether it's in the winner or loser
 
-        by_action = self.remove_empty_entries_from_dict(by_action)  # silly library
+        # by_action = self.remove_empty_entries_from_dict(by_action)  # silly library
         # Construct the match set.
         match_set = MatchSet(self, situation, by_action)
 
@@ -96,6 +92,46 @@ class SolutionDifferenceModel(ClassifierSet):
 
         # Return the newly created match set.
         return match_set
+
+
+    def run(self, scenario, learn=True):
+        """ Had to modify this since the match set is strange"""
+
+        assert isinstance(scenario, scenarios.Scenario)
+
+        # previous_match_set = None
+
+        # Repeat until the scenario has run its course.
+        while scenario.more():
+            # Gather information about the current state of the
+            # environment.
+            situation = scenario.sense()
+
+            # Determine which rules match the current situation.
+            match_set = self.match(situation)
+
+            # No need to select an action
+            # The reward for the rules that were betting on the correct side is 1.0,
+            # and for those that bet against it, 0.0
+
+
+            # If the scenario is dynamic, don't immediately apply the
+            # reward; instead, wait until the next iteration and factor in
+            # not only the reward that was received on the previous step,
+            # but the (discounted) reward that is expected going forward
+            # given the resulting situation observed after the action was
+            # taken. This is a classic feature of temporal difference (TD)
+            # algorithms, which acts to stitch together a general picture
+            # of the future expected reward without actually waiting the
+            # full duration to find out what it will be.
+            if learn:
+                # apply payoff for correct instances
+                self._algorithm.apply_payoff_to_match_set(match_set, which_action=True, payoff=1, enable_reproduction=True)
+                self._algorithm.apply_payoff_to_match_set(match_set, which_action=False, payoff=0, enable_reproduction=False)
+                match_set._closed = True
+                # match_set.apply_payoff()
+
+        # I don't think I need the "final stitch" here
 
     def predict(self, sol_pair: (EvaluatedFS, EvaluatedFS)) -> dict:
         # This function will need to be expanded in the future
@@ -117,3 +153,8 @@ class SolutionDifferenceModel(ClassifierSet):
                   "rules": rules}
 
         return result
+
+
+
+
+
