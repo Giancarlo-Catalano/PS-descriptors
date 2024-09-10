@@ -47,6 +47,10 @@ class CombinatorialCondition(PS):
         return self.fixed_count()
 
 
+    def copy(self):
+        return CombinatorialCondition.from_ps_values(self.values.copy())
+
+
     def __iter__(self):
         for value in self.values:
             if value == STAR:

@@ -278,7 +278,7 @@ class SolutionDifferenceAlgorithm(xcs.XCSAlgorithm):
                 parent2.condition
             )
         else:
-            condition1, condition2 = parent1.condition, parent2.condition
+            condition1, condition2 = parent1.condition.copy(), parent2.condition.copy()
 
         # Apply the mutation operator to each child, randomly flipping
         # their mask bits with a small probability.

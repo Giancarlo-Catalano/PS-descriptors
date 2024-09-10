@@ -39,7 +39,8 @@ class SolutionDifferenceModel(ClassifierSet):
             elif condition in by_action[False]:
                 del by_action[False][condition]
             else:
-                raise Exception(f"The rule {replaced_rule} to be removed is nowhere to be found")
+                if self.verbose:
+                    print(f"The rule {replaced_rule} to be removed is nowhere to be found")
 
         # Add the new classifier to the action set. This is done after
         # the replaced rules are removed, just in case the algorithm
@@ -54,6 +55,7 @@ class SolutionDifferenceModel(ClassifierSet):
 
     @classmethod
     def remove_empty_entries_from_dict(cls, old_dict):
+        """ This is dangerous, don't use it"""
         new_dict = old_dict.copy()
         for key in old_dict:
             if len(old_dict[key]) == 0:
