@@ -15,12 +15,15 @@ class SolutionDifferenceModel(ClassifierSet):
         super().__init__(algorithm, possible_actions)
         self.verbose = verbose
 
-    def update_match_set_after_covering(self, old_match_set: xcs.MatchSet,
-                                        by_action: dict[bool, dict],
-                                        new_rules: list) -> xcs.MatchSet:
-        # Add the new classifier, getting back a list of the rule(s)
-        # which had to be removed to make room for it.
+    def add_rules_to_model_and_update_match_set_after_covering(self, old_match_set: xcs.MatchSet,
+                                                               by_action: dict[bool, dict],
+                                                               new_rules: list) -> xcs.MatchSet:
+        # Add the rules to the model, and get the list of removed ones
         replaced = [removed for rule in new_rules for removed in self.add(rule)]  # MODIFIED
+        if self.verbose:
+            print("Adding the following rules")
+            for added_rule in new_rules:
+                print(added_rule)
         if self.verbose and len(replaced) > 0:
             print("In adding those rules, the following were removed")
             for replaced_rule in replaced:
@@ -33,8 +36,10 @@ class SolutionDifferenceModel(ClassifierSet):
             condition = replaced_rule.condition
             if condition in by_action[True]:
                 del by_action[True][condition]
-            else:
+            elif condition in by_action[False]:
                 del by_action[False][condition]
+            else:
+                raise Exception(f"The rule {replaced_rule} to be removed is nowhere to be found")
 
         # Add the new classifier to the action set. This is done after
         # the replaced rules are removed, just in case the algorithm
@@ -86,9 +91,9 @@ class SolutionDifferenceModel(ClassifierSet):
             # Ensure that the condition provided by the algorithm does indeed match the situation.
             assert (all(rule.condition(winner.values) for rule in rules))
 
-            return self.update_match_set_after_covering(old_match_set=match_set,
-                                                        by_action=by_action,
-                                                        new_rules=rules)
+            return self.add_rules_to_model_and_update_match_set_after_covering(old_match_set=match_set,
+                                                                               by_action=by_action,
+                                                                               new_rules=rules)
 
         # Return the newly created match set.
         return match_set

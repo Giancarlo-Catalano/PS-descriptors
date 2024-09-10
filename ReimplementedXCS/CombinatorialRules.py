@@ -71,23 +71,23 @@ class CombinatorialCondition(PS):
 
 
     def __call__(self, other):  # other might be a np.ndarray or another CombinatorialCondition
-        other_values = None
+        def check_against_values(other_values: np.ndarray) -> bool:
+            same_value = self.values == other_values
+            wildcard_in_either = (self.values == STAR) | (other_values == STAR)
+            return np.all(np.logical_or(same_value,
+                                        wildcard_in_either))
+
         if isinstance(other, np.ndarray):
-            other_values = other
+            return check_against_values(other)
         elif isinstance(other, CombinatorialCondition):
-            other_values = other.values
-        elif type(other) is tuple and len(other) == 2:
+            return check_against_values(other.values)
+        elif type(other) is tuple and len(other) == 2 and isinstance(other[0], FullSolution):
             # this is a nasty hack to circumvent the restrictions in ActionSet for the condition to match the scenario
-            assert(isinstance(other[1], FullSolution))
-            other_values = other[0].values # 0 is the winner
+            winner, loser = other
+            return check_against_values(winner.values) != check_against_values(loser.values) # xor
         else:
             print(f"Received a __call__ where type(other) = {type(other)}")
-            other_values = np.array(other)
-
-        same_value = self.values == other_values
-        wildcard_in_either = (self.values == STAR) | (other_values == STAR)
-        return np.all(np.logical_or(same_value,
-                             wildcard_in_either))
+            return check_against_values(np.array(other))
 
 
 

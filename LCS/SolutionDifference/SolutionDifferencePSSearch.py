@@ -57,7 +57,7 @@ class TMLocalRestrictedPymooProblem(Problem):
 
 
         rows_that_satisfy_mask = np.any(X[:, self.difference_variables], axis=1)
-        out["G"] = rows_that_satisfy_mask - 0.5   # if the constraint is not satisfied, G = -0.5, otherwise +0.5
+        out["G"] = 0.5 - rows_that_satisfy_mask   # if the constraint is satisfied, it is negative (which is counterintuitive)
 
 def local_restricted_tm_ps_search(to_explain: FullSolution,
                        must_include_mask: np.ndarray,
@@ -108,32 +108,30 @@ def local_restricted_tm_ps_search(to_explain: FullSolution,
         return wrong_signs
 
 
-def test_local_search():
+def test_local_restricted_search():
     problem = Trapk(4, 4)
 
     already_mined = []  # [PS([1,1,1,1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1]),
     # PS([-1,-1,-1,-1,1,1,1,1,-1,-1,-1,-1,-1,-1,-1,-1])]
 
     to_explain = FullSolution([1, 1, 1, 1, 0, 0, 0, 0, 1, 0, 1, 0, 1, 1, 1, 0])
+    must_include_mask = np.zeros(shape=len(to_explain), dtype=bool)
+    must_include_mask[0:3] = True
 
     pRef = problem.get_reference_population(10000)
 
     tm_evaluator = TMEvaluator(pRef)
 
-    results = local_tm_ps_search(to_explain=to_explain,
+    results = local_restricted_tm_ps_search(to_explain=to_explain,
                                  pss_to_avoid=already_mined,
                                  ps_evaluator=tm_evaluator,
                                  ps_budget=1000,
                                  population_size=50,
-                                 verbose=True)
+                                 verbose=True,
+                                 must_include_mask=must_include_mask)
 
     print("results of search:")
     for result in results:
         print(result)
 
-    print("The results by dependence-atomicity are")
-    results.sort(key=lambda x: x.metric_scores[0] - x.metric_scores[1], reverse=True)
-    for result in results:
-        a, d = result.metric_scores
-        if a < 0 and d > 0:
-            print(result)
+

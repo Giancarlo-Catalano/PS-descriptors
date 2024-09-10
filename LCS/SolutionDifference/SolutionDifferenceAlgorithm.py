@@ -60,7 +60,7 @@ class SolutionDifferenceAlgorithm(xcs.XCSAlgorithm):
         difference_mask = winner.values != loser.values
 
         # search for the appropriate patterns using NSGAII (using Pymoo)
-        with utils.announce("Mining the PSs...", True):
+        with utils.announce("Mining the PSs...", self.verbose):
             pss = local_restricted_tm_ps_search(to_explain=winner,
                                                 pss_to_avoid=[],
                                                 must_include_mask=difference_mask,
@@ -77,6 +77,11 @@ class SolutionDifferenceAlgorithm(xcs.XCSAlgorithm):
                 True,
                 self,
                 match_set.model.time_stamp)
+
+        if self.verbose:
+            print('The mined pss are')
+            for ps in pss:
+                print("\t", ps)
 
         return list(map(ps_to_rule, pss))
 
@@ -194,7 +199,7 @@ class SolutionDifferenceAlgorithm(xcs.XCSAlgorithm):
         accuracies = list(map(get_rule_accuracy, action_set))
         total_accuracy = sum(accuracy * rule.numerosity for rule, accuracy in zip(action_set, accuracies))
 
-        if total_accuracy < 1e-5:
+        if total_accuracy == 0:  # I am scared of using 1e-05, because the model already uses that as a default in many places.
             total_accuracy = 1  # to prevent a division by zero, as implemented in the original
 
         total_accuracy = total_accuracy or 1
