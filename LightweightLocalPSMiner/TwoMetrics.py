@@ -12,7 +12,8 @@ from Core.EvaluatedPS import EvaluatedPS
 from Core.FullSolution import FullSolution
 from Core.PRef import PRef
 from Core.PS import PS
-from Core.PSMetric.MeanFitness import FitnessDelta
+from Core.PSMetric.MeanFitness import FitnessDelta, MeanFitness
+from Core.PSMetric.Metric import Metric
 from Core.PSMetric.SignificantlyHighAverage import SignificantlyHighAverage, MannWhitneyU
 from Core.PSMetric.ValueSpecificMutualInformation import SolutionSpecificMutualInformation, \
     FasterSolutionSpecificMutualInformation, NotValueSpecificMI
@@ -26,6 +27,8 @@ class TMEvaluator:
     fitness_p_value_metric: MannWhitneyU
     global_mean_fitness: float
     used_evaluations: int
+
+    mean_fitness_metric: Metric
 
     def __init__(self,
                  pRef: PRef):
@@ -42,12 +45,18 @@ class TMEvaluator:
 
         self.global_mean_fitness = np.average(pRef.fitness_array)
 
+
+        self.mean_fitness_metric = MeanFitness()
+        self.mean_fitness_metric.set_pRef(pRef)
+
     def get_A_D(self, ps: PS) -> (float, float):
         self.used_evaluations += 1
         atomicity = self.linkage_metric.get_atomicity(ps)
         dependence = self.linkage_metric.get_dependence(ps)
 
-        return -atomicity, dependence
+        mean_fitness = self.mean_fitness_metric.get_single_score(ps)
+
+        return -atomicity, -mean_fitness  # TODO restore this to -atomicity, dependence
 
     def set_solution(self, solution: FullSolution):
         self.linkage_metric.set_solution(solution)

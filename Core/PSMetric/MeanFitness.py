@@ -41,6 +41,7 @@ class MeanFitness(Metric):
         return np.average(observed_fitnesses)
 
     def get_single_score(self, ps: PS) -> float:
+        assert(self.pRef is not None)  # which would mean that set_pRef has not been called
         observed_fitnesses = self.pRef.fitnesses_of_observations(ps)
         if len(observed_fitnesses) == 0:
             # warnings.warn(f"The passed Core {ps} has no observations, and thus the MeanFitness could not be calculated")

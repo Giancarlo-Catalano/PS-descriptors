@@ -2,10 +2,11 @@ import random
 from typing import Iterable, Any
 
 import numpy as np
+from pymoo.core.repair import Repair
 from pymoo.operators.sampling.rnd import FloatRandomSampling
 
 from Core.PS import PS, STAR
-from PSMiners.PyMoo.CustomCrowding import PyMooDecisionSpaceSequentialCrowding, PyMooCustomCrowding
+from PSMiners.PyMoo.CustomCrowding import PyMooCustomCrowding
 
 
 class LocalPSGeometricSampling(FloatRandomSampling):
@@ -66,6 +67,29 @@ class ObjectiveSpaceAvoidance(PyMooCustomCrowding):
         return scores
 
 # mutation should be BitFlipMutation(...)
-# crossover should be SimulatedBinaryCrossover(...)
+# crossover should be SimulatedBinaryCrossover(...), probably set to 0
 # selection should be tournamentSelection
 # crowding operator should be UnexplainedCrowdingOperator
+
+
+
+class ForceDifferenceMask(Repair):
+
+    def _do(self, problem, Z, **kwargs):
+
+        # assert(isinstance(problem, TMLocalRestrictedPymooProblem)) # including this requires a circular import
+        difference_variables = problem.difference_variables
+
+        def fix_row(row: np.ndarray):
+            # we choose an item at random to activate
+            to_activate  = random.choice(difference_variables)
+            row[to_activate] = True
+
+        which_need_fixing = problem.get_which_rows_satisfy_mask_constraint(Z)
+
+
+        for row, needs_fixing in zip(Z, which_need_fixing):
+            if needs_fixing:
+                fix_row(row)
+
+        return Z

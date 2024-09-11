@@ -49,7 +49,7 @@ def run_solution_difference_LCS(verbose: bool = False):
     # e.g uniform SA means that 50% is from random search, 50% is from Simulated Annealing
     pRef = PRefManager.generate_pRef(problem=optimisation_problem,
                                      sample_size=10000,  # these are the Solution evaluations
-                                     which_algorithm="uniform SA",
+                                     which_algorithm="uniform",
                                      verbose=verbose)
 
     pRef = PRef.unique(pRef)

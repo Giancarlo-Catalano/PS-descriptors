@@ -70,7 +70,7 @@ class SolutionDifferenceAlgorithm(xcs.XCSAlgorithm):
                                                 population_size=100,  # TODO parametrize this
                                                 ps_evaluator=self.ps_evaluator,
                                                 ps_budget=self.covering_search_budget,
-                                                verbose=False)
+                                                verbose=True)
 
         assert (len(pss) > 0)
 

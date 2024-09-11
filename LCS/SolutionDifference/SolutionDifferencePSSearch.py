@@ -17,7 +17,7 @@ from Core.PSMetric.MeanFitness import FitnessDelta
 from Core.PSMetric.SignificantlyHighAverage import SignificantlyHighAverage, MannWhitneyU
 from Core.PSMetric.ValueSpecificMutualInformation import SolutionSpecificMutualInformation, \
     FasterSolutionSpecificMutualInformation, NotValueSpecificMI
-from LightweightLocalPSMiner.Operators import LocalPSGeometricSampling, ObjectiveSpaceAvoidance
+from LightweightLocalPSMiner.Operators import LocalPSGeometricSampling, ObjectiveSpaceAvoidance, ForceDifferenceMask
 from LightweightLocalPSMiner.TwoMetrics import TMEvaluator, TMLocalPymooProblem
 from LinkageExperiments.LocalVarianceLinkage import LocalVarianceLinkage, BivariateLinkage
 
@@ -50,14 +50,17 @@ class TMLocalRestrictedPymooProblem(Problem):
         return PS(sol_value if x_value else -1 for (sol_value, x_value) in zip(self.solution_to_explain.values, x))
 
 
+    def get_which_rows_satisfy_mask_constraint(self, X: np.ndarray) -> np.ndarray:
+        return np.any(X[:, self.difference_variables], axis=1)
+
+
     def _evaluate(self, X, out, *args, **kwargs):
         """ I believe that since this class inherits from Problem, x should be a group of solutions, and not just one"""
         metrics = np.array([self.objectives_evaluator.get_A_D(self.individual_to_ps(row)) for row in X])
         out["F"] = metrics
 
 
-        rows_that_satisfy_mask = np.any(X[:, self.difference_variables], axis=1)
-        out["G"] = 0.5 - rows_that_satisfy_mask   # if the constraint is satisfied, it is negative (which is counterintuitive)
+        out["G"] = 0.5 - self.get_which_rows_satisfy_mask_constraint(X)   # if the constraint is satisfied, it is negative (which is counterintuitive)
 
 def local_restricted_tm_ps_search(to_explain: FullSolution,
                        must_include_mask: np.ndarray,
@@ -72,10 +75,11 @@ def local_restricted_tm_ps_search(to_explain: FullSolution,
 
     algorithm = NSGA2(pop_size=population_size,
                       sampling=LocalPSGeometricSampling(),
-                      crossover=SimulatedBinaryCrossover(prob=0.5),
+                      crossover=SimulatedBinaryCrossover(prob=0),
                       mutation=BitflipMutation(prob=1 / problem.n_var),
                       eliminate_duplicates=True,
-                      survival=ObjectiveSpaceAvoidance(pss_to_avoid)
+                      survival=ObjectiveSpaceAvoidance(pss_to_avoid),
+                      repair=ForceDifferenceMask(),
                       )
 
     res = minimize(problem,
@@ -84,7 +88,17 @@ def local_restricted_tm_ps_search(to_explain: FullSolution,
                    verbose=verbose)
 
     result_pss = [EvaluatedPS(problem.individual_to_ps(values).values, metric_scores=ms)
-                  for values, ms in zip(res.X, res.F)]
+                  for values, ms, satisfies_constr in zip(res.X, res.F, res.G)
+                  if satisfies_constr]
+
+    if len(result_pss) == 0:
+        if verbose:
+            print("Count not find any PSs that satisfied the constraint, so I'll relax it")
+            result_pss = [EvaluatedPS(problem.individual_to_ps(values).values, metric_scores=ms)
+                          for values, ms, satisfies_constr in zip(res.X, res.F, res.G)]
+            if len(result_pss)==0:
+                print("Even after relaxing the constraint, no solutions were found...")
+                raise Exception("No maching PSs could be found") # perhaps I should return nothing?
 
     # then we arrange them in such a way that if a really good one is found, it will be the first one
 
@@ -92,7 +106,7 @@ def local_restricted_tm_ps_search(to_explain: FullSolution,
     wrong_signs = []
     for ps in result_pss:
         a, d = ps.metric_scores
-        if a < 0 and d > 0:
+        if a < 0: #  and d > 0: TODO uncomment this when the second metric is dependence
             correct_sign_pss.append(ps)
         else:
             wrong_signs.append(ps)
