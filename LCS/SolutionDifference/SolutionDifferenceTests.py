@@ -21,16 +21,16 @@ def set_settings_for_lcs_algorithm(algorithm: xcs.XCSAlgorithm) -> None:
     """Simply sets the settings that are best for my purposes"""
     # play with these settings ad lib. Leaving the defaults seems to work :--)
     algorithm.crossover_probability = 0
-    # algorithm.deletion_threshold = 20  #  minimum age before a rule can be pruned away
+    algorithm.deletion_threshold = 20  #  minimum age before a rule can be pruned away
     # algorithm.discount_factor = 0
-    # algorithm.do_action_set_subsumption = True
+    algorithm.do_action_set_subsumption = True
     # algorithm.do_ga_subsumption = True
     # algorithm.exploration_probability = 0
     # algorithm.ga_threshold = 100000
     algorithm.max_population_size = 50
     # algorithm.exploration_probability = 0
     # algorithm.minimum_actions = 1
-    # algorithm.subsumption_threshold = 50  # minimum age before a rule can subsume another
+    algorithm.subsumption_threshold = 50  # minimum age before a rule can subsume another
 
 
 def run_solution_difference_LCS(verbose: bool = False):
@@ -70,7 +70,7 @@ def run_solution_difference_LCS(verbose: bool = False):
     # my custom XCS algorithm, which just overrides when covering is required, and how it happens
     algorithm = SolutionDifferenceAlgorithm(ps_evaluator=ps_evaluator,
                                             xcs_problem = xcs_problem,
-                                            covering_search_budget=1000,
+                                            covering_search_budget=2000,
                                             verbose=verbose)
 
     set_settings_for_lcs_algorithm(algorithm)
@@ -83,7 +83,9 @@ def run_solution_difference_LCS(verbose: bool = False):
         model.run(scenario, learn=True)
 
     print("The model is")
-    print(model)
+
+    for rule in model._population:
+        print(rule)
 
     # # We request to evaluate on the best and worst solutions
     # solutions_to_evaluate = [xcs_problem.all_solutions[0], xcs_problem.all_solutions[-1]]

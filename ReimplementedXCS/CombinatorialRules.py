@@ -67,6 +67,14 @@ class CombinatorialCondition(PS):
 
     # ne should be implemented automatically
 
+
+    def is_generalisation_of(self, other_values) -> bool:
+        same_value = self.values == other_values
+        i_have_wildcard = self.values == STAR
+        # (own, other) A A -> True,  A B -> False, A * -> False, * A -> True, * * -> True
+        return np.all(same_value | i_have_wildcard)
+
+
     def __floordiv__(self, other):
         same_value = self.values == other.values
         wildcard_in_either = (self.values == STAR) | (other.values == STAR)
@@ -79,16 +87,16 @@ class CombinatorialCondition(PS):
             same_value = self.values == other_values
             wildcard_in_either = (self.values == STAR) | (other_values == STAR)
             return np.all(np.logical_or(same_value,
-                                        wildcard_in_either))
+                                 wildcard_in_either))
 
         if isinstance(other, np.ndarray):
             return check_against_values(other)
         elif isinstance(other, CombinatorialCondition):
-            return check_against_values(other.values)
+            return self.is_generalisation_of(other.values)
         elif type(other) is tuple and len(other) == 2 and isinstance(other[0], FullSolution):
             # this is a nasty hack to circumvent the restrictions in ActionSet for the condition to match the scenario
             winner, loser = other
-            return check_against_values(winner.values) != check_against_values(loser.values) # xor
+            return self.is_generalisation_of(winner.values) != self.is_generalisation_of(loser.values) # xor
         else:
             print(f"Received a __call__ where type(other) = {type(other)}")
             return check_against_values(np.array(other))

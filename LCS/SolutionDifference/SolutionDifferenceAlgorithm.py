@@ -59,12 +59,15 @@ class SolutionDifferenceAlgorithm(xcs.XCSAlgorithm):
         self.ps_evaluator.set_solution(winner)
         difference_mask = winner.values != loser.values
 
+        if self.verbose:
+            print(f"Covering for {winner = }, {loser = }")
+
         # search for the appropriate patterns using NSGAII (using Pymoo)
         with utils.announce("Mining the PSs...", self.verbose):
             pss = local_restricted_tm_ps_search(to_explain=winner,
                                                 pss_to_avoid=[],
                                                 must_include_mask=difference_mask,
-                                                population_size=50,  # TODO parametrize this
+                                                population_size=100,  # TODO parametrize this
                                                 ps_evaluator=self.ps_evaluator,
                                                 ps_budget=self.covering_search_budget,
                                                 verbose=False)
@@ -167,7 +170,7 @@ class SolutionDifferenceAlgorithm(xcs.XCSAlgorithm):
 
     def _action_set_subsumption(self, action_set):
         """Perform action set subsumption."""
-        self.traditional_subsumption(action_set)
+        self.custom_subsumption(action_set)
 
 
     def update_attributes_of_rule(self,

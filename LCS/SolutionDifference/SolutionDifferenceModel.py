@@ -23,11 +23,11 @@ class SolutionDifferenceModel(ClassifierSet):
         if self.verbose:
             print("Adding the following rules")
             for added_rule in new_rules:
-                print(added_rule)
+                print(added_rule.condition)
         if self.verbose and len(replaced) > 0:
             print("In adding those rules, the following were removed")
             for replaced_rule in replaced:
-                print(replaced_rule)
+                print(replaced_rule.condition)
 
         # Remove the rules that were removed the population from the
         # action set, as well. Note that they may not appear in the
@@ -39,7 +39,7 @@ class SolutionDifferenceModel(ClassifierSet):
             elif condition in by_action[False]:
                 del by_action[False][condition]
             else:
-                if self.verbose:
+                if self.verbose and False: # TODO Understand why this happens
                     print(f"The rule {replaced_rule} to be removed is nowhere to be found")
 
         # Add the new classifier to the action set. This is done after
