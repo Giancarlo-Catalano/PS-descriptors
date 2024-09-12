@@ -12,6 +12,7 @@ from Core.PS import PS
 from LCS.Conversions import get_pss_from_action_set, get_action_set, \
     ps_to_condition, get_conditions_in_match_set, condition_to_ps
 from LCS.CustomXCSClassifierSet import CustomXCSClassiferSet
+from LCS.PSFilter import filter_pss
 from LCS.SolutionDifference.SolutionDifferenceModel import SolutionDifferenceModel
 from LCS.SolutionDifference.SolutionDifferencePSSearch import local_restricted_tm_ps_search
 from LCS.SolutionDifference.SolutionDifferenceScenario import SolutionDifferenceScenario
@@ -63,14 +64,16 @@ class SolutionDifferenceAlgorithm(xcs.XCSAlgorithm):
             print(f"Covering for {winner = }, {loser = }")
 
         # search for the appropriate patterns using NSGAII (using Pymoo)
-        with utils.announce("Mining the PSs...", self.verbose):
+        with utils.announce("Mining the PSs...\n", self.verbose):
             pss = local_restricted_tm_ps_search(to_explain=winner,
                                                 pss_to_avoid=[],
                                                 must_include_mask=difference_mask,
                                                 population_size=100,  # TODO parametrize this
                                                 ps_evaluator=self.ps_evaluator,
                                                 ps_budget=self.covering_search_budget,
-                                                verbose=True)
+                                                verbose=False)
+
+            pss = filter_pss(pss, ps_evaluator=self.ps_evaluator)
 
         assert (len(pss) > 0)
 

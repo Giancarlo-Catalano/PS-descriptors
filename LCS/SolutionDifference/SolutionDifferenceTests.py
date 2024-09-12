@@ -49,7 +49,7 @@ def run_solution_difference_LCS(verbose: bool = False):
     # e.g uniform SA means that 50% is from random search, 50% is from Simulated Annealing
     pRef = PRefManager.generate_pRef(problem=optimisation_problem,
                                      sample_size=10000,  # these are the Solution evaluations
-                                     which_algorithm="uniform",
+                                     which_algorithm="uniform SA",
                                      verbose=verbose)
 
     pRef = PRef.unique(pRef)
@@ -62,7 +62,7 @@ def run_solution_difference_LCS(verbose: bool = False):
     # The best solutions have class 1 and the worst have class 0.
     xcs_problem = SolutionDifferenceScenario(original_problem=optimisation_problem,
                                              pRef=pRef,  # where it gets the solutions from
-                                             training_cycles=1000,  # how many solutions to show (might repeat)
+                                             training_cycles=10000,  # how many solutions to show (might repeat)
                                              verbose=verbose)
 
     scenario = ScenarioObserver(xcs_problem)

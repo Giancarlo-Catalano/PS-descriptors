@@ -87,7 +87,7 @@ def local_restricted_tm_ps_search(to_explain: FullSolution,
                    termination=('n_evals', ps_budget),
                    verbose=verbose)
 
-    result_pss = [EvaluatedPS(problem.individual_to_ps(values).values, metric_scores=ms)
+    result_pss = [EvaluatedPS(problem.individual_to_ps(values).values, metric_scores=-ms)
                   for values, ms, satisfies_constr in zip(res.X, res.F, res.G)
                   if satisfies_constr]
 
@@ -100,26 +100,7 @@ def local_restricted_tm_ps_search(to_explain: FullSolution,
                 print("Even after relaxing the constraint, no solutions were found...")
                 raise Exception("No maching PSs could be found") # perhaps I should return nothing?
 
-    # then we arrange them in such a way that if a really good one is found, it will be the first one
-
-    correct_sign_pss = []
-    wrong_signs = []
-    for ps in result_pss:
-        a, d = ps.metric_scores
-        if a < 0: #  and d > 0: TODO uncomment this when the second metric is dependence
-            correct_sign_pss.append(ps)
-        else:
-            wrong_signs.append(ps)
-
-    if verbose:
-        print(f"The search for PSs in {to_explain} resulted in ")
-        for ps in result_pss:
-            print("\t", ps)
-
-    if len(correct_sign_pss) > 0:
-        return correct_sign_pss
-    else:
-        return wrong_signs
+    return result_pss
 
 
 def test_local_restricted_search():
