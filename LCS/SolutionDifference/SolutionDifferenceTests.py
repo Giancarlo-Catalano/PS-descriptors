@@ -1,18 +1,12 @@
 import xcs
-from xcs.bitstrings import BitString
 from xcs.scenarios import ScenarioObserver
 
-from BenchmarkProblems.Checkerboard import CheckerBoard
 from BenchmarkProblems.GraphColouring import GraphColouring
 from BenchmarkProblems.RoyalRoad import RoyalRoad
-from BenchmarkProblems.Trapk import Trapk
-from Core.FullSolution import FullSolution
 from Core.PRef import PRef
 from Explanation.PRefManager import PRefManager
-from LCS.CustomXCSAlgorithm import CustomXCSAlgorithm
 from LCS.SolutionDifference.SolutionDifferenceAlgorithm import SolutionDifferenceAlgorithm
 from LCS.SolutionDifference.SolutionDifferenceScenario import SolutionDifferenceScenario
-from LCS.XCSProblemTopAndBottom import XCSProblemTopAndBottom
 from LightweightLocalPSMiner.TwoMetrics import TMEvaluator
 from utils import announce
 
@@ -21,7 +15,7 @@ def set_settings_for_lcs_algorithm(algorithm: xcs.XCSAlgorithm) -> None:
     """Simply sets the settings that are best for my purposes"""
     # play with these settings ad lib. Leaving the defaults seems to work :--)
     algorithm.crossover_probability = 0
-    algorithm.deletion_threshold = 20  #  minimum age before a rule can be pruned away
+    algorithm.deletion_threshold = 1  #  minimum age before a rule can be pruned away
     # algorithm.discount_factor = 0
     algorithm.do_action_set_subsumption = True
     # algorithm.do_ga_subsumption = True

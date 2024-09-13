@@ -181,7 +181,7 @@ class SolutionDifferenceAlgorithm(xcs.XCSAlgorithm):
                                   action_set_size: int,
                                   payoff: float):
         # modification of a section in XCSAlgorithm.distribute_payoff
-        rule.experience += 1
+        rule.experience += 1  # appears to be equivalent to the count of matches
 
         update_rate = max(self.learning_rate, 1 / rule.experience)
 
@@ -190,6 +190,14 @@ class SolutionDifferenceAlgorithm(xcs.XCSAlgorithm):
         rule.error += (abs(payoff - rule.average_reward) - rule.error) * update_rate
 
         rule.action_set_size += (action_set_size - rule.action_set_size) * update_rate
+
+
+        # custom part
+        if not hasattr(rule, "correct_match_count"):
+            rule.correct_match_count = 0
+        rule.correct_match_count += int(payoff)
+        # end of custom part
+
 
     def update_action_set_fitnesses(self,
                                   action_set: xcs.ActionSet):
@@ -212,8 +220,9 @@ class SolutionDifferenceAlgorithm(xcs.XCSAlgorithm):
 
         # then update every rule
         for rule, accuracy in zip(action_set, accuracies):
-            proposed_new_fitness = (accuracy * rule.numerosity / total_accuracy - rule.fitness)
-            rule.fitness += self.learning_rate * proposed_new_fitness
+            # proposed_new_fitness = (accuracy * rule.numerosity / total_accuracy - rule.fitness)
+            # rule.fitness += self.learning_rate * proposed_new_fitness TODO uncomment these
+            rule.fitness = rule.correct_match_count / rule.experience  # experimental
 
 
     def update_match_set_timestamps(self, match_set: xcs.MatchSet):
@@ -371,3 +380,31 @@ class SolutionDifferenceAlgorithm(xcs.XCSAlgorithm):
             return amount_in_correct_action_set < 1
         else:
             return amount_in_correct_action_set < self.minimum_actions
+
+
+    def prune(self, model: SolutionDifferenceModel) -> list[xcs.ClassifierRule]:
+        """ custom reimplementation in order to simplify the pruning process"""
+        """ deletes a single rule, which consists in calling model.discard(rule) and returning it into a singleton list"""
+
+
+        """ the assumption is that the rules' fitnesses are their accuracy (correct / matches)"""
+
+        total_numerosity = sum(rule.numerosity for rule in model)
+        if total_numerosity <= self.max_population_size:
+            return []
+
+        rules_available_for_removal = [rule for rule in model
+                                       if rule.experience > self.deletion_threshold
+                                       if rule.fitness < 1.0]
+        if len(rules_available_for_removal) == 0:
+            if self.verbose:
+                print(f"While pruning is necessary (tot.numerosity = {total_numerosity}, #rules = {len(list(model))}), no rules are eligible for removal")
+            return []
+
+        to_remove = min(rules_available_for_removal, key=lambda x: x.fitness)
+        if self.verbose:
+            print(f"In pruning, the condition {to_remove.condition} will be discarded "
+                  f"(numerosity = {to_remove.numerosity}), "
+                  f"its accuracy was {to_remove.fitness}")
+        model.discard(to_remove)
+        return [to_remove]
