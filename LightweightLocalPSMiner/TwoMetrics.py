@@ -21,7 +21,7 @@ from LightweightLocalPSMiner.Operators import LocalPSGeometricSampling, Objectiv
 from LinkageExperiments.LocalVarianceLinkage import LocalVarianceLinkage, BivariateLinkage
 
 
-class TMEvaluator:
+class GeneralPSEvaluator:
     linkage_metric: BivariateLinkage
     delta_fitness_metric: FitnessDelta
     fitness_p_value_metric: MannWhitneyU
@@ -56,7 +56,7 @@ class TMEvaluator:
 
         mean_fitness = self.mean_fitness_metric.get_single_score(ps)
 
-        return -atomicity, -mean_fitness  # TODO restore this to -atomicity, dependence
+        return -atomicity, -mean_fitness
 
     def set_solution(self, solution: FullSolution):
         self.linkage_metric.set_solution(solution)
@@ -67,11 +67,11 @@ class TMEvaluator:
 
 
 class TMLocalPymooProblem(Problem):
-    tm_evaluator: TMEvaluator
+    tm_evaluator: GeneralPSEvaluator
 
     def __init__(self,
                  solution_to_explain: FullSolution,
-                 objectives_evaluator: TMEvaluator):
+                 objectives_evaluator: GeneralPSEvaluator):
         self.solution_to_explain = solution_to_explain
         self.objectives_evaluator = objectives_evaluator
         self.objectives_evaluator.set_solution(solution_to_explain)
@@ -97,7 +97,7 @@ class TMLocalPymooProblem(Problem):
 
 def local_tm_ps_search(to_explain: FullSolution,
                        to_avoid: Iterable[PS],
-                       ps_evaluator: TMEvaluator,
+                       ps_evaluator: GeneralPSEvaluator,
                        ps_budget: int,
                        population_size: int,
                        verbose=True) -> list[PS]:
@@ -168,7 +168,7 @@ def test_local_search():
 
     pRef = problem.get_reference_population(10000)
 
-    tm_evaluator = TMEvaluator(pRef)
+    tm_evaluator = GeneralPSEvaluator(pRef)
 
     results = local_tm_ps_search(to_explain=to_explain,
                                  to_avoid=already_mined,

@@ -18,19 +18,21 @@ from Core.PSMetric.SignificantlyHighAverage import SignificantlyHighAverage, Man
 from Core.PSMetric.ValueSpecificMutualInformation import SolutionSpecificMutualInformation, \
     FasterSolutionSpecificMutualInformation, NotValueSpecificMI
 from LightweightLocalPSMiner.Operators import LocalPSGeometricSampling, ObjectiveSpaceAvoidance, ForceDifferenceMask
-from LightweightLocalPSMiner.TwoMetrics import TMEvaluator, TMLocalPymooProblem
+from LightweightLocalPSMiner.TwoMetrics import GeneralPSEvaluator, TMLocalPymooProblem
 from LinkageExperiments.LocalVarianceLinkage import LocalVarianceLinkage, BivariateLinkage
 
 
-class TMLocalRestrictedPymooProblem(Problem):
-    tm_evaluator: TMEvaluator
+class LocalRestrictedPymooProblem(Problem):
+    objectives_evaluator: GeneralPSEvaluator
     solution_to_explain: FullSolution
     must_include_mask: np.ndarray
+
+    amount_of_metrics_in_use = 3
 
     def __init__(self,
                  solution_to_explain: FullSolution,
                  must_include_mask: np.ndarray,
-                 objectives_evaluator: TMEvaluator):
+                 objectives_evaluator: GeneralPSEvaluator):
         self.difference_variables = np.arange(len(must_include_mask))[must_include_mask]
         self.solution_to_explain = solution_to_explain
         self.objectives_evaluator = objectives_evaluator
@@ -40,7 +42,7 @@ class TMLocalRestrictedPymooProblem(Problem):
         lower_bounds = np.full(shape=n_var, fill_value=0)  # the stars
         upper_bounds = lower_bounds + 1
         super().__init__(n_var=n_var,
-                         n_obj=2,
+                         n_obj=self.amount_of_metrics_in_use,
                          n_ieq_constr=1,
                          xl=lower_bounds,
                          xu=upper_bounds,
@@ -53,25 +55,31 @@ class TMLocalRestrictedPymooProblem(Problem):
     def get_which_rows_satisfy_mask_constraint(self, X: np.ndarray) -> np.ndarray:
         return np.any(X[:, self.difference_variables], axis=1)
 
+    def get_metrics_for_ps(self, ps: PS) -> list[float]:
+        atomicity = self.objectives_evaluator.linkage_metric.get_atomicity(ps)
+        mean_fitness = self.objectives_evaluator.mean_fitness_metric.get_single_score(ps)
+        simplicity = len(ps) - ps.fixed_count()
+        return [-atomicity, -mean_fitness, -simplicity]
+
 
     def _evaluate(self, X, out, *args, **kwargs):
         """ I believe that since this class inherits from Problem, x should be a group of solutions, and not just one"""
-        metrics = np.array([self.objectives_evaluator.get_A_D(self.individual_to_ps(row)) for row in X])
+        metrics = np.array([self.get_metrics_for_ps(self.individual_to_ps(row)) for row in X])
         out["F"] = metrics
 
 
         out["G"] = 0.5 - self.get_which_rows_satisfy_mask_constraint(X)   # if the constraint is satisfied, it is negative (which is counterintuitive)
 
 def local_restricted_tm_ps_search(to_explain: FullSolution,
-                       must_include_mask: np.ndarray,
-                       pss_to_avoid: Iterable[PS],
-                       ps_evaluator: TMEvaluator,
-                       ps_budget: int,
-                       population_size: int,
-                       verbose=True) -> list[PS]:
-    problem = TMLocalRestrictedPymooProblem(solution_to_explain=to_explain,
-                                            objectives_evaluator = ps_evaluator,
-                                            must_include_mask = must_include_mask)
+                                  must_include_mask: np.ndarray,
+                                  pss_to_avoid: Iterable[PS],
+                                  ps_evaluator: GeneralPSEvaluator,
+                                  ps_budget: int,
+                                  population_size: int,
+                                  verbose=True) -> list[PS]:
+    problem = LocalRestrictedPymooProblem(solution_to_explain=to_explain,
+                                          objectives_evaluator = ps_evaluator,
+                                          must_include_mask = must_include_mask)
 
     algorithm = NSGA2(pop_size=population_size,
                       sampling=LocalPSGeometricSampling(),
@@ -115,7 +123,7 @@ def test_local_restricted_search():
 
     pRef = problem.get_reference_population(10000)
 
-    tm_evaluator = TMEvaluator(pRef)
+    tm_evaluator = GeneralPSEvaluator(pRef)
 
     results = local_restricted_tm_ps_search(to_explain=to_explain,
                                  pss_to_avoid=already_mined,

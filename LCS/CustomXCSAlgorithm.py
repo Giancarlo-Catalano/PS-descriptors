@@ -12,7 +12,7 @@ from Core.PS import PS
 from LCS.Conversions import get_pss_from_action_set, get_action_set, \
     ps_to_condition, get_conditions_in_match_set, condition_to_ps
 from LCS.CustomXCSClassifierSet import CustomXCSClassiferSet
-from LightweightLocalPSMiner.TwoMetrics import TMEvaluator, local_tm_ps_search
+from LightweightLocalPSMiner.TwoMetrics import GeneralPSEvaluator, local_tm_ps_search
 
 
 def get_solution_coverage(match_set: xcs.MatchSet, action) -> float:
@@ -36,7 +36,7 @@ class CustomXCSAlgorithm(xcs.XCSAlgorithm):
     * deciding when covering is requiered: when most of the solution is 'uncovered'
     * covering using a small NSGAII run [ which also produces more than one covering rule ]"""
 
-    ps_evaluator: TMEvaluator  # to evaluate the linkage of a rule
+    ps_evaluator: GeneralPSEvaluator  # to evaluate the linkage of a rule
     coverage_covering_threshold: float  # how much a scenario needs to be covered by rules ([0, 1])
     covering_search_budget: int
     xcs_problem: Scenario
@@ -44,7 +44,7 @@ class CustomXCSAlgorithm(xcs.XCSAlgorithm):
     verbose: bool
 
     def __init__(self,
-                 ps_evaluator: TMEvaluator,
+                 ps_evaluator: GeneralPSEvaluator,
                  xcs_problem: Scenario,
                  coverage_covering_threshold: float = 0.5,
                  covering_search_budget: int = 1000,

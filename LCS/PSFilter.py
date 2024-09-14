@@ -1,11 +1,11 @@
 from typing import Optional, Callable
 
 from Core.PS import PS
-from LightweightLocalPSMiner.TwoMetrics import TMEvaluator
+from LightweightLocalPSMiner.TwoMetrics import GeneralPSEvaluator
 
 
 def filter_pss(pss: list[PS],
-               ps_evaluator: TMEvaluator,
+               ps_evaluator: GeneralPSEvaluator,
                consistency_threshold: Optional[float] = 0.05,
                delta_fitness_threshold: Optional[float] = 0,
                atomicity_threshold: Optional[float] = 0,

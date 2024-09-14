@@ -16,7 +16,7 @@ from LCS.PSFilter import filter_pss
 from LCS.SolutionDifference.SolutionDifferenceModel import SolutionDifferenceModel
 from LCS.SolutionDifference.SolutionDifferencePSSearch import local_restricted_tm_ps_search
 from LCS.SolutionDifference.SolutionDifferenceScenario import SolutionDifferenceScenario
-from LightweightLocalPSMiner.TwoMetrics import TMEvaluator, local_tm_ps_search
+from LightweightLocalPSMiner.TwoMetrics import GeneralPSEvaluator, local_tm_ps_search
 from ReimplementedXCS.CombinatorialRules import CombinatorialCondition
 
 
@@ -25,14 +25,14 @@ class SolutionDifferenceAlgorithm(xcs.XCSAlgorithm):
     * deciding when covering is required: when most of the solution is 'uncovered'
     * covering using a small NSGAII run [ which also produces more than one covering rule ]"""
 
-    ps_evaluator: TMEvaluator  # to evaluate the linkage of a rule
+    ps_evaluator: GeneralPSEvaluator  # to evaluate the linkage of a rule
     covering_search_budget: int
     xcs_problem: SolutionDifferenceScenario
 
     verbose: bool
 
     def __init__(self,
-                 ps_evaluator: TMEvaluator,
+                 ps_evaluator: GeneralPSEvaluator,
                  xcs_problem: SolutionDifferenceScenario,
                  covering_search_budget: int = 1000,
                  verbose: bool = False,
@@ -166,7 +166,7 @@ class SolutionDifferenceAlgorithm(xcs.XCSAlgorithm):
                 if self.verbose:
                     big_fish = condition_to_ps(winning_rule.condition)
                     small_fish = condition_to_ps(rule.condition)
-                    print(f"\t{big_fish}(err = {winning_rule.error}) consumed {small_fish}(err = {rule.error})")
+                    print(f"\t{big_fish}(acc = {winning_rule.error:.2f}) consumed {small_fish}(acc = {rule.error:.2f})")
 
         for rule in rules_to_remove:
             action_set.remove(rule)

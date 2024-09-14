@@ -124,7 +124,6 @@ class SolutionDifferenceModel(ClassifierSet):
             # and for those that bet against it, 0.0
             if learn:
                 # apply payoff for correct instances
-                print(f"Before the payoff retribution, {self.algorithm.allow_ga_reproduction = }")
                 self._algorithm.apply_payoff_to_match_set(action_set = match_set[True], payoff=1)
                 self._algorithm.apply_payoff_to_match_set(action_set = match_set[False], payoff=0)
                 self._algorithm.update_match_set_timestamps(match_set)

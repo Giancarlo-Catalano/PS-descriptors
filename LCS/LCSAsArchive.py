@@ -11,7 +11,7 @@ from Core.PRef import PRef
 from Explanation.PRefManager import PRefManager
 from LCS.CustomXCSAlgorithm import CustomXCSAlgorithm
 from LCS.XCSProblemTopAndBottom import XCSProblemTopAndBottom
-from LightweightLocalPSMiner.TwoMetrics import TMEvaluator
+from LightweightLocalPSMiner.TwoMetrics import GeneralPSEvaluator
 from utils import announce
 
 
@@ -54,7 +54,7 @@ def run_LCS_as_archive(verbose: bool = False):
     print(f"After removing duplicate entries, pRef has {pRef.sample_size} samples")
 
     # Evaluates Linkage and keeps track of PS evaluations used
-    ps_evaluator = TMEvaluator(pRef)
+    ps_evaluator = GeneralPSEvaluator(pRef)
 
     # Shows, alternating, the best and worst solutions to the learner.
     # The best solutions have class 1 and the worst have class 0.
