@@ -3,15 +3,17 @@ from xcs import ClassifierSet, MatchSet, scenarios
 
 from Core.EvaluatedFS import EvaluatedFS
 
-
 class SolutionDifferenceModel(ClassifierSet):
     verbose: bool
+    allow_ga_reproduction: bool
 
     def __init__(self,
                  algorithm,
                  possible_actions,
+                 allow_ga_reproduction: bool = True,
                  verbose=False
                  ):
+        self.allow_ga_reproduction = allow_ga_reproduction
         super().__init__(algorithm, possible_actions)
         self.verbose = verbose
 
@@ -120,23 +122,16 @@ class SolutionDifferenceModel(ClassifierSet):
             # No need to select an action
             # The reward for the rules that were betting on the correct side is 1.0,
             # and for those that bet against it, 0.0
-
-
-            # If the scenario is dynamic, don't immediately apply the
-            # reward; instead, wait until the next iteration and factor in
-            # not only the reward that was received on the previous step,
-            # but the (discounted) reward that is expected going forward
-            # given the resulting situation observed after the action was
-            # taken. This is a classic feature of temporal difference (TD)
-            # algorithms, which acts to stitch together a general picture
-            # of the future expected reward without actually waiting the
-            # full duration to find out what it will be.
             if learn:
                 # apply payoff for correct instances
-                self._algorithm.apply_payoff_to_match_set(match_set, which_action=True, payoff=1, enable_reproduction=True)
-                self._algorithm.apply_payoff_to_match_set(match_set, which_action=False, payoff=0, enable_reproduction=False)
-                match_set._closed = True
-                # match_set.apply_payoff()
+                print(f"Before the payoff retribution, {self.algorithm.allow_ga_reproduction = }")
+                self._algorithm.apply_payoff_to_match_set(action_set = match_set[True], payoff=1)
+                self._algorithm.apply_payoff_to_match_set(action_set = match_set[False], payoff=0)
+                self._algorithm.update_match_set_timestamps(match_set)
+
+                if self.algorithm.allow_ga_reproduction:
+                    self._algorithm.introduce_rules_via_reproduction(action_set=match_set[True])
+                match_set._closed = True # vestigial but kept for completeness, check using assert(match_set.is_closed == False)
 
         # I don't think I need the "final stitch" here
 

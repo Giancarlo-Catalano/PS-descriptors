@@ -41,7 +41,7 @@ class SolutionDifferenceAlgorithm(xcs.XCSAlgorithm):
         self.xcs_problem = xcs_problem
         self.covering_search_budget = covering_search_budget
         self.verbose = verbose
-        self.minimum_actions = 1 # otherwise it causes behaviour which I don't understand in XCSAlgorithm.covering_is_required
+        self.minimum_actions = 1  # otherwise it causes behaviour which I don't understand in XCSAlgorithm.covering_is_required
         super().__init__()
 
     def cover_with_many(self, match_set: xcs.MatchSet) -> list[xcs.ClassifierRule]:
@@ -79,7 +79,7 @@ class SolutionDifferenceAlgorithm(xcs.XCSAlgorithm):
 
         def ps_to_rule(ps: PS) -> xcs.XCSClassifierRule:
             return xcs.XCSClassifierRule(
-                CombinatorialCondition.from_ps_values(ps.values), # NOTE that this is the customised rule
+                CombinatorialCondition.from_ps_values(ps.values),  # NOTE that this is the customised rule
                 True,
                 self,
                 match_set.model.time_stamp)
@@ -151,7 +151,7 @@ class SolutionDifferenceAlgorithm(xcs.XCSAlgorithm):
         def should_be_removed(rule) -> bool:
             return (rule is not winning_rule) and \
                 winning_rule.condition(rule.condition) and \
-                rule.error > winning_rule.error
+                rule.fitness < winning_rule.fitness
 
         rules_to_remove = []
 
@@ -175,7 +175,6 @@ class SolutionDifferenceAlgorithm(xcs.XCSAlgorithm):
         """Perform action set subsumption."""
         self.custom_subsumption(action_set)
 
-
     def update_attributes_of_rule(self,
                                   rule: xcs.ClassifierRule,
                                   action_set_size: int,
@@ -191,16 +190,22 @@ class SolutionDifferenceAlgorithm(xcs.XCSAlgorithm):
 
         rule.action_set_size += (action_set_size - rule.action_set_size) * update_rate
 
-
         # custom part
+
         if not hasattr(rule, "correct_match_count"):
             rule.correct_match_count = 0
         rule.correct_match_count += int(payoff)
+
+        rule.accuracy = rule.correct_match_count / rule.experience
+
         # end of custom part
 
+    def update_action_set_fitnesses_as_accuracy(self, action_set):
+        for rule in action_set:
+            rule.fitness = rule.accuracy
 
-    def update_action_set_fitnesses(self,
-                                  action_set: xcs.ActionSet):
+    def update_action_set_fitnesses_traditional(self,
+                                                action_set: xcs.ActionSet):
         # modification of XCSAlgorithm._update_fitness
 
         def get_rule_accuracy(rule):
@@ -208,7 +213,6 @@ class SolutionDifferenceAlgorithm(xcs.XCSAlgorithm):
                 return 1
             else:
                 return self.accuracy_coefficient * (rule.error / self.error_threshold) ** -self.accuracy_power
-
 
         accuracies = list(map(get_rule_accuracy, action_set))
         total_accuracy = sum(accuracy * rule.numerosity for rule, accuracy in zip(action_set, accuracies))
@@ -220,10 +224,11 @@ class SolutionDifferenceAlgorithm(xcs.XCSAlgorithm):
 
         # then update every rule
         for rule, accuracy in zip(action_set, accuracies):
-            # proposed_new_fitness = (accuracy * rule.numerosity / total_accuracy - rule.fitness)
-            # rule.fitness += self.learning_rate * proposed_new_fitness TODO uncomment these
-            rule.fitness = rule.correct_match_count / rule.experience  # experimental
+            proposed_new_fitness = (accuracy * rule.numerosity / total_accuracy - rule.fitness)
+            rule.fitness += self.learning_rate * proposed_new_fitness
 
+    def update_action_set_fitnesses(self, action_set: xcs.ActionSet):
+        self.update_action_set_fitnesses_as_accuracy(action_set)
 
     def update_match_set_timestamps(self, match_set: xcs.MatchSet):
         # Modification of the initial part of XCSAlgorithm.update(match_set)
@@ -244,16 +249,13 @@ class SolutionDifferenceAlgorithm(xcs.XCSAlgorithm):
             # updated by the GA.
             self._set_timestamps(action_set)
 
-
         update_action_set_timestamps(match_set[True])
         update_action_set_timestamps(match_set[False])
 
-    def apply_payoff_to_match_set(self, match_set: xcs.MatchSet, which_action, payoff: float, enable_reproduction: bool):
+    def apply_payoff_to_match_set(self,
+                                  action_set: xcs.ActionSet,
+                                  payoff: float):
         # modification of MatchSet.apply_payoff
-        if match_set._closed:  # this is, to be honest, stupid but I'll keep it in
-            raise ValueError("The payoff for this match set has already been applied.")
-
-        action_set = match_set[which_action]
         action_set_size = sum(rule.numerosity for rule in action_set)
 
         # Update the average reward, error, and action set size of each
@@ -269,9 +271,8 @@ class SolutionDifferenceAlgorithm(xcs.XCSAlgorithm):
             self._action_set_subsumption(action_set)
 
         # this is where the .update methods would be
-        self.update_match_set_timestamps(match_set)
-        if enable_reproduction:
-            self.introduce_rules_via_reproduction(action_set)
+
+        # GA reproduction moved to its own optional function
 
         # end of original .update method
 
@@ -298,8 +299,8 @@ class SolutionDifferenceAlgorithm(xcs.XCSAlgorithm):
         # Apply the mutation operator to each child, randomly flipping
         # their mask bits with a small probability.
         background_solution = action_set.situation[0]
-        condition1.mutate(point_mutation_probability=self.mutation_probability, background_solution = background_solution)
-        condition2.mutate(point_mutation_probability=self.mutation_probability, background_solution = background_solution)
+        condition1.mutate(point_mutation_probability=self.mutation_probability, background_solution=background_solution)
+        condition2.mutate(point_mutation_probability=self.mutation_probability, background_solution=background_solution)
 
         # If the newly generated children are already present in the
         # population (or if they should be subsumed due to GA subsumption)
@@ -366,6 +367,9 @@ class SolutionDifferenceAlgorithm(xcs.XCSAlgorithm):
             )
 
             for child in new_children:
+                if self.verbose:
+                    print(f"Via GA, adding the child {child.condition}")
+
                 child.average_reward = average_reward
                 child.error = error
                 child.fitness = fitness
@@ -381,11 +385,9 @@ class SolutionDifferenceAlgorithm(xcs.XCSAlgorithm):
         else:
             return amount_in_correct_action_set < self.minimum_actions
 
-
     def prune(self, model: SolutionDifferenceModel) -> list[xcs.ClassifierRule]:
         """ custom reimplementation in order to simplify the pruning process"""
         """ deletes a single rule, which consists in calling model.discard(rule) and returning it into a singleton list"""
-
 
         """ the assumption is that the rules' fitnesses are their accuracy (correct / matches)"""
 
@@ -398,7 +400,8 @@ class SolutionDifferenceAlgorithm(xcs.XCSAlgorithm):
                                        if rule.fitness < 1.0]
         if len(rules_available_for_removal) == 0:
             if self.verbose:
-                print(f"While pruning is necessary (tot.numerosity = {total_numerosity}, #rules = {len(list(model))}), no rules are eligible for removal")
+                print(
+                    f"While pruning is necessary (tot.numerosity = {total_numerosity}, #rules = {len(list(model))}), no rules are eligible for removal")
             return []
 
         to_remove = min(rules_available_for_removal, key=lambda x: x.fitness)

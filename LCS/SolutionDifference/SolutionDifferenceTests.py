@@ -15,7 +15,7 @@ def set_settings_for_lcs_algorithm(algorithm: xcs.XCSAlgorithm) -> None:
     """Simply sets the settings that are best for my purposes"""
     # play with these settings ad lib. Leaving the defaults seems to work :--)
     algorithm.crossover_probability = 0
-    algorithm.deletion_threshold = 1  #  minimum age before a rule can be pruned away
+    algorithm.deletion_threshold = 20  #  minimum age before a rule can be pruned away
     # algorithm.discount_factor = 0
     algorithm.do_action_set_subsumption = True
     # algorithm.do_ga_subsumption = True
@@ -25,6 +25,8 @@ def set_settings_for_lcs_algorithm(algorithm: xcs.XCSAlgorithm) -> None:
     # algorithm.exploration_probability = 0
     # algorithm.minimum_actions = 1
     algorithm.subsumption_threshold = 50  # minimum age before a rule can subsume another
+
+    algorithm.allow_ga_reproduction = False
 
 
 def run_solution_difference_LCS(verbose: bool = False):
