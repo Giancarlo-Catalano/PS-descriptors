@@ -1,6 +1,7 @@
 import xcs
 from xcs.scenarios import ScenarioObserver
 
+from BenchmarkProblems.Checkerboard import CheckerBoard
 from BenchmarkProblems.GraphColouring import GraphColouring
 from BenchmarkProblems.RoyalRoad import RoyalRoad
 from Core.PRef import PRef
@@ -32,10 +33,10 @@ def set_settings_for_lcs_algorithm(algorithm: xcs.XCSAlgorithm) -> None:
 def run_solution_difference_LCS(verbose: bool = False):
     # the optimisation problem to be solved
 
-    optimisation_problem = RoyalRoad(5, 4)
-    # optimisation_problem = GraphColouring.random(amount_of_colours=3, amount_of_nodes=14, chance_of_connection=0.4)
+    # optimisation_problem = RoyalRoad(5, 4)
+    # optimisation_problem = GraphColouring.random(amount_of_colours=3, amount_of_nodes=6, chance_of_connection=0.4)
     # optimisation_problem = Trapk(4, 5)
-    # optimisation_problem = CheckerBoard(4, 4)
+    optimisation_problem = CheckerBoard(4, 4)
 
     if isinstance(optimisation_problem, GraphColouring):
         optimisation_problem.view()
@@ -80,8 +81,14 @@ def run_solution_difference_LCS(verbose: bool = False):
 
     print("The model is")
 
-    for rule in model._population:
+    model_rules = [item[True] for item in model._population.values()]
+    model_rules.sort(key=lambda x: x.average_reward, reverse=True)
+    for rule in model_rules:
+        assert(isinstance(rule, xcs.ClassifierRule))
+        print(optimisation_problem.repr_ps(rule.condition))
         print(rule)
+
+    print("End of run")
 
     # # We request to evaluate on the best and worst solutions
     # solutions_to_evaluate = [xcs_problem.all_solutions[0], xcs_problem.all_solutions[-1]]
@@ -95,6 +102,7 @@ def run_solution_difference_LCS(verbose: bool = False):
     #           f"fitness:{optimisation_problem.fitness_function(solution)}")
     #     for rule in rules:
     #         print(rule)
+    # Submitting to the uni computer
 
 
 run_solution_difference_LCS(verbose=True)
