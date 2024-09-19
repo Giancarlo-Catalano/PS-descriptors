@@ -286,10 +286,12 @@ class PerturbationOfSolution(Metric):
         fixed_vars = ps.get_fixed_variable_positions()
         unfixed_vars = [index for index, val in enumerate(ps.values) if val == STAR]
 
+        def max_linkage_with_unfixed(fixed: int) -> float:
+            return max(self.current_linkage_table[fixed, unfixed] for unfixed in unfixed_vars)
+
         if (len(unfixed_vars) > 0) and (len(fixed_vars) > 0):  # maybe this should be zero?
-            linkages = [self.current_linkage_table[fixed, unfixed]
-                              for fixed in fixed_vars for unfixed in unfixed_vars]
-            return np.average(linkages)
+            outwards_linkages = [max_linkage_with_unfixed(fixed) for fixed in fixed_vars]
+            return np.average(outwards_linkages)
         else:
             return 10000
 

@@ -58,7 +58,7 @@ def filter_pss(pss: list[PS],
 
     def maybe_filter_by_dependency(input_pss: list[PS]):
         def get_dependency(ps):
-            return ps.metric_scores[0]
+            return -ps.metric_scores[1]
 
         """ will not filter if consistency threshold is None or the result is empty"""
         if atomicity_threshold is not None:
