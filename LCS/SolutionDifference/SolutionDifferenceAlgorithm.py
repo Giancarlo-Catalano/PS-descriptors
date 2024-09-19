@@ -27,6 +27,7 @@ class SolutionDifferenceAlgorithm(xcs.XCSAlgorithm):
 
     ps_evaluator: GeneralPSEvaluator  # to evaluate the linkage of a rule
     covering_search_budget: int
+    covering_population_size: int
     xcs_problem: SolutionDifferenceScenario
 
     verbose: bool
@@ -35,11 +36,13 @@ class SolutionDifferenceAlgorithm(xcs.XCSAlgorithm):
                  ps_evaluator: GeneralPSEvaluator,
                  xcs_problem: SolutionDifferenceScenario,
                  covering_search_budget: int = 1000,
+                 covering_population_size: int = 100,
                  verbose: bool = False,
                  ):
         self.ps_evaluator = ps_evaluator
         self.xcs_problem = xcs_problem
         self.covering_search_budget = covering_search_budget
+        self.covering_population_size = covering_population_size
         self.verbose = verbose
         self.minimum_actions = 1  # otherwise it causes behaviour which I don't understand in XCSAlgorithm.covering_is_required
         super().__init__()
@@ -75,7 +78,7 @@ class SolutionDifferenceAlgorithm(xcs.XCSAlgorithm):
             pss = local_restricted_tm_ps_search(to_explain=winner,
                                                 pss_to_avoid=[],
                                                 must_include_mask=difference_mask,
-                                                population_size=100,  # TODO parametrize this
+                                                population_size=self.covering_population_size,
                                                 ps_evaluator=self.ps_evaluator,
                                                 ps_budget=self.covering_search_budget,
                                                 verbose=False)

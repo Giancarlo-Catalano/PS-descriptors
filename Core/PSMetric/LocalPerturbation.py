@@ -204,8 +204,9 @@ class PerturbationOfSolution(Metric):
 
     def set_solution(self, solution: FullSolution):
         self.current_solution = solution
-        self.current_linkage_table = self.get_linkage_table_for_solution(self.current_solution,
-                                                                         difference_upper_bound=len(solution) // 2)
+        with utils.announce("Generating the linkage table"):
+            self.current_linkage_table = self.get_linkage_table_for_solution(self.current_solution,
+                                                                             difference_upper_bound=len(solution) // 2)
 
     def get_linkage_table_for_solution(self, solution: FullSolution, difference_upper_bound: int) -> np.ndarray:
         n = len(solution)

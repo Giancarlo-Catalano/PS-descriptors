@@ -67,7 +67,8 @@ def run_solution_difference_LCS(verbose: bool = False):
     # my custom XCS algorithm, which just overrides when covering is required, and how it happens
     algorithm = SolutionDifferenceAlgorithm(ps_evaluator=ps_evaluator,
                                             xcs_problem = xcs_problem,
-                                            covering_search_budget=2000,
+                                            covering_search_budget=500,
+                                            covering_population_size=50,
                                             verbose=verbose)
 
     set_settings_for_lcs_algorithm(algorithm)
