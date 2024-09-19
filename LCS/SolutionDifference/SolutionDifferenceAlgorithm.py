@@ -57,8 +57,15 @@ class SolutionDifferenceAlgorithm(xcs.XCSAlgorithm):
 
         # get the PSs in the action set
         winner, loser = match_set.situation
-        self.ps_evaluator.set_solution(winner)
+        # self.ps_evaluator.set_solution(winner)
         difference_mask = winner.values != loser.values
+
+        # debug
+        self.ps_evaluator.variance_linkage_metric.set_solution(winner)
+        # table = self.ps_evaluator.variance_linkage_metric.current_linkage_table
+
+        # table_average = np.average(table[np.triu_indices(len(winner), 1)])
+        # good_links = table > table_average
 
         if self.verbose:
             print(f"Covering for {winner = }, {loser = }")
@@ -73,7 +80,11 @@ class SolutionDifferenceAlgorithm(xcs.XCSAlgorithm):
                                                 ps_budget=self.covering_search_budget,
                                                 verbose=False)
 
-            pss = filter_pss(pss, ps_evaluator=self.ps_evaluator)
+            linkage_threshold = self.ps_evaluator.variance_linkage_metric.get_linkage_threshold()
+
+            pss = filter_pss(pss, ps_evaluator=self.ps_evaluator,
+                             atomicity_threshold=linkage_threshold,
+                             dependency_threshold = linkage_threshold)
 
         assert (len(pss) > 0)
 
@@ -166,7 +177,7 @@ class SolutionDifferenceAlgorithm(xcs.XCSAlgorithm):
                 if self.verbose:
                     big_fish = condition_to_ps(winning_rule.condition)
                     small_fish = condition_to_ps(rule.condition)
-                    print(f"\t{big_fish}(acc = {winning_rule.error:.2f}) consumed {small_fish}(acc = {rule.error:.2f})")
+                    print(f"\t{big_fish}(acc = {winning_rule.accuracy:.2f}) consumed {small_fish}(acc = {rule.accuracy:.2f})")
 
         for rule in rules_to_remove:
             action_set.remove(rule)

@@ -16,7 +16,7 @@ def set_settings_for_lcs_algorithm(algorithm: xcs.XCSAlgorithm) -> None:
     """Simply sets the settings that are best for my purposes"""
     # play with these settings ad lib. Leaving the defaults seems to work :--)
     algorithm.crossover_probability = 0
-    algorithm.deletion_threshold = 20  #  minimum age before a rule can be pruned away
+    algorithm.deletion_threshold = 10  #  minimum age before a rule can be pruned away
     # algorithm.discount_factor = 0
     algorithm.do_action_set_subsumption = True
     # algorithm.do_ga_subsumption = True
@@ -33,10 +33,10 @@ def set_settings_for_lcs_algorithm(algorithm: xcs.XCSAlgorithm) -> None:
 def run_solution_difference_LCS(verbose: bool = False):
     # the optimisation problem to be solved
 
-    # optimisation_problem = RoyalRoad(5, 4)
+    optimisation_problem = RoyalRoad(5, 4)
     # optimisation_problem = GraphColouring.random(amount_of_colours=3, amount_of_nodes=6, chance_of_connection=0.4)
     # optimisation_problem = Trapk(4, 5)
-    optimisation_problem = CheckerBoard(4, 4)
+    # optimisation_problem = CheckerBoard(4, 4)
 
     if isinstance(optimisation_problem, GraphColouring):
         optimisation_problem.view()

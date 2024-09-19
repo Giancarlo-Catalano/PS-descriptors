@@ -56,10 +56,12 @@ class LocalRestrictedPymooProblem(Problem):
         return np.any(X[:, self.difference_variables], axis=1)
 
     def get_metrics_for_ps(self, ps: PS) -> list[float]:
-        atomicity = self.objectives_evaluator.linkage_metric.get_atomicity(ps)
-        mean_fitness = self.objectives_evaluator.mean_fitness_metric.get_single_score(ps)
+        atomicity = self.objectives_evaluator.variance_linkage_metric.get_atomicity(ps)
+        dependency = self.objectives_evaluator.variance_linkage_metric.get_dependence(ps)
+        # atomicity = self.objectives_evaluator.linkage_metric.get_atomicity(ps)
+        #mean_fitness = self.objectives_evaluator.mean_fitness_metric.get_single_score(ps)
         simplicity = len(ps) - ps.fixed_count()
-        return [-atomicity, -mean_fitness, -simplicity]
+        return [-atomicity, dependency, -simplicity]
 
 
     def _evaluate(self, X, out, *args, **kwargs):

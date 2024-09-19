@@ -12,12 +12,14 @@ from Core.EvaluatedPS import EvaluatedPS
 from Core.FullSolution import FullSolution
 from Core.PRef import PRef
 from Core.PS import PS
+from Core.PSMetric.LocalPerturbation import PerturbationOfSolution
 from Core.PSMetric.MeanFitness import FitnessDelta, MeanFitness
 from Core.PSMetric.Metric import Metric
 from Core.PSMetric.SignificantlyHighAverage import SignificantlyHighAverage, MannWhitneyU
 from Core.PSMetric.ValueSpecificMutualInformation import SolutionSpecificMutualInformation, \
     FasterSolutionSpecificMutualInformation, NotValueSpecificMI
 from LightweightLocalPSMiner.Operators import LocalPSGeometricSampling, ObjectiveSpaceAvoidance
+from LinkageExperiments.LocalLinkage import BivariateVariance
 from LinkageExperiments.LocalVarianceLinkage import LocalVarianceLinkage, BivariateLinkage
 
 
@@ -26,6 +28,8 @@ class GeneralPSEvaluator:
     delta_fitness_metric: FitnessDelta
     fitness_p_value_metric: MannWhitneyU
     global_mean_fitness: float
+
+    variance_linkage_metric: PerturbationOfSolution
     used_evaluations: int
 
     mean_fitness_metric: Metric
@@ -48,6 +52,10 @@ class GeneralPSEvaluator:
 
         self.mean_fitness_metric = MeanFitness()
         self.mean_fitness_metric.set_pRef(pRef)
+
+
+        self.variance_linkage_metric = PerturbationOfSolution()
+        self.variance_linkage_metric.set_pRef(pRef)
 
     def get_A_D(self, ps: PS) -> (float, float):
         self.used_evaluations += 1

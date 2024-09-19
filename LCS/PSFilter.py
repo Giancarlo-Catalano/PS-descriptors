@@ -9,6 +9,7 @@ def filter_pss(pss: list[PS],
                consistency_threshold: Optional[float] = 0.05,
                delta_fitness_threshold: Optional[float] = 0,
                atomicity_threshold: Optional[float] = 0,
+               dependency_threshold: Optional[float] = 0,
                verbose: bool = True) -> list[PS]:
     def filter_by_function(input_pss: list[PS],
                            metric_func: Callable[[PS], float],
@@ -55,12 +56,24 @@ def filter_pss(pss: list[PS],
                                          verbose_name="atomicity")
             return new_pss if len(new_pss) > 0 else input_pss
 
+    def maybe_filter_by_dependency(input_pss: list[PS]):
+        def get_dependency(ps):
+            return ps.metric_scores[0]
+
+        """ will not filter if consistency threshold is None or the result is empty"""
+        if atomicity_threshold is not None:
+            new_pss = filter_by_function(input_pss, metric_func=get_dependency,
+                                         must_be_below=dependency_threshold,
+                                         verbose_name="dependency")
+            return new_pss if len(new_pss) > 0 else input_pss
+
+
     def maybe_filter_by_delta_fitness(input_pss: list[PS]):
         def get_delta_fitness(ps):
             return ps_evaluator.delta_fitness_metric.get_mean_fitness_delta(ps)
 
         """ will not filter if consistency threshold is None or the result is empty"""
-        if delta_fitness_threshold is not None:
+        if dependency_threshold is not None:
             new_pss = filter_by_function(input_pss, metric_func=get_delta_fitness,
                                          must_be_above=delta_fitness_threshold,
                                          verbose_name="delta_fitness")
@@ -68,8 +81,8 @@ def filter_pss(pss: list[PS],
 
     current_pss = pss.copy()
     current_pss = maybe_filter_by_atomicity(current_pss)
-    current_pss = maybe_filter_by_delta_fitness(current_pss)
+    # current_pss = maybe_filter_by_delta_fitness(current_pss)
+    current_pss = maybe_filter_by_dependency(current_pss)
     current_pss = maybe_filter_by_consistency(current_pss)
-
 
     return current_pss

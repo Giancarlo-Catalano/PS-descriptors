@@ -10,6 +10,7 @@ from BenchmarkProblems.RoyalRoad import RoyalRoad
 from BenchmarkProblems.RoyalRoadWithOverlaps import RoyalRoadWithOverlaps
 from BenchmarkProblems.Trapk import Trapk
 from Core.EvaluatedPS import EvaluatedPS
+from Core.FullSolution import FullSolution
 from Core.PRef import PRef
 from Core.PS import PS, STAR
 from Core.PSMetric.Metric import Metric
@@ -265,6 +266,17 @@ class BivariateVariance(Metric):
         #     # return (-self.global_variance+self.univariate_importances[(var, ps[var])])/2
         # else:
         #     return self.global_variance
+
+
+    def get_linkage_table_for_solution(self, solution: FullSolution) -> np.ndarray:
+        n = len(solution)
+        table = np.zeros(shape=(n, n), dtype=float)
+        for var_a, var_b in itertools.combinations(range(n), r=2):
+            table[var_a, var_b] = self.bivariate_linkages[(var_a, solution.values[var_a], var_b, solution.values[var_b])]
+
+        table += table.T
+
+        return table
 
 
 class MarkovianSampler:
