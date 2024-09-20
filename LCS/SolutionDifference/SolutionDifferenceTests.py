@@ -2,8 +2,10 @@ import xcs
 from xcs.scenarios import ScenarioObserver
 
 from BenchmarkProblems.Checkerboard import CheckerBoard
+from BenchmarkProblems.EfficientBTProblem.EfficientBTProblem import EfficientBTProblem
 from BenchmarkProblems.GraphColouring import GraphColouring
 from BenchmarkProblems.RoyalRoad import RoyalRoad
+from BenchmarkProblems.Trapk import Trapk
 from Core.PRef import PRef
 from Explanation.PRefManager import PRefManager
 from LCS.SolutionDifference.SolutionDifferenceAlgorithm import SolutionDifferenceAlgorithm
@@ -33,10 +35,11 @@ def set_settings_for_lcs_algorithm(algorithm: xcs.XCSAlgorithm) -> None:
 def run_solution_difference_LCS(verbose: bool = False):
     # the optimisation problem to be solved
 
-    optimisation_problem = RoyalRoad(5, 4)
+    # optimisation_problem = RoyalRoad(10, 4)
     # optimisation_problem = GraphColouring.random(amount_of_colours=3, amount_of_nodes=6, chance_of_connection=0.4)
     # optimisation_problem = Trapk(4, 5)
     # optimisation_problem = CheckerBoard(4, 4)
+    optimisation_problem = EfficientBTProblem.from_default_files()
 
     if isinstance(optimisation_problem, GraphColouring):
         optimisation_problem.view()
@@ -46,7 +49,7 @@ def run_solution_difference_LCS(verbose: bool = False):
     # e.g uniform SA means that 50% is from random search, 50% is from Simulated Annealing
     pRef = PRefManager.generate_pRef(problem=optimisation_problem,
                                      sample_size=10000,  # these are the Solution evaluations
-                                     which_algorithm="uniform SA",
+                                     which_algorithm="uniform GA",
                                      verbose=verbose)
 
     pRef = PRef.unique(pRef)

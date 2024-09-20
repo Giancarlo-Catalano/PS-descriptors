@@ -1,7 +1,11 @@
 import xcs
 from xcs import ClassifierSet, MatchSet, scenarios
+from tqdm import tqdm
+from xcs.scenarios import ScenarioObserver
 
 from Core.EvaluatedFS import EvaluatedFS
+from LCS.SolutionDifference.SolutionDifferenceScenario import GenericSolutionDifferenceScenario
+
 
 class SolutionDifferenceModel(ClassifierSet):
     verbose: bool
@@ -103,15 +107,14 @@ class SolutionDifferenceModel(ClassifierSet):
         return match_set
 
 
-    def run(self, scenario, learn=True):
+    def run(self, scenario: ScenarioObserver, learn=True):
         """ Had to modify this since the match set is strange"""
 
         assert isinstance(scenario, scenarios.Scenario)
 
         # previous_match_set = None
 
-        # Repeat until the scenario has run its course.
-        while scenario.more():
+        def single_iteration():
             # Gather information about the current state of the
             # environment.
             situation = scenario.sense()
@@ -124,15 +127,18 @@ class SolutionDifferenceModel(ClassifierSet):
             # and for those that bet against it, 0.0
             if learn:
                 # apply payoff for correct instances
-                self._algorithm.apply_payoff_to_match_set(action_set = match_set[True], payoff=1)
-                self._algorithm.apply_payoff_to_match_set(action_set = match_set[False], payoff=0)
+                self._algorithm.apply_payoff_to_match_set(action_set=match_set[True], payoff=1)
+                self._algorithm.apply_payoff_to_match_set(action_set=match_set[False], payoff=0)
                 self._algorithm.update_match_set_timestamps(match_set)
 
                 if self.algorithm.allow_ga_reproduction:
                     self._algorithm.introduce_rules_via_reproduction(action_set=match_set[True])
-                match_set._closed = True # vestigial but kept for completeness, check using assert(match_set.is_closed == False)
+                match_set._closed = True  # vestigial but kept for completeness, check using assert(match_set.is_closed == False)
 
-        # I don't think I need the "final stitch" here
+        for iteration in tqdm(range(scenario.wrapped.remaining_cycles)):
+            if not scenario.more():
+                break
+            single_iteration()
 
     def predict(self, sol_pair: (EvaluatedFS, EvaluatedFS)) -> dict:
         # This function will need to be expanded in the future

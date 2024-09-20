@@ -80,9 +80,10 @@ def filter_pss(pss: list[PS],
             return new_pss if len(new_pss) > 0 else input_pss
 
     current_pss = pss.copy()
-    current_pss = maybe_filter_by_atomicity(current_pss)
+
     # current_pss = maybe_filter_by_delta_fitness(current_pss)
     current_pss = maybe_filter_by_dependency(current_pss)
+    current_pss = maybe_filter_by_atomicity(current_pss)
     current_pss = maybe_filter_by_consistency(current_pss)
 
     return current_pss

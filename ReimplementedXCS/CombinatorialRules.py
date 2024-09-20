@@ -97,6 +97,8 @@ class CombinatorialCondition(PS):
             # this is a nasty hack to circumvent the restrictions in ActionSet for the condition to match the scenario
             winner, loser = other
             return self.is_generalisation_of(winner.values) != self.is_generalisation_of(loser.values) # xor
+        elif isinstance(other, FullSolution):
+            return check_against_values(other.values)
         else:
             print(f"Received a __call__ where type(other) = {type(other)}")
             return check_against_values(np.array(other))

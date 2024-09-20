@@ -15,7 +15,8 @@ from LCS.CustomXCSClassifierSet import CustomXCSClassiferSet
 from LCS.PSFilter import filter_pss
 from LCS.SolutionDifference.SolutionDifferenceModel import SolutionDifferenceModel
 from LCS.SolutionDifference.SolutionDifferencePSSearch import local_restricted_tm_ps_search
-from LCS.SolutionDifference.SolutionDifferenceScenario import SolutionDifferenceScenario
+from LCS.SolutionDifference.SolutionDifferenceScenario import SolutionDifferenceScenario, \
+    GenericSolutionDifferenceScenario
 from LightweightLocalPSMiner.TwoMetrics import GeneralPSEvaluator, local_tm_ps_search
 from ReimplementedXCS.CombinatorialRules import CombinatorialCondition
 
@@ -28,22 +29,26 @@ class SolutionDifferenceAlgorithm(xcs.XCSAlgorithm):
     ps_evaluator: GeneralPSEvaluator  # to evaluate the linkage of a rule
     covering_search_budget: int
     covering_population_size: int
-    xcs_problem: SolutionDifferenceScenario
+    xcs_problem: GenericSolutionDifferenceScenario
 
     verbose: bool
+    verbose_search: bool
 
     def __init__(self,
                  ps_evaluator: GeneralPSEvaluator,
-                 xcs_problem: SolutionDifferenceScenario,
+                 xcs_problem: GenericSolutionDifferenceScenario,
                  covering_search_budget: int = 1000,
                  covering_population_size: int = 100,
                  verbose: bool = False,
+                 verbose_search: bool = False,
                  ):
         self.ps_evaluator = ps_evaluator
         self.xcs_problem = xcs_problem
         self.covering_search_budget = covering_search_budget
         self.covering_population_size = covering_population_size
         self.verbose = verbose
+        self.verbose_search = verbose_search
+
         self.minimum_actions = 1  # otherwise it causes behaviour which I don't understand in XCSAlgorithm.covering_is_required
         super().__init__()
 
@@ -81,13 +86,14 @@ class SolutionDifferenceAlgorithm(xcs.XCSAlgorithm):
                                                 population_size=self.covering_population_size,
                                                 ps_evaluator=self.ps_evaluator,
                                                 ps_budget=self.covering_search_budget,
-                                                verbose=False)
+                                                verbose=self.verbose_search)
 
             linkage_threshold = self.ps_evaluator.variance_linkage_metric.get_linkage_threshold()
 
             pss = filter_pss(pss, ps_evaluator=self.ps_evaluator,
                              atomicity_threshold=linkage_threshold,
-                             dependency_threshold = linkage_threshold)
+                             dependency_threshold = linkage_threshold,
+                             verbose=self.verbose_search)
 
         assert (len(pss) > 0)
 
