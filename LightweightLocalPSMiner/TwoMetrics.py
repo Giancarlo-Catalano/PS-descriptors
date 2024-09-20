@@ -37,9 +37,9 @@ class GeneralPSEvaluator:
     def __init__(self,
                  pRef: PRef):
         self.used_evaluations = 0
-        self.linkage_metric = FasterSolutionSpecificMutualInformation()
+        #self.linkage_metric = FasterSolutionSpecificMutualInformation()
         # self.linkage_metric = LocalVarianceLinkage(similarity_threshold=0.5)
-        self.linkage_metric.set_pRef(pRef)
+        #self.linkage_metric.set_pRef(pRef)
 
         self.delta_fitness_metric = FitnessDelta()
         self.delta_fitness_metric.set_pRef(pRef)
@@ -57,17 +57,18 @@ class GeneralPSEvaluator:
         self.variance_linkage_metric = PerturbationOfSolution()
         self.variance_linkage_metric.set_pRef(pRef)
 
-    def get_A_D(self, ps: PS) -> (float, float):
-        self.used_evaluations += 1
-        atomicity = self.linkage_metric.get_atomicity(ps)
-        dependence = self.linkage_metric.get_dependence(ps)
-
-        mean_fitness = self.mean_fitness_metric.get_single_score(ps)
-
-        return -atomicity, -mean_fitness
+    # def get_A_D(self, ps: PS) -> (float, float):
+    #     # no longer used
+    #     self.used_evaluations += 1
+    #     atomicity = self.linkage_metric.get_atomicity(ps)
+    #     dependence = self.linkage_metric.get_dependence(ps)
+    #
+    #     mean_fitness = self.mean_fitness_metric.get_single_score(ps)
+    #
+    #     return -atomicity, -mean_fitness
 
     def set_solution(self, solution: FullSolution):
-        self.linkage_metric.set_solution(solution)
+        self.variance_linkage_metric.set_solution(solution)
 
     def is_ps_beneficial(self, ps: PS) -> bool:
         self.used_evaluations += 1
@@ -75,6 +76,7 @@ class GeneralPSEvaluator:
 
 
 class TMLocalPymooProblem(Problem):
+    """currently unused"""
     tm_evaluator: GeneralPSEvaluator
 
     def __init__(self,

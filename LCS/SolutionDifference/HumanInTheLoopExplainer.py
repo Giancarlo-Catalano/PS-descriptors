@@ -5,7 +5,9 @@ from xcs.scenarios import Scenario, ScenarioObserver
 
 import utils
 from BenchmarkProblems.BenchmarkProblem import BenchmarkProblem
+from BenchmarkProblems.EfficientBTProblem.EfficientBTProblem import EfficientBTProblem
 from BenchmarkProblems.RoyalRoad import RoyalRoad
+from BenchmarkProblems.Trapk import Trapk
 from Core.EvaluatedFS import EvaluatedFS
 from Core.FullSolution import FullSolution
 from Core.PRef import PRef
@@ -61,10 +63,10 @@ class HumanInTheLoopExplainer:
         # algorithm.do_ga_subsumption = True
         # algorithm.exploration_probability = 0
         # algorithm.ga_threshold = 100000
-        algorithm.max_population_size = 50
+        algorithm.max_population_size = 100
         # algorithm.exploration_probability = 0
         # algorithm.minimum_actions = 1
-        algorithm.subsumption_threshold = 50  # minimum age before a rule can subsume another
+        algorithm.subsumption_threshold = 10  # minimum age before a rule can subsume another
 
         algorithm.allow_ga_reproduction = False
 
@@ -163,7 +165,9 @@ class HumanInTheLoopExplainer:
 
 
 def test_human_in_the_loop_explainer():
-    optimisation_problem = RoyalRoad(4, 4)
+    # optimisation_problem = RoyalRoad(4, 4)
+    optimisation_problem = Trapk(4, 5)
+    #optimisation_problem = EfficientBTProblem.from_default_files()
     explainer = HumanInTheLoopExplainer.from_problem(optimisation_problem=optimisation_problem,
                                                      covering_search_budget=1000,
                                                      covering_search_population=50,

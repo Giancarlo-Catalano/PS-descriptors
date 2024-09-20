@@ -68,13 +68,6 @@ class SolutionDifferenceAlgorithm(xcs.XCSAlgorithm):
         # self.ps_evaluator.set_solution(winner)
         difference_mask = winner.values != loser.values
 
-        # debug
-        self.ps_evaluator.variance_linkage_metric.set_solution(winner)
-        # table = self.ps_evaluator.variance_linkage_metric.current_linkage_table
-
-        # table_average = np.average(table[np.triu_indices(len(winner), 1)])
-        # good_links = table > table_average
-
         if self.verbose:
             print(f"Covering for {winner = }, {loser = }")
 
