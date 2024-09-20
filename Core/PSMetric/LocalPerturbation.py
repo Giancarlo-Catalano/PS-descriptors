@@ -258,7 +258,7 @@ class PerturbationOfSolution(Metric):
         return table
 
 
-    def get_atomicity(self, ps: PS) -> float:
+    def get_traditional_atomicity(self, ps: PS) -> float:
         if ps.is_empty():
             return 0
 
@@ -266,6 +266,22 @@ class PerturbationOfSolution(Metric):
         if len(fixed_positions) > 1:
             linkages = [self.current_linkage_table[a, b]
                         for a, b in itertools.combinations(fixed_positions, r=2)]
+            return np.average(linkages)
+        else:
+            singleton = fixed_positions[0]
+            return self.current_linkage_table[singleton, singleton]
+
+
+    def get_atomicity(self, ps: PS) -> float:
+        if ps.is_empty():
+            return 0
+        fixed_positions = ps.get_fixed_variable_positions()
+
+        def min_linkage_with_fixed(fixed: int) -> float:
+            return min(self.current_linkage_table[fixed, other_fixed] for other_fixed in fixed_positions)
+
+        if len(fixed_positions) > 1:
+            linkages = [min_linkage_with_fixed(fixed) for fixed in fixed_positions]
             return np.average(linkages)
         else:
             singleton = fixed_positions[0]
