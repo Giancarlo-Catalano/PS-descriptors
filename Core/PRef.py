@@ -1,4 +1,5 @@
 import os
+import random
 from typing import Iterable, Callable, Any
 
 import numba
@@ -224,6 +225,12 @@ class PRef:
         all_solutions = pRef.get_evaluated_FSs()
         all_solutions = list(set(all_solutions))
         return PRef.from_evaluated_full_solutions(all_solutions, pRef.search_space)
+
+    def get_random_evaluated_fs(self) -> EvaluatedFS:
+        index = random.randrange(self.sample_size)
+        return EvaluatedFS(FullSolution(self.full_solution_matrix[index]),
+                           fitness=self.fitness_array[index])
+
 
 def plot_solutions_in_pRef(pRef: PRef, filename: str):
     x_points, y_points = utils.unzip(list(enumerate(pRef.fitness_array)))

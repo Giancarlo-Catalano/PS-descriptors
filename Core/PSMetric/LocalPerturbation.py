@@ -230,20 +230,41 @@ class PerturbationOfSolution(Metric):
                 elif not a_is_different and not b_is_different:
                     no_difference_fitnesses.append(fitness)
 
-        def safe_mean(values):
-            if len(values) < 1:
-                return -100000
-            return np.average(values)
+        # def safe_mean(values):
+        #     if len(values) < 1:
+        #         return -100000
+        #     return np.average(values)
+        #
+        # no_difference_mean = safe_mean(no_difference_fitnesses)
+        # one_difference_means = [safe_mean(values) for values in one_diffence_fitnesses]
+        # two_difference_means = {key: safe_mean(values) for key, values in two_difference_fitnesses.items()}
+        #
+        # def get_linkage(a: int, b: int) -> float:
+        #     return np.abs(no_difference_mean + two_difference_means[(a, b)] - one_difference_means[a] - one_difference_means[b])
+        #
+        # def get_importance(a: int) -> float:
+        #     return np.abs(no_difference_mean - one_difference_means[a])
 
-        no_difference_mean = safe_mean(no_difference_fitnesses)
-        one_difference_means = [safe_mean(values) for values in one_diffence_fitnesses]
-        two_difference_means = {key: safe_mean(values) for key, values in two_difference_fitnesses.items()}
-
-        def get_linkage(a: int, b: int) -> float:
-            return np.abs(no_difference_mean + two_difference_means[(a, b)] - one_difference_means[a] - one_difference_means[b])
-
-        def get_importance(a: int) -> float:
-            return np.abs(no_difference_mean - one_difference_means[a])
+        # def safe_variance(values):
+        #     if len(values) < 2:
+        #         return 0
+        #     else:
+        #         return np.var(values)
+        #
+        #
+        # no_difference_variance = safe_variance(no_difference_fitnesses)
+        # one_difference_variance = [safe_variance(values) for values in one_diffence_fitnesses]
+        # two_difference_variance = {key: safe_variance(values) for key, values in two_difference_fitnesses.items()}
+        #
+        # diff_counts = np.sum(difference_matrix, axis=1)
+        # eligible_rows = diff_counts < difference_upper_bound
+        # background_variance = safe_variance(self.pRef.fitness_array[eligible_rows])
+        #
+        # def get_importance(a: int) -> float:
+        #     return one_difference_variance[a] / background_variance
+        #
+        # def get_linkage(a: int, b: int) -> float:
+        #      return np.abs(two_difference_variance[(a, b)] - one_difference_variance[a] - one_difference_variance[b]) / background_variance
 
         table = np.zeros(shape=(n, n))
         for a, b in itertools.combinations(range(n), r=2):

@@ -1,4 +1,6 @@
 import heapq
+import random
+from typing import Literal
 
 import xcs
 from xcs.scenarios import Scenario, ScenarioObserver
@@ -139,6 +141,16 @@ class HumanInTheLoopExplainer:
                 if rule.condition(solution)]
 
 
+    def get_matches_for_pair(self,
+                             winner: EvaluatedFS,
+                             loser: EvaluatedFS) -> (list[xcs.ClassifierRule], list[xcs.ClassifierRule]):
+        match_set = self.model.match(situation = (winner, loser))
+
+        correct_set, wrong_set = match_set[True], match_set[False]
+
+        return correct_set, wrong_set
+
+
     def get_n_best_solutions(self, n: int) -> list[EvaluatedFS]:
         indexes_and_fitnesses = list(enumerate(self.pRef.fitness_array))
         best_indexes_and_fitnesses = heapq.nlargest(n=n, iterable=indexes_and_fitnesses, key=utils.second)
@@ -149,7 +161,7 @@ class HumanInTheLoopExplainer:
 
 
 
-    def playground(self):
+    def explain_best_solution(self):
         found_optima = self.get_n_best_solutions(1)[0]
         print(f"The found optima is {self.optimisation_problem.repr_fs(found_optima)}")
         print(f"It has fitness {found_optima.fitness}")
@@ -160,6 +172,47 @@ class HumanInTheLoopExplainer:
             for rule in matches:
                 print(self.optimisation_problem.repr_ps(rule.condition))
                 print(f"Accuracy = {rule.accuracy:.2f}")
+
+
+    def explain_top_n_solutions(self, n: int):
+        solutions_to_explain = self.get_n_best_solutions(n)
+        for solution in solutions_to_explain:
+            self.investigate_solution(solution)
+
+        def random_good_solution() -> EvaluatedFS:
+            return random.choice(solutions_to_explain)
+
+        def random_solution() -> EvaluatedFS:
+            return self.pRef.get_random_evaluated_fs()
+
+
+        samples_to_collect = 100
+
+        def check_pair(first: EvaluatedFS, second: EvaluatedFS) -> (int, int):
+            winner, loser = (first, second) if first > second else (second, first)
+            correct, wrong = self.get_matches_for_pair(winner, loser)
+            return len(correct), len(wrong)
+
+
+        def generate_pair(how: Literal["both_good", "both_any", "one_good"]) -> (EvaluatedFS, EvaluatedFS):
+            if how == "both_good":
+                return random_good_solution(), random_good_solution()
+            elif how == "both_any":
+                return random_solution(), random_solution()
+            else:
+                return random_good_solution(), random_solution()
+
+
+        results = dict()
+        for how in ["both_good", "both_any", "one_good"]:
+            results[how] = []
+            for iteration in range(samples_to_collect):
+                first, second = generate_pair(how)
+                result_pair = check_pair(first, second)
+                results[how].append(result_pair)
+
+
+        print(results)
 
 
 
@@ -176,7 +229,7 @@ def test_human_in_the_loop_explainer():
                                                      resolution_method="GA",
                                                      verbose=False)
 
-    explainer.playground()
+    explainer.explain_best_solution()
 
 
 test_human_in_the_loop_explainer()
