@@ -3,6 +3,7 @@ from typing import Optional
 
 import numpy as np
 
+import utils
 from Core.FullSolution import FullSolution
 from Core.PRef import PRef
 from Core.PS import PS, STAR
@@ -153,7 +154,7 @@ class ValueSpecificMutualInformation(Metric):
 
 class SolutionSpecificMutualInformation(Metric):
     pRef: Optional[PRef]
-    solution: Optional[FullSolution]
+    current_solution: Optional[FullSolution]
 
     univariate_probability_table: Optional[list]
     bivariate_probability_table: Optional[list]
@@ -162,7 +163,7 @@ class SolutionSpecificMutualInformation(Metric):
 
     def __init__(self):
         super().__init__()
-        self.solution = None
+        self.current_solution = None
         self.pRef = None
         self.univariate_probability_table = None
         self.bivariate_probability_table = None
@@ -178,7 +179,7 @@ class SolutionSpecificMutualInformation(Metric):
 
     def set_solution(self, solution: FullSolution):
         assert self.pRef is not None
-        self.solution = solution
+        self.current_solution = solution
         self.linkage_table = self.get_linkage_table_for_solution()
 
     def calculate_probability_tables(self) -> (list, list):
@@ -245,9 +246,9 @@ class SolutionSpecificMutualInformation(Metric):
         result = np.zeros(shape=(n, n), dtype=float)
         for a, b in itertools.combinations(range(n), r=2):
             result[a, b] = self.mutual_information(a,
-                                                   self.solution.values[a],
+                                                   self.current_solution.values[a],
                                                    b,
-                                                   self.solution.values[b])
+                                                   self.current_solution.values[b])
 
         result += result.T
 
@@ -394,6 +395,17 @@ class FasterSolutionSpecificMutualInformation(SolutionSpecificMutualInformation,
     #     np.fill_diagonal(result, averages)
     #
     #     return result
+
+
+    def get_linkage_threshold(self) -> float:
+        values_to_check = self.linkage_table[np.triu_indices(len(self.current_solution), 1)]
+        values_to_check = list(values_to_check)
+        values_to_check.sort()
+
+        differences = [(index, values_to_check[index] - values_to_check[index-1])
+                       for index in range(len(values_to_check)//2, len(values_to_check))]
+        best_index, best_difference = max(differences, key=utils.second)
+        return np.average(values_to_check[(best_index-1):(best_index+1)])
 
 
 class NotValueSpecificMI(FasterSolutionSpecificMutualInformation):

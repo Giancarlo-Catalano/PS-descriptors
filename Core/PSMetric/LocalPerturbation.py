@@ -198,14 +198,20 @@ class PerturbationOfSolution(Metric):
 
     def __init__(self):
         super().__init__()
+        self.pRef = None
+        self.current_linkage_table = None
+        self.current_solution = None
 
     def set_pRef(self, pRef: PRef):
         self.pRef = pRef
 
     def set_solution(self, solution: FullSolution):
+        if self.current_solution is not None and solution == self.current_solution:
+            return  # saves repeated calculations
         self.current_solution = solution
         self.current_linkage_table = self.get_linkage_table_for_solution(self.current_solution,
                                                                              difference_upper_bound=len(solution) // 2)
+        return  # just to set a break point
 
     def get_linkage_table_for_solution(self, solution: FullSolution, difference_upper_bound: int) -> np.ndarray:
         n = len(solution)
@@ -243,15 +249,15 @@ class PerturbationOfSolution(Metric):
             return np.abs(no_difference_mean + two_difference_means[(a, b)] - one_difference_means[a] - one_difference_means[b])
 
         def get_importance(a: int) -> float:
-            return np.abs(no_difference_mean - one_difference_means[a])
+            return np.abs(no_difference_mean - one_difference_means[a]) / 2
 
         def safe_variance(values):
             if len(values) < 2:
                 return 0
             else:
                 return np.var(values)
-        #
-        #
+
+
         # no_difference_variance = safe_variance(no_difference_fitnesses)
         # one_difference_variance = [safe_variance(values) for values in one_diffence_fitnesses]
         # two_difference_variance = {key: safe_variance(values) for key, values in two_difference_fitnesses.items()}
@@ -261,10 +267,10 @@ class PerturbationOfSolution(Metric):
         # background_variance = safe_variance(self.pRef.fitness_array[eligible_rows])
         #
         # def get_importance(a: int) -> float:
-        #     return one_difference_variance[a] / background_variance
+        #     return one_difference_variance[a]
         #
         # def get_linkage(a: int, b: int) -> float:
-        #      return np.abs(two_difference_variance[(a, b)] - one_difference_variance[a] - one_difference_variance[b]) / background_variance
+        #      return np.abs(notwo_difference_variance[(a, b)] - one_difference_variance[a] - one_difference_variance[b])
 
         table = np.zeros(shape=(n, n))
         for a, b in itertools.combinations(range(n), r=2):
@@ -274,6 +280,8 @@ class PerturbationOfSolution(Metric):
             table[a, a] = get_importance(a)
 
         table += table.T
+
+        # table /= background_variance
 
         return table
 

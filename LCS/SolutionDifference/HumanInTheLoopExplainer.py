@@ -193,8 +193,8 @@ class HumanInTheLoopExplainer:
         def check_pair(first: EvaluatedFS, second: EvaluatedFS) -> (int, int, float, float):
             winner, loser = (first, second) if first > second else (second, first)
             correct, wrong = self.get_matches_for_pair(winner, loser)
-            correct_average_accuracy = 0 if len(correct) == 0 else np.average([rule.accuracy for rule in correct])
-            wrong_average_accuracy = 0 if len(wrong) == 0 else np.average([rule.accuracy for rule in wrong])
+            correct_average_accuracy = 0 if len(correct) == 0 else np.average([rule.fitness for rule in correct])
+            wrong_average_accuracy = 0 if len(wrong) == 0 else np.average([rule.fitness for rule in wrong])
             return len(correct), len(wrong), correct_average_accuracy, wrong_average_accuracy
 
 

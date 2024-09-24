@@ -24,7 +24,7 @@ from LinkageExperiments.LocalVarianceLinkage import LocalVarianceLinkage, Bivari
 
 
 class GeneralPSEvaluator:
-    linkage_metric: BivariateLinkage
+    linkage_metric: FasterSolutionSpecificMutualInformation
     delta_fitness_metric: FitnessDelta
     fitness_p_value_metric: MannWhitneyU
     global_mean_fitness: float
@@ -37,7 +37,7 @@ class GeneralPSEvaluator:
     def __init__(self,
                  pRef: PRef):
         self.used_evaluations = 0
-        #self.linkage_metric = FasterSolutionSpecificMutualInformation()
+        #self.linkage_metric = FasterSolutionSpecificMutualInformation()  # TEMP
         # self.linkage_metric = LocalVarianceLinkage(similarity_threshold=0.5)
         #self.linkage_metric.set_pRef(pRef)
 
@@ -68,6 +68,7 @@ class GeneralPSEvaluator:
     #     return -atomicity, -mean_fitness
 
     def set_solution(self, solution: FullSolution):
+        #self.linkage_metric.set_solution(solution)
         self.variance_linkage_metric.set_solution(solution)
 
     def is_ps_beneficial(self, ps: PS) -> bool:
