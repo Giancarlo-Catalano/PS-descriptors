@@ -61,7 +61,7 @@ class HumanInTheLoopExplainer:
         """Simply sets the settings that are best for my purposes"""
         # play with these settings ad lib. Leaving the defaults seems to work :--)
         algorithm.crossover_probability = 0
-        algorithm.deletion_threshold = 10  # minimum age before a rule can be pruned away
+        algorithm.deletion_threshold = 50  # minimum age before a rule can be pruned away
         # algorithm.discount_factor = 0
         algorithm.do_action_set_subsumption = True
         # algorithm.do_ga_subsumption = True
@@ -70,7 +70,7 @@ class HumanInTheLoopExplainer:
         algorithm.max_population_size = 100
         # algorithm.exploration_probability = 0
         # algorithm.minimum_actions = 1
-        algorithm.subsumption_threshold = 10  # minimum age before a rule can subsume another
+        algorithm.subsumption_threshold = 50  # minimum age before a rule can subsume another
 
         algorithm.allow_ga_reproduction = False
 
@@ -237,9 +237,9 @@ class HumanInTheLoopExplainer:
 
 
 def test_human_in_the_loop_explainer():
-    #optimisation_problem = RoyalRoad(4, 4)
-    optimisation_problem = Trapk(4, 5)
-    #optimisation_problem = EfficientBTProblem.from_default_files()
+    optimisation_problem = RoyalRoad(4, 4)
+    # optimisation_problem = Trapk(4, 5)
+    # optimisation_problem = EfficientBTProblem.from_default_files()
     covering_search_population = min(50, optimisation_problem.search_space.amount_of_parameters)
     amount_of_generations = 30
     explainer = HumanInTheLoopExplainer.from_problem(optimisation_problem=optimisation_problem,

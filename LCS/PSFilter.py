@@ -46,8 +46,10 @@ def filter_pss(pss: list[PS],
             return new_pss if len(new_pss) > 0 else input_pss
 
     def maybe_filter_by_atomicity(input_pss: list[PS]):
+        if verbose:
+            print(f"The linkage atomicity threshold is {atomicity_threshold}")
         def get_atomicity(ps):
-            return ps.metric_scores[0]
+            return ps.metric_scores[2]
 
         """ will not filter if consistency threshold is None or the result is empty"""
         if atomicity_threshold is not None:
@@ -82,8 +84,8 @@ def filter_pss(pss: list[PS],
     current_pss = pss.copy()
 
     # current_pss = maybe_filter_by_delta_fitness(current_pss)
-    current_pss = maybe_filter_by_dependency(current_pss)
+    #current_pss = maybe_filter_by_dependency(current_pss)
     current_pss = maybe_filter_by_atomicity(current_pss)
-    current_pss = maybe_filter_by_consistency(current_pss)
+    #current_pss = maybe_filter_by_consistency(current_pss)
 
     return current_pss

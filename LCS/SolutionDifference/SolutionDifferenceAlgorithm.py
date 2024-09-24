@@ -85,7 +85,6 @@ class SolutionDifferenceAlgorithm(xcs.XCSAlgorithm):
 
             pss = filter_pss(pss, ps_evaluator=self.ps_evaluator,
                              atomicity_threshold=linkage_threshold,
-                             dependency_threshold = linkage_threshold,
                              verbose=self.verbose_search)
 
         assert (len(pss) > 0)

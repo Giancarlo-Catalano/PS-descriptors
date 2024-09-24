@@ -57,11 +57,18 @@ class LocalRestrictedPymooProblem(Problem):
 
     def get_metrics_for_ps(self, ps: PS) -> list[float]:
         atomicity = self.objectives_evaluator.variance_linkage_metric.get_atomicity(ps)
-        dependency = self.objectives_evaluator.variance_linkage_metric.get_dependence(ps)
-        # atomicity = self.objectives_evaluator.linkage_metric.get_atomicity(ps)
-        #mean_fitness = self.objectives_evaluator.mean_fitness_metric.get_single_score(ps)
+
         simplicity = len(ps) - ps.fixed_count()
-        return [-atomicity, dependency, -simplicity]
+
+        def use_dependency():
+            dependency = self.objectives_evaluator.variance_linkage_metric.get_dependence(ps)
+            return [-simplicity, dependency, -atomicity]
+
+        def use_mean_fitness():
+            mean_fitness = self.objectives_evaluator.mean_fitness_metric.get_single_score(ps)
+            return [-simplicity, -mean_fitness, -atomicity]
+
+        return use_dependency()
 
 
     def _evaluate(self, X, out, *args, **kwargs):
@@ -85,7 +92,7 @@ def local_restricted_tm_ps_search(to_explain: FullSolution,
 
     algorithm = NSGA2(pop_size=population_size,
                       sampling=LocalPSGeometricSampling(),
-                      crossover=SimulatedBinaryCrossover(prob=0),
+                      crossover=SimulatedBinaryCrossover(prob=0.3),
                       mutation=BitflipMutation(prob=1 / problem.n_var),
                       eliminate_duplicates=True,
                       survival=ObjectiveSpaceAvoidance(pss_to_avoid),

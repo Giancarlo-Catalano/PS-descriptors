@@ -286,58 +286,96 @@ class PerturbationOfSolution(Metric):
         return table
 
 
-    def get_traditional_atomicity(self, ps: PS) -> float:
-        if ps.is_empty():
-            return 0
-
-        fixed_positions = ps.get_fixed_variable_positions()
-        if len(fixed_positions) > 1:
-            linkages = [self.current_linkage_table[a, b]
-                        for a, b in itertools.combinations(fixed_positions, r=2)]
-            return np.average(linkages)
-        else:
-            singleton = fixed_positions[0]
-            return self.current_linkage_table[singleton, singleton]
-
-
     def get_atomicity(self, ps: PS) -> float:
-        if ps.is_empty():
-            return 0
-        fixed_positions = ps.get_fixed_variable_positions()
+        def get_from_minimum_internal():
+            if ps.is_empty():
+                return 0
+            fixed_positions = ps.get_fixed_variable_positions()
 
-        def min_linkage_with_fixed(fixed: int) -> float:
-            return min(self.current_linkage_table[fixed, other_fixed] for other_fixed in fixed_positions)
+            def min_linkage_with_fixed(fixed: int) -> float:
+                return min(self.current_linkage_table[fixed, other_fixed] for other_fixed in fixed_positions)
 
-        if len(fixed_positions) > 1:
-            linkages = [min_linkage_with_fixed(fixed) for fixed in fixed_positions]
-            return np.average(linkages)
-        else:
-            singleton = fixed_positions[0]
-            return self.current_linkage_table[singleton, singleton]
+            if len(fixed_positions) > 1:
+                linkages = [min_linkage_with_fixed(fixed) for fixed in fixed_positions]
+                return np.average(linkages)
+            else:
+                singleton = fixed_positions[0]
+                return self.current_linkage_table[singleton, singleton]
+
+        def get_from_average_internal():
+            if ps.is_empty():
+                return 0
+            fixed_positions = ps.get_fixed_variable_positions()
+
+            if len(fixed_positions) > 1:
+                linkages = [self.current_linkage_table[fixed, other_fixed]
+                            for fixed,other_fixed in itertools.combinations(fixed_positions, r=2)]
+                return np.average(linkages)
+            else:
+                singleton = fixed_positions[0]
+                return self.current_linkage_table[singleton, singleton]
+
+        def get_from_NDSGAII_method():
+            if ps.is_empty():
+                return 0
+            fixed_positions = ps.get_fixed_variable_positions()
+
+            if len(fixed_positions) > 1:
+                linkages = [self.current_linkage_table[fixed, other_fixed]
+                            for fixed,other_fixed in itertools.combinations(fixed_positions, r=2)]
+                return np.sum(linkages) / (ps.fixed_count())
+            else:
+                singleton = fixed_positions[0]
+                return self.current_linkage_table[singleton, singleton]
+
+        return get_from_average_internal()
 
 
     def get_linkage_threshold(self) -> float:
         values_to_check = self.current_linkage_table[np.triu_indices(len(self.current_solution), 1)]
         values_to_check = list(values_to_check)
-        values_to_check.sort()
 
-        differences = [(index, values_to_check[index] - values_to_check[index-1])
-                       for index in range(len(values_to_check)//2, len(values_to_check))]
-        best_index, best_difference = max(differences, key=utils.second)
-        return np.average(values_to_check[(best_index-1):(best_index+1)])
+        def get_at_greatest_slope():
+            values_to_check.sort()
 
+            differences = [(index, values_to_check[index] - values_to_check[index-1])
+                           for index in range(len(values_to_check)//2, len(values_to_check))]
+            best_index, best_difference = max(differences, key=utils.second)
+            return np.average(values_to_check[(best_index-1):(best_index+1)])
+
+        def get_average() -> float:
+            return np.average(values_to_check)
+
+        return get_average()
 
     def get_dependence(self, ps: PS) -> float:
-        fixed_vars = ps.get_fixed_variable_positions()
-        unfixed_vars = [index for index, val in enumerate(ps.values) if val == STAR]
+        def get_from_max_external():
+            fixed_vars = ps.get_fixed_variable_positions()
+            unfixed_vars = [index for index, val in enumerate(ps.values) if val == STAR]
 
-        def max_linkage_with_unfixed(fixed: int) -> float:
-            return max(self.current_linkage_table[fixed, unfixed] for unfixed in unfixed_vars)
+            def max_linkage_with_unfixed(fixed: int) -> float:
+                return max(self.current_linkage_table[fixed, unfixed] for unfixed in unfixed_vars)
 
-        if (len(unfixed_vars) > 0) and (len(fixed_vars) > 0):  # maybe this should be zero?
-            outwards_linkages = [max_linkage_with_unfixed(fixed) for fixed in fixed_vars]
-            return np.average(outwards_linkages)
-        else:
-            return 10000
+            if (len(unfixed_vars) > 0) and (len(fixed_vars) > 0):  # maybe this should be zero?
+                outwards_linkages = [max_linkage_with_unfixed(fixed) for fixed in fixed_vars]
+                return np.average(outwards_linkages)
+            else:
+                return 10000
+
+        def get_from_average_external():
+            fixed_vars = ps.get_fixed_variable_positions()
+            unfixed_vars = [index for index, val in enumerate(ps.values) if val == STAR]
+
+
+            if (len(unfixed_vars) > 0) and (len(fixed_vars) > 0):  # maybe this should be zero?
+                outwards_linkages = [self.current_linkage_table[fixed, unfixed]
+                                     for fixed in fixed_vars
+                                     for unfixed in unfixed_vars]
+                return np.average(outwards_linkages)
+            else:
+                return 10000
+
+        return get_from_average_external()
+
 
 
