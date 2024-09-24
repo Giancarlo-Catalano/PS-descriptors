@@ -55,7 +55,7 @@ def situation_to_fs(situation) -> FullSolution:
 
 
 def get_pss_from_action_set(action_set: xcs.ActionSet) -> list[PS]:
-    rules = action_set._rules # yes I access private members, what about it
+    rules = action_set._rules  # yes I access private members, what about it
     return list(map(condition_to_ps, rules))
 
 
@@ -72,6 +72,7 @@ def get_rules_in_model(model: xcs.ClassifierSet) -> list[(PS, Any)]:
 def get_action_set(match_set: xcs.MatchSet, action) -> xcs.ActionSet:
     # this function exists because empty action sets are annoying to handle
     """ Returns the action set from the provided match set, and returns an empty action set if appropriate"""
+
     def make_empty_action_set():
         return xcs.ActionSet(model=match_set.model,
                              situation=match_set.situation,
@@ -87,3 +88,7 @@ def get_conditions_in_match_set(match_set: xcs.MatchSet) -> list[BitCondition]:
         all_rules.extend(match_set[action])
 
     return all_rules
+
+
+def get_rules_in_action_set(action_set: xcs.ActionSet) -> list[xcs.XCSClassifierRule]:
+    return list(action_set._rules.values())

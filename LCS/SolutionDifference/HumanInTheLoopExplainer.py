@@ -2,6 +2,7 @@ import heapq
 import random
 from typing import Literal
 
+import numpy as np
 import xcs
 from xcs.scenarios import Scenario, ScenarioObserver
 
@@ -14,6 +15,7 @@ from Core.EvaluatedFS import EvaluatedFS
 from Core.FullSolution import FullSolution
 from Core.PRef import PRef
 from Explanation.PRefManager import PRefManager
+from LCS.Conversions import get_rules_in_action_set
 from LCS.SolutionDifference.SolutionDifferenceAlgorithm import SolutionDifferenceAlgorithm
 from LCS.SolutionDifference.SolutionDifferenceModel import SolutionDifferenceModel
 from LCS.SolutionDifference.SolutionDifferenceScenario import SolutionDifferenceScenario, \
@@ -146,9 +148,9 @@ class HumanInTheLoopExplainer:
                              loser: EvaluatedFS) -> (list[xcs.ClassifierRule], list[xcs.ClassifierRule]):
         match_set = self.model.match(situation = (winner, loser))
 
-        correct_set, wrong_set = match_set[True], match_set[False]
+        correct_action_set, wrong_action_set = match_set[True], match_set[False]
 
-        return correct_set, wrong_set
+        return get_rules_in_action_set(correct_action_set), get_rules_in_action_set(wrong_action_set)
 
 
     def get_n_best_solutions(self, n: int) -> list[EvaluatedFS]:
@@ -188,19 +190,30 @@ class HumanInTheLoopExplainer:
 
         samples_to_collect = 100
 
-        def check_pair(first: EvaluatedFS, second: EvaluatedFS) -> (int, int):
+        def check_pair(first: EvaluatedFS, second: EvaluatedFS) -> (int, int, float, float):
             winner, loser = (first, second) if first > second else (second, first)
             correct, wrong = self.get_matches_for_pair(winner, loser)
-            return len(correct), len(wrong)
+            correct_average_accuracy = 0 if len(correct) == 0 else np.average([rule.accuracy for rule in correct])
+            wrong_average_accuracy = 0 if len(wrong) == 0 else np.average([rule.accuracy for rule in wrong])
+            return len(correct), len(wrong), correct_average_accuracy, wrong_average_accuracy
 
 
         def generate_pair(how: Literal["both_good", "both_any", "one_good"]) -> (EvaluatedFS, EvaluatedFS):
-            if how == "both_good":
-                return random_good_solution(), random_good_solution()
-            elif how == "both_any":
-                return random_solution(), random_solution()
-            else:
-                return random_good_solution(), random_solution()
+            def pair_has_different_fitnesses(pair):
+                return pair[0].fitness != pair[1].fitness
+            def generate_unsafe_pair() -> (EvaluatedFS, EvaluatedFS):
+                if how == "both_good":
+                    return random_good_solution(), random_good_solution()
+                elif how == "both_any":
+                    return random_solution(), random_solution()
+                else:
+                    return random_good_solution(), random_solution()
+
+            pair = generate_unsafe_pair()
+            while not pair_has_different_fitnesses(pair):
+                pair = generate_unsafe_pair()
+            return pair
+
 
 
         results = dict()
@@ -212,24 +225,33 @@ class HumanInTheLoopExplainer:
                 results[how].append(result_pair)
 
 
-        print(results)
+        def pretty_print_results(results_dict: dict):
+            for pair_kind in results_dict:
+                for row in results_dict[pair_kind]:
+                    #count_correct, count_wrong, accuracy_correct, accuracy_wrong = results_dict[pair_kind]
+                    print("\t".join(f"{x}" for x in [pair_kind]+list(row)))
+
+        pretty_print_results(results)
 
 
 
 
 def test_human_in_the_loop_explainer():
-    # optimisation_problem = RoyalRoad(4, 4)
+    #optimisation_problem = RoyalRoad(4, 4)
     optimisation_problem = Trapk(4, 5)
     #optimisation_problem = EfficientBTProblem.from_default_files()
+    covering_search_population = min(50, optimisation_problem.search_space.amount_of_parameters)
+    amount_of_generations = 30
     explainer = HumanInTheLoopExplainer.from_problem(optimisation_problem=optimisation_problem,
-                                                     covering_search_budget=1000,
-                                                     covering_search_population=50,
+                                                     covering_search_budget=covering_search_population * amount_of_generations,
+                                                     covering_search_population=covering_search_population,
                                                      pRef_size=10000,
-                                                     training_cycles_per_solution=10000,
+                                                     training_cycles_per_solution=500,
                                                      resolution_method="GA",
-                                                     verbose=False)
+                                                     verbose=True)
 
-    explainer.explain_best_solution()
+    #explainer.explain_best_solution()
+    explainer.explain_top_n_solutions(4)
 
 
 test_human_in_the_loop_explainer()

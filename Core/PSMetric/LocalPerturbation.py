@@ -230,26 +230,26 @@ class PerturbationOfSolution(Metric):
                 elif not a_is_different and not b_is_different:
                     no_difference_fitnesses.append(fitness)
 
-        # def safe_mean(values):
-        #     if len(values) < 1:
-        #         return -100000
-        #     return np.average(values)
-        #
-        # no_difference_mean = safe_mean(no_difference_fitnesses)
-        # one_difference_means = [safe_mean(values) for values in one_diffence_fitnesses]
-        # two_difference_means = {key: safe_mean(values) for key, values in two_difference_fitnesses.items()}
-        #
-        # def get_linkage(a: int, b: int) -> float:
-        #     return np.abs(no_difference_mean + two_difference_means[(a, b)] - one_difference_means[a] - one_difference_means[b])
-        #
-        # def get_importance(a: int) -> float:
-        #     return np.abs(no_difference_mean - one_difference_means[a])
+        def safe_mean(values):
+            if len(values) < 1:
+                return -100000
+            return np.average(values)
 
-        # def safe_variance(values):
-        #     if len(values) < 2:
-        #         return 0
-        #     else:
-        #         return np.var(values)
+        no_difference_mean = safe_mean(no_difference_fitnesses)
+        one_difference_means = [safe_mean(values) for values in one_diffence_fitnesses]
+        two_difference_means = {key: safe_mean(values) for key, values in two_difference_fitnesses.items()}
+
+        def get_linkage(a: int, b: int) -> float:
+            return np.abs(no_difference_mean + two_difference_means[(a, b)] - one_difference_means[a] - one_difference_means[b])
+
+        def get_importance(a: int) -> float:
+            return np.abs(no_difference_mean - one_difference_means[a])
+
+        def safe_variance(values):
+            if len(values) < 2:
+                return 0
+            else:
+                return np.var(values)
         #
         #
         # no_difference_variance = safe_variance(no_difference_fitnesses)
