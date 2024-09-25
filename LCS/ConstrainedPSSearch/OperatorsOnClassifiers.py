@@ -1,11 +1,10 @@
 import random
-from abc import abstractmethod
 
 import numpy as np
 
 from Core.PS import STAR
 from Core.SearchSpace import SearchSpace
-from ReimplementedXCS.CombinatorialRules import CombinatorialCondition
+from LCS.XCSComponents.CombinatorialRules import CombinatorialCondition
 
 def uniform_crossover_on_combinatorial_condition(mother: CombinatorialCondition,
                                                  father: CombinatorialCondition) -> (CombinatorialCondition, CombinatorialCondition):

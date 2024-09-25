@@ -7,7 +7,7 @@ from scipy.stats import f
 
 from Core.PRef import PRef
 from Core.PS import PS, STAR
-from Core.PSMetric.Linkage.Linkage import Linkage
+from Core.PSMetric.Linkage.OutdatedLinkage import OutdatedLinkage
 from Core.PSMetric.Metric import Metric
 
 LinkageTable: TypeAlias = np.ndarray
@@ -28,7 +28,7 @@ class BivariateANOVALinkage(Metric):
     def set_pRef(self, pRef: PRef):
         # print("Calculating linkages...", end="")
         self.linkage_table = self.get_linkage_table(pRef)
-        self.normalised_linkage_table = Linkage.get_normalised_linkage_table(self.linkage_table)
+        self.normalised_linkage_table = OutdatedLinkage.get_normalised_linkage_table(self.linkage_table)
         # print("Finished")
 
     def get_ANOVA_interaction_table(self, pRef: PRef) -> LinkageTable:
@@ -126,5 +126,5 @@ class BivariateANOVALinkage(Metric):
         return self.get_single_normalised_score(ps)
 
     def get_quantized_linkage_table(self, linkage_table: LinkageTable):
-        in_zero_one_range = Linkage.get_normalised_linkage_table(linkage_table)
+        in_zero_one_range = OutdatedLinkage.get_normalised_linkage_table(linkage_table)
         return np.array(in_zero_one_range > 0.5, dtype=float)

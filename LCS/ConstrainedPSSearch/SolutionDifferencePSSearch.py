@@ -11,8 +11,8 @@ from BenchmarkProblems.Trapk import Trapk
 from Core.EvaluatedPS import EvaluatedPS
 from Core.FullSolution import FullSolution
 from Core.PS import PS
-from LightweightLocalPSMiner.Operators import LocalPSGeometricSampling, ObjectiveSpaceAvoidance, ForceDifferenceMask
-from LightweightLocalPSMiner.TwoMetrics import GeneralPSEvaluator
+from LCS.Operators import LocalPSGeometricSampling, ObjectiveSpaceAvoidance, ForceDifferenceMask
+from LCS.PSEvaluator import GeneralPSEvaluator
 
 
 class LocalRestrictedPymooProblem(Problem):
@@ -49,12 +49,12 @@ class LocalRestrictedPymooProblem(Problem):
         return np.any(X[:, self.difference_variables], axis=1)
 
     def get_metrics_for_ps(self, ps: PS) -> list[float]:
-        atomicity = self.objectives_evaluator.variance_linkage_metric.get_atomicity(ps)
+        atomicity = self.objectives_evaluator.local_linkage_metric.get_atomicity(ps)
 
         simplicity = len(ps) - ps.fixed_count()
 
         def use_dependency():
-            dependency = self.objectives_evaluator.variance_linkage_metric.get_dependence(ps)
+            dependency = self.objectives_evaluator.local_linkage_metric.get_dependence(ps)
             return [-simplicity, dependency, -atomicity]
 
         def use_mean_fitness():

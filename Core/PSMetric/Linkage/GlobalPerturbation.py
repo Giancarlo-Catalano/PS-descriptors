@@ -6,8 +6,8 @@ import numpy as np
 import utils
 from Core.PRef import PRef
 from Core.PS import PS, STAR
-from Core.PSMetric.Linkage.Linkage import Linkage
-from Core.PSMetric.Linkage.Linkage import BivariateLocalPerturbation, UnivariateLocalPerturbation
+from Core.PSMetric.Linkage.OutdatedLinkage import OutdatedLinkage
+from Core.PSMetric.Linkage.OutdatedLinkage import BivariateLocalPerturbation, UnivariateLocalPerturbation
 from Core.PSMetric.Metric import Metric
 from Core.custom_types import ArrayOfFloats
 
@@ -99,7 +99,7 @@ class BivariateGlobalPerturbation(Metric):
 
     def set_pRef(self, pRef: PRef):
         self.linkage_table = self.get_linkage_table(pRef)
-        self.normalised_linkage_table = Linkage.get_normalised_linkage_table(self.linkage_table, include_diagonal=True)
+        self.normalised_linkage_table = OutdatedLinkage.get_normalised_linkage_table(self.linkage_table, include_diagonal=True)
 
     def get_all_normalised_linkages(self, ps: PS, include_reflexive=False) -> list[float]:
         if include_reflexive:
@@ -169,7 +169,7 @@ class AlternativeBivariateGlobalLinkage(Metric):
 
     def set_pRef(self, pRef: PRef):
         self.linkage_table = self.get_linkage_table(pRef)
-        self.normalised_linkage_table = Linkage.get_normalised_linkage_table(self.linkage_table, include_diagonal=True)
+        self.normalised_linkage_table = OutdatedLinkage.get_normalised_linkage_table(self.linkage_table, include_diagonal=True)
 
     def get_all_normalised_linkages(self, ps: PS, include_reflexive=False) -> list[float]:
         if include_reflexive:

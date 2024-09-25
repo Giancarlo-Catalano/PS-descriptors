@@ -1,7 +1,7 @@
 from typing import Optional, Callable
 
 from Core.PS import PS
-from LightweightLocalPSMiner.TwoMetrics import GeneralPSEvaluator
+from LCS.PSEvaluator import GeneralPSEvaluator
 
 
 def filter_pss(pss: list[PS],

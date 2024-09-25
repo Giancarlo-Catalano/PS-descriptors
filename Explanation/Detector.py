@@ -10,7 +10,7 @@ from Core.EvaluatedPS import EvaluatedPS
 from Core.FullSolution import FullSolution
 from Core.PRef import PRef
 from Core.PS import PS, contains, STAR
-from Core.PSMetric.Linkage.Linkage import MutualInformation
+from Core.PSMetric.Linkage.OutdatedLinkage import MutualInformation
 from Explanation.MinedPSManager import MinedPSManager
 from Explanation.MutualInformationManager import MutualInformationManager
 from Explanation.PRefManager import PRefManager

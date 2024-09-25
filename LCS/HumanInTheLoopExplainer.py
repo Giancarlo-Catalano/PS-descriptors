@@ -9,18 +9,15 @@ from xcs.scenarios import Scenario, ScenarioObserver
 import utils
 from BenchmarkProblems.BenchmarkProblem import BenchmarkProblem
 from BenchmarkProblems.EfficientBTProblem.EfficientBTProblem import EfficientBTProblem
-from BenchmarkProblems.RoyalRoad import RoyalRoad
-from BenchmarkProblems.Trapk import Trapk
 from Core.EvaluatedFS import EvaluatedFS
 from Core.FullSolution import FullSolution
 from Core.PRef import PRef
 from Explanation.PRefManager import PRefManager
 from LCS.Conversions import get_rules_in_action_set, get_rules_in_model
-from LCS.SolutionDifference.SolutionDifferenceAlgorithm import SolutionDifferenceAlgorithm
-from LCS.SolutionDifference.SolutionDifferenceModel import SolutionDifferenceModel
-from LCS.SolutionDifference.SolutionDifferenceScenario import SolutionDifferenceScenario, \
-    OneAtATimeSolutionDifferenceScenario, RandomPairsScenario
-from LightweightLocalPSMiner.TwoMetrics import GeneralPSEvaluator
+from LCS.XCSComponents.SolutionDifferenceAlgorithm import SolutionDifferenceAlgorithm
+from LCS.XCSComponents.SolutionDifferenceModel import SolutionDifferenceModel
+from LCS.XCSComponents.SolutionDifferenceScenario import OneAtATimeSolutionDifferenceScenario, RandomPairsScenario
+from LCS.PSEvaluator import GeneralPSEvaluator
 from utils import announce
 
 

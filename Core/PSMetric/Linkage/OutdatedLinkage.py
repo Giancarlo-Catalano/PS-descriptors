@@ -9,7 +9,7 @@ from Core.PSMetric.Metric import Metric
 LinkageTable: TypeAlias = np.ndarray
 
 
-class Linkage(Metric):
+class OutdatedLinkage(Metric):
     linkage_table: Optional[LinkageTable]
     normalised_linkage_table: Optional[LinkageTable]
 

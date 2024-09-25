@@ -7,11 +7,11 @@ import utils
 from Core.PS import PS
 from LCS.Conversions import condition_to_ps
 from LCS.PSFilter import filter_pss, keep_biggest
-from LCS.SolutionDifference.SolutionDifferenceModel import SolutionDifferenceModel
-from LCS.SolutionDifference.SolutionDifferencePSSearch import local_restricted_tm_ps_search
-from LCS.SolutionDifference.SolutionDifferenceScenario import GenericSolutionDifferenceScenario
-from LightweightLocalPSMiner.TwoMetrics import GeneralPSEvaluator
-from ReimplementedXCS.CombinatorialRules import CombinatorialCondition
+from LCS.XCSComponents.SolutionDifferenceModel import SolutionDifferenceModel
+from LCS.ConstrainedPSSearch.SolutionDifferencePSSearch import local_restricted_tm_ps_search
+from LCS.XCSComponents.SolutionDifferenceScenario import GenericSolutionDifferenceScenario
+from LCS.PSEvaluator import GeneralPSEvaluator
+from LCS.XCSComponents.CombinatorialRules import CombinatorialCondition
 
 
 class SolutionDifferenceAlgorithm(xcs.XCSAlgorithm):
@@ -72,7 +72,7 @@ class SolutionDifferenceAlgorithm(xcs.XCSAlgorithm):
                                                 ps_budget=self.covering_search_budget,
                                                 verbose=self.verbose_search)
 
-            linkage_threshold = self.ps_evaluator.variance_linkage_metric.get_linkage_threshold()
+            linkage_threshold = self.ps_evaluator.local_linkage_metric.get_linkage_threshold()
 
             pss = filter_pss(pss, ps_evaluator=self.ps_evaluator,
                              atomicity_threshold=linkage_threshold,

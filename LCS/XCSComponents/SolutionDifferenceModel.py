@@ -4,7 +4,6 @@ from tqdm import tqdm
 from xcs.scenarios import ScenarioObserver
 
 from Core.EvaluatedFS import EvaluatedFS
-from LCS.SolutionDifference.SolutionDifferenceScenario import GenericSolutionDifferenceScenario
 
 
 class SolutionDifferenceModel(ClassifierSet):

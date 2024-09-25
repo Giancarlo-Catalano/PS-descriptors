@@ -1,16 +1,13 @@
 import xcs
 from xcs.scenarios import ScenarioObserver
 
-from BenchmarkProblems.Checkerboard import CheckerBoard
 from BenchmarkProblems.EfficientBTProblem.EfficientBTProblem import EfficientBTProblem
 from BenchmarkProblems.GraphColouring import GraphColouring
-from BenchmarkProblems.RoyalRoad import RoyalRoad
-from BenchmarkProblems.Trapk import Trapk
 from Core.PRef import PRef
 from Explanation.PRefManager import PRefManager
-from LCS.SolutionDifference.SolutionDifferenceAlgorithm import SolutionDifferenceAlgorithm
-from LCS.SolutionDifference.SolutionDifferenceScenario import SolutionDifferenceScenario
-from LightweightLocalPSMiner.TwoMetrics import GeneralPSEvaluator
+from LCS.XCSComponents.SolutionDifferenceAlgorithm import SolutionDifferenceAlgorithm
+from LCS.XCSComponents.SolutionDifferenceScenario import SolutionDifferenceScenario
+from LCS.PSEvaluator import GeneralPSEvaluator
 from utils import announce
 
 

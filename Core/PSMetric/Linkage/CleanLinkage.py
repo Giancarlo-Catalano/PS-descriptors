@@ -7,7 +7,7 @@ import numpy as np
 import utils
 from Core.PRef import PRef
 from Core.PS import PS
-from Core.PSMetric.Linkage.Linkage import MutualInformation
+from Core.PSMetric.Linkage.OutdatedLinkage import MutualInformation
 
 
 class CleanLinkage(MutualInformation):
