@@ -133,7 +133,10 @@ class PSPropertyManager:
         return properties_and_p_values
 
 
+<<<<<<< HEAD:ExplanationGeneration/PSPropertyManager.py
 
+=======
+>>>>>>> LightweightLocalMiner:Explanation/PSPropertyManager.py
 
     def plot_var_property(self, var_index: int, value: Optional[int], property_name: str, pss: list[PS]):
         if value is None:

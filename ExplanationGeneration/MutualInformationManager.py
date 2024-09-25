@@ -2,8 +2,13 @@ from typing import Optional
 
 import numpy as np
 
+<<<<<<< HEAD:ExplanationGeneration/MutualInformationManager.py
 from FirstPaper.PRef import PRef
 from FirstPaper.PSMetric.LinkageMetrics import MutualInformation
+=======
+from Core.PRef import PRef
+from Core.PSMetric.Linkage.OutdatedLinkage import MutualInformation
+>>>>>>> LightweightLocalMiner:Explanation/MutualInformationManager.py
 from utils import announce
 
 

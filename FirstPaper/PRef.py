@@ -1,4 +1,5 @@
 import os
+import random
 from typing import Iterable, Callable, Any
 
 import numba
@@ -105,7 +106,7 @@ class PRef:
     @classmethod
     def from_evaluated_full_solutions(cls, evaluated_fss: Iterable[EvaluatedFS],
                                       search_space: SearchSpace):
-        fss, fitnesses = utils.unzip([(e_fs.full_solution, e_fs.fitness) for e_fs in evaluated_fss])
+        fss, fitnesses = utils.unzip([(e_fs, e_fs.fitness) for e_fs in evaluated_fss])
         return cls.from_full_solutions(fss, fitnesses, search_space)
 
     @classmethod
@@ -145,6 +146,8 @@ class PRef:
     def fitnesses_of_observations_other_experimental(self, ps: PS) -> np.ndarray:
         return get_relevant_rows_in_matrix_shortcircuit(self.full_solution_matrix, self.fitness_array, ps.values)
     def fitnesses_of_observations_and_complement(self, ps: PS) -> (ArrayOfFloats, ArrayOfFloats):
+        """Returns the fitnesses for the rows where the ps is present,
+        and the fitnesses for the rows where it's not present"""
         selected_rows = np.full(shape=self.fitness_array.shape, fill_value=True, dtype=bool)
 
         for variable_index, variable_value in enumerate(ps.values):
@@ -216,7 +219,24 @@ class PRef:
                        fitness_array = fitness_array,
                        search_space = search_space)
 
+<<<<<<< HEAD:FirstPaper/PRef.py
 def plot_solutions_in_pRef(pRef: PRef):
+=======
+    @classmethod
+    def unique(cls, pRef):
+        """ removes duplicate entries"""
+        all_solutions = pRef.get_evaluated_FSs()
+        all_solutions = list(set(all_solutions))
+        return PRef.from_evaluated_full_solutions(all_solutions, pRef.search_space)
+
+    def get_random_evaluated_fs(self) -> EvaluatedFS:
+        index = random.randrange(self.sample_size)
+        return EvaluatedFS(FullSolution(self.full_solution_matrix[index]),
+                           fitness=self.fitness_array[index])
+
+
+def plot_solutions_in_pRef(pRef: PRef, filename: str):
+>>>>>>> LightweightLocalMiner:Core/PRef.py
     x_points, y_points = utils.unzip(list(enumerate(pRef.fitness_array)))
     fig = plt.figure()
     plt.plot(x_points, y_points)

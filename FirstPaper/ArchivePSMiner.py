@@ -7,6 +7,7 @@ import numpy as np
 
 import utils
 from BenchmarkProblems.BenchmarkProblem import BenchmarkProblem
+<<<<<<< HEAD:FirstPaper/ArchivePSMiner.py
 from FirstPaper.EvaluatedPS import EvaluatedPS
 from FirstPaper.PRef import PRef
 from FirstPaper.PS import PS
@@ -19,6 +20,20 @@ from FirstPaper.TerminationCriteria import TerminationCriteria, PSEvaluationLimi
 from FirstPaper.get_init import just_empty
 from FirstPaper.get_local import specialisations
 from FirstPaper.selection import truncation_selection
+=======
+from Core.EvaluatedPS import EvaluatedPS
+from Core.PRef import PRef
+from Core.PS import PS
+from Core.PSMetric.FitnessQuality.MeanFitness import MeanFitness
+from Core.PSMetric.Linkage.Atomicity import Atomicity
+from Core.PSMetric.Metric import Metric
+from Core.PSMetric.Simplicity import Simplicity
+from Core.SearchSpace import SearchSpace
+from Core.TerminationCriteria import TerminationCriteria, PSEvaluationLimit, IterationLimit
+from Core.get_init import just_empty
+from Core.get_local import specialisations
+from Core.selection import truncation_selection
+>>>>>>> LightweightLocalMiner:Core/ArchivePSMiner.py
 from FSStochasticSearch.GA import GA
 from FSStochasticSearch.Operators import SinglePointFSMutation, TwoPointFSCrossover, TournamentSelection
 from PSMiners.AbstractPSMiner import AbstractPSMiner

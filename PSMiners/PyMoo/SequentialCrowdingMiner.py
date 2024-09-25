@@ -6,13 +6,13 @@ from pymoo.operators.survival.rank_and_crowding import RankAndCrowding
 from pymoo.optimize import minimize
 
 import utils
-from FirstPaper.EvaluatedPS import EvaluatedPS
-from FirstPaper.PRef import PRef
-from FirstPaper.PSMetric.LinkageMetrics import Influence
-from FirstPaper.TerminationCriteria import TerminationCriteria, PSEvaluationLimit, UnionOfCriteria, IterationLimit, \
+from Core.EvaluatedPS import EvaluatedPS
+from Core.PRef import PRef
+from Core.PSMetric.Linkage.Additivity import Influence
+from Core.TerminationCriteria import TerminationCriteria, PSEvaluationLimit, UnionOfCriteria, IterationLimit, \
     SearchSpaceIsCovered
 from PSMiners.AbstractPSMiner import AbstractPSMiner
-from PSMiners.PyMoo.CustomCrowding import PyMooDecisionSpaceSequentialCrowding
+from PSMiners.PyMoo.CustomCrowding import PyMooPSSequentialCrowding, PyMooDecisionSpaceSequentialCrowding
 from PSMiners.PyMoo.Operators import PSUniformMutation, PSGeometricSampling
 from PSMiners.PyMoo.PSPyMooProblem import PSPyMooProblem
 from PSMiners.PyMoo.pymoo_utilities import get_pymoo_search_algorithm
@@ -20,18 +20,15 @@ from utils import announce
 
 
 class SequentialCrowdingMiner(AbstractPSMiner):
-    """
-    This is the algorithm which produces partial solutions for a given reference population
-    """
-    which_algorithm: str   # the MO algorithm to use
-    population_size_per_run: int  # there are multiple MO runs, each with a population
-    budget_per_run: int  # and a budget
+    which_algorithm: str
+    population_size_per_run: int
+    budget_per_run: int
 
-    pymoo_problem: PSPyMooProblem  # the pymoo problem instance, the task of finding PSs
-    winners_archive: list[EvaluatedPS] # all the PSs returned by the runs
+    pymoo_problem: PSPyMooProblem
+    winners_archive: list[EvaluatedPS]
 
-    use_custom_crowding_operator: bool
-    influence_metric: Influence   # used to better sort PSs, for aesthetic reasons
+    use_experimental_crowding_operator: bool
+    influence_metric: Influence
 
 
     def __init__(self,
@@ -47,7 +44,7 @@ class SequentialCrowdingMiner(AbstractPSMiner):
         self.budget_per_run = budget_per_run
         self.pymoo_problem = PSPyMooProblem(pRef)
         self.winners_archive = []
-        self.use_custom_crowding_operator = use_experimental_crowding_operator
+        self.use_experimental_crowding_operator = use_experimental_crowding_operator
 
         if influence_metric is None:
             influence_metric = Influence()
@@ -92,11 +89,9 @@ class SequentialCrowdingMiner(AbstractPSMiner):
 
 
     def get_crowding_operator(self):
-        if self.use_custom_crowding_operator and len(self.winners_archive) > 0:
-            # this is the crowding operator discussed in the paper
+        if self.use_experimental_crowding_operator and len(self.winners_archive) > 0:
             return PyMooDecisionSpaceSequentialCrowding(archived_pss=self.winners_archive, sigma_shared=0.5)
         else:
-            # on the first run, we are forced to run the default crowding operator
             return RankAndCrowding()
 
     def get_miner_algorithm(self):
@@ -104,30 +99,54 @@ class SequentialCrowdingMiner(AbstractPSMiner):
                                           pop_size=self.population_size_per_run,
                                           sampling=PSGeometricSampling(),
                                           mutation=PSUniformMutation(self.search_space),
-                                          crossover=UniformCrossover(prob=0),  # as the first paper discussed, crossover is bad
+                                          crossover=UniformCrossover(prob=0),
                                           crowding_operator=self.get_crowding_operator(),
                                           search_space=self.search_space)
 
 
 
     def get_coverage(self):
-        """
-        This function is for reporting purposes only, and tells how many variables have appeared in PSs so far
-        @return: an array, with the proportions of how many times a variable appears in the archive
-        """
         if len(self.winners_archive) == 0:
             return np.zeros(self.search_space.amount_of_parameters)
         else:
-            return PyMooDecisionSpaceSequentialCrowding.get_coverage(search_space=self.pymoo_problem.search_space,
+            return PyMooPSSequentialCrowding.get_coverage(search_space=self.pymoo_problem.search_space,
                                                           already_obtained=self.winners_archive)
 
 
     def sort_by_clarity(self, pss: list[EvaluatedPS]) -> list[EvaluatedPS]:
+        # def get_atomicity(ps: EvaluatedPS) -> float:
+        #     return ps.metric_scores[2]
+        #
+        # def get_mean_fitness(ps: EvaluatedPS) -> float:
+        #     return ps.metric_scores[1]
+        #
+        # def get_simplicity(ps: EvaluatedPS) -> float:
+        #     return ps.metric_scores[0]
+
         def get_influence_delta(ps: EvaluatedPS) -> float:
             return self.influence_metric.get_single_score(ps)
 
         return utils.sort_by_combination_of(pss, key_functions=[get_influence_delta], reverse=True)
 
+    # def plot_pss_to_sort(self, pss: list[EvaluatedPS]):
+    #     influence_evaluator = Influence()
+    #     influence_evaluator.set_pRef(self.pRef)
+    #
+    #
+    #     def get_EI(ps: EvaluatedPS) -> float:
+    #         return influence_evaluator.get_single_score(ps)
+    #     def get_mean_error(ps: EvaluatedPS) -> float:
+    #         return utils.get_mean_error(self.pRef.fitnesses_of_observations(ps))
+    #
+    #     def get_simplicity(ps: EvaluatedPS) -> float:
+    #         return ps.metric_scores[0]
+    #
+    #     other_metric = list(map(get_EI, pss))
+    #     simplicities = list(map(get_simplicity, pss))
+    #
+    #     externals, internals = utils.unzip([influence_evaluator.get_external_internal_influence(ps) for ps in pss])
+
+    #    utils.simple_scatterplot("simplicity", "influence", simplicities, other_metric)
     def step(self, verbose = False):
         algorithm = self.get_miner_algorithm()
         if verbose:
@@ -141,7 +160,17 @@ class SequentialCrowdingMiner(AbstractPSMiner):
                            verbose=verbose)
 
 
-        winners = self.output_of_miner_to_evaluated_ps(res)
+        e_pss = self.output_of_miner_to_evaluated_ps(res)
+        # debug
+        #print("The sorted e_pss are")
+        sorted_pss = self.sort_by_clarity(e_pss)
+        #self.plot_pss_to_sort(e_pss)
+        # for ps in sorted_pss:
+        #     print(ps)
+
+        amount_to_keep_per_run = 10
+        winners = sorted_pss[:amount_to_keep_per_run]
+
         self.winners_archive.extend(winners)
 
 
@@ -168,11 +197,10 @@ class SequentialCrowdingMiner(AbstractPSMiner):
 
     @classmethod
     def with_default_settings(cls, pRef: PRef):
-        """ These are the settings that were found via the testing in the paper"""
         return cls(pRef = pRef,
-                   budget_per_run = 1000,
-                   population_size_per_run = 50,
-                   which_algorithm="NSGAII")
+                   budget_per_run = 10000,
+                   population_size_per_run = 200,
+                   which_algorithm="NSGAIII")
 
 
 
@@ -184,3 +212,15 @@ class SequentialCrowdingMiner(AbstractPSMiner):
         self.winners_archive = self.sort_by_atomicity(self.winners_archive)
         return self.winners_archive[:amount]
 
+
+
+def test_sequential_miner(pRef: PRef, total_budget: int):
+    miner = SequentialCrowdingMiner.with_default_settings(pRef)
+    termination_criteria = UnionOfCriteria(PSEvaluationLimit(total_budget),
+                                           IterationLimit(100),
+                                           SearchSpaceIsCovered())
+
+    with announce(f"Running the sequential miner"):
+        miner.run(termination_criteria, verbose=True)
+
+    return miner.get_results()

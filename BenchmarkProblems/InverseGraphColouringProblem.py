@@ -1,9 +1,9 @@
 import numpy as np
 
 from BenchmarkProblems.BenchmarkProblem import BenchmarkProblem
-from FirstPaper.FullSolution import FullSolution
-from FirstPaper.PS import PS
-from FirstPaper.SearchSpace import SearchSpace
+from Core.FullSolution import FullSolution
+from Core.PS import PS
+from Core.SearchSpace import SearchSpace
 
 
 class InverseGraphColouring(BenchmarkProblem):

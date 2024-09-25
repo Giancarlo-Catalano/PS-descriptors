@@ -13,18 +13,18 @@ class EvaluatedFS:
     def __init__(self,
                  full_solution: FullSolution,
                  fitness: float):
-        self.full_solution = full_solution
+        super().__init__(full_solution.values)
         self.fitness = fitness
 
     def __repr__(self):
-        return f"{self.full_solution}, fs score = {self.fitness:.2f}"
+        return f"{super().__repr__()}, fs score = {self.fitness:.2f}"
 
     def __lt__(self, other):
         return self.fitness < other.fitness
 
     def __eq__(self, other):
-        return self.full_solution == other.full_solution
+        return super().__eq__(other)
 
 
     def __hash__(self):
-        return hash(self.full_solution)
+        return super().__hash__()

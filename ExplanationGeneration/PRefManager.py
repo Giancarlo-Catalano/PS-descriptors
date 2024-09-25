@@ -35,7 +35,7 @@ class PRefManager:
     @staticmethod
     def generate_pRef(problem,
                       sample_size: int,
-                      which_algorithm: Literal["uniform", "GA", "SA", "GA_best", "SA_best"],
+                      which_algorithm: str,
                       force_include: Optional[list[FullSolution]] = None,
                       verbose: bool = False) -> PRef:
 

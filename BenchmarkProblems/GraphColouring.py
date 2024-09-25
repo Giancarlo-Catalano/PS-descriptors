@@ -5,9 +5,9 @@ from typing import TypeAlias, Iterable, Optional
 
 import utils
 from BenchmarkProblems.BenchmarkProblem import BenchmarkProblem
-from FirstPaper.FullSolution import FullSolution
-from FirstPaper.PS import PS, STAR
-from FirstPaper.SearchSpace import SearchSpace
+from Core.FullSolution import FullSolution
+from Core.PS import PS, STAR
+from Core.SearchSpace import SearchSpace
 import networkx as nx
 import matplotlib.pyplot as plt
 
@@ -120,7 +120,7 @@ class GraphColouring(BenchmarkProblem):
                    connections = data["connections"])
 
 
-    def descriptors_of_ps(self, ps: PS) -> dict:
+    def ps_to_properties(self, ps: PS) -> dict:
         def is_internal_edge(pair):
             a, b = pair
             return ps[a] != STAR and ps[b] != STAR
@@ -137,17 +137,17 @@ class GraphColouring(BenchmarkProblem):
                 "external_edge_count": external_edge_count}
 
 
-    def repr_descriptor(self, descriptor_name:str, descriptor_value:float, polarity:(float, float), ps: PS):
+    def repr_property(self, property_name:str, property_value:float, rank:(float, float), ps: PS):
         #lower_rank, upper_rank = property_rank_range
-        is_low = polarity < 0.5
-        rank_str = f"(rank = {int(polarity * 100)}%)" # "~ {int(property_rank_range[1]*100)}%)"
+        is_low = rank < 0.5
+        rank_str = f"(rank = {int(rank * 100)}%)" # "~ {int(property_rank_range[1]*100)}%)"
 
-        if descriptor_name == "internal_edge_count":
+        if property_name == "internal_edge_count":
             return f"The PS is {'NOT ' if is_low else ''}densely connected {rank_str}"
-        elif descriptor_name == "external_edge_count":
+        elif property_name == "external_edge_count":
             return f"The PS is {'' if is_low else 'NOT '}isolated {rank_str}"
         else:
-            raise ValueError(f"Did not recognise the property {descriptor_name} in GC")
+            raise ValueError(f"Did not recognise the property {property_name} in GC")
 
 
     @classmethod

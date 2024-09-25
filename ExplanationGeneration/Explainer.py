@@ -1,7 +1,11 @@
 import csv
 import os
+<<<<<<< HEAD:ExplanationGeneration/Explainer.py
 import re
 from typing import Optional, Iterable
+=======
+from typing import Optional
+>>>>>>> LightweightLocalMiner:Explanation/Detector.py
 
 import numpy as np
 import pandas as pd
@@ -10,6 +14,7 @@ from matplotlib import pyplot as plt
 import utils
 from BenchmarkProblems.BT.Worker import Worker
 from BenchmarkProblems.BenchmarkProblem import BenchmarkProblem
+<<<<<<< HEAD:ExplanationGeneration/Explainer.py
 from BenchmarkProblems.EfficientBTProblem.EfficientBTProblem import EfficientBTProblem
 from FirstPaper.EvaluatedFS import EvaluatedFS
 from FirstPaper.EvaluatedPS import EvaluatedPS
@@ -22,6 +27,18 @@ from ExplanationGeneration.MutualInformationManager import MutualInformationMana
 from ExplanationGeneration.PRefManager import PRefManager
 from ExplanationGeneration.PSPropertyManager import PSPropertyManager
 from FirstPaper.custom_types import ArrayOfFloats
+=======
+from Core.EvaluatedFS import EvaluatedFS
+from Core.EvaluatedPS import EvaluatedPS
+from Core.FullSolution import FullSolution
+from Core.PRef import PRef
+from Core.PS import PS, contains, STAR
+from Core.PSMetric.Linkage.OutdatedLinkage import MutualInformation
+from Explanation.MinedPSManager import MinedPSManager
+from Explanation.MutualInformationManager import MutualInformationManager
+from Explanation.PRefManager import PRefManager
+from Explanation.PSPropertyManager import PSPropertyManager
+>>>>>>> LightweightLocalMiner:Explanation/Detector.py
 
 
 class ExplainedPS(PS):
@@ -339,15 +356,25 @@ class Explainer:
         if answer == "no":
             return
 
+<<<<<<< HEAD:ExplanationGeneration/Explainer.py
         # generate the reference population
+=======
+>>>>>>> LightweightLocalMiner:Explanation/Detector.py
         self.pRef_manager.generate_pRef_file(sample_size=pRef_size,
                                              which_algorithm="uniform SA",
                                              force_include=force_include_in_pRef)
 
+<<<<<<< HEAD:ExplanationGeneration/Explainer.py
         self.mined_ps_manager.generate_ps_file(pRef=self.pRef,
                                                population_size=50,
                                                ps_budget_in_total=pss_budget,
                                                ps_budget_per_run=1000)  # TODO check if this is right
+=======
+        self.mined_ps_manager.generate_ps_file(pRef = self.pRef,
+                                               population_size=50,
+                                               ps_budget_in_total=pss_budget,
+                                               ps_budget_per_run=1000)
+>>>>>>> LightweightLocalMiner:Explanation/Detector.py
         self.mined_ps_manager.generate_control_pss_file(samples_for_each_category=1000)
 
         self.ps_property_manager.generate_property_table_file(self.mined_ps_manager.pss,

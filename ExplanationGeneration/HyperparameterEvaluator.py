@@ -1,6 +1,6 @@
 import json
 import re
-from typing import Iterator, Iterable
+from typing import Iterable
 
 import numpy as np
 
@@ -9,11 +9,19 @@ from BenchmarkProblems.EfficientBTProblem.EfficientBTProblem import EfficientBTP
 from BenchmarkProblems.GraphColouring import GraphColouring
 from BenchmarkProblems.InverseGraphColouringProblem import InverseGraphColouring
 from BenchmarkProblems.RoyalRoad import RoyalRoad
+<<<<<<< HEAD:ExplanationGeneration/HyperparameterEvaluator.py
 from FirstPaper import TerminationCriteria
 from FirstPaper.PRef import PRef, plot_solutions_in_pRef
 from FirstPaper.PS import PS, STAR
 from FirstPaper.PSMetric.LinkageMetrics import Influence
 from ExplanationGeneration.PRefManager import PRefManager
+=======
+from Core import TerminationCriteria
+from Core.PRef import plot_solutions_in_pRef
+from Core.PS import PS, STAR
+from Core.PSMetric.Linkage.OutdatedLinkage import Influence
+from Explanation.PRefManager import PRefManager
+>>>>>>> LightweightLocalMiner:Explanation/HyperparameterEvaluator.py
 from PSMiners.PyMoo.SequentialCrowdingMiner import SequentialCrowdingMiner
 import logging
 
