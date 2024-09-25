@@ -1,4 +1,5 @@
 import heapq
+import random
 from typing import Optional
 
 import numpy as np
@@ -82,9 +83,6 @@ class GenericSolutionDifferenceScenario(Scenario):
         self.current_solution_pair_index += 1
         self.current_winner, self.current_loser = self.solution_pairs_to_consider[self.current_solution_pair_index]
 
-        if self.verbose and ((self.remaining_cycles + 1) % 100 == 0):
-            print(f"remaining: {self.remaining_cycles}")
-
         return (self.current_winner, self.current_loser)
 
     def execute(self, is_in_winner: bool) -> float:
@@ -153,6 +151,39 @@ class SolutionDifferenceScenario(GenericSolutionDifferenceScenario):
         #     return sol_pair if a > b else (b, a)
 
         # return list(map(rearrange_pair_if_necessary, all_pairs))
+
+        return all_pairs
+
+
+class RandomPairsScenario(GenericSolutionDifferenceScenario):
+    def __init__(self,
+                 original_problem: BenchmarkProblem,
+                 pRef: PRef,
+                 training_cycles: int = 1000,
+                 verbose: bool = False):
+
+        super().__init__(initial_training_cycles=training_cycles,
+                         original_problem=original_problem,
+                         verbose=verbose)
+
+        self.solution_pairs_to_consider = self.get_solution_pairs(pRef=pRef, amount_required=training_cycles)
+
+    @classmethod
+    def get_solution_pairs(cls, pRef: PRef, amount_required: int) -> list[
+        (EvaluatedFS, EvaluatedFS)]:
+
+        all_solutions = pRef.get_evaluated_FSs()
+
+        all_pairs = []
+
+        while len(all_pairs) < amount_required:
+            first = random.choice(all_solutions)
+            second = random.choice(all_solutions)
+            if first > second:
+                all_pairs.append((first, second))
+            elif second > first:
+                all_pairs.append((second, first))
+            # else it doesn't get added
 
         return all_pairs
 

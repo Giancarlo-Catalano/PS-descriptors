@@ -15,11 +15,11 @@ from Core.EvaluatedFS import EvaluatedFS
 from Core.FullSolution import FullSolution
 from Core.PRef import PRef
 from Explanation.PRefManager import PRefManager
-from LCS.Conversions import get_rules_in_action_set
+from LCS.Conversions import get_rules_in_action_set, get_rules_in_model
 from LCS.SolutionDifference.SolutionDifferenceAlgorithm import SolutionDifferenceAlgorithm
 from LCS.SolutionDifference.SolutionDifferenceModel import SolutionDifferenceModel
 from LCS.SolutionDifference.SolutionDifferenceScenario import SolutionDifferenceScenario, \
-    OneAtATimeSolutionDifferenceScenario
+    OneAtATimeSolutionDifferenceScenario, RandomPairsScenario
 from LightweightLocalPSMiner.TwoMetrics import GeneralPSEvaluator
 from utils import announce
 
@@ -82,6 +82,7 @@ class HumanInTheLoopExplainer:
                      covering_search_budget: int,
                      covering_search_population: int,
                      training_cycles_per_solution: int,
+                     flip_fitness: bool = False,
                      verbose: bool = False):
         # generate the reference population
 
@@ -92,6 +93,10 @@ class HumanInTheLoopExplainer:
                                              verbose=verbose)
 
         pRef = PRef.unique(pRef)
+
+        if flip_fitness:
+            pRef.fitness_array *= -1
+
         if verbose:
             print(f"After pruning the pRef, {pRef.sample_size} solutions are left")
 
@@ -127,7 +132,7 @@ class HumanInTheLoopExplainer:
                    lcs_scenario=scenario,
                    algorithm=algorithm,
                    model=model,
-                   verbose = verbose)
+                   verbose=verbose)
 
     def investigate_solution(self, solution: EvaluatedFS) -> list[xcs.ClassifierRule]:
         self.lcs_environment.set_solution_to_investigate(solution)
@@ -142,26 +147,24 @@ class HumanInTheLoopExplainer:
         return [rule for rule in self.get_rules_in_model()
                 if rule.condition(solution)]
 
-
     def get_matches_for_pair(self,
                              winner: EvaluatedFS,
                              loser: EvaluatedFS) -> (list[xcs.ClassifierRule], list[xcs.ClassifierRule]):
-        match_set = self.model.match(situation = (winner, loser))
+        match_set = self.model.match(situation=(winner, loser))
 
         correct_action_set, wrong_action_set = match_set[True], match_set[False]
 
         return get_rules_in_action_set(correct_action_set), get_rules_in_action_set(wrong_action_set)
 
-
     def get_n_best_solutions(self, n: int) -> list[EvaluatedFS]:
         indexes_and_fitnesses = list(enumerate(self.pRef.fitness_array))
         best_indexes_and_fitnesses = heapq.nlargest(n=n, iterable=indexes_and_fitnesses, key=utils.second)
+
         def get_nth_solution(index: int, fitness: float) -> EvaluatedFS:
             return EvaluatedFS(FullSolution(self.pRef.full_solution_matrix[index]),
                                fitness=fitness)
+
         return [get_nth_solution(index, fitness) for index, fitness in best_indexes_and_fitnesses]
-
-
 
     def explain_best_solution(self):
         found_optima = self.get_n_best_solutions(1)[0]
@@ -175,64 +178,83 @@ class HumanInTheLoopExplainer:
                 print(self.optimisation_problem.repr_ps(rule.condition))
                 print(f"Accuracy = {rule.accuracy:.2f}")
 
+    def polish_on_entire_dataset(self):
+        """NOTE this doesn't really work well"""
+        entire_dataset_environment = RandomPairsScenario(original_problem=self.optimisation_problem,
+                                                         pRef=self.pRef,
+                                                         training_cycles=1000,
+                                                         verbose=True)
+        observer = ScenarioObserver(entire_dataset_environment)
+        self.model.run(observer, learn=True)
 
     def explain_top_n_solutions(self, n: int):
+        def print_model():
+            for rule in get_rules_in_model(self.model):
+                print(self.optimisation_problem.repr_ps(rule.condition), end="")
+                print(f"\t acc={rule.fitness:.2f}, error={rule.error:.2f}, age={rule.experience:.2f}")
+
+        def generate_data():
+
+            def random_good_solution() -> EvaluatedFS:
+                return random.choice(solutions_to_explain)
+
+            def random_solution() -> EvaluatedFS:
+                return self.pRef.get_random_evaluated_fs()
+
+            samples_to_collect = 100
+
+            def check_pair(first: EvaluatedFS, second: EvaluatedFS) -> (int, int, float, float):
+                winner, loser = (first, second) if first > second else (second, first)
+                correct, wrong = self.get_matches_for_pair(winner, loser)
+                correct_average_accuracy = 0 if len(correct) == 0 else np.average([rule.fitness for rule in correct])
+                wrong_average_accuracy = 0 if len(wrong) == 0 else np.average([rule.fitness for rule in wrong])
+                return len(correct), len(wrong), correct_average_accuracy, wrong_average_accuracy
+
+            def generate_pair(how: Literal["both_good", "both_any", "one_good"]) -> (EvaluatedFS, EvaluatedFS):
+                def pair_has_different_fitnesses(pair):
+                    return pair[0].fitness != pair[1].fitness
+
+                def generate_unsafe_pair() -> (EvaluatedFS, EvaluatedFS):
+                    if how == "both_good":
+                        return random_good_solution(), random_good_solution()
+                    elif how == "both_any":
+                        return random_solution(), random_solution()
+                    else:
+                        return random_good_solution(), random_solution()
+
+                pair = generate_unsafe_pair()
+                while not pair_has_different_fitnesses(pair):
+                    pair = generate_unsafe_pair()
+                return pair
+
+            results = dict()
+            for how in ["both_good", "both_any", "one_good"]:
+                results[how] = []
+                for iteration in range(samples_to_collect):
+                    first, second = generate_pair(how)
+                    result_pair = check_pair(first, second)
+                    results[how].append(result_pair)
+
+            def pretty_print_results(results_dict: dict):
+                for pair_kind in results_dict:
+                    for row in results_dict[pair_kind]:
+                        # count_correct, count_wrong, accuracy_correct, accuracy_wrong = results_dict[pair_kind]
+                        print("\t".join(f"{x}" for x in [pair_kind] + list(row)))
+
+            pretty_print_results(results)
+
         solutions_to_explain = self.get_n_best_solutions(n)
         for solution in solutions_to_explain:
             self.investigate_solution(solution)
 
-        def random_good_solution() -> EvaluatedFS:
-            return random.choice(solutions_to_explain)
+        print("At the end of the investigation, the model is")
+        print_model()
 
-        def random_solution() -> EvaluatedFS:
-            return self.pRef.get_random_evaluated_fs()
-
-
-        samples_to_collect = 100
-
-        def check_pair(first: EvaluatedFS, second: EvaluatedFS) -> (int, int, float, float):
-            winner, loser = (first, second) if first > second else (second, first)
-            correct, wrong = self.get_matches_for_pair(winner, loser)
-            correct_average_accuracy = 0 if len(correct) == 0 else np.average([rule.fitness for rule in correct])
-            wrong_average_accuracy = 0 if len(wrong) == 0 else np.average([rule.fitness for rule in wrong])
-            return len(correct), len(wrong), correct_average_accuracy, wrong_average_accuracy
-
-
-        def generate_pair(how: Literal["both_good", "both_any", "one_good"]) -> (EvaluatedFS, EvaluatedFS):
-            def pair_has_different_fitnesses(pair):
-                return pair[0].fitness != pair[1].fitness
-            def generate_unsafe_pair() -> (EvaluatedFS, EvaluatedFS):
-                if how == "both_good":
-                    return random_good_solution(), random_good_solution()
-                elif how == "both_any":
-                    return random_solution(), random_solution()
-                else:
-                    return random_good_solution(), random_solution()
-
-            pair = generate_unsafe_pair()
-            while not pair_has_different_fitnesses(pair):
-                pair = generate_unsafe_pair()
-            return pair
-
-
-
-        results = dict()
-        for how in ["both_good", "both_any", "one_good"]:
-            results[how] = []
-            for iteration in range(samples_to_collect):
-                first, second = generate_pair(how)
-                result_pair = check_pair(first, second)
-                results[how].append(result_pair)
-
-
-        def pretty_print_results(results_dict: dict):
-            for pair_kind in results_dict:
-                for row in results_dict[pair_kind]:
-                    #count_correct, count_wrong, accuracy_correct, accuracy_wrong = results_dict[pair_kind]
-                    print("\t".join(f"{x}" for x in [pair_kind]+list(row)))
-
-        pretty_print_results(results)
-
+        # print("Now polishing on the entire dataset")
+        # self.polish_on_entire_dataset()
+        #
+        # print("After polishing, the model is ")
+        # print_model()
 
 
 
@@ -246,13 +268,12 @@ def test_human_in_the_loop_explainer():
                                                      covering_search_budget=covering_search_population * amount_of_generations,
                                                      covering_search_population=covering_search_population,
                                                      pRef_size=10000,
-                                                     training_cycles_per_solution=500,
+                                                     training_cycles_per_solution=100,
                                                      resolution_method="GA",
-                                                     verbose=True)
+                                                     verbose=False)
 
-    #explainer.explain_best_solution()
-    explainer.explain_top_n_solutions(4)
+    # explainer.explain_best_solution()
+    explainer.explain_top_n_solutions(12)
 
 
 test_human_in_the_loop_explainer()
-

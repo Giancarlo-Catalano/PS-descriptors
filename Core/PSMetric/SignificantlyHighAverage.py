@@ -85,4 +85,6 @@ class MannWhitneyU(Metric):
 
     def get_single_score(self, ps: PS) -> float:
         """This is not meant to be used but I might as well write this one line"""
+        if ps.is_empty():
+            return 1
         return self.test_effect(ps, supposed_beneficial=True)

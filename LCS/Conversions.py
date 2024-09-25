@@ -59,14 +59,8 @@ def get_pss_from_action_set(action_set: xcs.ActionSet) -> list[PS]:
     return list(map(condition_to_ps, rules))
 
 
-def get_rules_in_model(model: xcs.ClassifierSet) -> list[(PS, Any)]:
-    result = model._population  # sue me
-
-    pss = map(condition_to_ps,
-              result)  # result is a dictionary, where the keys are bitconditions. We convert each to a ps
-    actions = [list(assigned_actions) for assigned_actions in result.values()]
-
-    return list(zip(pss, actions))
+def get_rules_in_model(model: xcs.ClassifierSet) -> list[xcs.XCSClassifierRule]:
+    return list(model)
 
 
 def get_action_set(match_set: xcs.MatchSet, action) -> xcs.ActionSet:
