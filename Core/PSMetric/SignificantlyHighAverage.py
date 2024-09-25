@@ -77,6 +77,9 @@ class MannWhitneyU(Metric):
 
     def test_effect(self, ps: PS, supposed_beneficial: bool) -> float:
         when_present, when_absent = self.pRef.fitnesses_of_observations_and_complement(ps)
+        if len(when_present) < 2 or len(when_absent) < 2:
+            return 1
+
         if supposed_beneficial:
             return self.get_p_value(supposed_greater=when_present, supposed_lower=when_absent)
         else:

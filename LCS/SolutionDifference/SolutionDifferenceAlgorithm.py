@@ -1,23 +1,16 @@
 import random
 
-import numpy as np
 import xcs
 from xcs import scenarios
-from xcs.scenarios import Scenario
 
 import utils
-from BenchmarkProblems.BenchmarkProblem import BenchmarkProblem
-from Core.FullSolution import FullSolution
 from Core.PS import PS
-from LCS.Conversions import get_pss_from_action_set, get_action_set, \
-    ps_to_condition, get_conditions_in_match_set, condition_to_ps
-from LCS.CustomXCSClassifierSet import CustomXCSClassiferSet
+from LCS.Conversions import condition_to_ps
 from LCS.PSFilter import filter_pss, keep_biggest
 from LCS.SolutionDifference.SolutionDifferenceModel import SolutionDifferenceModel
 from LCS.SolutionDifference.SolutionDifferencePSSearch import local_restricted_tm_ps_search
-from LCS.SolutionDifference.SolutionDifferenceScenario import SolutionDifferenceScenario, \
-    GenericSolutionDifferenceScenario
-from LightweightLocalPSMiner.TwoMetrics import GeneralPSEvaluator, local_tm_ps_search
+from LCS.SolutionDifference.SolutionDifferenceScenario import GenericSolutionDifferenceScenario
+from LightweightLocalPSMiner.TwoMetrics import GeneralPSEvaluator
 from ReimplementedXCS.CombinatorialRules import CombinatorialCondition
 
 

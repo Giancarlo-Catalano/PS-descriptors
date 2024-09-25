@@ -108,6 +108,9 @@ def local_restricted_tm_ps_search(to_explain: FullSolution,
                    termination=('n_evals', ps_budget),
                    verbose=verbose)
 
+    if (res.X is None) or (res.F is None) or (res.G is None):
+        raise Exception(f"From PyMoo's result, {res.X is None}, {res.F is None}, {res.G is None}")
+
     result_pss = [EvaluatedPS(problem.individual_to_ps(values).values, metric_scores=-ms)
                   for values, ms, satisfies_constr in zip(res.X, res.F, res.G)
                   if satisfies_constr]

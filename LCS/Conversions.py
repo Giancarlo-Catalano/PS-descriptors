@@ -1,19 +1,9 @@
-import heapq
-from typing import Any
-
 import numpy as np
 import xcs
-from xcs.bitstrings import BitString, BitCondition
-from xcs.scenarios import Scenario, ScenarioObserver
+from xcs.bitstrings import BitCondition
 
-from BenchmarkProblems.BenchmarkProblem import BenchmarkProblem
-from Core.EvaluatedFS import EvaluatedFS
 from Core.FullSolution import FullSolution
-from Core.PRef import PRef
 from Core.PS import PS, STAR
-from LCS.XCSProblemTournamenter import XCSProblemTournamenter
-from LightweightLocalPSMiner.FastPSEvaluator import FastPSEvaluator
-from LightweightLocalPSMiner.LocalPSSearch import local_ps_search
 
 """ This file is where I put the functions to convert between PSs and classifier rules"""
 

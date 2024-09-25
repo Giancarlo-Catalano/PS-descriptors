@@ -191,7 +191,7 @@ class HumanInTheLoopExplainer:
         def print_model():
             for rule in get_rules_in_model(self.model):
                 print(self.optimisation_problem.repr_ps(rule.condition), end="")
-                print(f"\t acc={rule.fitness:.2f}, error={rule.error:.2f}, age={rule.experience:.2f}")
+                print(f"\t acc={rule.fitness:.2f}, error={rule.error:.2f}, age={rule.experience:.2f}\n")
 
         def generate_data():
 
@@ -243,7 +243,9 @@ class HumanInTheLoopExplainer:
 
             pretty_print_results(results)
 
-        solutions_to_explain = self.get_n_best_solutions(n)
+        with announce(f"Inspecting the best solutions"):
+            solutions_to_explain = self.get_n_best_solutions(n)
+
         for solution in solutions_to_explain:
             self.investigate_solution(solution)
 
@@ -259,9 +261,9 @@ class HumanInTheLoopExplainer:
 
 
 def test_human_in_the_loop_explainer():
-    optimisation_problem = RoyalRoad(4, 4)
+    # optimisation_problem = RoyalRoad(4, 4)
     # optimisation_problem = Trapk(4, 5)
-    # optimisation_problem = EfficientBTProblem.from_default_files()
+    optimisation_problem = EfficientBTProblem.from_default_files()
     covering_search_population = min(50, optimisation_problem.search_space.amount_of_parameters)
     amount_of_generations = 30
     explainer = HumanInTheLoopExplainer.from_problem(optimisation_problem=optimisation_problem,
