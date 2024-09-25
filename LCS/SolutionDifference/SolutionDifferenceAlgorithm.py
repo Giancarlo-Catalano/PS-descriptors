@@ -52,15 +52,13 @@ class SolutionDifferenceAlgorithm(xcs.XCSAlgorithm):
         self.minimum_actions = 1  # otherwise it causes behaviour which I don't understand in XCSAlgorithm.covering_is_required
         super().__init__()
 
-    def cover_with_many(self, match_set: xcs.MatchSet) -> list[xcs.ClassifierRule]:
+    def cover_with_many(self, match_set: xcs.MatchSet, only_return_biggest: bool = False) -> list[xcs.ClassifierRule]:
         """ This is a replacement for the .cover function.
 
         The results must:
         * 1: match the winner
         * 2: NOT match the loser
         *   --> contain at least one part of the difference between them
-
-
         """
 
         # get the PSs in the action set
@@ -88,9 +86,8 @@ class SolutionDifferenceAlgorithm(xcs.XCSAlgorithm):
                              verbose=self.verbose_search)
             assert (len(pss) > 0)
 
-            # pss = keep_biggest(pss)  # still considering
-
-
+            if only_return_biggest:
+                pss = keep_biggest(pss)
 
         def ps_to_rule(ps: PS) -> xcs.XCSClassifierRule:
             return xcs.XCSClassifierRule(
@@ -181,7 +178,8 @@ class SolutionDifferenceAlgorithm(xcs.XCSAlgorithm):
                 if self.verbose:
                     big_fish = condition_to_ps(winning_rule.condition)
                     small_fish = condition_to_ps(rule.condition)
-                    print(f"\t{big_fish}(acc = {winning_rule.accuracy:.2f}) consumed {small_fish}(acc = {rule.accuracy:.2f})")
+                    print(
+                        f"\t{big_fish}(acc = {winning_rule.accuracy:.2f}) consumed {small_fish}(acc = {rule.accuracy:.2f})")
 
         for rule in rules_to_remove:
             action_set.remove(rule)

@@ -63,14 +63,14 @@ class HumanInTheLoopExplainer:
         algorithm.crossover_probability = 0
         algorithm.deletion_threshold = 50  # minimum age before a rule can be pruned away
         # algorithm.discount_factor = 0
-        algorithm.do_action_set_subsumption = True
+        algorithm.do_action_set_subsumption = False
         # algorithm.do_ga_subsumption = True
         # algorithm.exploration_probability = 0
         # algorithm.ga_threshold = 100000
         algorithm.max_population_size = 100
         # algorithm.exploration_probability = 0
         # algorithm.minimum_actions = 1
-        algorithm.subsumption_threshold = 50  # minimum age before a rule can subsume another
+        algorithm.subsumption_threshold = 100  # minimum age before a rule can subsume another
 
         algorithm.allow_ga_reproduction = False
 
