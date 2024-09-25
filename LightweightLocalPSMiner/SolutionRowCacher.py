@@ -1,12 +1,12 @@
 import random
-from typing import Optional, Any
+from typing import Any
 
 import numpy as np
 
 from BenchmarkProblems.RoyalRoad import RoyalRoad
 from Core.PRef import PRef
 from Core.PS import PS, STAR
-from Core.PSMetric.MeanFitness import MeanFitness
+from Core.PSMetric.FitnessQuality.MeanFitness import MeanFitness
 from utils import announce
 
 

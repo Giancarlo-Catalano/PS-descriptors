@@ -7,9 +7,9 @@ from Core.FullSolution import FullSolution
 from Core.PS import PS, contains
 from Core.EvaluatedPS import EvaluatedPS
 from Core.PRef import PRef
-from Core.PSMetric.LocalPerturbation import UnivariateLocalPerturbation, BivariateLocalPerturbation
-from Core.PSMetric.MeanFitness import MeanFitness
-from Core.PSMetric.SignificantlyHighAverage import SignificantlyHighAverage
+from Core.PSMetric.Linkage.Linkage import UnivariateLocalPerturbation, BivariateLocalPerturbation
+from Core.PSMetric.FitnessQuality.MeanFitness import MeanFitness
+from Core.PSMetric.FitnessQuality.SignificantlyHighAverage import SignificantlyHighAverage
 from utils import indent
 
 

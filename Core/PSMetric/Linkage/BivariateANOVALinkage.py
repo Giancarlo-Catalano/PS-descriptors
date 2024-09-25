@@ -7,7 +7,7 @@ from scipy.stats import f
 
 from Core.PRef import PRef
 from Core.PS import PS, STAR
-from Core.PSMetric.Linkage import Linkage
+from Core.PSMetric.Linkage.Linkage import Linkage
 from Core.PSMetric.Metric import Metric
 
 LinkageTable: TypeAlias = np.ndarray

@@ -1,7 +1,6 @@
 from typing import Optional
 
 import numpy as np
-from pymoo.operators.crossover.hux import HalfUniformCrossover
 from pymoo.operators.crossover.ux import UniformCrossover
 from pymoo.operators.survival.rank_and_crowding import RankAndCrowding
 from pymoo.optimize import minimize
@@ -9,12 +8,12 @@ from pymoo.optimize import minimize
 import utils
 from Core.EvaluatedPS import EvaluatedPS
 from Core.PRef import PRef
-from Core.PSMetric.Additivity import Influence, sort_by_influence
+from Core.PSMetric.Linkage.Additivity import Influence
 from Core.TerminationCriteria import TerminationCriteria, PSEvaluationLimit, UnionOfCriteria, IterationLimit, \
     SearchSpaceIsCovered
 from PSMiners.AbstractPSMiner import AbstractPSMiner
 from PSMiners.PyMoo.CustomCrowding import PyMooPSSequentialCrowding, PyMooDecisionSpaceSequentialCrowding
-from PSMiners.PyMoo.Operators import PSUniformMutation, PSUniformSampling, PSGeometricSampling
+from PSMiners.PyMoo.Operators import PSUniformMutation, PSGeometricSampling
 from PSMiners.PyMoo.PSPyMooProblem import PSPyMooProblem
 from PSMiners.PyMoo.pymoo_utilities import get_pymoo_search_algorithm
 from utils import announce

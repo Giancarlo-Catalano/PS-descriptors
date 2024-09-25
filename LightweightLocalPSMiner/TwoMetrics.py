@@ -12,15 +12,12 @@ from Core.EvaluatedPS import EvaluatedPS
 from Core.FullSolution import FullSolution
 from Core.PRef import PRef
 from Core.PS import PS
-from Core.PSMetric.LocalPerturbation import PerturbationOfSolution
-from Core.PSMetric.MeanFitness import FitnessDelta, MeanFitness
+from Core.PSMetric.FitnessQuality.MeanFitness import FitnessDelta, MeanFitness
+from Core.PSMetric.Linkage.LocalPerturbation import PerturbationOfSolution
 from Core.PSMetric.Metric import Metric
-from Core.PSMetric.SignificantlyHighAverage import SignificantlyHighAverage, MannWhitneyU
-from Core.PSMetric.ValueSpecificMutualInformation import SolutionSpecificMutualInformation, \
-    FasterSolutionSpecificMutualInformation, NotValueSpecificMI
+from Core.PSMetric.FitnessQuality.SignificantlyHighAverage import MannWhitneyU
+from Core.PSMetric.Linkage.ValueSpecificMutualInformation import FasterSolutionSpecificMutualInformation
 from LightweightLocalPSMiner.Operators import LocalPSGeometricSampling, ObjectiveSpaceAvoidance
-from LinkageExperiments.LocalLinkage import BivariateVariance
-from LinkageExperiments.LocalVarianceLinkage import LocalVarianceLinkage, BivariateLinkage
 
 
 class GeneralPSEvaluator:

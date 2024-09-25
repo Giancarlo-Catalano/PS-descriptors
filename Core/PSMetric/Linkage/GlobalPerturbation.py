@@ -6,8 +6,8 @@ import numpy as np
 import utils
 from Core.PRef import PRef
 from Core.PS import PS, STAR
-from Core.PSMetric.Linkage import Linkage
-from Core.PSMetric.LocalPerturbation import BivariateLocalPerturbation, UnivariateLocalPerturbation
+from Core.PSMetric.Linkage.Linkage import Linkage
+from Core.PSMetric.Linkage.Linkage import BivariateLocalPerturbation, UnivariateLocalPerturbation
 from Core.PSMetric.Metric import Metric
 from Core.custom_types import ArrayOfFloats
 

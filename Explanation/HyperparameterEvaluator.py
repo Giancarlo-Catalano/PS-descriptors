@@ -1,6 +1,6 @@
 import json
 import re
-from typing import Iterator, Iterable
+from typing import Iterable
 
 import numpy as np
 
@@ -10,9 +10,9 @@ from BenchmarkProblems.GraphColouring import GraphColouring
 from BenchmarkProblems.InverseGraphColouringProblem import InverseGraphColouring
 from BenchmarkProblems.RoyalRoad import RoyalRoad
 from Core import TerminationCriteria
-from Core.PRef import PRef, plot_solutions_in_pRef
+from Core.PRef import plot_solutions_in_pRef
 from Core.PS import PS, STAR
-from Core.PSMetric.Additivity import Influence
+from Core.PSMetric.Linkage.Linkage import Influence
 from Explanation.PRefManager import PRefManager
 from PSMiners.PyMoo.SequentialCrowdingMiner import SequentialCrowdingMiner
 import logging

@@ -1,13 +1,9 @@
 from Core.PRef import PRef
 from Core.PS import PS
-from Core.PSMetric.Additivity import MutualInformation
-from Core.PSMetric.Classic3 import Classic3PSEvaluator
 from Core.PSMetric.Metric import Metric
 from Core.PSMetric.Simplicity import Simplicity
-from Core.PSMetric.ValueSpecificMutualInformation import ValueSpecificMutualInformation, \
-    SolutionSpecificMutualInformation
+from Core.PSMetric.Linkage.ValueSpecificMutualInformation import SolutionSpecificMutualInformation
 from LightweightLocalPSMiner.SolutionRowCacher import CachedRowsNode, fast_get_mean_fitness
-from LinkageExperiments.LocalLinkage import BivariateVariance
 
 
 class FastPSEvaluator:

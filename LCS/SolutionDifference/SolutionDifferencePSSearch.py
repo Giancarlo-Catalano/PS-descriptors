@@ -1,7 +1,6 @@
 from typing import Iterable
 
 import numpy as np
-import pymoo
 from pymoo.algorithms.moo.nsga2 import NSGA2
 from pymoo.core.problem import Problem
 from pymoo.operators.crossover.sbx import SimulatedBinaryCrossover
@@ -11,15 +10,9 @@ from pymoo.optimize import minimize
 from BenchmarkProblems.Trapk import Trapk
 from Core.EvaluatedPS import EvaluatedPS
 from Core.FullSolution import FullSolution
-from Core.PRef import PRef
 from Core.PS import PS
-from Core.PSMetric.MeanFitness import FitnessDelta
-from Core.PSMetric.SignificantlyHighAverage import SignificantlyHighAverage, MannWhitneyU
-from Core.PSMetric.ValueSpecificMutualInformation import SolutionSpecificMutualInformation, \
-    FasterSolutionSpecificMutualInformation, NotValueSpecificMI
 from LightweightLocalPSMiner.Operators import LocalPSGeometricSampling, ObjectiveSpaceAvoidance, ForceDifferenceMask
-from LightweightLocalPSMiner.TwoMetrics import GeneralPSEvaluator, TMLocalPymooProblem
-from LinkageExperiments.LocalVarianceLinkage import LocalVarianceLinkage, BivariateLinkage
+from LightweightLocalPSMiner.TwoMetrics import GeneralPSEvaluator
 
 
 class LocalRestrictedPymooProblem(Problem):
