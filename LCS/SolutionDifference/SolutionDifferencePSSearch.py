@@ -68,7 +68,11 @@ class LocalRestrictedPymooProblem(Problem):
             mean_fitness = self.objectives_evaluator.mean_fitness_metric.get_single_score(ps)
             return [-simplicity, -mean_fitness, -atomicity]
 
-        return use_dependency()
+        def use_p_value():
+            p_value = self.objectives_evaluator.fitness_p_value_metric.get_single_score(ps)
+            return [-simplicity, p_value, -atomicity]
+
+        return use_p_value()
 
 
     def _evaluate(self, X, out, *args, **kwargs):
