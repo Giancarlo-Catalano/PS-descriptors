@@ -1,3 +1,4 @@
+(Please use the branch ExplainaingAStaffRosteringProblemUsingPartialSolutions)
 
 This is the source code for the program developed for the paper ["Explaining a Staff Rostering Problem using Partial Solutions".](https://doi.org/10.1145/3638530.3654318)
 
