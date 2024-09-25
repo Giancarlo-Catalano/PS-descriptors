@@ -12,7 +12,7 @@ from Core.PS import PS
 from LCS.Conversions import get_pss_from_action_set, get_action_set, \
     ps_to_condition, get_conditions_in_match_set, condition_to_ps
 from LCS.CustomXCSClassifierSet import CustomXCSClassiferSet
-from LCS.PSFilter import filter_pss
+from LCS.PSFilter import filter_pss, keep_biggest
 from LCS.SolutionDifference.SolutionDifferenceModel import SolutionDifferenceModel
 from LCS.SolutionDifference.SolutionDifferencePSSearch import local_restricted_tm_ps_search
 from LCS.SolutionDifference.SolutionDifferenceScenario import SolutionDifferenceScenario, \
@@ -86,8 +86,11 @@ class SolutionDifferenceAlgorithm(xcs.XCSAlgorithm):
             pss = filter_pss(pss, ps_evaluator=self.ps_evaluator,
                              atomicity_threshold=linkage_threshold,
                              verbose=self.verbose_search)
+            assert (len(pss) > 0)
 
-        assert (len(pss) > 0)
+            # pss = keep_biggest(pss)  # still considering
+
+
 
         def ps_to_rule(ps: PS) -> xcs.XCSClassifierRule:
             return xcs.XCSClassifierRule(

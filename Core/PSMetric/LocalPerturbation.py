@@ -168,7 +168,7 @@ class BivariateLocalPerturbation(Metric):
                 fixed_locus = ps.get_fixed_variable_positions()[0]
                 perturbation = self.linkage_calculator.get_delta_f_of_ps_at_locus_univariate(ps, fixed_locus)
                 return (perturbation + self.fitness_range) / (
-                            2 * self.fitness_range)  # note how perturbation is not divided by 2, because it's univariate now
+                        2 * self.fitness_range)  # note how perturbation is not divided by 2, because it's univariate now
             else:
                 return 0
         perturbation = self.get_single_score(ps)
@@ -210,7 +210,7 @@ class PerturbationOfSolution(Metric):
             return  # saves repeated calculations
         self.current_solution = solution
         self.current_linkage_table = self.get_linkage_table_for_solution(self.current_solution,
-                                                                             difference_upper_bound=len(solution) // 2)
+                                                                         difference_upper_bound=len(solution) // 2)
         return  # just to set a break point
 
     def get_linkage_table_for_solution(self, solution: FullSolution, difference_upper_bound: int) -> np.ndarray:
@@ -246,17 +246,17 @@ class PerturbationOfSolution(Metric):
         two_difference_means = {key: safe_mean(values) for key, values in two_difference_fitnesses.items()}
 
         def get_linkage(a: int, b: int) -> float:
-            return np.abs(no_difference_mean + two_difference_means[(a, b)] - one_difference_means[a] - one_difference_means[b])
+            return np.abs(
+                no_difference_mean + two_difference_means[(a, b)] - one_difference_means[a] - one_difference_means[b])
 
         def get_importance(a: int) -> float:
-            return np.abs(no_difference_mean - one_difference_means[a]) / 2
+            return np.abs(no_difference_mean - one_difference_means[a])
 
         def safe_variance(values):
             if len(values) < 2:
                 return 0
             else:
                 return np.var(values)
-
 
         # no_difference_variance = safe_variance(no_difference_fitnesses)
         # one_difference_variance = [safe_variance(values) for values in one_diffence_fitnesses]
@@ -276,15 +276,14 @@ class PerturbationOfSolution(Metric):
         for a, b in itertools.combinations(range(n), r=2):
             table[a, b] = get_linkage(a, b)
 
+        table += table.T
+
         for a in range(n):
             table[a, a] = get_importance(a)
-
-        table += table.T
 
         # table /= background_variance
 
         return table
-
 
     def get_atomicity(self, ps: PS) -> float:
         def get_from_minimum_internal():
@@ -309,7 +308,7 @@ class PerturbationOfSolution(Metric):
 
             if len(fixed_positions) > 1:
                 linkages = [self.current_linkage_table[fixed, other_fixed]
-                            for fixed,other_fixed in itertools.combinations(fixed_positions, r=2)]
+                            for fixed, other_fixed in itertools.combinations(fixed_positions, r=2)]
                 return np.average(linkages)
             else:
                 singleton = fixed_positions[0]
@@ -322,14 +321,13 @@ class PerturbationOfSolution(Metric):
 
             if len(fixed_positions) > 1:
                 linkages = [self.current_linkage_table[fixed, other_fixed]
-                            for fixed,other_fixed in itertools.combinations(fixed_positions, r=2)]
+                            for fixed, other_fixed in itertools.combinations(fixed_positions, r=2)]
                 return np.sum(linkages) / (ps.fixed_count())
             else:
                 singleton = fixed_positions[0]
                 return self.current_linkage_table[singleton, singleton]
 
         return get_from_average_internal()
-
 
     def get_linkage_threshold(self) -> float:
         values_to_check = self.current_linkage_table[np.triu_indices(len(self.current_solution), 1)]
@@ -338,10 +336,10 @@ class PerturbationOfSolution(Metric):
         def get_at_greatest_slope():
             values_to_check.sort()
 
-            differences = [(index, values_to_check[index] - values_to_check[index-1])
-                           for index in range(len(values_to_check)//2, len(values_to_check))]
+            differences = [(index, values_to_check[index] - values_to_check[index - 1])
+                           for index in range(len(values_to_check) // 2, len(values_to_check))]
             best_index, best_difference = max(differences, key=utils.second)
-            return np.average(values_to_check[(best_index-1):(best_index+1)])
+            return np.average(values_to_check[(best_index - 1):(best_index + 1)])
 
         def get_average() -> float:
             return np.average(values_to_check)
@@ -366,7 +364,6 @@ class PerturbationOfSolution(Metric):
             fixed_vars = ps.get_fixed_variable_positions()
             unfixed_vars = [index for index, val in enumerate(ps.values) if val == STAR]
 
-
             if (len(unfixed_vars) > 0) and (len(fixed_vars) > 0):  # maybe this should be zero?
                 outwards_linkages = [self.current_linkage_table[fixed, unfixed]
                                      for fixed in fixed_vars
@@ -376,6 +373,3 @@ class PerturbationOfSolution(Metric):
                 return 10000
 
         return get_from_average_external()
-
-
-

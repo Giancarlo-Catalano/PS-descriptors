@@ -36,7 +36,7 @@ def filter_pss(pss: list[PS],
 
     def maybe_filter_by_consistency(input_pss: list[PS]):
         def get_consistency(ps):
-            return ps_evaluator.fitness_p_value_metric.test_effect(ps, supposed_beneficial=True)
+            return -ps.metric_scores[1]
 
         """ will not filter if consistency threshold is None or the result is empty"""
         if consistency_threshold is not None:
@@ -85,7 +85,15 @@ def filter_pss(pss: list[PS],
 
     # current_pss = maybe_filter_by_delta_fitness(current_pss)
     #current_pss = maybe_filter_by_dependency(current_pss)
+    current_pss = maybe_filter_by_consistency(current_pss)
     current_pss = maybe_filter_by_atomicity(current_pss)
-    #current_pss = maybe_filter_by_consistency(current_pss)
+
 
     return current_pss
+
+
+
+def keep_biggest(pss: list[PS]) -> list[PS]:
+    """returns a singleton list containing the pss with the most variables being fixed, (i know it's counterintuitive"""
+    """assumes simplicity is the first metric"""
+    return [min(pss, key=lambda x:x.metric_scores[0])]
