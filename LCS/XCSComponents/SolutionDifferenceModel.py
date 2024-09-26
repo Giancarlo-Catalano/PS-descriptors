@@ -4,6 +4,8 @@ from tqdm import tqdm
 from xcs.scenarios import ScenarioObserver
 
 from Core.EvaluatedFS import EvaluatedFS
+from LCS.Conversions import rules_to_population
+from LCS.XCSComponents.SolutionDifferenceAlgorithm import SolutionDifferenceAlgorithm
 
 
 class SolutionDifferenceModel(ClassifierSet):
@@ -12,7 +14,7 @@ class SolutionDifferenceModel(ClassifierSet):
 
     def __init__(self,
                  algorithm,
-                 possible_actions,
+                 possible_actions=(True, False),
                  allow_ga_reproduction: bool = True,
                  verbose=False
                  ):
@@ -44,7 +46,7 @@ class SolutionDifferenceModel(ClassifierSet):
             elif condition in by_action[False]:
                 del by_action[False][condition]
             else:
-                if self.verbose and False: # TODO Understand why this happens
+                if self.verbose and False:  # TODO Understand why this happens
                     print(f"The rule {replaced_rule} to be removed is nowhere to be found")
 
         # Add the new classifier to the action set. This is done after
@@ -93,7 +95,7 @@ class SolutionDifferenceModel(ClassifierSet):
         # Apply covering if necessary.
         if self._algorithm.covering_is_required(match_set):
             # Ask the algorithm to provide a new classifier rule to add to the population.
-            rules: list = self._algorithm.cover_with_many(match_set, only_return_biggest = True)  # MODIFIED
+            rules: list = self._algorithm.cover_with_many(match_set, only_return_biggest=True)  # MODIFIED
 
             # Ensure that the condition provided by the algorithm does indeed match the situation.
             assert (all(rule.condition(winner.values) for rule in rules))
@@ -104,7 +106,6 @@ class SolutionDifferenceModel(ClassifierSet):
 
         # Return the newly created match set.
         return match_set
-
 
     def run(self, scenario: ScenarioObserver, learn=True):
         """ Had to modify this since the match set is strange"""
@@ -160,7 +161,5 @@ class SolutionDifferenceModel(ClassifierSet):
 
         return result
 
-
-
-
-
+    def set_rules(self, rules: list[xcs.XCSClassifierRule]):
+        self._population = rules_to_population(rules)  # hopefully there are no cached values.

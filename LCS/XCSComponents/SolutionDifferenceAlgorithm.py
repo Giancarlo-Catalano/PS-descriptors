@@ -417,3 +417,6 @@ class SolutionDifferenceAlgorithm(xcs.XCSAlgorithm):
                   f"its accuracy was {to_remove.fitness}")
         model.discard(to_remove)
         return [to_remove]
+
+    def new_model_from_rules(self, lcs_scenario, rules):
+        pass

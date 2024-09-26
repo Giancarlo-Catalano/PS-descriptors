@@ -12,7 +12,7 @@ from BenchmarkProblems.RoyalRoad import RoyalRoad
 from Core import TerminationCriteria
 from Core.PRef import plot_solutions_in_pRef
 from Core.PS import PS, STAR
-from Core.PSMetric.Linkage.OutdatedLinkage import Influence
+from Core.PSMetric.Linkage.Additivity import Influence
 from Explanation.PRefManager import PRefManager
 from PSMiners.PyMoo.SequentialCrowdingMiner import SequentialCrowdingMiner
 import logging

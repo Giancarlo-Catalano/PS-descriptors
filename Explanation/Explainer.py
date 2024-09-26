@@ -10,14 +10,14 @@ from Core.EvaluatedPS import EvaluatedPS
 from Core.FullSolution import FullSolution
 from Core.PRef import PRef
 from Core.PS import PS, contains, STAR
-from Core.PSMetric.Linkage.OutdatedLinkage import MutualInformation
+from Core.PSMetric.Linkage.Additivity import MutualInformation
 from Explanation.MinedPSManager import MinedPSManager
 from Explanation.MutualInformationManager import MutualInformationManager
 from Explanation.PRefManager import PRefManager
 from Explanation.PSPropertyManager import PSPropertyManager
 
 
-class Detector:
+class Explainer:
     problem: BenchmarkProblem
 
     pRef_manager: PRefManager   # manages a npz

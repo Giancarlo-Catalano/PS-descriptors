@@ -4,6 +4,7 @@ from xcs.bitstrings import BitCondition
 
 from Core.FullSolution import FullSolution
 from Core.PS import PS, STAR
+from LCS.XCSComponents.CombinatorialRules import CombinatorialCondition
 
 """ This file is where I put the functions to convert between PSs and classifier rules"""
 
@@ -76,3 +77,8 @@ def get_conditions_in_match_set(match_set: xcs.MatchSet) -> list[BitCondition]:
 
 def get_rules_in_action_set(action_set: xcs.ActionSet) -> list[xcs.XCSClassifierRule]:
     return list(action_set._rules.values())
+
+
+
+def rules_to_population(rules: list[xcs.XCSClassifierRule]) -> dict:
+    return {rule.condition : {True : rule} for rule in rules}

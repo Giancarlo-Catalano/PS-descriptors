@@ -22,7 +22,7 @@ from Core.PS import PS
 from Core.PSMetric.Classic3 import Classic3PSEvaluator
 from Core.PSMetric.Metric import Metric
 from Core.TerminationCriteria import PSEvaluationLimit
-from Explanation.Detector import Detector
+from Explanation.Explainer import Explainer
 from Explanation.HyperparameterEvaluator import HyperparameterEvaluator
 from Explanation.PRefManager import PRefManager
 from FSStochasticSearch.Operators import SinglePointFSMutation
@@ -102,13 +102,13 @@ def show_overall_system(benchmark_problem: BenchmarkProblem):
 
     print("And that concludes the showcase")
 
-def get_bt_explainer() -> Detector:
+def get_bt_explainer() -> Explainer:
     experimental_directory = r"C:\Users\gac8\PycharmProjects\PS-PDF\Experimentation\BT\Final"
     problem = EfficientBTProblem.from_default_files()
-    return Detector.from_folder(problem=problem,
-                                  folder=experimental_directory,
-                                  speciality_threshold=0.1,
-                                  verbose=True)
+    return Explainer.from_folder(problem=problem,
+                                 folder=experimental_directory,
+                                 speciality_threshold=0.1,
+                                 verbose=True)
 
 def get_gc_explainer():
     experimental_directory = os.path.join("Experimentation", "GC", "Dummy")
@@ -116,26 +116,26 @@ def get_gc_explainer():
     # problem = GraphColouring.from_file(problem_file)#
     problem = GraphColouring.random(amount_of_colours=3, amount_of_nodes=7, chance_of_connection=0.40)
     problem.view()
-    return Detector.from_folder(folder = experimental_directory,
-                                  problem = problem,
-                                  speciality_threshold=0.20,
-                                  verbose=True)
+    return Explainer.from_folder(folder = experimental_directory,
+                                 problem = problem,
+                                 speciality_threshold=0.20,
+                                 verbose=True)
 
 
-def get_manual_bt_explainer() -> Detector:
+def get_manual_bt_explainer() -> Explainer:
     experimental_directory = r"C:\Users\gac8\PycharmProjects\PS-PDF\Experimentation\BT\TwoTeam"
     amount_of_skills = 12
     problem = get_bad_week_instance(amount_of_skills, workers_per_skill=4)
     #problem = get_start_and_end_instance(amount_of_skills)
     #problem = get_toestepping_instance(amount_of_skills=3)
     #problem = get_unfairness_instance(amount_of_skills=3)
-    return Detector.from_folder(problem=problem,
-                                folder=experimental_directory,
-                                speciality_threshold=0.2,
-                                verbose=True)
+    return Explainer.from_folder(problem=problem,
+                                 folder=experimental_directory,
+                                 speciality_threshold=0.2,
+                                 verbose=True)
 
 
-def get_problem_explainer() -> Detector:
+def get_problem_explainer() -> Explainer:
     experimental_directory = r"C:\Users\gac8\PycharmProjects\PS-PDF\Experimentation\GC\Dummy"
 
     use_gc = False
@@ -146,10 +146,10 @@ def get_problem_explainer() -> Detector:
     else:
         rr_problem = RoyalRoad(3, 4)
         problem = rr_problem
-    return Detector.from_folder(problem=problem,
-                                folder=experimental_directory,
-                                speciality_threshold=0.2,
-                                verbose=True)
+    return Explainer.from_folder(problem=problem,
+                                 folder=experimental_directory,
+                                 speciality_threshold=0.2,
+                                 verbose=True)
 
 
 def test_classic3(pRef: PRef):

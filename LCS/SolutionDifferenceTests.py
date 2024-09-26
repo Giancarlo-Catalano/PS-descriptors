@@ -3,6 +3,7 @@ from xcs.scenarios import ScenarioObserver
 
 from BenchmarkProblems.EfficientBTProblem.EfficientBTProblem import EfficientBTProblem
 from BenchmarkProblems.GraphColouring import GraphColouring
+from BenchmarkProblems.RoyalRoad import RoyalRoad
 from Core.PRef import PRef
 from Explanation.PRefManager import PRefManager
 from LCS.XCSComponents.SolutionDifferenceAlgorithm import SolutionDifferenceAlgorithm
@@ -36,7 +37,7 @@ def run_solution_difference_LCS(verbose: bool = False):
     # optimisation_problem = GraphColouring.random(amount_of_colours=3, amount_of_nodes=6, chance_of_connection=0.4)
     # optimisation_problem = Trapk(4, 5)
     # optimisation_problem = CheckerBoard(4, 4)
-    optimisation_problem = EfficientBTProblem.from_default_files()
+    # optimisation_problem = EfficientBTProblem.from_default_files()
 
     if isinstance(optimisation_problem, GraphColouring):
         optimisation_problem.view()

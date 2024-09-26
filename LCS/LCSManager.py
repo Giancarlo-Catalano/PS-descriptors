@@ -1,57 +1,103 @@
+import csv
 import heapq
 import random
-from typing import Literal
+from typing import Literal, Optional
 
 import numpy as np
+import pandas as pd
 import xcs
 from xcs.scenarios import Scenario, ScenarioObserver
 
 import utils
 from BenchmarkProblems.BenchmarkProblem import BenchmarkProblem
 from BenchmarkProblems.EfficientBTProblem.EfficientBTProblem import EfficientBTProblem
+from BenchmarkProblems.RoyalRoad import RoyalRoad
+from BenchmarkProblems.Trapk import Trapk
 from Core.EvaluatedFS import EvaluatedFS
 from Core.FullSolution import FullSolution
 from Core.PRef import PRef
+from Core.PS import PS
 from Explanation.PRefManager import PRefManager
 from LCS.Conversions import get_rules_in_action_set, get_rules_in_model
+from LCS.XCSComponents.CombinatorialRules import CombinatorialCondition
 from LCS.XCSComponents.SolutionDifferenceAlgorithm import SolutionDifferenceAlgorithm
 from LCS.XCSComponents.SolutionDifferenceModel import SolutionDifferenceModel
 from LCS.XCSComponents.SolutionDifferenceScenario import OneAtATimeSolutionDifferenceScenario, RandomPairsScenario
 from LCS.PSEvaluator import GeneralPSEvaluator
+from PSMiners.Mining import load_pss, write_pss_to_file
 from utils import announce
 
 
-class HumanInTheLoopExplainer:
+class LCSManager:
     optimisation_problem: BenchmarkProblem
-    pRef: PRef
-    ps_evaluator: GeneralPSEvaluator
+    pRef: Optional[PRef]
+    ps_evaluator: Optional[GeneralPSEvaluator]
 
-    lcs_environment: OneAtATimeSolutionDifferenceScenario
-    lcs_scenario: Scenario
+    lcs_environment: Optional[OneAtATimeSolutionDifferenceScenario]
+    lcs_scenario: Optional[Scenario]
 
-    algorithm: SolutionDifferenceAlgorithm
-    model: SolutionDifferenceModel
+    algorithm: Optional[SolutionDifferenceAlgorithm]
+    model: Optional[SolutionDifferenceModel]
+
+    rule_conditions_file: str
+    rule_attributes_file: str
+
+    covering_search_budget: int
+    covering_search_population: int
+    training_cycles_per_solution: int
 
     verbose: bool
 
     def __init__(self,
                  optimisation_problem: BenchmarkProblem,
-                 pRef: PRef,
-                 ps_evaluator: GeneralPSEvaluator,
-                 lcs_environment: OneAtATimeSolutionDifferenceScenario,
-                 lcs_scenario: Scenario,
-                 algorithm: SolutionDifferenceAlgorithm,
-                 model: SolutionDifferenceModel,
+                 rule_conditions_file: str,
+                 rule_attributes_file: str,
+                 covering_search_budget: int,
+                 covering_search_population: int,
+                 training_cycles_per_solution: int,
                  verbose: bool = False):
+
+        self.covering_search_budget = covering_search_budget
+        self.covering_search_population = covering_search_population
+        self.training_cycles_per_solution = training_cycles_per_solution
+
         self.optimisation_problem = optimisation_problem
-        self.pRef = pRef
+        self.pRef = None
+        self.ps_evaluator = None
+        self.lcs_environment = None
+        self.lcs_scenario = None
+        self.algorithm = None
+        self.model = None
+
+        self.rule_conditions_file = rule_conditions_file
+        self.rule_attributes_file = rule_attributes_file
+
+        self.verbose = verbose
+
+    def set_pRef(self, pRef: PRef):
+        ps_evaluator, lcs_environment, scenario, algorithm, model = self.get_objects_when_rules_are_unknown(
+            optimisation_problem=self.optimisation_problem,
+            pRef=pRef,
+            covering_search_population=50,
+            covering_search_budget=1000,
+            training_cycles_per_solution=500,
+            verbose=self.verbose)
         self.ps_evaluator = ps_evaluator
         self.lcs_environment = lcs_environment
-        self.lcs_scenario = lcs_scenario
+        self.lcs_scenario = scenario
         self.algorithm = algorithm
         self.model = model
 
-        self.verbose = verbose
+
+    def load_rules(self):
+        pss = load_pss(self.rule_conditions_file)
+        rules = self.load_rules_from_file(pss, self.rule_attributes_file, self.algorithm)
+        self.model.set_rules(rules)
+
+
+    def write_rules_to_files(self):
+        write_pss_to_file(self.get_pss_from_model(), self.rule_conditions_file)
+        self.write_rule_attributes_to_file(get_rules_in_model(self.model), self.rule_attributes_file)
 
     @classmethod
     def set_settings_for_lcs_algorithm(cls, algorithm: xcs.XCSAlgorithm) -> None:
@@ -70,6 +116,40 @@ class HumanInTheLoopExplainer:
         algorithm.subsumption_threshold = 100  # minimum age before a rule can subsume another
 
         algorithm.allow_ga_reproduction = False
+
+    @classmethod
+    def get_objects_when_rules_are_unknown(cls,
+                                           optimisation_problem: BenchmarkProblem,
+                                           pRef: PRef,
+                                           covering_search_budget: int,
+                                           covering_search_population: int,
+                                           training_cycles_per_solution: int,
+                                           verbose: bool = False):
+        ps_evaluator = GeneralPSEvaluator(pRef)  # Evaluates Linkage and keeps track of PS evaluations used
+
+        lcs_environment = OneAtATimeSolutionDifferenceScenario(original_problem=optimisation_problem,
+                                                               pRef=pRef,  # where it gets the solutions from
+                                                               training_cycles=training_cycles_per_solution,
+                                                               # how many solutions to show (might repeat)
+                                                               verbose=verbose)
+
+        scenario = ScenarioObserver(lcs_environment)
+
+        # my custom XCS algorithm
+        algorithm = SolutionDifferenceAlgorithm(ps_evaluator=ps_evaluator,
+                                                xcs_problem=lcs_environment,
+                                                covering_search_budget=covering_search_budget,
+                                                covering_population_size=covering_search_population,
+                                                verbose=verbose,
+                                                verbose_search=verbose)
+
+        LCSManager.set_settings_for_lcs_algorithm(algorithm)
+
+        # This should be a solutionDifferenceModel
+        model = algorithm.new_model(scenario)
+        model.verbose = verbose
+
+        return ps_evaluator, lcs_environment, scenario, algorithm, model
 
     @classmethod
     def from_problem(cls,
@@ -97,39 +177,90 @@ class HumanInTheLoopExplainer:
         if verbose:
             print(f"After pruning the pRef, {pRef.sample_size} solutions are left")
 
-        # generate the other components of the LCS system
-        ps_evaluator = GeneralPSEvaluator(pRef)  # Evaluates Linkage and keeps track of PS evaluations used
+        return cls.from_problem_and_pRef(optimisation_problem=optimisation_problem,
+                                         covering_search_budget=covering_search_budget,
+                                         covering_search_population=covering_search_population,
+                                         pRef=pRef,
+                                         training_cycles_per_solution=training_cycles_per_solution)
 
-        xcs_problem = OneAtATimeSolutionDifferenceScenario(original_problem=optimisation_problem,
-                                                           pRef=pRef,  # where it gets the solutions from
-                                                           training_cycles=training_cycles_per_solution,
-                                                           # how many solutions to show (might repeat)
-                                                           verbose=verbose)
+    @classmethod
+    def load_rules_from_file(cls,
+                             pss: list[PS],
+                             rule_attribute_file: str,
+                             algorithm: SolutionDifferenceAlgorithm) -> list[xcs.XCSClassifierRule]:
+        # internally it is a cvs file, where the columns are the fitness, error, experience, accuracy, correct_count,
+        # time_stamp
+        attribute_table = pd.read_csv(rule_attribute_file)
 
-        scenario = ScenarioObserver(xcs_problem)
+        def rule_from_row(ps: PS, row) -> xcs.XCSClassifierRule:
+            rule = xcs.XCSClassifierRule(action=True,
+                                         algorithm=algorithm,
+                                         time_stamp=row["time_stamp"],
+                                         condition=CombinatorialCondition.from_ps_values(ps.values))
+            rule.fitness = row["fitness"]
+            rule.error = row["error"]
+            rule.experience = row["experience"]
+            rule.time_stamp = row["time_stamp"]
 
-        # my custom XCS algorithm, which just overrides when covering is required, and how it happens
+            rule.accuracy = row["accuracy"]
+            rule.correct_count = row["correct_count"]
+
+            return rule
+
+        return [rule_from_row(ps, row) for ps, row in zip(pss, attribute_table.iterrows())]
+
+    def get_pss_from_model(self) -> list[PS]:
+        return [rule.condition for rule in get_rules_in_model(self.model)]
+
+    @classmethod
+    def write_rule_attributes_to_file(self, rules: list[xcs.XCSClassifierRule], file_location: str):
+        headers = ["fitness", "error", "experience", "time_stamp", "accuracy", "correct_count"]
+        with open(file_location, mode="w") as file:
+            writer = csv.writer(file, delimiter=',', quotechar='"', quoting=csv.QUOTE_MINIMAL)
+            writer.writerow(headers)
+
+            for rule in rules:
+                rule_row = [rule.fitness, rule.error, rule.experience, rule.time_stamp,
+                            rule.accuracy if hasattr(rule, "accuracy") else 0,
+                            rule.correct_count if hasattr(rule, "correct_count") else 0]
+                writer.writerow(rule_row)
+
+    @classmethod
+    def from_problem_and_rules(cls,
+                               optimisation_problem: BenchmarkProblem,
+                               pRef: PRef,
+                               rules: list[xcs.XCSClassifierRule],
+                               training_cycles_per_solution: int,
+                               covering_search_budget: int,
+                               covering_population_size: int,
+                               verbose: bool = False):
+        ps_evaluator = GeneralPSEvaluator(pRef)
+        lcs_environment = OneAtATimeSolutionDifferenceScenario(original_problem=optimisation_problem,
+                                                               pRef=pRef,  # where it gets the solutions from
+                                                               training_cycles=training_cycles_per_solution,
+                                                               # how many solutions to show (might repeat)
+                                                               verbose=verbose)
+        lcs_scenario = ScenarioObserver(lcs_environment)
         algorithm = SolutionDifferenceAlgorithm(ps_evaluator=ps_evaluator,
-                                                xcs_problem=xcs_problem,
+                                                xcs_problem=lcs_environment,
                                                 covering_search_budget=covering_search_budget,
-                                                covering_population_size=covering_search_population,
+                                                covering_population_size=covering_population_size,
                                                 verbose=verbose,
                                                 verbose_search=verbose)
 
-        HumanInTheLoopExplainer.set_settings_for_lcs_algorithm(algorithm)
+        LCSManager.set_settings_for_lcs_algorithm(algorithm)
 
         # This should be a solutionDifferenceModel
-        model = algorithm.new_model(scenario)
+        model = algorithm.new_model_from_rules(lcs_scenario, rules)
         model.verbose = verbose
 
         return cls(optimisation_problem=optimisation_problem,
                    pRef=pRef,
                    ps_evaluator=ps_evaluator,
-                   lcs_environment=xcs_problem,
-                   lcs_scenario=scenario,
+                   lcs_environment=lcs_environment,
+                   lcs_scenario=lcs_scenario,
                    algorithm=algorithm,
-                   model=model,
-                   verbose=verbose)
+                   model=model)
 
     def investigate_solution(self, solution: EvaluatedFS) -> list[xcs.ClassifierRule]:
         self.lcs_environment.set_solution_to_investigate(solution)
@@ -186,7 +317,9 @@ class HumanInTheLoopExplainer:
 
     def explain_top_n_solutions(self, n: int):
         def print_model():
-            for rule in get_rules_in_model(self.model):
+            rules: list[xcs.XCSClassifierRule] = get_rules_in_model(self.model)
+            rules.sort(key=lambda x: x.accuracy, reverse=True)
+            for rule in rules:
                 print(self.optimisation_problem.repr_ps(rule.condition), end="")
                 print(f"\t acc={rule.fitness:.2f}, error={rule.error:.2f}, age={rule.experience:.2f}\n")
 
@@ -256,20 +389,20 @@ class HumanInTheLoopExplainer:
         # print_model()
 
 
-
 def test_human_in_the_loop_explainer():
+    print("I am running")
     # optimisation_problem = RoyalRoad(4, 4)
     # optimisation_problem = Trapk(4, 5)
     optimisation_problem = EfficientBTProblem.from_default_files()
     covering_search_population = min(50, optimisation_problem.search_space.amount_of_parameters)
     amount_of_generations = 30
-    explainer = HumanInTheLoopExplainer.from_problem(optimisation_problem=optimisation_problem,
-                                                     covering_search_budget=covering_search_population * amount_of_generations,
-                                                     covering_search_population=covering_search_population,
-                                                     pRef_size=10000,
-                                                     training_cycles_per_solution=100,
-                                                     resolution_method="GA",
-                                                     verbose=False)
+    explainer = LCSManager.from_problem(optimisation_problem=optimisation_problem,
+                                        covering_search_budget=covering_search_population * amount_of_generations,
+                                        covering_search_population=covering_search_population,
+                                        pRef_size=10000,
+                                        training_cycles_per_solution=100,
+                                        resolution_method="GA",
+                                        verbose=False)
 
     # explainer.explain_best_solution()
     explainer.explain_top_n_solutions(12)
