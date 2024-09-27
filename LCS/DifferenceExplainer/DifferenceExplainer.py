@@ -228,8 +228,8 @@ class DifferenceExplainer:
         self.explain_solution(solution_to_explain, shown_ps_max=ps_show_limit)
 
     def handle_diff_query(self, solutions: list[EvaluatedFS]):
-        index_a = int(input("Which solution is A?"))
-        index_b = int(input("Which solution is B?"))
+        index_a = int(input("Which solution is A? "))
+        index_b = int(input("Which solution is B? "))
         solution_a = solutions[index_a]
         solution_b = solutions[index_b]
 
@@ -266,7 +266,7 @@ class DifferenceExplainer:
     def explanation_loop(self,
                          amount_of_fs_to_propose: int = 6,
                          ps_show_limit: int = 12,
-                         show_debug_info=False):
+                         suppress_errors: bool = True):
         solutions = self.pRef.get_top_n_solutions(amount_of_fs_to_propose)
 
         print(f"The top {amount_of_fs_to_propose} solutions are")
@@ -275,11 +275,12 @@ class DifferenceExplainer:
             print(f"(Has fitness {solution.fitness})")
             print()
 
-        finish = False
-        while not finish:
+        while True:
             answer = input("Type a command from [s, v, vs, plotvar, global], or n to exit: ")
             answer = answer.lower()
-            try:
+
+            def handle_answer() -> bool:
+                wants_to_continue = True
                 if answer in {"s", "sol", "solution"}:
                     self.handle_solution_query(solutions, ps_show_limit)
                 elif answer in {"d", "diff"}:
@@ -297,15 +298,26 @@ class DifferenceExplainer:
                 elif answer in {"d", "distributions"}:
                     self.handle_distribution_query()
                 elif answer in {"n", "no", "exit", "q", "quit"}:
-                    finish = True
+                    wants_to_continue = False
                 else:
                     print(f"Sorry, the command {answer} was not recognised")
-            except Exception as e:
-                print(f"Something went wrong: {e}")
-            finally:
-                continue
 
-        want_changes = input("Do you want the changes to be saved?")
+                return wants_to_continue
+
+            if suppress_errors:
+                try:
+                    wants_to_continue = handle_answer()
+                except Exception as e:
+                    print(f"Something went wrong: {e}")
+                finally:
+                    continue
+            else:
+                wants_to_continue = handle_answer()
+
+                if not wants_to_continue:
+                    break
+
+        want_changes = input("Do you want the changes to be saved? ")
         if want_changes.upper() == "Y":
             self.save_changes_and_quit()
         print("Bye Bye!")

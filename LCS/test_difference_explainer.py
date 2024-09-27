@@ -9,7 +9,7 @@ def test_difference_explainer():
                                                      folder = r"C:\Users\gac8\PycharmProjects\PS-descriptors-LCS\resources\explanations\rr_explain",
                                                      verbose=True)
 
-    diff_explainer.explanation_loop(amount_of_fs_to_propose=6)
+    diff_explainer.explanation_loop(amount_of_fs_to_propose=6, suppress_errors=False)
 
 
 test_difference_explainer()
