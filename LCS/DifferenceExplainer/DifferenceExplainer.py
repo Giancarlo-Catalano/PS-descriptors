@@ -15,31 +15,16 @@ from Explanation.MinedPSManager import MinedPSManager
 from Explanation.MutualInformationManager import MutualInformationManager
 from Explanation.PRefManager import PRefManager
 from Explanation.PSPropertyManager import PSPropertyManager
+from LCS.DifferenceExplainer.DescriptorsManager import DescriptorsManager
 from LCS.LCSManager import LCSManager
-
-class ControlPSManager:
-    """TODO.
-    This class will (lazily) produce the control pss as needed.
-    It is likely that this will also involve their properties in the future, which could be cached if the optimisation problem is included in the class."""
-    control_ps_file: str
-
-    cached_control_pss: Optional[list[PS]]
-
-
-    def __init__(self, control_ps_file: str):
-        self.control_ps_file = control_ps_file
-        self.cached_control_pss = None
 
 class DifferenceExplainer:
     problem: BenchmarkProblem
 
-    pRef_manager: PRefManager   # manages a npz
-    control_ps_manager: ControlPSManager  # manages some npz files
-    ps_property_manager: PSPropertyManager   # which will manage a csv
+    pRef_manager: PRefManager
+    descriptors_manager: DescriptorsManager
 
-    minimum_acceptable_ps_size: int
     verbose: bool
-
     speciality_threshold: float
 
     lcs_manager: LCSManager
@@ -48,21 +33,20 @@ class DifferenceExplainer:
                  problem: BenchmarkProblem,
                  pRef_file: str,
                  control_ps_file: str,
+                 descriptors_file: str,
                  condition_ps_file: str,
                  rule_attribute_file: str,
-                 descriptors_file: str,
                  speciality_threshold: float,
                  verbose = False):
         self.problem = problem
         self.pRef_manager = PRefManager(problem = problem,
                                         pRef_file = pRef_file,
                                         verbose=True)
-        self.control_ps_manager = ControlPSManager(control_ps_file,
-                                                   verbose = verbose)
-        self.ps_property_manager = PSPropertyManager(problem = problem,
-                                                     property_table_file=descriptors_file,
-                                                     verbose=verbose,
-                                                     threshold=speciality_threshold)
+        self.descriptors_manager = DescriptorsManager(optimisation_problem=problem,
+                                                      control_pss_file=control_ps_file,
+                                                      control_descriptors_table_file=descriptors_file,
+                                                      control_samples_per_size_category=1000,
+                                                      verbose = verbose)
 
         self.lcs_manager = LCSManager(optimisation_problem=problem,
                                       rule_conditions_file=condition_ps_file,
@@ -84,17 +68,18 @@ class DifferenceExplainer:
         pRef_file = os.path.join(folder, "pRef.npz")
         ps_file = os.path.join(folder, "mined_ps.npz")
         control_ps_file = os.path.join(folder, "control_ps.npz")
-        properties_file = os.path.join(folder, "ps_properties.csv")
-        mutual_information_linkage_file = os.path.join(folder, "linkage_table.npz")
+        descriptors_file = os.path.join(folder, "descriptors.csv")
+        rule_attribute_file = os.path.join(folder, "rule_attributes.csv")
 
-        return cls(problem = problem,
-                   pRef_file = pRef_file,
-                   ps_file = ps_file,
-                   control_ps_file = control_ps_file,
-                   descriptors_file= properties_file,
-                   speciality_threshold = speciality_threshold,
-                   mutual_information_linkage_table_file = mutual_information_linkage_file,
-                   verbose=verbose)
+        return cls(
+                     problem = problem,
+                     pRef_file = pRef_file,
+                     control_ps_file = control_ps_file,
+                     descriptors_file = descriptors_file,
+                     condition_ps_file = ps_file,
+                     rule_attribute_file = rule_attribute_file,
+                     speciality_threshold = speciality_threshold,
+                     verbose=False)
 
 
     @property
