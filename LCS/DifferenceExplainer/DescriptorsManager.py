@@ -1,6 +1,7 @@
 from typing import Optional
 
 import pandas as pd
+from pandas.io.common import file_exists
 
 import utils
 from BenchmarkProblems.BenchmarkProblem import BenchmarkProblem
@@ -94,13 +95,8 @@ class DescriptorsManager:
         else:
             return self.control_descriptors_table[self.control_descriptors_table_file["size"] == size]
 
-
-
-    def get_percentiles_for_PS(self, ps: PS) -> dict[str, float]:
-        ps_size = ps.fixed_count()
+    def get_percentiles_for_descriptors(self, ps_size: int, ps_descriptors: dict[str, float]) -> dict[str, float]:
         table_rows = self.get_table_rows_where_size_is(ps_size)
-
-        ps_descriptors = self.get_descriptors_of_ps(ps)
 
         def get_percentile_of_descriptor(descriptor_name: str) -> float:
             descriptor_value = ps_descriptors[descriptor_name]
@@ -109,6 +105,17 @@ class DescriptorsManager:
         return {descriptor_name: get_percentile_of_descriptor(descriptor_name)
                 for descriptor_name in ps_descriptors
                 if descriptor_name != "size"}
+
+    def load_from_existing_if_possible(self):
+        control_ps_file_exists = file_exists(self.control_pss_file)
+        ps_descriptor_table_file_esists = file_exists(self.control_descriptors_table_file)
+        if control_ps_file_exists and ps_descriptor_table_file_esists:
+            self.load_from_files()
+        else:
+            if control_ps_file_exists != ps_descriptor_table_file_esists:
+                raise Exception("Only one of the files for the control data is present!")
+
+            # otherwise nothing needs to happen, the class initialised in a valid empty state
 
 
 

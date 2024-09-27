@@ -2,6 +2,7 @@ from math import ceil
 from typing import Optional, Literal
 
 import numpy as np
+from pandas.io.common import file_exists
 from scipy.stats import t
 
 from BenchmarkProblems.BenchmarkProblem import BenchmarkProblem
@@ -32,6 +33,13 @@ class PRefManager:
         self.pRef_mean = None
         self.verbose = verbose
 
+    def load_from_existing_if_possible(self):
+        if file_exists(self.pRef_file):
+            self.load_from_file()
+        else:
+            self.generate_pRef_file(sample_size=10000,
+                                    which_algorithm="uniform GA")
+
     @staticmethod
     def generate_pRef(problem,
                       sample_size: int,
@@ -44,15 +52,16 @@ class PRefManager:
 
         def make_pRef_with_method(method: str) -> PRef:
             return get_history_pRef(benchmark_problem=problem,
-                                 which_algorithm=method,
-                                 sample_size=sample_size_for_each,
-                                 verbose=verbose)
+                                    which_algorithm=method,
+                                    sample_size=sample_size_for_each,
+                                    verbose=verbose)
 
         pRefs = [make_pRef_with_method(method) for method in methods]
 
         if force_include is not None and len(force_include) > 0:
             forced_pRef = PRef.from_full_solutions(force_include,
-                                                   fitness_values=[problem.fitness_function(fs) for fs in force_include],
+                                                   fitness_values=[problem.fitness_function(fs) for fs in
+                                                                   force_include],
                                                    search_space=problem.search_space)
             pRefs.append(forced_pRef)
 
@@ -60,7 +69,6 @@ class PRefManager:
 
     def instantiate_evaluator(self):
         self.evaluator = Classic3PSEvaluator(self.cached_pRef)
-
 
     def instantiate_mean(self):
         self.pRef_mean = np.average(self.cached_pRef.fitness_array)
@@ -82,17 +90,16 @@ class PRefManager:
         with announce(f"Writing the pRef to {self.pRef_file}", self.verbose):
             self.cached_pRef.save(file=self.pRef_file)
 
-
-
+    def load_from_file(self):
+        self.cached_pRef = PRef.load(self.pRef_file)
+        # self.instantiate_evaluator()
+        self.instantiate_mean()
 
     @property
     def pRef(self) -> PRef:
         if self.cached_pRef is None:
-            self.cached_pRef = PRef.load(self.pRef_file)
-            #self.instantiate_evaluator()
-            self.instantiate_mean()
+            self.load_from_file()
         return self.cached_pRef
-
 
     def t_test_for_mean_with_ps(self, ps: PS) -> (float, float):
         observations = self.pRef.fitnesses_of_observations(ps)
@@ -112,10 +119,5 @@ class PRefManager:
         observations, not_observations = self.pRef.fitnesses_of_observations_and_complement(ps)
         return np.average(observations), np.average(not_observations)
 
-
     def get_atomicity_contributions(self, ps: PS) -> np.ndarray:
         return self.evaluator.get_atomicity_contributions(ps, normalised=True)
-
-
-
-

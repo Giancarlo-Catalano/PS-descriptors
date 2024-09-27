@@ -1,3 +1,4 @@
+import heapq
 import os
 import random
 from typing import Iterable, Callable, Any
@@ -230,6 +231,17 @@ class PRef:
         index = random.randrange(self.sample_size)
         return EvaluatedFS(FullSolution(self.full_solution_matrix[index]),
                            fitness=self.fitness_array[index])
+
+    def get_nth_solution(self, index: int) -> EvaluatedFS:
+        return EvaluatedFS(FullSolution(self.full_solution_matrix[index]),
+                           fitness=self.fitness_array[index])
+
+
+    def get_top_n_solutions(self, n: int) -> list[EvaluatedFS]:
+        indexes_and_fitnesses = list(enumerate(self.fitness_array))
+        best_indexes_and_fitnesses = heapq.nlargest(n=n, iterable=indexes_and_fitnesses, key=utils.second)
+
+        return [self.get_nth_solution(index) for index, _ in best_indexes_and_fitnesses]
 
 
 def plot_solutions_in_pRef(pRef: PRef, filename: str):

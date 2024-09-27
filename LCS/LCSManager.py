@@ -1,36 +1,32 @@
 import csv
-import heapq
 import random
 from typing import Literal, Optional
 
 import numpy as np
 import pandas as pd
 import xcs
+from pandas.io.common import file_exists
 from xcs.scenarios import Scenario, ScenarioObserver
 
-import utils
 from BenchmarkProblems.BenchmarkProblem import BenchmarkProblem
 from BenchmarkProblems.EfficientBTProblem.EfficientBTProblem import EfficientBTProblem
-from BenchmarkProblems.RoyalRoad import RoyalRoad
-from BenchmarkProblems.Trapk import Trapk
 from Core.EvaluatedFS import EvaluatedFS
-from Core.FullSolution import FullSolution
 from Core.PRef import PRef
 from Core.PS import PS
 from Explanation.PRefManager import PRefManager
 from LCS.Conversions import get_rules_in_action_set, get_rules_in_model
+from LCS.PSEvaluator import GeneralPSEvaluator
 from LCS.XCSComponents.CombinatorialRules import CombinatorialCondition
 from LCS.XCSComponents.SolutionDifferenceAlgorithm import SolutionDifferenceAlgorithm
 from LCS.XCSComponents.SolutionDifferenceModel import SolutionDifferenceModel
 from LCS.XCSComponents.SolutionDifferenceScenario import OneAtATimeSolutionDifferenceScenario, RandomPairsScenario
-from LCS.PSEvaluator import GeneralPSEvaluator
 from PSMiners.Mining import load_pss, write_pss_to_file
 from utils import announce
 
 
 class LCSManager:
     optimisation_problem: BenchmarkProblem
-    pRef: Optional[PRef]
+    pRef: PRef
     ps_evaluator: Optional[GeneralPSEvaluator]
 
     lcs_environment: Optional[OneAtATimeSolutionDifferenceScenario]
@@ -42,27 +38,17 @@ class LCSManager:
     rule_conditions_file: str
     rule_attributes_file: str
 
-    covering_search_budget: int
-    covering_search_population: int
-    training_cycles_per_solution: int
-
     verbose: bool
 
     def __init__(self,
                  optimisation_problem: BenchmarkProblem,
+                 pRef: PRef,
                  rule_conditions_file: str,
                  rule_attributes_file: str,
-                 covering_search_budget: int,
-                 covering_search_population: int,
-                 training_cycles_per_solution: int,
                  verbose: bool = False):
 
-        self.covering_search_budget = covering_search_budget
-        self.covering_search_population = covering_search_population
-        self.training_cycles_per_solution = training_cycles_per_solution
-
         self.optimisation_problem = optimisation_problem
-        self.pRef = None
+        self.pRef = pRef
         self.ps_evaluator = None
         self.lcs_environment = None
         self.lcs_scenario = None
@@ -74,26 +60,28 @@ class LCSManager:
 
         self.verbose = verbose
 
-    def set_pRef(self, pRef: PRef):
-        ps_evaluator, lcs_environment, scenario, algorithm, model = self.get_objects_when_rules_are_unknown(
-            optimisation_problem=self.optimisation_problem,
-            pRef=pRef,
-            covering_search_population=50,
-            covering_search_budget=1000,
-            training_cycles_per_solution=500,
-            verbose=self.verbose)
-        self.ps_evaluator = ps_evaluator
-        self.lcs_environment = lcs_environment
-        self.lcs_scenario = scenario
-        self.algorithm = algorithm
-        self.model = model
 
+    def load_from_existing_if_possible(self):
+        conditions_file_exists = file_exists(self.rule_conditions_file)
+        rule_attributes_file_exists = file_exists(self.rule_attributes_file)
+        if conditions_file_exists and rule_attributes_file_exists:
+            self.load_from_files()
+        else:
+            if conditions_file_exists != rule_attributes_file_exists:
+                raise Exception("Only one of the files for the control data is present!")
 
-    def load_rules(self):
+            self.ps_evaluator, self.lcs_environment, self.lcs_scenario, self.algorithm, self.model = self.get_objects_when_rules_are_unknown(
+                optimisation_problem=self.optimisation_problem,
+                pRef=self.pRef,
+                covering_search_population=50,
+                covering_search_budget=1000,
+                training_cycles_per_solution=500,
+                verbose=self.verbose)
+
+    def load_from_files(self):
         pss = load_pss(self.rule_conditions_file)
-        rules = self.load_rules_from_file(pss, self.rule_attributes_file, self.algorithm)
+        rules = self.get_rules_from_file(pss, self.rule_attributes_file, self.algorithm)
         self.model.set_rules(rules)
-
 
     def write_rules_to_files(self):
         write_pss_to_file(self.get_pss_from_model(), self.rule_conditions_file)
@@ -152,42 +140,10 @@ class LCSManager:
         return ps_evaluator, lcs_environment, scenario, algorithm, model
 
     @classmethod
-    def from_problem(cls,
-                     optimisation_problem: BenchmarkProblem,
-                     resolution_method: str,
-                     pRef_size: int,
-                     covering_search_budget: int,
-                     covering_search_population: int,
-                     training_cycles_per_solution: int,
-                     flip_fitness: bool = False,
-                     verbose: bool = False):
-        # generate the reference population
-
-        with announce(f"Generating the reference population using {resolution_method} of size {pRef_size}", verbose):
-            pRef = PRefManager.generate_pRef(problem=optimisation_problem,
-                                             sample_size=pRef_size,  # these are the Solution evaluations
-                                             which_algorithm="uniform " + resolution_method,
-                                             verbose=verbose)
-
-        pRef = PRef.unique(pRef)
-
-        if flip_fitness:
-            pRef.fitness_array *= -1
-
-        if verbose:
-            print(f"After pruning the pRef, {pRef.sample_size} solutions are left")
-
-        return cls.from_problem_and_pRef(optimisation_problem=optimisation_problem,
-                                         covering_search_budget=covering_search_budget,
-                                         covering_search_population=covering_search_population,
-                                         pRef=pRef,
-                                         training_cycles_per_solution=training_cycles_per_solution)
-
-    @classmethod
-    def load_rules_from_file(cls,
-                             pss: list[PS],
-                             rule_attribute_file: str,
-                             algorithm: SolutionDifferenceAlgorithm) -> list[xcs.XCSClassifierRule]:
+    def get_rules_from_file(cls,
+                            pss: list[PS],
+                            rule_attribute_file: str,
+                            algorithm: SolutionDifferenceAlgorithm) -> list[xcs.XCSClassifierRule]:
         # internally it is a cvs file, where the columns are the fitness, error, experience, accuracy, correct_count,
         # time_stamp
         attribute_table = pd.read_csv(rule_attribute_file)
@@ -225,43 +181,6 @@ class LCSManager:
                             rule.correct_count if hasattr(rule, "correct_count") else 0]
                 writer.writerow(rule_row)
 
-    @classmethod
-    def from_problem_and_rules(cls,
-                               optimisation_problem: BenchmarkProblem,
-                               pRef: PRef,
-                               rules: list[xcs.XCSClassifierRule],
-                               training_cycles_per_solution: int,
-                               covering_search_budget: int,
-                               covering_population_size: int,
-                               verbose: bool = False):
-        ps_evaluator = GeneralPSEvaluator(pRef)
-        lcs_environment = OneAtATimeSolutionDifferenceScenario(original_problem=optimisation_problem,
-                                                               pRef=pRef,  # where it gets the solutions from
-                                                               training_cycles=training_cycles_per_solution,
-                                                               # how many solutions to show (might repeat)
-                                                               verbose=verbose)
-        lcs_scenario = ScenarioObserver(lcs_environment)
-        algorithm = SolutionDifferenceAlgorithm(ps_evaluator=ps_evaluator,
-                                                xcs_problem=lcs_environment,
-                                                covering_search_budget=covering_search_budget,
-                                                covering_population_size=covering_population_size,
-                                                verbose=verbose,
-                                                verbose_search=verbose)
-
-        LCSManager.set_settings_for_lcs_algorithm(algorithm)
-
-        # This should be a solutionDifferenceModel
-        model = algorithm.new_model_from_rules(lcs_scenario, rules)
-        model.verbose = verbose
-
-        return cls(optimisation_problem=optimisation_problem,
-                   pRef=pRef,
-                   ps_evaluator=ps_evaluator,
-                   lcs_environment=lcs_environment,
-                   lcs_scenario=lcs_scenario,
-                   algorithm=algorithm,
-                   model=model)
-
     def investigate_solution(self, solution: EvaluatedFS) -> list[xcs.ClassifierRule]:
         self.lcs_environment.set_solution_to_investigate(solution)
         self.model.run(self.lcs_scenario, learn=True)
@@ -284,18 +203,8 @@ class LCSManager:
 
         return get_rules_in_action_set(correct_action_set), get_rules_in_action_set(wrong_action_set)
 
-    def get_n_best_solutions(self, n: int) -> list[EvaluatedFS]:
-        indexes_and_fitnesses = list(enumerate(self.pRef.fitness_array))
-        best_indexes_and_fitnesses = heapq.nlargest(n=n, iterable=indexes_and_fitnesses, key=utils.second)
-
-        def get_nth_solution(index: int, fitness: float) -> EvaluatedFS:
-            return EvaluatedFS(FullSolution(self.pRef.full_solution_matrix[index]),
-                               fitness=fitness)
-
-        return [get_nth_solution(index, fitness) for index, fitness in best_indexes_and_fitnesses]
-
     def explain_best_solution(self):
-        found_optima = self.get_n_best_solutions(1)[0]
+        found_optima = self.pRef.get_top_n_solutions(1)[0]
         print(f"The found optima is {self.optimisation_problem.repr_fs(found_optima)}")
         print(f"It has fitness {found_optima.fitness}")
 
@@ -374,7 +283,7 @@ class LCSManager:
             pretty_print_results(results)
 
         with announce(f"Inspecting the best solutions"):
-            solutions_to_explain = self.get_n_best_solutions(n)
+            solutions_to_explain = self.pRef.get_top_n_solutions(n)
 
         for solution in solutions_to_explain:
             self.investigate_solution(solution)
@@ -387,6 +296,85 @@ class LCSManager:
         #
         # print("After polishing, the model is ")
         # print_model()
+
+
+    def investigate_pair_if_necessary(self, solution_a: EvaluatedFS, solution_b: EvaluatedFS):
+        winner, loser = (solution_a, solution_b) if solution_a > solution_b else (solution_b, solution_a)
+        self.model.match(situation=(winner, loser))  # forces to cover if necessary
+
+
+    # currently unused
+    @classmethod
+    def from_problem(cls,
+                     optimisation_problem: BenchmarkProblem,
+                     resolution_method: str,
+                     pRef_size: int,
+                     covering_search_budget: int,
+                     covering_search_population: int,
+                     training_cycles_per_solution: int,
+                     flip_fitness: bool = False,
+                     verbose: bool = False):
+        # generate the reference population
+
+        with announce(f"Generating the reference population using {resolution_method} of size {pRef_size}", verbose):
+            pRef = PRefManager.generate_pRef(problem=optimisation_problem,
+                                             sample_size=pRef_size,  # these are the Solution evaluations
+                                             which_algorithm="uniform " + resolution_method,
+                                             verbose=verbose)
+
+        pRef = PRef.unique(pRef)
+
+        if flip_fitness:
+            pRef.fitness_array *= -1
+
+        if verbose:
+            print(f"After pruning the pRef, {pRef.sample_size} solutions are left")
+
+        return cls.from_problem_and_pRef(optimisation_problem=optimisation_problem,
+                                         covering_search_budget=covering_search_budget,
+                                         covering_search_population=covering_search_population,
+                                         pRef=pRef,
+                                         training_cycles_per_solution=training_cycles_per_solution)
+
+    # currently unused
+    @classmethod
+    def from_problem_and_rules(cls,
+                               optimisation_problem: BenchmarkProblem,
+                               pRef: PRef,
+                               rules: list[xcs.XCSClassifierRule],
+                               training_cycles_per_solution: int,
+                               covering_search_budget: int,
+                               covering_population_size: int,
+                               verbose: bool = False):
+        ps_evaluator = GeneralPSEvaluator(pRef)
+        lcs_environment = OneAtATimeSolutionDifferenceScenario(original_problem=optimisation_problem,
+                                                               pRef=pRef,  # where it gets the solutions from
+                                                               training_cycles=training_cycles_per_solution,
+                                                               # how many solutions to show (might repeat)
+                                                               verbose=verbose)
+        lcs_scenario = ScenarioObserver(lcs_environment)
+        algorithm = SolutionDifferenceAlgorithm(ps_evaluator=ps_evaluator,
+                                                xcs_problem=lcs_environment,
+                                                covering_search_budget=covering_search_budget,
+                                                covering_population_size=covering_population_size,
+                                                verbose=verbose,
+                                                verbose_search=verbose)
+
+        LCSManager.set_settings_for_lcs_algorithm(algorithm)
+
+        # This should be a solutionDifferenceModel
+        model = algorithm.new_model_from_rules(lcs_scenario, rules)
+        model.verbose = verbose
+
+        return cls(optimisation_problem=optimisation_problem,
+                   pRef=pRef,
+                   ps_evaluator=ps_evaluator,
+                   lcs_environment=lcs_environment,
+                   lcs_scenario=lcs_scenario,
+                   algorithm=algorithm,
+                   model=model)
+
+
 
 
 def test_human_in_the_loop_explainer():
