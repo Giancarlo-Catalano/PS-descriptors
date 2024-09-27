@@ -114,7 +114,7 @@ class DifferenceExplainer:
                                     if percentile_is_significant(percentile)]
 
         # sort by "extremeness"
-        names_values_percentiles.sort(key=lambda x: abs(0.5 - x.percentile), reverse=True)
+        names_values_percentiles.sort(key=lambda x: abs(0.5 - x[2]), reverse=True)
         return names_values_percentiles
 
     def get_properties_string(self, ps: PS) -> str:
