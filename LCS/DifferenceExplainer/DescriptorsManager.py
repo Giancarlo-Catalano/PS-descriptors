@@ -59,7 +59,7 @@ class DescriptorsManager:
         result["size"] = ps.fixed_count()
         return result
 
-    def generate_data_for_new_size_category(self, size_category: int) -> pd.Dataframe:
+    def generate_data_for_new_size_category(self, size_category: int) -> pd.DataFrame:
         """Generates the new control pss and the descriptors.
         It updates the internal control pss, the descriptor table and the 'sizes_for_which_control_has_been_generated,
         and returns the new rows generated"""
@@ -108,13 +108,17 @@ class DescriptorsManager:
 
     def load_from_existing_if_possible(self):
         control_ps_file_exists = file_exists(self.control_pss_file)
-        ps_descriptor_table_file_esists = file_exists(self.control_descriptors_table_file)
-        if control_ps_file_exists and ps_descriptor_table_file_esists:
+        ps_descriptor_table_file_exists = file_exists(self.control_descriptors_table_file)
+        if control_ps_file_exists and ps_descriptor_table_file_exists:
+            if self.verbose:
+                print(f"Found pre-existing descriptors, loading {self.control_pss_file} and {self.control_descriptors_table_file}")
             self.load_from_files()
         else:
-            if control_ps_file_exists != ps_descriptor_table_file_esists:
+            if control_ps_file_exists != ps_descriptor_table_file_exists:
                 raise Exception("Only one of the files for the control data is present!")
 
+            if self.verbose:
+                print(f"Since no descriptor files were found, the model will be initialised as empty")
             # otherwise nothing needs to happen, the class initialised in a valid empty state
 
 

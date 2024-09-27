@@ -36,6 +36,7 @@ class DifferenceExplainer:
         self.problem = problem
         self.pRef_manager = PRefManager(problem=problem,
                                         pRef_file=pRef_file,
+                                        instantiate_own_evaluator=False,
                                         verbose=True)
 
         self.pRef_manager.load_from_existing_if_possible()
@@ -148,7 +149,7 @@ class DifferenceExplainer:
     def get_contained_ps(self, solution: EvaluatedFS, must_contain: Optional[int] = None) -> list[PS]:
         contained = [ps
                      for ps in self.pss
-                     if contains(solution.full_solution, ps)]
+                     if contains(solution, ps)]
 
         if must_contain is not None:
             contained = [ps for ps in contained
@@ -181,7 +182,7 @@ class DifferenceExplainer:
         contained_pss: list[PS] = self.get_contained_ps(solution, must_contain=must_contain)
 
         print(f"The solution \n"
-              f"{utils.indent(self.problem.repr_fs(solution.full_solution))}")
+              f"{utils.indent(self.problem.repr_fs(solution))}")
 
         explainability_coverage = self.get_explainability_percentage_of_solution(contained_pss)
         print(f"It is {int(explainability_coverage * 100)}% explainable")
@@ -270,7 +271,7 @@ class DifferenceExplainer:
 
         print(f"The top {amount_of_fs_to_propose} solutions are")
         for solution in solutions:
-            print(self.problem.repr_fs(solution.full_solution))
+            print(self.problem.repr_fs(solution))
             print(f"(Has fitness {solution.fitness})")
             print()
 

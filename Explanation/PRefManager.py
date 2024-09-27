@@ -22,9 +22,12 @@ class PRefManager:
     pRef_mean: Optional[float]
     evaluator: Optional[Classic3PSEvaluator]
 
+    instantiate_own_evaluator: bool
+
     def __init__(self,
                  problem: BenchmarkProblem,
                  pRef_file: str,
+                 instantiate_own_evaluator: bool = True, # to make it backwards compatible
                  verbose: bool = False):
         self.problem = problem
         self.pRef_file = pRef_file
@@ -33,10 +36,16 @@ class PRefManager:
         self.pRef_mean = None
         self.verbose = verbose
 
+        self.instantiate_own_evaluator = instantiate_own_evaluator
+
     def load_from_existing_if_possible(self):
         if file_exists(self.pRef_file):
+            if self.verbose:
+                print(f"Found a pre-existing pRef file, loading {self.pRef_file}")
             self.load_from_file()
         else:
+            if self.verbose:
+                print(f"Since no pRef file was found, one will be generated...")
             self.generate_pRef_file(sample_size=10000,
                                     which_algorithm="uniform GA")
 
@@ -65,7 +74,9 @@ class PRefManager:
                                                    search_space=problem.search_space)
             pRefs.append(forced_pRef)
 
-        return PRef.concat(pRefs)
+        final_pRef = PRef.concat(pRefs)
+        final_pRef = PRef.unique(final_pRef)
+        return final_pRef
 
     def instantiate_evaluator(self):
         self.evaluator = Classic3PSEvaluator(self.cached_pRef)
@@ -84,7 +95,9 @@ class PRefManager:
                                                      which_algorithm,
                                                      force_include=force_include,
                                                      verbose=self.verbose)
-        self.instantiate_evaluator()
+
+        if self.instantiate_own_evaluator:
+            self.instantiate_evaluator()
         self.instantiate_mean()
 
         with announce(f"Writing the pRef to {self.pRef_file}", self.verbose):

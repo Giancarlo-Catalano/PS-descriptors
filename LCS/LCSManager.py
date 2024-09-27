@@ -65,10 +65,15 @@ class LCSManager:
         conditions_file_exists = file_exists(self.rule_conditions_file)
         rule_attributes_file_exists = file_exists(self.rule_attributes_file)
         if conditions_file_exists and rule_attributes_file_exists:
+            if self.verbose:
+                print(f"Found a pre-calculated LCS, loading from {self.rule_conditions_file} and {self.rule_attributes_file}")
             self.load_from_files()
         else:
             if conditions_file_exists != rule_attributes_file_exists:
                 raise Exception("Only one of the files for the control data is present!")
+
+            if self.verbose:
+                print(f"Since no LCS files were found, the LCS model will be initialised as empty")
 
             self.ps_evaluator, self.lcs_environment, self.lcs_scenario, self.algorithm, self.model = self.get_objects_when_rules_are_unknown(
                 optimisation_problem=self.optimisation_problem,
@@ -396,4 +401,4 @@ def test_human_in_the_loop_explainer():
     explainer.explain_top_n_solutions(12)
 
 
-test_human_in_the_loop_explainer()
+#test_human_in_the_loop_explainer()

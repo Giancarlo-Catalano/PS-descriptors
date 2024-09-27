@@ -1,11 +1,10 @@
 import xcs
-from xcs import ClassifierSet, MatchSet, scenarios
 from tqdm import tqdm
+from xcs import ClassifierSet, MatchSet, scenarios
 from xcs.scenarios import ScenarioObserver
 
 from Core.EvaluatedFS import EvaluatedFS
 from LCS.Conversions import rules_to_population
-from LCS.XCSComponents.SolutionDifferenceAlgorithm import SolutionDifferenceAlgorithm
 
 
 class SolutionDifferenceModel(ClassifierSet):
