@@ -50,7 +50,7 @@ class BenchmarkProblem:
         raise Exception("An implementation of BenchmarkProblem does not implement get_global_optima_fitness")
 
 
-    def ps_to_properties(self, ps: PS) -> dict:
+    def get_descriptors_of_ps(self, ps: PS) -> dict:
         raise NotImplemented(f"The class {self.__repr__()} does not implement .ps_to_properties")
 
     def repr_property(self, property_name:str, property_value:str, rank:float, ps: PS):

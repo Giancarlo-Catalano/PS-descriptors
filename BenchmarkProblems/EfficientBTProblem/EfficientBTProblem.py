@@ -218,7 +218,7 @@ class EfficientBTProblem(BTProblem):
         return -(rota_score + preference_score) # to convert it to a maximisation task
 
 
-    def ps_to_properties(self, ps: PS) -> dict:
+    def get_descriptors_of_ps(self, ps: PS) -> dict:
         cohort = ps_to_cohort(self, ps)
 
         choice_amounts = [member.get_amount_of_choices() for member in cohort]

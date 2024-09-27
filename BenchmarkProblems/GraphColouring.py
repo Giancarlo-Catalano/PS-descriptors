@@ -120,7 +120,7 @@ class GraphColouring(BenchmarkProblem):
                    connections = data["connections"])
 
 
-    def ps_to_properties(self, ps: PS) -> dict:
+    def get_descriptors_of_ps(self, ps: PS) -> dict:
         def is_internal_edge(pair):
             a, b = pair
             return ps[a] != STAR and ps[b] != STAR
