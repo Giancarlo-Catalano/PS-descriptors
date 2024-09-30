@@ -41,6 +41,8 @@ def visualize_undirected_graph(edges):
 
 
 
+
+
 class GraphColouring(BenchmarkProblem):
     amount_of_colours: int
     amount_of_nodes: int
@@ -190,3 +192,6 @@ class GraphColouring(BenchmarkProblem):
             raise Exception("Requesting the target PSs from a GC instance with unknown targets")
         else:
             return self.target_pss
+
+    def get_short_code(self) -> str:
+        return "GC"

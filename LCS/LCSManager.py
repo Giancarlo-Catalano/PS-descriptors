@@ -75,10 +75,13 @@ class LCSManager:
             if self.verbose:
                 print(f"Since no LCS files were found, the LCS model will be initialised as empty")
 
+
+            search_population = min(50, sum(self.optimisation_problem.search_space.cardinalities))
+
             self.ps_evaluator, self.lcs_environment, self.lcs_scenario, self.algorithm, self.model = self.get_objects_when_rules_are_unknown(
                 optimisation_problem=self.optimisation_problem,
                 pRef=self.pRef,
-                covering_search_population=50,
+                covering_search_population=search_population,
                 covering_search_budget=1000,
                 training_cycles_per_solution=500,
                 verbose=self.verbose)

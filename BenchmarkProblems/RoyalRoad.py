@@ -39,3 +39,7 @@ class RoyalRoad(UnitaryProblem):
             values[start:end] = 1
             result.add(PS(values))
         return result
+
+
+    def get_short_code(self)->str:
+        return "RR"

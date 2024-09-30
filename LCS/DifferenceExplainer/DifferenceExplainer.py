@@ -52,7 +52,7 @@ class DifferenceExplainer:
         self.lcs_manager = LCSManager(optimisation_problem=problem,
                                       rule_conditions_file=condition_ps_file,
                                       rule_attributes_file=rule_attribute_file,
-                                      pRef = self.pRef)
+                                      pRef=self.pRef)
         self.lcs_manager.load_from_existing_if_possible()
 
         self.speciality_threshold = speciality_threshold
@@ -117,7 +117,7 @@ class DifferenceExplainer:
         names_values_percentiles.sort(key=lambda x: abs(0.5 - x[2]), reverse=True)
         return names_values_percentiles
 
-    def get_properties_string(self, ps: PS) -> str:
+    def get_descriptors_string(self, ps: PS) -> str:
         names_values_percentiles = self.get_significant_descriptors_of_ps(ps)
         return "\n".join(self.problem.repr_property(name, value, percentile, ps)
                          for name, value, percentile in names_values_percentiles)
@@ -125,7 +125,7 @@ class DifferenceExplainer:
     def get_ps_description(self, ps: PS) -> str:
         return utils.indent("\n".join([self.problem.repr_extra_ps_info(ps),
                                        self.get_fitness_delta_string(ps),
-                                       self.get_properties_string(ps)]))
+                                       self.get_descriptors_string(ps)]))
 
     @staticmethod
     def only_non_obscured_pss(pss: list[PS]) -> list[PS]:
@@ -214,13 +214,15 @@ class DifferenceExplainer:
             print(utils.indent(self.get_ps_description(ps)))
             print()
 
-        print("In solution a we have")
-        for ps in in_a:
-            print_ps_and_descriptors(ps)
+        if len(in_a) != 0:
+            print("In solution A we have")
+            for ps in in_a:
+                print_ps_and_descriptors(ps)
 
-        print("\nIn solutions B we have")
-        for ps in in_b:
-            print_ps_and_descriptors(ps)
+        if len(in_b) != 0:
+            print("\nIn solutions B we have")
+            for ps in in_b:
+                print_ps_and_descriptors(ps)
 
     def handle_solution_query(self, solutions: list[EvaluatedFS], ps_show_limit: int):
         index = int(input("Which solution? "))

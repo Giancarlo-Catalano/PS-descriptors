@@ -538,6 +538,11 @@ class EfficientBTProblem(BTProblem):
 
 
 
+    def get_short_code(self) -> str:
+        return "BT"
+
+
+
 
 
 
