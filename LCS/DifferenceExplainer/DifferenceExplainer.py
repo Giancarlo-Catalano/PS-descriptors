@@ -2,6 +2,7 @@ import os
 from typing import Optional
 
 import numpy as np
+import xcs
 
 import utils
 from BenchmarkProblems.BenchmarkProblem import BenchmarkProblem
@@ -159,29 +160,37 @@ class DifferenceExplainer:
 
         return contained
 
-    def get_difference_ps(self, solution_a: EvaluatedFS, solution_b: EvaluatedFS) -> (list[PS], list[PS]):
+    def get_difference_rules(self, solution_a: EvaluatedFS, solution_b: EvaluatedFS) -> (list[PS], list[PS]):
         in_a = []
         in_b = []
-        for ps in self.pss:
-            if contains(solution_a, ps):
-                if not contains(solution_b, ps):
-                    in_a.append(ps)
-            elif contains(solution_b, ps):
-                if not contains(solution_a, ps):
-                    in_b.append(ps)
+        for rule in self.lcs_manager.get_rules_in_model():
+            if rule.condition(solution_a):
+                if not rule.condition(solution_b):
+                    in_a.append(rule)
+            elif rule.condition(solution_b):
+                if not rule.condition(solution_a):
+                    in_b.append(rule)
 
         return in_a, in_b
 
-    def get_explainability_percentage_of_solution(self, pss: list[PS]) -> float:
-        if len(pss) == 0:
+    def get_explainability_percentage_of_solution(self, rules: list[xcs.XCSClassifierRule]) -> float:
+        if len(rules) == 0:
             return 0
-        used_vars = np.array([ps.values != STAR for ps in pss])
+        used_vars = np.array([rule.condition.values != STAR for rule in rules])
         used_vars_count = used_vars.sum(axis=0, dtype=bool).sum(dtype=int)
-        return used_vars_count / len(pss[0])
+        size_of_solution = len(rules[0].condition)
+        return used_vars_count / size_of_solution
 
     def print_ps_and_descriptors(self, ps: PS):
         print(self.problem.repr_ps(ps))
         print(utils.indent(self.get_ps_description(ps)))
+        # print()
+
+
+    def print_rule_and_descriptors(self, rule: xcs.XCSClassifierRule):
+        print(self.problem.repr_ps(rule.condition))
+        print(f"Accuracy = {int(rule.fitness*100)}%, average error = {rule.error:.2f}, age = {rule.experience}")
+        print(utils.indent(self.get_ps_description(rule.condition)))
         # print()
 
     def explain_difference(self, solution_a: EvaluatedFS, solution_b: EvaluatedFS):
@@ -191,7 +200,7 @@ class DifferenceExplainer:
 
         self.lcs_manager.investigate_pair_if_necessary(solution_a, solution_b)
 
-        in_a, in_b = self.get_difference_ps(solution_a, solution_b)
+        in_a, in_b = self.get_difference_rules(solution_a, solution_b)
 
         if len(in_a) != 0:
             print("In solution A we have")
@@ -209,16 +218,16 @@ class DifferenceExplainer:
         for other_solution in to_compare_against:
             self.lcs_manager.investigate_pair_if_necessary(solution, other_solution)
 
-        pss_in_solution = [rule_to_ps(rule) for rule in self.lcs_manager.get_matches_with_solution(solution)]
+        rules_in_solution = [rule for rule in self.lcs_manager.get_matches_with_solution(solution)]
 
-        if len(pss_in_solution) == 0:
+        if len(rules_in_solution) == 0:
             print("No patterns were found in the solution")
             return
 
-        coverage = self.get_explainability_percentage_of_solution(pss_in_solution)
-        print(f"{len(pss_in_solution)} PSs were found, which cause coverage of {int(coverage * 100)}%")
-        for ps in pss_in_solution:
-            self.print_ps_and_descriptors(ps)
+        coverage = self.get_explainability_percentage_of_solution(rules_in_solution)
+        print(f"{len(rules_in_solution)} PSs were found, which cause coverage of {int(coverage * 100)}%")
+        for rule in rules_in_solution:
+            self.print_rule_and_descriptors(rule)
 
     def handle_solution_query(self, solutions: list[EvaluatedFS], ps_show_limit: int):
         index = int(input("Which solution? "))

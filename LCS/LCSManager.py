@@ -194,10 +194,10 @@ class LCSManager:
 
         return self.get_matches_with_solution(solution)
 
-    def get_rules_in_model(self) -> list[xcs.ClassifierRule]:
+    def get_rules_in_model(self) -> list[xcs.XCSClassifierRule]:
         return [item[True] for item in self.model._population.values()]
 
-    def get_matches_with_solution(self, solution: EvaluatedFS) -> list[xcs.ClassifierRule]:
+    def get_matches_with_solution(self, solution: EvaluatedFS) -> list[xcs.XCSClassifierRule]:
         return [rule for rule in self.get_rules_in_model()
                 if rule.condition(solution)]
 
@@ -380,6 +380,11 @@ class LCSManager:
                    lcs_scenario=lcs_scenario,
                    algorithm=algorithm,
                    model=model)
+
+    def get_matches_with_partial_solution(self, partial_solution: PS) -> list[xcs.XCSClassifierRule]:
+        return [rule
+                for rule in self.get_rules_in_model()
+                if rule.condition.matches_partial_solution(partial_solution)]
 
 
 def test_human_in_the_loop_explainer():

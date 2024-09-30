@@ -130,6 +130,18 @@ class CombinatorialCondition(PS):
                     self.values[index] = STAR
 
 
+    def matches_partial_solution(self, ps: PS) -> bool:
+        """Return true if self and ps don't have disagreements"""
+        """ While i am aware that this implementation is identical to that of matches_solution, but these might diverge in the future"""
+        #  * * -> true,  * a -> true, a a -> true,  a b false
+
+        for own_value, other_value in zip(self.values, ps.values):
+            if own_value != STAR and other_value != STAR and own_value != other_value:
+                return False
+        return True
+
+
+
 
 
 
