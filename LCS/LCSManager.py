@@ -60,13 +60,13 @@ class LCSManager:
 
         self.verbose = verbose
 
-
     def load_from_existing_if_possible(self):
         conditions_file_exists = file_exists(self.rule_conditions_file)
         rule_attributes_file_exists = file_exists(self.rule_attributes_file)
         if conditions_file_exists and rule_attributes_file_exists:
             if self.verbose:
-                print(f"Found a pre-calculated LCS, loading from {self.rule_conditions_file} and {self.rule_attributes_file}")
+                print(
+                    f"Found a pre-calculated LCS, loading from {self.rule_conditions_file} and {self.rule_attributes_file}")
             self.load_from_files()
         else:
             if conditions_file_exists != rule_attributes_file_exists:
@@ -74,7 +74,6 @@ class LCSManager:
 
             if self.verbose:
                 print(f"Since no LCS files were found, the LCS model will be initialised as empty")
-
 
             search_population = min(50, sum(self.optimisation_problem.search_space.cardinalities))
 
@@ -98,18 +97,18 @@ class LCSManager:
     @classmethod
     def set_settings_for_lcs_algorithm(cls, algorithm: xcs.XCSAlgorithm) -> None:
         """Simply sets the settings that are best for my purposes"""
-        # play with these settings ad lib. Leaving the defaults seems to work :--)
+        # play with these settings ad lib.
         algorithm.crossover_probability = 0
         algorithm.deletion_threshold = 50  # minimum age before a rule can be pruned away
         # algorithm.discount_factor = 0
-        algorithm.do_action_set_subsumption = False
+        algorithm.do_action_set_subsumption = True
         # algorithm.do_ga_subsumption = True
         # algorithm.exploration_probability = 0
         # algorithm.ga_threshold = 100000
         algorithm.max_population_size = 100
         # algorithm.exploration_probability = 0
         # algorithm.minimum_actions = 1
-        algorithm.subsumption_threshold = 100  # minimum age before a rule can subsume another
+        algorithm.subsumption_threshold = 1  # minimum age before a rule can subsume another
 
         algorithm.allow_ga_reproduction = False
 
@@ -137,7 +136,7 @@ class LCSManager:
                                                 covering_search_budget=covering_search_budget,
                                                 covering_population_size=covering_search_population,
                                                 verbose=verbose,
-                                                verbose_search=verbose)
+                                                verbose_search=False)
 
         LCSManager.set_settings_for_lcs_algorithm(algorithm)
 
@@ -305,11 +304,11 @@ class LCSManager:
         # print("After polishing, the model is ")
         # print_model()
 
-
     def investigate_pair_if_necessary(self, solution_a: EvaluatedFS, solution_b: EvaluatedFS):
         winner, loser = (solution_a, solution_b) if solution_a > solution_b else (solution_b, solution_a)
+        if self.verbose:
+            print(f"Comparing {winner} and {loser}")
         self.model.match(situation=(winner, loser))  # forces to cover if necessary
-
 
     # currently unused
     @classmethod
@@ -383,8 +382,6 @@ class LCSManager:
                    model=model)
 
 
-
-
 def test_human_in_the_loop_explainer():
     print("I am running")
     # optimisation_problem = RoyalRoad(4, 4)
@@ -403,5 +400,4 @@ def test_human_in_the_loop_explainer():
     # explainer.explain_best_solution()
     explainer.explain_top_n_solutions(12)
 
-
-#test_human_in_the_loop_explainer()
+# test_human_in_the_loop_explainer()

@@ -9,6 +9,7 @@ from Core.EvaluatedFS import EvaluatedFS
 from Core.PRef import PRef
 from Core.PS import PS, contains, STAR
 from Explanation.PRefManager import PRefManager
+from LCS.Conversions import rule_to_ps
 from LCS.DifferenceExplainer.DescriptorsManager import DescriptorsManager
 from LCS.LCSManager import LCSManager
 
@@ -52,7 +53,8 @@ class DifferenceExplainer:
         self.lcs_manager = LCSManager(optimisation_problem=problem,
                                       rule_conditions_file=condition_ps_file,
                                       rule_attributes_file=rule_attribute_file,
-                                      pRef=self.pRef)
+                                      pRef=self.pRef,
+                                      verbose=True)
         self.lcs_manager.load_from_existing_if_possible()
 
         self.speciality_threshold = speciality_threshold
@@ -177,28 +179,10 @@ class DifferenceExplainer:
         used_vars_count = used_vars.sum(axis=0, dtype=bool).sum(dtype=int)
         return used_vars_count / len(pss[0])
 
-    def explain_solution(self, solution: EvaluatedFS, shown_ps_max: Optional[int] = None,
-                         must_contain: Optional[int] = None):
-        contained_pss: list[PS] = self.get_contained_ps(solution, must_contain=must_contain)
-
-        print(f"The solution \n"
-              f"{utils.indent(self.problem.repr_fs(solution))}")
-
-        explainability_coverage = self.get_explainability_percentage_of_solution(contained_pss)
-        print(f"It is {int(explainability_coverage * 100)}% explainable")
-
-        if len(contained_pss) > 0:
-            print(f"contains the following PSs:")
-        else:
-            print("No matching PSs were found for the requested combination of solution and variable...")
-
-        if shown_ps_max is None:
-            shown_ps_max = 10000
-
-        for ps in contained_pss[:shown_ps_max]:
-            print(self.problem.repr_ps(ps))
-            print(utils.indent(self.get_ps_description(ps)))
-            print()
+    def print_ps_and_descriptors(self, ps: PS):
+        print(self.problem.repr_ps(ps))
+        print(utils.indent(self.get_ps_description(ps)))
+        # print()
 
     def explain_difference(self, solution_a: EvaluatedFS, solution_b: EvaluatedFS):
         print(f"Inspecting difference of solutions... "
@@ -209,25 +193,39 @@ class DifferenceExplainer:
 
         in_a, in_b = self.get_difference_ps(solution_a, solution_b)
 
-        def print_ps_and_descriptors(ps: PS):
-            print(self.problem.repr_ps(ps))
-            print(utils.indent(self.get_ps_description(ps)))
-            print()
-
         if len(in_a) != 0:
             print("In solution A we have")
             for ps in in_a:
-                print_ps_and_descriptors(ps)
+                self.print_ps_and_descriptors(ps)
 
         if len(in_b) != 0:
             print("\nIn solutions B we have")
             for ps in in_b:
-                print_ps_and_descriptors(ps)
+                self.print_ps_and_descriptors(ps)
+
+    def explain_solution(self, solution: EvaluatedFS, amount_to_check_against: int):
+        to_compare_against = self.pRef_manager.get_most_similar_solutions_to(solution=solution,
+                                                                             amount_to_return=amount_to_check_against)
+        for other_solution in to_compare_against:
+            self.lcs_manager.investigate_pair_if_necessary(solution, other_solution)
+
+        pss_in_solution = [rule_to_ps(rule) for rule in self.lcs_manager.get_matches_with_solution(solution)]
+
+        if len(pss_in_solution) == 0:
+            print("No patterns were found in the solution")
+            return
+
+        coverage = self.get_explainability_percentage_of_solution(pss_in_solution)
+        print(f"{len(pss_in_solution)} PSs were found, which cause coverage of {int(coverage * 100)}%")
+        for ps in pss_in_solution:
+            self.print_ps_and_descriptors(ps)
 
     def handle_solution_query(self, solutions: list[EvaluatedFS], ps_show_limit: int):
         index = int(input("Which solution? "))
         solution_to_explain = solutions[index]
-        self.explain_solution(solution_to_explain, shown_ps_max=ps_show_limit)
+
+        how_many_to_compare_against = int(input("How many solutions to compare it against?"))
+        self.explain_solution(solution_to_explain, amount_to_check_against=how_many_to_compare_against)
 
     def handle_diff_query(self, solutions: list[EvaluatedFS]):
         index_a = int(input("Which solution is A? "))

@@ -1,3 +1,4 @@
+import itertools
 from math import ceil
 from typing import Optional, Literal
 
@@ -5,7 +6,9 @@ import numpy as np
 from pandas.io.common import file_exists
 from scipy.stats import t
 
+import utils
 from BenchmarkProblems.BenchmarkProblem import BenchmarkProblem
+from Core.EvaluatedFS import EvaluatedFS
 from Core.FullSolution import FullSolution
 from Core.PRef import PRef
 from Core.PS import PS
@@ -134,3 +137,25 @@ class PRefManager:
 
     def get_atomicity_contributions(self, ps: PS) -> np.ndarray:
         return self.evaluator.get_atomicity_contributions(ps, normalised=True)
+
+    def get_most_similar_solutions_to(self, solution: EvaluatedFS, amount_to_return: int) -> list[EvaluatedFS]:
+        differences = np.sum(self.pRef.full_solution_matrix != solution.values, axis=1)
+        index_and_differences = list(enumerate(differences))
+        index_and_differences.sort(key = utils.second)
+
+        result = []
+        for index, difference in index_and_differences:
+            if len(result) >= amount_to_return:
+                break
+
+            if difference == 0:
+                continue
+
+            solution_to_consider = self.pRef.get_nth_solution(index)
+            if solution_to_consider == solution:
+                continue
+
+            result.append(solution_to_consider)
+
+        return result
+
