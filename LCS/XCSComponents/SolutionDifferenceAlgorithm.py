@@ -63,7 +63,7 @@ class SolutionDifferenceAlgorithm(xcs.XCSAlgorithm):
             print(f"Covering for {winner = }, {loser = }")
 
         # search for the appropriate patterns using NSGAII (using Pymoo)
-        with utils.announce("Mining the PSs...\n", self.verbose):
+        with utils.announce("Mining the PSs...\n", self.verbose_search):
             pss = local_restricted_tm_ps_search(to_explain=winner,
                                                 pss_to_avoid=[],
                                                 must_include_mask=difference_mask,
@@ -89,7 +89,7 @@ class SolutionDifferenceAlgorithm(xcs.XCSAlgorithm):
                 self,
                 match_set.model.time_stamp)
 
-        if self.verbose:
+        if self.verbose_search:
             print('The mined pss are')
             for ps in pss:
                 print("\t", ps)

@@ -106,6 +106,17 @@ class SolutionDifferenceModel(ClassifierSet):
         # Return the newly created match set.
         return match_set
 
+
+    def apply_payoff_to_match_set(self, match_set: MatchSet):
+        self._algorithm.apply_payoff_to_match_set(action_set=match_set[True], payoff=1)
+        self._algorithm.apply_payoff_to_match_set(action_set=match_set[False], payoff=0)
+
+
+    def use_match_set_for_learning(self, match_set: MatchSet):
+        self.apply_payoff_to_match_set(match_set)
+        if self._algorithm.allow_ga_reproduction:
+            self._algorithm.introduce_rules_via_reproduction(action_set=match_set[True])
+
     def run(self, scenario: ScenarioObserver, learn=True):
         """ Had to modify this since the match set is strange"""
 
@@ -126,8 +137,7 @@ class SolutionDifferenceModel(ClassifierSet):
             # and for those that bet against it, 0.0
             if learn:
                 # apply payoff for correct instances
-                self._algorithm.apply_payoff_to_match_set(action_set=match_set[True], payoff=1)
-                self._algorithm.apply_payoff_to_match_set(action_set=match_set[False], payoff=0)
+                self.apply_payoff_to_match_set(match_set)
                 self._algorithm.update_match_set_timestamps(match_set)
 
                 if self.algorithm.allow_ga_reproduction:

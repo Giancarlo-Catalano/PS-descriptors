@@ -63,6 +63,18 @@ class LCSManager:
     def load_from_existing_if_possible(self):
         conditions_file_exists = file_exists(self.rule_conditions_file)
         rule_attributes_file_exists = file_exists(self.rule_attributes_file)
+
+        search_population = min(50, sum(self.optimisation_problem.search_space.cardinalities))
+
+        self.ps_evaluator, self.lcs_environment, self.lcs_scenario, self.algorithm, self.model = self.get_objects_when_rules_are_unknown(
+            optimisation_problem=self.optimisation_problem,
+            pRef=self.pRef,
+            covering_search_population=search_population,
+            covering_search_budget=1000,
+            training_cycles_per_solution=500,
+            verbose=self.verbose)
+
+
         if conditions_file_exists and rule_attributes_file_exists:
             if self.verbose:
                 print(
@@ -75,15 +87,7 @@ class LCSManager:
             if self.verbose:
                 print(f"Since no LCS files were found, the LCS model will be initialised as empty")
 
-            search_population = min(50, sum(self.optimisation_problem.search_space.cardinalities))
 
-            self.ps_evaluator, self.lcs_environment, self.lcs_scenario, self.algorithm, self.model = self.get_objects_when_rules_are_unknown(
-                optimisation_problem=self.optimisation_problem,
-                pRef=self.pRef,
-                covering_search_population=search_population,
-                covering_search_budget=1000,
-                training_cycles_per_solution=500,
-                verbose=self.verbose)
 
     def load_from_files(self):
         pss = load_pss(self.rule_conditions_file)
@@ -156,17 +160,18 @@ class LCSManager:
         attribute_table = pd.read_csv(rule_attribute_file)
 
         def rule_from_row(ps: PS, row) -> xcs.XCSClassifierRule:
+            row_dict = dict(row[1])
             rule = xcs.XCSClassifierRule(action=True,
                                          algorithm=algorithm,
-                                         time_stamp=row["time_stamp"],
+                                         time_stamp=int(row_dict["time_stamp"]),
                                          condition=CombinatorialCondition.from_ps_values(ps.values))
-            rule.fitness = row["fitness"]
-            rule.error = row["error"]
-            rule.experience = row["experience"]
-            rule.time_stamp = row["time_stamp"]
+            rule.fitness = float(row_dict["fitness"])
+            rule.error = float(row_dict["error"])
+            rule.experience = int(row_dict["experience"])
+            rule.time_stamp = float(row_dict["time_stamp"])
 
-            rule.accuracy = row["accuracy"]
-            rule.correct_count = row["correct_count"]
+            rule.accuracy = float(row_dict["accuracy"])
+            rule.correct_count = int(row_dict["correct_count"])
 
             return rule
 
@@ -306,9 +311,10 @@ class LCSManager:
 
     def investigate_pair_if_necessary(self, solution_a: EvaluatedFS, solution_b: EvaluatedFS):
         winner, loser = (solution_a, solution_b) if solution_a > solution_b else (solution_b, solution_a)
-        if self.verbose:
-            print(f"Comparing {winner} and {loser}")
-        self.model.match(situation=(winner, loser))  # forces to cover if necessary
+        # if self.verbose:
+        #     print(f"Comparing {winner} and {loser}")
+        match_set = self.model.match(situation=(winner, loser))  # forces to cover if necessary
+        self.model.use_match_set_for_learning(match_set)
 
     # currently unused
     @classmethod

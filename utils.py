@@ -1,5 +1,6 @@
 import json
 import os
+import re
 import sys
 import time
 import traceback
@@ -454,3 +455,42 @@ def make_path(original_path: str):
     to_break = original_path[len(to_remove):]
     words = to_break.split("\\")
     return "os.path.join("+(", ".join(f"\"{w}\"" for w in words))+")"
+
+
+
+
+# regex building utilities
+
+def space_on_either_side(given: str) -> str:
+    return r"\s*" + given + r"\s*"
+
+def an_integer() -> str:
+    return r"-?\d+"
+
+
+def capture(given: str) -> str:
+    return f"({given})"
+
+
+def parse_simple_input(format_string: str, user_input: str, explain_error=False) -> Optional[list[int]]:
+    """numbers are indicated with X"""
+    amount_of_numbers = format_string.count("X")
+    pattern =format_string.replace("(", r"\(")
+    pattern = pattern.replace(")", r"\)")
+    pattern = pattern.replace("X", r"\s*(-?\d+)\s*")
+    match = re.match(pattern, user_input)
+
+    if not match:
+        print(f"Wrong format (expected is {format_string}), please try again")
+        return None
+
+    result_strs = [match.group(i+1) for i in range(amount_of_numbers)]
+    result_numbers = []
+    for index, item in enumerate(result_strs):
+        try:
+            result_numbers.append(int(item))
+        except:
+            print(f"The {index+1}th number is wrong, please try again")
+            return None
+
+    return result_numbers

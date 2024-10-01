@@ -1,4 +1,6 @@
 import os
+import random
+from collections import defaultdict
 from typing import Optional
 
 import numpy as np
@@ -10,8 +12,9 @@ from Core.EvaluatedFS import EvaluatedFS
 from Core.PRef import PRef
 from Core.PS import PS, contains, STAR
 from Explanation.PRefManager import PRefManager
-from LCS.Conversions import rule_to_ps
+from LCS.Conversions import rule_to_ps, get_rules_in_model
 from LCS.DifferenceExplainer.DescriptorsManager import DescriptorsManager
+from LCS.DifferenceExplainer.PatchManager import PatchManager
 from LCS.LCSManager import LCSManager
 
 
@@ -25,6 +28,8 @@ class DifferenceExplainer:
     speciality_threshold: float
 
     lcs_manager: LCSManager
+
+    patch_manager: PatchManager
 
     def __init__(self,
                  problem: BenchmarkProblem,
@@ -57,6 +62,10 @@ class DifferenceExplainer:
                                       pRef=self.pRef,
                                       verbose=True)
         self.lcs_manager.load_from_existing_if_possible()
+
+        self.patch_manager = PatchManager(lcs_manager = self.lcs_manager,
+                                          search_space = self.problem.search_space, #
+                                          merge_limit=100)
 
         self.speciality_threshold = speciality_threshold
         self.verbose = verbose
@@ -194,9 +203,9 @@ class DifferenceExplainer:
         # print()
 
     def explain_difference(self, solution_a: EvaluatedFS, solution_b: EvaluatedFS):
-        print(f"Inspecting difference of solutions... "
-              f"A.fitness = {solution_a.fitness}, "
-              f"B.fitness = {solution_b.fitness}")
+        print(f"Inspecting difference of solutions... ")
+              # f"A.fitness = {solution_a.fitness}, "
+              # f"B.fitness = {solution_b.fitness}")
 
         self.lcs_manager.investigate_pair_if_necessary(solution_a, solution_b)
 
@@ -205,12 +214,12 @@ class DifferenceExplainer:
         if len(in_a) != 0:
             print("In solution A we have")
             for ps in in_a:
-                self.print_ps_and_descriptors(ps)
+                self.print_rule_and_descriptors(ps)
 
         if len(in_b) != 0:
             print("\nIn solutions B we have")
             for ps in in_b:
-                self.print_ps_and_descriptors(ps)
+                self.print_rule_and_descriptors(ps)
 
     def explain_solution(self, solution: EvaluatedFS, amount_to_check_against: int):
         to_compare_against = self.pRef_manager.get_most_similar_solutions_to(solution=solution,
@@ -285,7 +294,7 @@ class DifferenceExplainer:
             print()
 
         while True:
-            answer = input("Type a command from [s, v, vs, plotvar, global], or n to exit: ")
+            answer = input("Type a command from [s, diff, game], or n to exit: ")
             answer = answer.lower()
 
             def handle_answer() -> bool:
@@ -294,18 +303,16 @@ class DifferenceExplainer:
                     self.handle_solution_query(solutions, ps_show_limit)
                 elif answer in {"d", "diff"}:
                     self.handle_diff_query(solutions)
+                elif answer in {"game"}:
+                    self.handle_game_query(solutions)
+                elif answer in {"rules"}:
+                    self.handle_rules_query()
                 elif answer in {"v", "var", "variable"}:
                     self.handle_variable_query()
                 elif answer in {"vs", "variable in solution"}:
                     self.handle_variable_within_solution_query(solutions, ps_show_limit)
                 elif answer in {"pss", "ps", "partial solutions"}:
                     self.handle_pss_query()
-                elif answer in {"pv", "plotvar"}:
-                    self.handle_plotvar_query()
-                elif answer in {"g", "global"}:
-                    self.handle_global_query()
-                elif answer in {"d", "distributions"}:
-                    self.handle_distribution_query()
                 elif answer in {"n", "no", "exit", "q", "quit"}:
                     wants_to_continue = False
                 else:
@@ -328,6 +335,7 @@ class DifferenceExplainer:
 
         want_changes = input("Do you want the changes to be saved? ")
         if want_changes.upper() == "Y":
+            print("Saving changes")
             self.save_changes_and_quit()
         print("Bye Bye!")
 
@@ -342,11 +350,105 @@ class DifferenceExplainer:
                 for size in unique_sizes}
 
     def handle_pss_query(self):
-        raise NotImplemented
+        pss = self.pss
+        for ps in pss:
+            print(f"\t{ps}")
+
+
+    def handle_rules_query(self):
+        rules = get_rules_in_model(self.lcs_manager.model)
+        for rule in rules:
+            print(rule)
 
     def handle_distribution_query(self):
         print("PSs properties")
         self.problem.print_stats_of_pss(self.pss, self.pRef.get_top_n_solutions(50))
 
     def save_changes_and_quit(self):
+        self.lcs_manager.write_rules_to_files()
         self.descriptors_manager.write_to_files()
+
+    def handle_game_query(self, solutions: list[EvaluatedFS]):
+        index_of_solution_to_modify = int(input("Which solution to modify? "))
+        solution_to_modify = solutions[index_of_solution_to_modify]
+        quantity_of_variables_to_remove = int(input("How many variables to remove? "))
+
+        incomplete_solution = self.patch_manager.remove_random_subset_from_solution(solution_to_modify, quantity_of_variables_to_remove)
+
+        print(f"The original solution was  {solution_to_modify}")
+        print(f"The incomplete solution is {incomplete_solution}")
+
+
+        by_method = defaultdict(list)
+        methods = ["random", "P&M"]
+        attempts_per_method = 3
+
+        def complete_solution_via_method(method: str) -> EvaluatedFS:
+            solution = self.patch_manager.fix_solution(incomplete_solution, method)
+            fitness = self.problem.fitness_function(solution)
+            return EvaluatedFS(solution, fitness)
+
+        for method in methods:
+            new_pss = [complete_solution_via_method(method)
+                       for _ in range(attempts_per_method)]
+            by_method[method].extend(new_pss)  # it's surprising that this works for a default dict
+
+        all_finished_solutions = [solution
+                                  for method in methods
+                                  for solution in by_method[method]]
+
+        random.shuffle(all_finished_solutions)
+
+        print("The proposed solutions are: ")
+
+        for index, solution in enumerate(all_finished_solutions):
+            print(f"[{index}]\t{solution}")
+
+        print("Type d(x, y) to compare x and y, or j(x) for just x, c(x) to make your final choice")
+
+        while True:
+            user_input = input("Select your action: ")
+
+            if len(user_input) == 0:
+                continue
+
+            if user_input[0] == "d":
+                parsed = utils.parse_simple_input(format_string="d(X, X)", user_input=user_input, explain_error=True)
+                if parsed is None:
+                    continue
+                first_index, second_index = parsed
+                solution_a, solution_b = all_finished_solutions[first_index], all_finished_solutions[second_index]
+                self.explain_difference(solution_a, solution_b)
+            elif user_input[0] == "j":
+                parsed = utils.parse_simple_input(format_string="j(X)", user_input=user_input, explain_error=True)
+                if parsed is None:
+                    continue
+                solution = all_finished_solutions[parsed[0]]
+
+                self.explain_solution(solution, 12)
+            elif user_input[0] == "c":
+                parsed = utils.parse_simple_input(format_string="c(X)", user_input=user_input, explain_error=True)
+                if parsed is None:
+                    continue
+                selected_solution = all_finished_solutions[parsed[0]]
+
+                print("The results are:")
+                for method in by_method:
+                    print(f"{method = }")
+                    for solution in by_method[method]:
+                        index_in_list = all_finished_solutions.index(solution)
+                        print(f"\t[{index_in_list}] -> {solution}")
+                print("End of game")
+                break  # freedom at last
+            elif user_input in {"ls", "view"}:
+                for index, solution in enumerate(all_finished_solutions):
+                    print(f"[{index}]\t{solution}")
+            else:
+                print("The command was not recognised, please try again")
+
+
+
+
+
+
+
