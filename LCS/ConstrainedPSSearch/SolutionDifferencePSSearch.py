@@ -19,17 +19,22 @@ class LocalRestrictedPymooProblem(Problem):
     objectives_evaluator: GeneralPSEvaluator
     solution_to_explain: FullSolution
     must_include_mask: np.ndarray
+    search_for_negative_traits: bool
+
 
     amount_of_metrics_in_use = 3
 
     def __init__(self,
                  solution_to_explain: FullSolution,
                  must_include_mask: np.ndarray,
-                 objectives_evaluator: GeneralPSEvaluator):
+                 objectives_evaluator: GeneralPSEvaluator,
+                 search_for_negative_traits: bool = False):
         self.difference_variables = np.arange(len(must_include_mask))[must_include_mask]
         self.solution_to_explain = solution_to_explain
         self.objectives_evaluator = objectives_evaluator
+        self.search_for_negative_traits = search_for_negative_traits
         self.objectives_evaluator.set_solution(solution_to_explain)
+        self.objectives_evaluator.set_positive_or_negative(search_for_negative_traits)
 
         n_var = len(solution_to_explain.values)
         lower_bounds = np.full(shape=n_var, fill_value=0)  # the stars
@@ -82,6 +87,7 @@ def local_restricted_tm_ps_search(to_explain: FullSolution,
                                   ps_evaluator: GeneralPSEvaluator,
                                   ps_budget: int,
                                   population_size: int,
+                                  search_for_negative_traits: bool,
                                   verbose=True) -> list[PS]:
     problem = LocalRestrictedPymooProblem(solution_to_explain=to_explain,
                                           objectives_evaluator = ps_evaluator,

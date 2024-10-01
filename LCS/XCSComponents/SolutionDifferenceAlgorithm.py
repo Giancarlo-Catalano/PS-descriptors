@@ -22,6 +22,7 @@ class SolutionDifferenceAlgorithm(xcs.XCSAlgorithm):
     ps_evaluator: GeneralPSEvaluator  # to evaluate the linkage of a rule
     covering_search_budget: int
     covering_population_size: int
+    search_for_negative_traits: bool
     xcs_problem: GenericSolutionDifferenceScenario
 
     verbose: bool
@@ -32,6 +33,7 @@ class SolutionDifferenceAlgorithm(xcs.XCSAlgorithm):
                  xcs_problem: GenericSolutionDifferenceScenario,
                  covering_search_budget: int = 1000,
                  covering_population_size: int = 100,
+                 search_for_negative_traits: bool = False,
                  verbose: bool = False,
                  verbose_search: bool = False,
                  ):
@@ -39,6 +41,7 @@ class SolutionDifferenceAlgorithm(xcs.XCSAlgorithm):
         self.xcs_problem = xcs_problem
         self.covering_search_budget = covering_search_budget
         self.covering_population_size = covering_population_size
+        self.search_for_negative_traits = search_for_negative_traits
         self.verbose = verbose
         self.verbose_search = verbose_search
 
@@ -70,6 +73,7 @@ class SolutionDifferenceAlgorithm(xcs.XCSAlgorithm):
                                                 population_size=self.covering_population_size,
                                                 ps_evaluator=self.ps_evaluator,
                                                 ps_budget=self.covering_search_budget,
+                                                search_for_negative_traits = self.search_for_negative_traits,
                                                 verbose=self.verbose_search)
 
             linkage_threshold = self.ps_evaluator.local_linkage_metric.get_linkage_threshold()

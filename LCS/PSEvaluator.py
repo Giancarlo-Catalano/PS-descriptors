@@ -30,3 +30,7 @@ class GeneralPSEvaluator:
     def set_solution(self, solution: FullSolution):
         #self.linkage_metric.set_solution(solution)
         self.local_linkage_metric.set_solution(solution)
+
+
+    def set_positive_or_negative(self, search_for_negative_traits: bool):
+        self.fitness_p_value_metric.search_for_negative_traits = search_for_negative_traits

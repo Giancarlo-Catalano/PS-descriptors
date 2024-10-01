@@ -62,9 +62,11 @@ class SignificantlyHighAverage(Metric):
 
 class MannWhitneyU(Metric):
     pRef: Optional[PRef]
+    search_for_negative_traits: bool
 
     def __init__(self):
         self.pRef = None
+        self.search_for_negative_traits = False
 
         super().__init__()
 
@@ -75,19 +77,20 @@ class MannWhitneyU(Metric):
         test = mannwhitneyu(supposed_greater, supposed_lower, alternative="greater")
         return test.pvalue
 
-    def test_effect(self, ps: PS, supposed_beneficial: bool) -> float:
+    def test_effect(self, ps: PS) -> float:
         when_present, when_absent = self.pRef.fitnesses_of_observations_and_complement(ps)
         if len(when_present) < 2 or len(when_absent) < 2:
             return 1
 
-        if supposed_beneficial:
-            return self.get_p_value(supposed_greater=when_present, supposed_lower=when_absent)
-        else:
+        if self.search_for_negative_traits:
             return self.get_p_value(supposed_greater=when_absent, supposed_lower=when_present)
+        else:
+            return self.get_p_value(supposed_greater=when_present, supposed_lower=when_absent)
 
 
     def get_single_score(self, ps: PS) -> float:
         """This is not meant to be used but I might as well write this one line"""
         if ps.is_empty():
             return 1
-        return self.test_effect(ps, supposed_beneficial=True)
+        return self.test_effect(ps)
+

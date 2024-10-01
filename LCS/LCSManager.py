@@ -38,6 +38,7 @@ class LCSManager:
     rule_conditions_file: str
     rule_attributes_file: str
 
+    search_for_negative_traits: bool
     verbose: bool
 
     def __init__(self,
@@ -45,6 +46,7 @@ class LCSManager:
                  pRef: PRef,
                  rule_conditions_file: str,
                  rule_attributes_file: str,
+                 search_for_negative_traits: bool = False,
                  verbose: bool = False):
 
         self.optimisation_problem = optimisation_problem
@@ -57,6 +59,8 @@ class LCSManager:
 
         self.rule_conditions_file = rule_conditions_file
         self.rule_attributes_file = rule_attributes_file
+
+        self.search_for_negative_traits = search_for_negative_traits
 
         self.verbose = verbose
 
@@ -72,6 +76,7 @@ class LCSManager:
             covering_search_population=search_population,
             covering_search_budget=1000,
             training_cycles_per_solution=500,
+            search_for_negative_traits=self.search_for_negative_traits,
             verbose=self.verbose)
 
 
@@ -123,6 +128,7 @@ class LCSManager:
                                            covering_search_budget: int,
                                            covering_search_population: int,
                                            training_cycles_per_solution: int,
+                                           search_for_negative_traits: bool,
                                            verbose: bool = False):
         ps_evaluator = GeneralPSEvaluator(pRef)  # Evaluates Linkage and keeps track of PS evaluations used
 
@@ -140,6 +146,7 @@ class LCSManager:
                                                 covering_search_budget=covering_search_budget,
                                                 covering_population_size=covering_search_population,
                                                 verbose=verbose,
+                                                search_for_negative_traits = search_for_negative_traits,
                                                 verbose_search=False)
 
         LCSManager.set_settings_for_lcs_algorithm(algorithm)

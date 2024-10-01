@@ -1,7 +1,6 @@
 import os
 import random
 from collections import defaultdict
-from typing import Optional
 
 import numpy as np
 import xcs
@@ -10,9 +9,9 @@ import utils
 from BenchmarkProblems.BenchmarkProblem import BenchmarkProblem
 from Core.EvaluatedFS import EvaluatedFS
 from Core.PRef import PRef
-from Core.PS import PS, contains, STAR
+from Core.PS import PS, STAR
 from Explanation.PRefManager import PRefManager
-from LCS.Conversions import rule_to_ps, get_rules_in_model
+from LCS.Conversions import get_rules_in_model
 from LCS.DifferenceExplainer.DescriptorsManager import DescriptorsManager
 from LCS.DifferenceExplainer.PatchManager import PatchManager
 from LCS.LCSManager import LCSManager
@@ -27,19 +26,22 @@ class DifferenceExplainer:
     verbose: bool
     speciality_threshold: float
 
-    lcs_manager: LCSManager
+    positive_lcs_manager: LCSManager
+    negative_lcs_manager: LCSManager
 
     patch_manager: PatchManager
 
     def __init__(self,
                  problem: BenchmarkProblem,
                  pRef_file: str,
-                 control_ps_file: str,
+                 ps_files: (str, str, str),  # positive, control, negative
                  descriptors_file: str,
-                 condition_ps_file: str,
-                 rule_attribute_file: str,
+                 rule_attribute_files: (str, str),  # positive, negative
                  speciality_threshold: float,
                  verbose=False):
+        positive_ps_file, control_ps_file, negative_ps_file = ps_files
+        positive_rule_attribute_file, negative_rule_attribute_file = rule_attribute_files
+
         self.problem = problem
         self.pRef_manager = PRefManager(problem=problem,
                                         pRef_file=pRef_file,
@@ -56,16 +58,25 @@ class DifferenceExplainer:
 
         self.descriptors_manager.load_from_existing_if_possible()
 
-        self.lcs_manager = LCSManager(optimisation_problem=problem,
-                                      rule_conditions_file=condition_ps_file,
-                                      rule_attributes_file=rule_attribute_file,
-                                      pRef=self.pRef,
-                                      verbose=True)
-        self.lcs_manager.load_from_existing_if_possible()
+        self.positive_lcs_manager = LCSManager(optimisation_problem=problem,
+                                               rule_conditions_file=positive_ps_file,
+                                               rule_attributes_file=positive_rule_attribute_file,
+                                               pRef=self.pRef,
+                                               search_for_negative_traits=False,
+                                               verbose=True)
+        self.positive_lcs_manager.load_from_existing_if_possible()
 
-        self.patch_manager = PatchManager(lcs_manager = self.lcs_manager,
-                                          search_space = self.problem.search_space, #
-                                          merge_limit=100)
+        self.negative_lcs_manager = LCSManager(optimisation_problem=problem,
+                                               rule_conditions_file=negative_ps_file,
+                                               rule_attributes_file=negative_rule_attribute_file,
+                                               pRef=self.pRef,
+                                               search_for_negative_traits=True,
+                                               verbose=True)
+        self.negative_lcs_manager.load_from_existing_if_possible()
+
+        self.patch_manager = PatchManager(lcs_manager=self.positive_lcs_manager,
+                                          search_space=self.problem.search_space,  #
+                                          merge_limit=100)  # TODO parametrise
 
         self.speciality_threshold = speciality_threshold
         self.verbose = verbose
@@ -77,24 +88,45 @@ class DifferenceExplainer:
                     speciality_threshold=0.1,
                     verbose=False):
         pRef_file = os.path.join(folder, "pRef.npz")
-        ps_file = os.path.join(folder, "mined_ps.npz")
+        positive_ps_file = os.path.join(folder, "positive_ps.npz")
+        negative_ps_file = os.path.join(folder, "negative_ps.npz")
         control_ps_file = os.path.join(folder, "control_ps.npz")
         descriptors_file = os.path.join(folder, "descriptors.csv")
-        rule_attribute_file = os.path.join(folder, "rule_attributes.csv")
+        positive_rule_attribute_file = os.path.join(folder, "positive_rule_attributes.csv")
+        negative_rule_attribute_file = os.path.join(folder, "negative_rule_attributes.csv")
 
         return cls(
             problem=problem,
             pRef_file=pRef_file,
-            control_ps_file=control_ps_file,
+            ps_files=(positive_ps_file, control_ps_file, negative_ps_file),
             descriptors_file=descriptors_file,
-            condition_ps_file=ps_file,
-            rule_attribute_file=rule_attribute_file,
+            rule_attribute_files=(positive_rule_attribute_file, negative_rule_attribute_file),
             speciality_threshold=speciality_threshold,
             verbose=verbose)
 
     @property
-    def pss(self) -> list[PS]:
-        return self.lcs_manager.get_pss_from_model()
+    def positive_pss(self) -> list[PS]:
+        return self.positive_lcs_manager.get_pss_from_model()
+
+    @property
+    def positive_rules(self) -> list[xcs.XCSClassifierRule]:
+        return get_rules_in_model(self.positive_lcs_manager.model)
+
+    @property
+    def negative_pss(self) -> list[PS]:
+        return self.negative_lcs_manager.get_pss_from_model()
+
+    @property
+    def negative_rules(self) -> list[xcs.XCSClassifierRule]:
+        return get_rules_in_model(self.negative_lcs_manager.model)
+
+    @property
+    def all_pss(self) -> list[PS]:
+        return self.positive_pss + self.negative_pss
+
+    @property
+    def all_rules(self) -> list[xcs.XCSClassifierRule]:
+        return self.positive_rules + self.negative_rules
 
     @property
     def pRef(self) -> PRef:
@@ -139,40 +171,10 @@ class DifferenceExplainer:
                                        self.get_fitness_delta_string(ps),
                                        self.get_descriptors_string(ps)]))
 
-    @staticmethod
-    def only_non_obscured_pss(pss: list[PS]) -> list[PS]:
-        def obscures(ps_a: PS, ps_b: PS):
-            a_fixed_pos = set(ps_a.get_fixed_variable_positions())
-            b_fixed_pos = set(ps_b.get_fixed_variable_positions())
-            if a_fixed_pos == b_fixed_pos:
-                return False
-            return b_fixed_pos.issubset(a_fixed_pos)
-
-        def get_those_that_are_not_obscured_by(ps_list: PS, candidates: set[PS]) -> set[PS]:
-            return {candidate for candidate in candidates if not obscures(ps_list, candidate)}
-
-        current_candidates = set(pss)
-
-        for ps in pss:
-            current_candidates = get_those_that_are_not_obscured_by(ps, current_candidates)
-
-        return list(current_candidates)
-
-    def get_contained_ps(self, solution: EvaluatedFS, must_contain: Optional[int] = None) -> list[PS]:
-        contained = [ps
-                     for ps in self.pss
-                     if contains(solution, ps)]
-
-        if must_contain is not None:
-            contained = [ps for ps in contained
-                         if ps[must_contain] != STAR]
-
-        return contained
-
     def get_difference_rules(self, solution_a: EvaluatedFS, solution_b: EvaluatedFS) -> (list[PS], list[PS]):
         in_a = []
         in_b = []
-        for rule in self.lcs_manager.get_rules_in_model():
+        for rule in self.all_rules:
             if rule.condition(solution_a):
                 if not rule.condition(solution_b):
                     in_a.append(rule)
@@ -195,19 +197,19 @@ class DifferenceExplainer:
         print(utils.indent(self.get_ps_description(ps)))
         # print()
 
-
     def print_rule_and_descriptors(self, rule: xcs.XCSClassifierRule):
         print(self.problem.repr_ps(rule.condition))
-        print(f"Accuracy = {int(rule.fitness*100)}%, average error = {rule.error:.2f}, age = {rule.experience}")
+        print(f"Accuracy = {int(rule.fitness * 100)}%, average error = {rule.error:.2f}, age = {rule.experience}")
         print(utils.indent(self.get_ps_description(rule.condition)))
         # print()
 
     def explain_difference(self, solution_a: EvaluatedFS, solution_b: EvaluatedFS):
         print(f"Inspecting difference of solutions... ")
-              # f"A.fitness = {solution_a.fitness}, "
-              # f"B.fitness = {solution_b.fitness}")
+        # f"A.fitness = {solution_a.fitness}, "
+        # f"B.fitness = {solution_b.fitness}")
 
-        self.lcs_manager.investigate_pair_if_necessary(solution_a, solution_b)
+        self.positive_lcs_manager.investigate_pair_if_necessary(solution_a, solution_b)
+        self.negative_lcs_manager.investigate_pair_if_necessary(solution_a, solution_b)
 
         in_a, in_b = self.get_difference_rules(solution_a, solution_b)
 
@@ -225,9 +227,10 @@ class DifferenceExplainer:
         to_compare_against = self.pRef_manager.get_most_similar_solutions_to(solution=solution,
                                                                              amount_to_return=amount_to_check_against)
         for other_solution in to_compare_against:
-            self.lcs_manager.investigate_pair_if_necessary(solution, other_solution)
+            self.positive_lcs_manager.investigate_pair_if_necessary(solution, other_solution)
+            self.negative_lcs_manager.investigate_pair_if_necessary(solution, other_solution)
 
-        rules_in_solution = [rule for rule in self.lcs_manager.get_matches_with_solution(solution)]
+        rules_in_solution = [rule for rule in self.positive_lcs_manager.get_matches_with_solution(solution)]
 
         if len(rules_in_solution) == 0:
             print("No patterns were found in the solution")
@@ -305,6 +308,9 @@ class DifferenceExplainer:
                     self.handle_diff_query(solutions)
                 elif answer in {"game"}:
                     self.handle_game_query(solutions)
+                elif answer in {"toggle-search-verbose", "toggle-verbose-search"}:
+                    self.positive_lcs_manager.algorithm.verbose_search = not self.positive_lcs_manager.algorithm.verbose_search
+                    print(f"verbose search was set to {self.positive_lcs_manager.algorithm.verbose_search}")
                 elif answer in {"rules"}:
                     self.handle_rules_query()
                 elif answer in {"v", "var", "variable"}:
@@ -340,7 +346,7 @@ class DifferenceExplainer:
         print("Bye Bye!")
 
     def get_ps_size_distribution(self):
-        sizes = [ps.fixed_count() for ps in self.pss]
+        sizes = [ps.fixed_count() for ps in self.positive_pss]
         unique_sizes = sorted(list(set(sizes)))
 
         def proportion_for_size(target_size: int) -> float:
@@ -350,22 +356,21 @@ class DifferenceExplainer:
                 for size in unique_sizes}
 
     def handle_pss_query(self):
-        pss = self.pss
+        pss = self.positive_pss
         for ps in pss:
             print(f"\t{ps}")
 
-
     def handle_rules_query(self):
-        rules = get_rules_in_model(self.lcs_manager.model)
+        rules = get_rules_in_model(self.positive_lcs_manager.model)
         for rule in rules:
             print(rule)
 
     def handle_distribution_query(self):
         print("PSs properties")
-        self.problem.print_stats_of_pss(self.pss, self.pRef.get_top_n_solutions(50))
+        self.problem.print_stats_of_pss(self.positive_pss, self.pRef.get_top_n_solutions(50))
 
     def save_changes_and_quit(self):
-        self.lcs_manager.write_rules_to_files()
+        self.positive_lcs_manager.write_rules_to_files()
         self.descriptors_manager.write_to_files()
 
     def handle_game_query(self, solutions: list[EvaluatedFS]):
@@ -373,11 +378,11 @@ class DifferenceExplainer:
         solution_to_modify = solutions[index_of_solution_to_modify]
         quantity_of_variables_to_remove = int(input("How many variables to remove? "))
 
-        incomplete_solution = self.patch_manager.remove_random_subset_from_solution(solution_to_modify, quantity_of_variables_to_remove)
+        incomplete_solution = self.patch_manager.remove_random_subset_from_solution(solution_to_modify,
+                                                                                    quantity_of_variables_to_remove)
 
         print(f"The original solution was  {solution_to_modify}")
         print(f"The incomplete solution is {incomplete_solution}")
-
 
         by_method = defaultdict(list)
         methods = ["random", "P&M"]
@@ -445,10 +450,3 @@ class DifferenceExplainer:
                     print(f"[{index}]\t{solution}")
             else:
                 print("The command was not recognised, please try again")
-
-
-
-
-
-
-
