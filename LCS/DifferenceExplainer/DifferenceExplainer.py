@@ -15,6 +15,7 @@ from LCS.Conversions import get_rules_in_model
 from LCS.DifferenceExplainer.DescriptorsManager import DescriptorsManager
 from LCS.DifferenceExplainer.PatchManager import PatchManager
 from LCS.LCSManager import LCSManager
+from LCS.PSEvaluator import GeneralPSEvaluator
 
 
 class DifferenceExplainer:
@@ -25,6 +26,8 @@ class DifferenceExplainer:
 
     verbose: bool
     speciality_threshold: float
+
+    ps_evaluator: GeneralPSEvaluator
 
     positive_lcs_manager: LCSManager
     negative_lcs_manager: LCSManager
@@ -58,7 +61,10 @@ class DifferenceExplainer:
 
         self.descriptors_manager.load_from_existing_if_possible()
 
+        self.ps_evaluator = GeneralPSEvaluator(self.pRef_manager.pRef)
+
         self.positive_lcs_manager = LCSManager(optimisation_problem=problem,
+                                               ps_evaluator=self.ps_evaluator,
                                                rule_conditions_file=positive_ps_file,
                                                rule_attributes_file=positive_rule_attribute_file,
                                                pRef=self.pRef,
@@ -67,6 +73,7 @@ class DifferenceExplainer:
         self.positive_lcs_manager.load_from_existing_if_possible()
 
         self.negative_lcs_manager = LCSManager(optimisation_problem=problem,
+                                               ps_evaluator=self.ps_evaluator,
                                                rule_conditions_file=negative_ps_file,
                                                rule_attributes_file=negative_rule_attribute_file,
                                                pRef=self.pRef,
@@ -75,7 +82,7 @@ class DifferenceExplainer:
         self.negative_lcs_manager.load_from_existing_if_possible()
 
         self.patch_manager = PatchManager(lcs_manager=self.positive_lcs_manager,
-                                          search_space=self.problem.search_space,  #
+                                          search_space=self.problem.search_space,
                                           merge_limit=100)  # TODO parametrise
 
         self.speciality_threshold = speciality_threshold

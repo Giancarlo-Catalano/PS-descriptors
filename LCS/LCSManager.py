@@ -44,6 +44,7 @@ class LCSManager:
     def __init__(self,
                  optimisation_problem: BenchmarkProblem,
                  pRef: PRef,
+                 ps_evaluator: GeneralPSEvaluator,
                  rule_conditions_file: str,
                  rule_attributes_file: str,
                  search_for_negative_traits: bool = False,
@@ -51,7 +52,7 @@ class LCSManager:
 
         self.optimisation_problem = optimisation_problem
         self.pRef = pRef
-        self.ps_evaluator = None
+        self.ps_evaluator = ps_evaluator
         self.lcs_environment = None
         self.lcs_scenario = None
         self.algorithm = None
@@ -70,7 +71,8 @@ class LCSManager:
 
         search_population = min(50, sum(self.optimisation_problem.search_space.cardinalities))
 
-        self.ps_evaluator, self.lcs_environment, self.lcs_scenario, self.algorithm, self.model = self.get_objects_when_rules_are_unknown(
+        self.lcs_environment, self.lcs_scenario, self.algorithm, self.model = self.get_objects_when_rules_are_unknown(
+            ps_evaluator=self.ps_evaluator,
             optimisation_problem=self.optimisation_problem,
             pRef=self.pRef,
             covering_search_population=search_population,
@@ -124,13 +126,13 @@ class LCSManager:
     @classmethod
     def get_objects_when_rules_are_unknown(cls,
                                            optimisation_problem: BenchmarkProblem,
+                                           ps_evaluator: GeneralPSEvaluator,
                                            pRef: PRef,
                                            covering_search_budget: int,
                                            covering_search_population: int,
                                            training_cycles_per_solution: int,
                                            search_for_negative_traits: bool,
                                            verbose: bool = False):
-        ps_evaluator = GeneralPSEvaluator(pRef)  # Evaluates Linkage and keeps track of PS evaluations used
 
         lcs_environment = OneAtATimeSolutionDifferenceScenario(original_problem=optimisation_problem,
                                                                pRef=pRef,  # where it gets the solutions from
@@ -155,7 +157,7 @@ class LCSManager:
         model = algorithm.new_model(scenario)
         model.verbose = verbose
 
-        return ps_evaluator, lcs_environment, scenario, algorithm, model
+        return lcs_environment, scenario, algorithm, model
 
     @classmethod
     def get_rules_from_file(cls,
@@ -321,6 +323,7 @@ class LCSManager:
         # if self.verbose:
         #     print(f"Comparing {winner} and {loser}")
         match_set = self.model.match(situation=(winner, loser))  # forces to cover if necessary
+
         self.model.use_match_set_for_learning(match_set)
 
     # currently unused

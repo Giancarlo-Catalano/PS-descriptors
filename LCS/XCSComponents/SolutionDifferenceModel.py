@@ -10,14 +10,17 @@ from LCS.Conversions import rules_to_population
 class SolutionDifferenceModel(ClassifierSet):
     verbose: bool
     allow_ga_reproduction: bool
+    want_negative_traits: bool
 
     def __init__(self,
                  algorithm,
+                 want_negative_traits: bool,
                  possible_actions=(True, False),
                  allow_ga_reproduction: bool = True,
                  verbose=False
                  ):
         self.allow_ga_reproduction = allow_ga_reproduction
+        self.want_negative_traits = want_negative_traits
         super().__init__(algorithm, possible_actions)
         self.verbose = verbose
 
@@ -97,7 +100,7 @@ class SolutionDifferenceModel(ClassifierSet):
             rules: list = self._algorithm.cover_with_many(match_set, only_return_biggest=True)  # MODIFIED
 
             # Ensure that the condition provided by the algorithm does indeed match the situation.
-            assert (all(rule.condition(winner.values) for rule in rules))
+            assert (all(rule.condition(situation) for rule in rules))
 
             return self.add_rules_to_model_and_update_match_set_after_covering(old_match_set=match_set,
                                                                                by_action=by_action,
@@ -107,15 +110,21 @@ class SolutionDifferenceModel(ClassifierSet):
         return match_set
 
 
-    def apply_payoff_to_match_set(self, match_set: MatchSet):
-        self._algorithm.apply_payoff_to_match_set(action_set=match_set[True], payoff=1)
-        self._algorithm.apply_payoff_to_match_set(action_set=match_set[False], payoff=0)
+    def get_correct_set(self, match_set: MatchSet):
+        return match_set[not self.want_negative_traits]
 
+    def get_incorrect_set(self, match_set: MatchSet):
+        return match_set[self.want_negative_traits]
+
+
+    def apply_payoff_to_match_set(self, match_set: MatchSet):
+        self._algorithm.apply_payoff_to_match_set(action_set=self.get_correct_set(match_set), payoff=1)
+        self._algorithm.apply_payoff_to_match_set(action_set=self.get_incorrect_set(match_set), payoff=0)
 
     def use_match_set_for_learning(self, match_set: MatchSet):
         self.apply_payoff_to_match_set(match_set)
         if self._algorithm.allow_ga_reproduction:
-            self._algorithm.introduce_rules_via_reproduction(action_set=match_set[True])
+            self._algorithm.introduce_rules_via_reproduction(action_set=self.get_correct_set(match_set))
 
     def run(self, scenario: ScenarioObserver, learn=True):
         """ Had to modify this since the match set is strange"""

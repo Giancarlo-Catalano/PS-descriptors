@@ -67,7 +67,7 @@ class SolutionDifferenceAlgorithm(xcs.XCSAlgorithm):
 
         # search for the appropriate patterns using NSGAII (using Pymoo)
         with utils.announce("Mining the PSs...\n", self.verbose_search):
-            pss = local_restricted_tm_ps_search(to_explain=winner,
+            pss = local_restricted_tm_ps_search(to_explain=loser if self.search_for_negative_traits else winner,
                                                 pss_to_avoid=[],
                                                 must_include_mask=difference_mask,
                                                 population_size=self.covering_population_size,
@@ -103,7 +103,7 @@ class SolutionDifferenceAlgorithm(xcs.XCSAlgorithm):
     def new_model(self, scenario):
         # modified because it needs to return an instance of CustomXCSClassifier
         assert isinstance(scenario, scenarios.Scenario)
-        return SolutionDifferenceModel(self, scenario.get_possible_actions())
+        return SolutionDifferenceModel(algorithm = self, want_negative_traits = self.search_for_negative_traits)
 
     def traditional_subsumption(self,
                                 action_set):  # this is identical to the original in XCSAlgorithm, but with some more printing

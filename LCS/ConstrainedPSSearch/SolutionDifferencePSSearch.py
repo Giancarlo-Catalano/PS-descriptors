@@ -91,7 +91,8 @@ def local_restricted_tm_ps_search(to_explain: FullSolution,
                                   verbose=True) -> list[PS]:
     problem = LocalRestrictedPymooProblem(solution_to_explain=to_explain,
                                           objectives_evaluator = ps_evaluator,
-                                          must_include_mask = must_include_mask)
+                                          must_include_mask = must_include_mask,
+                                          search_for_negative_traits=search_for_negative_traits)
 
     algorithm = NSGA2(pop_size=population_size,
                       sampling=LocalPSGeometricSampling(),
