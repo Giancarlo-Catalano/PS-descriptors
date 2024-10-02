@@ -313,6 +313,11 @@ class DifferenceExplainer:
                     self.handle_solution_query(solutions, ps_show_limit)
                 elif answer in {"d", "diff"}:
                     self.handle_diff_query(solutions)
+                elif len(answer) > 0 and answer[0] == "d":
+                    parsed = utils.parse_simple_input(user_input=answer, format_string="d(X,X)")
+                    if parsed is not None:
+                        first_index, second_index = parsed
+                        self.explain_difference(solutions[first_index], solutions[second_index])
                 elif answer in {"game"}:
                     self.handle_game_query(solutions)
                 elif answer in {"toggle-search-verbose", "toggle-verbose-search"}:
