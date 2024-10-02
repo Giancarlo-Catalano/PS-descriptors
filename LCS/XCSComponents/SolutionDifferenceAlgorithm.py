@@ -388,7 +388,8 @@ class SolutionDifferenceAlgorithm(xcs.XCSAlgorithm):
     def covering_is_required(self, match_set):
         # Modification of XCSAlgorithm.covering_is_required
 
-        amount_in_correct_action_set = len(match_set[True]._rules)  # I am really getting annoyed at this library...
+        correct_set = match_set[not self.search_for_negative_traits]
+        amount_in_correct_action_set = len(correct_set._rules)  # I am really getting annoyed at this library...
 
         if self.minimum_actions is None:
             return amount_in_correct_action_set < 1

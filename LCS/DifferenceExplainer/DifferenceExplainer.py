@@ -253,8 +253,8 @@ class DifferenceExplainer:
         # f"A.fitness = {solution_a.fitness}, "
         # f"B.fitness = {solution_b.fitness}")
 
-        for lcs_manager in self.get_lcs_managers_in_use:
-            lcs_manager.investigate_pair_if_necessary(solution_a, solution_b)
+
+        self.ensure_pair_is_examined(solution_a, solution_b)
 
         in_a, in_b = self.get_difference_rules(solution_a, solution_b)
 
@@ -417,16 +417,6 @@ class DifferenceExplainer:
             self.save_changes_and_quit()
         print("Bye Bye!")
 
-    def get_ps_size_distribution(self):
-        sizes = [ps.fixed_count() for ps in self.positive_pss]
-        unique_sizes = sorted(list(set(sizes)))
-
-        def proportion_for_size(target_size: int) -> float:
-            return len([1 for item in sizes if item == target_size]) / len(sizes)
-
-        return {size: proportion_for_size(size)
-                for size in unique_sizes}
-
     def handle_pss_query(self):
         for ps in self.all_pss:
             print(f"\t{ps}")
@@ -434,10 +424,6 @@ class DifferenceExplainer:
     def handle_rules_query(self):
         for rule in self.all_rules:
             print(rule)
-
-    def handle_distribution_query(self):
-        print("PSs properties")
-        self.problem.print_stats_of_pss(self.positive_pss, self.pRef.get_top_n_solutions(50))
 
     def save_changes_and_quit(self):
         self.positive_lcs_manager.write_rules_to_files()
@@ -619,6 +605,7 @@ class DifferenceExplainer:
                     if sol_a == sol_b:
                         continue
                     self.ensure_pair_is_examined(sol_a, sol_b)
+                    self.explain_difference(sol_a, sol_b)
             else:
                 print("The command was not recognised, please try again")
 
@@ -626,7 +613,7 @@ class DifferenceExplainer:
         print("Entering experiment mode...")
         solution_to_modify = self.pRef.get_top_n_solutions(1)[0]
 
-        experiment_seeds = [6, 12]
+        experiment_seeds = [6]
 
         for seed in experiment_seeds:
             self.carry_out_experiment(seed=seed,
