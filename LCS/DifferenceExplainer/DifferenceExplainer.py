@@ -550,6 +550,7 @@ class DifferenceExplainer:
 
         def finish_game(selected_option: int):
             positions = ["1st", "2nd", "3rd"] + [f"{n}th" for n in range(4, 10)]
+            best_fitness = max(alternative.fitness for alternative in alternatives)
 
             alternatives_with_index = list(enumerate(alternatives))
             alternatives_with_index.sort(key=utils.second, reverse=True)
@@ -564,7 +565,7 @@ class DifferenceExplainer:
 
             your_position = alternatives_with_index_and_position[selected_option-1][2]
             print(f"Your option was the {positions[your_position]}")
-            if your_position == 0:
+            if alternatives_with_index_and_position[selected_option-1][0].fitness == best_fitness:
                 print("Congrats!")
 
         print("The original solution is not usable, and your job is to find a suitable replacement")

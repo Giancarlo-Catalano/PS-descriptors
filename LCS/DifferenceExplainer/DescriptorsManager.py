@@ -53,7 +53,7 @@ class DescriptorsManager:
 
             if self.verbose:
                 print(f"Since no descriptor files were found, the model will be initialised as empty")
-                self.start_from_scratch()
+            self.start_from_scratch()
             # otherwise nothing needs to happen, the class initialised in a valid empty state
 
     @property
@@ -67,7 +67,10 @@ class DescriptorsManager:
         self.control_pss = load_pss(self.control_pss_file)
         self.control_descriptors_table = pd.read_csv(self.control_descriptors_table_file)
 
-        self.sizes_for_which_control_has_been_generated = set(self.control_descriptors_table["size"].unique())
+        if "size" in self.control_descriptors_table.columns:  # in the cases where the table file was created but the table was still empty.
+            self.sizes_for_which_control_has_been_generated = set(self.control_descriptors_table["size"].unique())
+        else:
+            self.sizes_for_which_control_has_been_generated = set()
 
     def get_descriptors_of_ps(self, ps: PS) -> dict[str, float]:
         result = self.optimisation_problem.get_descriptors_of_ps(ps)
