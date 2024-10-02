@@ -326,99 +326,9 @@ class LCSManager:
 
         self.model.use_match_set_for_learning(match_set)
 
-    # currently unused
-    @classmethod
-    def from_problem(cls,
-                     optimisation_problem: BenchmarkProblem,
-                     resolution_method: str,
-                     pRef_size: int,
-                     covering_search_budget: int,
-                     covering_search_population: int,
-                     training_cycles_per_solution: int,
-                     flip_fitness: bool = False,
-                     verbose: bool = False):
-        # generate the reference population
-
-        with announce(f"Generating the reference population using {resolution_method} of size {pRef_size}", verbose):
-            pRef = PRefManager.generate_pRef(problem=optimisation_problem,
-                                             sample_size=pRef_size,  # these are the Solution evaluations
-                                             which_algorithm="uniform " + resolution_method,
-                                             verbose=verbose)
-
-        pRef = PRef.unique(pRef)
-
-        if flip_fitness:
-            pRef.fitness_array *= -1
-
-        if verbose:
-            print(f"After pruning the pRef, {pRef.sample_size} solutions are left")
-
-        return cls.from_problem_and_pRef(optimisation_problem=optimisation_problem,
-                                         covering_search_budget=covering_search_budget,
-                                         covering_search_population=covering_search_population,
-                                         pRef=pRef,
-                                         training_cycles_per_solution=training_cycles_per_solution)
-
-    # currently unused
-    @classmethod
-    def from_problem_and_rules(cls,
-                               optimisation_problem: BenchmarkProblem,
-                               pRef: PRef,
-                               rules: list[xcs.XCSClassifierRule],
-                               training_cycles_per_solution: int,
-                               covering_search_budget: int,
-                               covering_population_size: int,
-                               verbose: bool = False):
-        ps_evaluator = GeneralPSEvaluator(pRef)
-        lcs_environment = OneAtATimeSolutionDifferenceScenario(original_problem=optimisation_problem,
-                                                               pRef=pRef,  # where it gets the solutions from
-                                                               training_cycles=training_cycles_per_solution,
-                                                               # how many solutions to show (might repeat)
-                                                               verbose=verbose)
-        lcs_scenario = ScenarioObserver(lcs_environment)
-        algorithm = SolutionDifferenceAlgorithm(ps_evaluator=ps_evaluator,
-                                                xcs_problem=lcs_environment,
-                                                covering_search_budget=covering_search_budget,
-                                                covering_population_size=covering_population_size,
-                                                verbose=verbose,
-                                                verbose_search=verbose)
-
-        LCSManager.set_settings_for_lcs_algorithm(algorithm)
-
-        # This should be a solutionDifferenceModel
-        model = algorithm.new_model_from_rules(lcs_scenario, rules)
-        model.verbose = verbose
-
-        return cls(optimisation_problem=optimisation_problem,
-                   pRef=pRef,
-                   ps_evaluator=ps_evaluator,
-                   lcs_environment=lcs_environment,
-                   lcs_scenario=lcs_scenario,
-                   algorithm=algorithm,
-                   model=model)
-
     def get_matches_with_partial_solution(self, partial_solution: PS) -> list[xcs.XCSClassifierRule]:
         return [rule
                 for rule in self.get_rules_in_model()
                 if rule.condition.matches_partial_solution(partial_solution)]
 
 
-def test_human_in_the_loop_explainer():
-    print("I am running")
-    # optimisation_problem = RoyalRoad(4, 4)
-    # optimisation_problem = Trapk(4, 5)
-    optimisation_problem = EfficientBTProblem.from_default_files()
-    covering_search_population = min(50, optimisation_problem.search_space.amount_of_parameters)
-    amount_of_generations = 30
-    explainer = LCSManager.from_problem(optimisation_problem=optimisation_problem,
-                                        covering_search_budget=covering_search_population * amount_of_generations,
-                                        covering_search_population=covering_search_population,
-                                        pRef_size=10000,
-                                        training_cycles_per_solution=100,
-                                        resolution_method="GA",
-                                        verbose=False)
-
-    # explainer.explain_best_solution()
-    explainer.explain_top_n_solutions(12)
-
-# test_human_in_the_loop_explainer()
