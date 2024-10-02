@@ -271,12 +271,16 @@ class DifferenceExplainer:
         return [rule for lcs_manager in self.get_lcs_managers_in_use
                 for rule in lcs_manager.get_matches_with_solution(solution)]
 
+
+    def ensure_solution_is_compared_against(self, solution: EvaluatedFS, others: list[EvaluatedFS]):
+        for other_solution in others:
+            for lcs_manager in self.get_lcs_managers_in_use:
+                lcs_manager.investigate_pair_if_necessary(solution, other_solution)
+
     def explain_solution(self, solution: EvaluatedFS, amount_to_check_against: int):
         to_compare_against = self.pRef_manager.get_most_similar_solutions_to(solution=solution,
                                                                              amount_to_return=amount_to_check_against)
-        for other_solution in to_compare_against:
-            for lcs_manager in self.get_lcs_managers_in_use:
-                lcs_manager.investigate_pair_if_necessary(solution, other_solution)
+        self.ensure_solution_is_compared_against(solution, to_compare_against)
 
         rules_in_solution = self.get_known_rules_in_solution(solution)
 
@@ -361,7 +365,10 @@ class DifferenceExplainer:
                         self.explain_difference(solutions[first_index], solutions[second_index])
                 elif answer in {"game"}:
                     self.handle_game_query(solutions)
-                elif answer in {"toggle-search-verbose", "toggle-verbose-search", "toggle_search_verbose", "toggle_verbose_search"}:
+                elif answer in {"experiment"}:
+                    self.replicable_experiments()
+                elif answer in {"toggle-search-verbose", "toggle-verbose-search", "toggle_search_verbose",
+                                "toggle_verbose_search"}:
                     for lcs_manager in self.get_lcs_managers_in_use:
                         lcs_manager.algorithm.toggle_verbose_search()
                     print(f"Verbose search was set to {self.positive_lcs_manager.algorithm.verbose_search}")
@@ -508,3 +515,107 @@ class DifferenceExplainer:
                     print(f"[{index}]\t{solution}")
             else:
                 print("The command was not recognised, please try again")
+
+
+    def carry_out_experiment(self, seed: int,
+                             amount_of_variables_to_remove: int,
+                             solution_to_modify: EvaluatedFS,
+                             alternatives_to_produce: int):
+        random.seed(seed)
+        incomplete_solution = self.patch_manager.remove_random_subset_from_solution(
+            solution=solution_to_modify,
+            amount_to_remove=amount_of_variables_to_remove)
+
+
+        alternatives = [self.patch_manager.fix_solution(incomplete_solution, method="random")
+                            for i in range(alternatives_to_produce)]
+        alternatives = [EvaluatedFS(solution, self.problem.fitness_function(solution))
+                            for solution in alternatives]
+
+        all_selectable_solutions = [solution_to_modify] + alternatives
+
+        def show_all_solutions():
+            print(f"The original solution is:")
+            print(f"\t[0]\t{solution_to_modify.as_full_solution()}")
+            print("The other solutions are:")
+            for index, alternative in enumerate(alternatives):
+                print(f"\t[{index + 1}]\t{alternative.as_full_solution()}")
+
+
+        def finish_game(selected_option: int):
+            positions = ["1st", "2nd", "3rd"] + [f"{n}th" for n in range(4, 10)]
+
+            alternatives_with_index = list(enumerate(alternatives))
+            alternatives_with_index.sort(key=utils.second, reverse=True)
+            alternatives_with_index_and_position = [(alternative, original_index+1, position)
+                                                    for (position, (original_index, alternative)) in alternatives_with_index]
+
+            alternatives_with_index_and_position.sort(key=utils.second)
+
+            for alternative, shown_index, position in alternatives_with_index_and_position:
+                print(f"[{shown_index}]->{positions[position]}"
+                      f"\t{alternative}, {'(your choice)' if shown_index == selected_option else ''}")
+
+            your_position = alternatives_with_index_and_position[selected_option][2]
+            print(f"Your option was the {positions[your_position]}")
+            if your_position == 0:
+                print("Congrats!")
+
+        print("The original solution is not usable, and your job is to find a suitable replacement")
+        print(
+            f"You will be shown {alternatives_to_produce} alternatives, and you should select the one with the highest fitness")
+        show_all_solutions()
+
+        print(f"You can type the following commands:"
+              f"\n\td(X, Y) to view the explanation of the difference between solution X and Y"
+              f"\n\tj(X) to view the patterns in solution X"
+              f"\n\tc(X) to make your choice"
+              f"\n\tview to view all the solutions again")
+
+        while True:
+            user_input = input("Select your action: ")
+
+            if len(user_input) == 0:
+                continue
+
+            if user_input[0] == "d":
+                parsed = utils.parse_simple_input(format_string="d(X, X)", user_input=user_input,
+                                                  explain_error=True)
+                if parsed is None:
+                    continue
+                self.explain_difference(all_selectable_solutions[parsed[0]], all_selectable_solutions[parsed[1]])
+            elif user_input[0] == "j":
+                parsed = utils.parse_simple_input(format_string="j(X)", user_input=user_input, explain_error=True)
+                if parsed is None:
+                    continue
+                solution = all_selectable_solutions[parsed[0]]
+
+                self.ensure_solution_is_compared_against(solution, alternatives)
+                self.explain_solution(solution, 0)  # don't check against similar ones
+            elif user_input[0] == "c":
+                parsed = utils.parse_simple_input(format_string="c(X)", user_input=user_input, explain_error=True)
+                if parsed is None:
+                    continue
+
+                if parsed[0] == 0 or parsed[0] >= len(all_selectable_solutions):
+                    print("Please select a valid option")
+                    continue
+
+                finish_game(parsed[0])
+                break  # freedom at last
+            elif user_input in {"ls", "view"}:
+                show_all_solutions()
+            else:
+                print("The command was not recognised, please try again")
+
+    def replicable_experiments(self):
+        print("Entering experiment mode...")
+        solution_to_modify = self.pRef.get_top_n_solutions(1)[0]
+
+        experiment_seeds = [6, 12]
+
+        for seed in experiment_seeds:
+            self.carry_out_experiment(seed=seed,
+                                      alternatives_to_produce=5,
+                                      solution_to_modify=solution_to_modify,
+                                      amount_of_variables_to_remove=6)

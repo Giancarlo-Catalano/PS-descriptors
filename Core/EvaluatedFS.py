@@ -5,10 +5,7 @@ from Core.FullSolution import FullSolution
 
 @functools.total_ordering
 class EvaluatedFS(FullSolution):
-
-    full_solution: FullSolution
     fitness: float
-
 
     def __init__(self,
                  full_solution: FullSolution,
@@ -25,6 +22,8 @@ class EvaluatedFS(FullSolution):
     def __eq__(self, other):
         return super().__eq__(other)
 
-
     def __hash__(self):
         return super().__hash__()
+
+    def as_full_solution(self):
+        return FullSolution(self.values)
