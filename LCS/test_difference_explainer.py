@@ -5,7 +5,7 @@ from LCS.DifferenceExplainer.DifferenceExplainer import DifferenceExplainer
 
 
 def test_difference_explainer():
-    problem = RoyalRoad(6, 4)
+    problem = RoyalRoad(4, 4)
     #problem = GraphColouring.random(amount_of_colours=3, amount_of_nodes=6, chance_of_connection=0.3)
     # problem.view()
     #problem = EfficientBTProblem.from_default_files()
@@ -15,6 +15,8 @@ def test_difference_explainer():
 
     diff_explainer = DifferenceExplainer.from_folder(problem = problem,
                                                      folder = folder,
+                                                     allow_negative_traits = False,
+                                                     allow_positive_traits = True,
                                                      verbose=True)
 
     diff_explainer.explanation_loop(amount_of_fs_to_propose=6, suppress_errors=False)

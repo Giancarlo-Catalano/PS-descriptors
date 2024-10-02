@@ -63,7 +63,7 @@ class SolutionDifferenceAlgorithm(xcs.XCSAlgorithm):
         difference_mask = winner.values != loser.values
 
         if self.verbose:
-            print(f"Covering for {winner = }, {loser = }")
+            print(f"Covering ({'negative' if self.search_for_negative_traits else 'positive'}) for {winner = }, {loser = }")
 
         # search for the appropriate patterns using NSGAII (using Pymoo)
         with utils.announce("Mining the PSs...\n", self.verbose_search):
@@ -422,5 +422,5 @@ class SolutionDifferenceAlgorithm(xcs.XCSAlgorithm):
         model.discard(to_remove)
         return [to_remove]
 
-    def new_model_from_rules(self, lcs_scenario, rules):
-        pass
+    def toggle_verbose_search(self):
+        self.verbose_search = not self.verbose_search

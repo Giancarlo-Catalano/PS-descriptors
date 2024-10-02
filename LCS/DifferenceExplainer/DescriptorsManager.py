@@ -46,8 +46,6 @@ class DescriptorsManager:
         control_ps_file_exists = file_exists(self.control_pss_file)
         ps_descriptor_table_file_exists = file_exists(self.control_descriptors_table_file)
         if control_ps_file_exists and ps_descriptor_table_file_exists:
-            if self.verbose:
-                print(f"Found pre-existing descriptors, loading {self.control_pss_file} and {self.control_descriptors_table_file}")
             self.load_from_files()
         else:
             if control_ps_file_exists != ps_descriptor_table_file_exists:

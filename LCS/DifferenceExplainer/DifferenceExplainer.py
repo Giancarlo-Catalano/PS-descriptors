@@ -32,6 +32,9 @@ class DifferenceExplainer:
     positive_lcs_manager: LCSManager
     negative_lcs_manager: LCSManager
 
+    allow_positive_traits: bool
+    allow_negative_traits: bool
+
     patch_manager: PatchManager
 
     def __init__(self,
@@ -40,10 +43,14 @@ class DifferenceExplainer:
                  ps_files: (str, str, str),  # positive, control, negative
                  descriptors_file: str,
                  rule_attribute_files: (str, str),  # positive, negative
+                 allow_positive_traits: bool,
+                 allow_negative_traits: bool,
                  speciality_threshold: float,
                  verbose=False):
         positive_ps_file, control_ps_file, negative_ps_file = ps_files
         positive_rule_attribute_file, negative_rule_attribute_file = rule_attribute_files
+        self.allow_negative_traits = allow_negative_traits
+        self.allow_positive_traits = allow_positive_traits
 
         self.problem = problem
         self.pRef_manager = PRefManager(problem=problem,
@@ -62,6 +69,8 @@ class DifferenceExplainer:
         self.descriptors_manager.load_from_existing_if_possible()
 
         self.ps_evaluator = GeneralPSEvaluator(self.pRef_manager.pRef)
+
+        # the positive and negative manager are always initialised, but the flags allow_[neg, pos]_traits determine if they are used.
 
         self.positive_lcs_manager = LCSManager(optimisation_problem=problem,
                                                ps_evaluator=self.ps_evaluator,
@@ -92,6 +101,8 @@ class DifferenceExplainer:
     def from_folder(cls,
                     problem: BenchmarkProblem,
                     folder: str,
+                    allow_negative_traits: bool = False,
+                    allow_positive_traits: bool = True,
                     speciality_threshold=0.1,
                     verbose=False):
         pRef_file = os.path.join(folder, "pRef.npz")
@@ -109,6 +120,8 @@ class DifferenceExplainer:
             descriptors_file=descriptors_file,
             rule_attribute_files=(positive_rule_attribute_file, negative_rule_attribute_file),
             speciality_threshold=speciality_threshold,
+            allow_negative_traits=allow_negative_traits,
+            allow_positive_traits=allow_positive_traits,
             verbose=verbose)
 
     @property
@@ -129,11 +142,35 @@ class DifferenceExplainer:
 
     @property
     def all_pss(self) -> list[PS]:
-        return self.positive_pss + self.negative_pss
+        result = []
+        if self.allow_positive_traits:
+            result.extend(self.positive_pss)
+
+        if self.allow_negative_traits:
+            result.extend(self.negative_pss)
+
+        return result
+
+    @property
+    def get_lcs_managers_in_use(self) -> list[LCSManager]:
+        result = []
+        if self.allow_positive_traits:
+            result.append(self.positive_lcs_manager)
+        if self.allow_negative_traits:
+            result.append(self.negative_lcs_manager)
+
+        return result
 
     @property
     def all_rules(self) -> list[xcs.XCSClassifierRule]:
-        return self.positive_rules + self.negative_rules
+        result = []
+        if self.allow_positive_traits:
+            result.extend(self.positive_rules)
+
+        if self.allow_negative_traits:
+            result.extend(self.negative_rules)
+
+        return result
 
     @property
     def pRef(self) -> PRef:
@@ -215,8 +252,8 @@ class DifferenceExplainer:
         # f"A.fitness = {solution_a.fitness}, "
         # f"B.fitness = {solution_b.fitness}")
 
-        self.positive_lcs_manager.investigate_pair_if_necessary(solution_a, solution_b)
-        self.negative_lcs_manager.investigate_pair_if_necessary(solution_a, solution_b)
+        for lcs_manager in self.get_lcs_managers_in_use:
+            lcs_manager.investigate_pair_if_necessary(solution_a, solution_b)
 
         in_a, in_b = self.get_difference_rules(solution_a, solution_b)
 
@@ -230,14 +267,18 @@ class DifferenceExplainer:
             for ps in in_b:
                 self.print_rule_and_descriptors(ps)
 
+    def get_known_rules_in_solution(self, solution: EvaluatedFS) -> list[xcs.XCSClassifierRule]:
+        return [rule for lcs_manager in self.get_lcs_managers_in_use
+                for rule in lcs_manager.get_matches_with_solution(solution)]
+
     def explain_solution(self, solution: EvaluatedFS, amount_to_check_against: int):
         to_compare_against = self.pRef_manager.get_most_similar_solutions_to(solution=solution,
                                                                              amount_to_return=amount_to_check_against)
         for other_solution in to_compare_against:
-            self.positive_lcs_manager.investigate_pair_if_necessary(solution, other_solution)
-            self.negative_lcs_manager.investigate_pair_if_necessary(solution, other_solution)
+            for lcs_manager in self.get_lcs_managers_in_use:
+                lcs_manager.investigate_pair_if_necessary(solution, other_solution)
 
-        rules_in_solution = [rule for rule in self.positive_lcs_manager.get_matches_with_solution(solution)]
+        rules_in_solution = self.get_known_rules_in_solution(solution)
 
         if len(rules_in_solution) == 0:
             print("No patterns were found in the solution")
@@ -320,9 +361,16 @@ class DifferenceExplainer:
                         self.explain_difference(solutions[first_index], solutions[second_index])
                 elif answer in {"game"}:
                     self.handle_game_query(solutions)
-                elif answer in {"toggle-search-verbose", "toggle-verbose-search"}:
-                    self.positive_lcs_manager.algorithm.verbose_search = not self.positive_lcs_manager.algorithm.verbose_search
-                    print(f"verbose search was set to {self.positive_lcs_manager.algorithm.verbose_search}")
+                elif answer in {"toggle-search-verbose", "toggle-verbose-search", "toggle_search_verbose", "toggle_verbose_search"}:
+                    for lcs_manager in self.get_lcs_managers_in_use:
+                        lcs_manager.algorithm.toggle_verbose_search()
+                    print(f"Verbose search was set to {self.positive_lcs_manager.algorithm.verbose_search}")
+                elif answer in {"toggle_positive_traits", "toggle-positive-traits"}:
+                    self.allow_positive_traits = not self.allow_positive_traits
+                    print(f"The positive traits are set to {self.allow_negative_traits}")
+                elif answer in {"toggle_negative_traits", "toggle-negative-traits"}:
+                    self.allow_negative_traits = not self.allow_negative_traits
+                    print(f"The negative traits are set to {self.allow_negative_traits}")
                 elif answer in {"rules"}:
                     self.handle_rules_query()
                 elif answer in {"v", "var", "variable"}:
@@ -368,13 +416,11 @@ class DifferenceExplainer:
                 for size in unique_sizes}
 
     def handle_pss_query(self):
-        pss = self.positive_pss
-        for ps in pss:
+        for ps in self.all_pss:
             print(f"\t{ps}")
 
     def handle_rules_query(self):
-        rules = get_rules_in_model(self.positive_lcs_manager.model)
-        for rule in rules:
+        for rule in self.all_rules:
             print(rule)
 
     def handle_distribution_query(self):
