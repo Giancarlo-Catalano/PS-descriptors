@@ -1,3 +1,4 @@
+import itertools
 import os
 import random
 from collections import defaultdict
@@ -272,15 +273,19 @@ class DifferenceExplainer:
                 for rule in lcs_manager.get_matches_with_solution(solution)]
 
 
-    def ensure_solution_is_compared_against(self, solution: EvaluatedFS, others: list[EvaluatedFS]):
-        for other_solution in others:
-            for lcs_manager in self.get_lcs_managers_in_use:
-                lcs_manager.investigate_pair_if_necessary(solution, other_solution)
+    def ensure_pair_is_examined(self, sol_a: EvaluatedFS, sol_b: EvaluatedFS):
+        if sol_a == sol_b:
+            print("Warning: Attempted to check identical solutions")
+            return
+        for lcs_manager in self.get_lcs_managers_in_use:
+            lcs_manager.investigate_pair_if_necessary(sol_a, sol_b)
 
     def explain_solution(self, solution: EvaluatedFS, amount_to_check_against: int):
         to_compare_against = self.pRef_manager.get_most_similar_solutions_to(solution=solution,
                                                                              amount_to_return=amount_to_check_against)
-        self.ensure_solution_is_compared_against(solution, to_compare_against)
+
+        for alternative in to_compare_against:
+            self.ensure_pair_is_examined(solution, alternative)
 
         rules_in_solution = self.get_known_rules_in_solution(solution)
 
@@ -436,6 +441,7 @@ class DifferenceExplainer:
 
     def save_changes_and_quit(self):
         self.positive_lcs_manager.write_rules_to_files()
+        self.negative_lcs_manager.write_rules_to_files()
         self.descriptors_manager.write_to_files()
 
     def handle_game_query(self, solutions: list[EvaluatedFS]):
@@ -548,7 +554,7 @@ class DifferenceExplainer:
             alternatives_with_index = list(enumerate(alternatives))
             alternatives_with_index.sort(key=utils.second, reverse=True)
             alternatives_with_index_and_position = [(alternative, original_index+1, position)
-                                                    for (position, (original_index, alternative)) in alternatives_with_index]
+                                                    for (position, (original_index, alternative)) in enumerate(alternatives_with_index)]
 
             alternatives_with_index_and_position.sort(key=utils.second)
 
@@ -556,7 +562,7 @@ class DifferenceExplainer:
                 print(f"[{shown_index}]->{positions[position]}"
                       f"\t{alternative}, {'(your choice)' if shown_index == selected_option else ''}")
 
-            your_position = alternatives_with_index_and_position[selected_option][2]
+            your_position = alternatives_with_index_and_position[selected_option-1][2]
             print(f"Your option was the {positions[your_position]}")
             if your_position == 0:
                 print("Congrats!")
@@ -579,7 +585,7 @@ class DifferenceExplainer:
                 continue
 
             if user_input[0] == "d":
-                parsed = utils.parse_simple_input(format_string="d(X, X)", user_input=user_input,
+                parsed = utils.parse_simple_input(format_string="d(X,X)", user_input=user_input,
                                                   explain_error=True)
                 if parsed is None:
                     continue
@@ -590,7 +596,9 @@ class DifferenceExplainer:
                     continue
                 solution = all_selectable_solutions[parsed[0]]
 
-                self.ensure_solution_is_compared_against(solution, alternatives)
+                for alternative in alternatives:
+                    self.ensure_pair_is_examined(solution, alternative)
+
                 self.explain_solution(solution, 0)  # don't check against similar ones
             elif user_input[0] == "c":
                 parsed = utils.parse_simple_input(format_string="c(X)", user_input=user_input, explain_error=True)
@@ -605,6 +613,11 @@ class DifferenceExplainer:
                 break  # freedom at last
             elif user_input in {"ls", "view"}:
                 show_all_solutions()
+            elif user_input in {"prepare"}:
+                for sol_a, sol_b in itertools.combinations(all_selectable_solutions, r=2):
+                    if sol_a == sol_b:
+                        continue
+                    self.ensure_pair_is_examined(sol_a, sol_b)
             else:
                 print("The command was not recognised, please try again")
 

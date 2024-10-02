@@ -102,6 +102,8 @@ class LCSManager:
         self.model.set_rules(rules)
 
     def write_rules_to_files(self):
+        if self.verbose:
+            print(f"Writing ({'negative' if self.search_for_negative_traits else 'positive'} traits to files {self.rule_conditions_file}, {self.rule_attributes_file}")
         write_pss_to_file(self.get_pss_from_model(), self.rule_conditions_file)
         self.write_rule_attributes_to_file(get_rules_in_model(self.model), self.rule_attributes_file)
 
@@ -319,6 +321,9 @@ class LCSManager:
         # print_model()
 
     def investigate_pair_if_necessary(self, solution_a: EvaluatedFS, solution_b: EvaluatedFS):
+        if solution_a == solution_b:
+            print("Warning: You requested to check a solution against itself.")
+            return
         winner, loser = (solution_a, solution_b) if solution_a > solution_b else (solution_b, solution_a)
         # if self.verbose:
         #     print(f"Comparing {winner} and {loser}")
