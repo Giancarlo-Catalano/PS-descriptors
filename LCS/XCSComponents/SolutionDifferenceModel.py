@@ -97,7 +97,7 @@ class SolutionDifferenceModel(ClassifierSet):
         # Apply covering if necessary.
         if self._algorithm.covering_is_required(match_set):
             # Ask the algorithm to provide a new classifier rule to add to the population.
-            rules: list = self._algorithm.cover_with_many(match_set, only_return_biggest=True)  # MODIFIED
+            rules: list = self._algorithm.cover_with_many(match_set, only_return_biggest=True)  # MODIFIED TODO think if this is arbitrary
 
             # Ensure that the condition provided by the algorithm does indeed match the situation.
             assert (all(rule.condition(situation) for rule in rules))

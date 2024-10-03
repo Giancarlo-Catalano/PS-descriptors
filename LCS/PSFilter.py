@@ -96,4 +96,6 @@ def filter_pss(pss: list[PS],
 def keep_biggest(pss: list[PS]) -> list[PS]:
     """returns a singleton list containing the pss with the most variables being fixed, (i know it's counterintuitive"""
     """assumes simplicity is the first metric"""
+    sizes = [ps.fixed_count() for ps in pss]
+    print(f"Of the sizes present ({sizes}), we'll return {max(sizes)}")
     return [min(pss, key=lambda x:x.metric_scores[0])]

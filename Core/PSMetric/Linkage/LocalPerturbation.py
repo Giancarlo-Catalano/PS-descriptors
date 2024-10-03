@@ -32,6 +32,7 @@ class PerturbationOfSolution(Metric):
         self.current_solution = solution
         self.current_linkage_table = self.get_linkage_table_for_solution(self.current_solution,
                                                                          difference_upper_bound=len(solution) // 2)
+
         return  # just to set a break point
 
     def get_linkage_table_for_solution(self, solution: FullSolution, difference_upper_bound: int) -> np.ndarray:
@@ -57,12 +58,15 @@ class PerturbationOfSolution(Metric):
                 elif not a_is_different and not b_is_different:
                     no_difference_fitnesses.append(fitness)
 
+        assert(len(no_difference_fitnesses) > 0)
+        no_difference_mean = np.average(no_difference_fitnesses)
+
         def safe_mean(values):
             if len(values) < 1:
-                return -100000
+                return no_difference_mean   # so that the linkage at the end will be zero in theory. Returning -10000 causes lots of issues...
             return np.average(values)
 
-        no_difference_mean = safe_mean(no_difference_fitnesses)
+
         one_difference_means = [safe_mean(values) for values in one_diffence_fitnesses]
         two_difference_means = {key: safe_mean(values) for key, values in two_difference_fitnesses.items()}
 

@@ -8,9 +8,11 @@ def test_difference_explainer():
     problem = RoyalRoad(4, 4)
     #problem = GraphColouring.random(amount_of_colours=3, amount_of_nodes=6, chance_of_connection=0.3)
     # problem.view()
-    # problem = EfficientBTProblem.from_default_files()
+    problem = EfficientBTProblem.from_default_files()
 
-    folder = r"C:\Users\gac8\PycharmProjects\PS-descriptors-LCS\resources\explanations" + "\\" + problem.get_short_code()+"explain"
+    folder = r"C:\Users\gac8\PycharmProjects\PS-descriptors-LCS\resources\explanations\messing_around"
+
+    # folder = r"C:\Users\gac8\PycharmProjects\PS-descriptors-LCS\resources\explanations" + "\\" + problem.get_short_code()+"explain"
     # folder = r"C:\Users\gac8\PycharmProjects\PS-descriptors-LCS\resources\explanations\heavy_BT_explain"
 
     diff_explainer = DifferenceExplainer.from_folder(problem = problem,
