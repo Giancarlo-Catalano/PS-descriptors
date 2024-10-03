@@ -606,6 +606,13 @@ class DifferenceExplainer:
                         continue
                     self.ensure_pair_is_examined(sol_a, sol_b)
                     self.explain_difference(sol_a, sol_b)
+            elif user_input in {"show_useful_output"}:
+                for sol_a_index, sol_b_index in itertools.combinations(range(alternatives_to_produce+1), r=2):
+                    sol_a = all_selectable_solutions[sol_a_index]
+                    sol_b = all_selectable_solutions[sol_b_index]
+
+                    print(f"d({sol_a_index}, {sol_b_index})")
+                    self.explain_difference(sol_a, sol_b)
             else:
                 print("The command was not recognised, please try again")
 

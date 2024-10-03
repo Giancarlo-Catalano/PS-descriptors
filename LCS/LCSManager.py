@@ -69,7 +69,7 @@ class LCSManager:
         conditions_file_exists = file_exists(self.rule_conditions_file)
         rule_attributes_file_exists = file_exists(self.rule_attributes_file)
 
-        search_population = min(50, sum(self.optimisation_problem.search_space.cardinalities))
+        search_population = min(100, sum(self.optimisation_problem.search_space.cardinalities))
 
         self.lcs_environment, self.lcs_scenario, self.algorithm, self.model = self.get_objects_when_rules_are_unknown(
             ps_evaluator=self.ps_evaluator,

@@ -1,6 +1,9 @@
 from typing import Optional, Callable
 
+import utils
 from Core.PS import PS
+from Core.PSMetric.Linkage import LocalPerturbation
+from Core.PSMetric.Linkage.LocalPerturbation import PerturbationOfSolution
 from LCS.PSEvaluator import GeneralPSEvaluator
 
 
@@ -98,4 +101,10 @@ def keep_biggest(pss: list[PS]) -> list[PS]:
     """assumes simplicity is the first metric"""
     sizes = [ps.fixed_count() for ps in pss]
     print(f"Of the sizes present ({sizes}), we'll return {max(sizes)}")
+    print("\n".join("\t".join(f"{m:.2f}" for m in ps.metric_scores) for ps in pss))
     return [min(pss, key=lambda x:x.metric_scores[0])]
+
+
+def keep_with_lowest_dependence(pss: list[PS], local_linkage_metric: PerturbationOfSolution) -> list[PS]:
+    pss_and_dependence = [(ps, local_linkage_metric.get_dependence(ps)) for ps in pss]
+    return [min(pss_and_dependence, key=utils.second)[0]]

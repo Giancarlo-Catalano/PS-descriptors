@@ -6,7 +6,7 @@ from xcs import scenarios
 import utils
 from Core.PS import PS
 from LCS.Conversions import condition_to_ps
-from LCS.PSFilter import filter_pss, keep_biggest
+from LCS.PSFilter import filter_pss, keep_biggest, keep_with_lowest_dependence
 from LCS.XCSComponents.SolutionDifferenceModel import SolutionDifferenceModel
 from LCS.ConstrainedPSSearch.SolutionDifferencePSSearch import local_restricted_tm_ps_search
 from LCS.XCSComponents.SolutionDifferenceScenario import GenericSolutionDifferenceScenario
@@ -48,7 +48,7 @@ class SolutionDifferenceAlgorithm(xcs.XCSAlgorithm):
         self.minimum_actions = 1  # otherwise it causes behaviour which I don't understand in XCSAlgorithm.covering_is_required
         super().__init__()
 
-    def cover_with_many(self, match_set: xcs.MatchSet, only_return_biggest: bool = False) -> list[xcs.ClassifierRule]:
+    def cover_with_many(self, match_set: xcs.MatchSet, only_return_one: bool = False) -> list[xcs.ClassifierRule]:
         """ This is a replacement for the .cover function.
 
         The results must:
@@ -83,8 +83,9 @@ class SolutionDifferenceAlgorithm(xcs.XCSAlgorithm):
                              verbose=self.verbose_search)
             assert (len(pss) > 0)
 
-            if only_return_biggest:
-                pss = keep_biggest(pss)
+            if only_return_one:
+                #pss = keep_biggest(pss)
+                pss = keep_with_lowest_dependence(pss, self.ps_evaluator.local_linkage_metric)
 
         def ps_to_rule(ps: PS) -> xcs.XCSClassifierRule:
             return xcs.XCSClassifierRule(
