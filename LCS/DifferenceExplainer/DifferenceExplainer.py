@@ -5,6 +5,7 @@ from collections import defaultdict
 
 import numpy as np
 import xcs
+from tqdm import tqdm
 
 import utils
 from BenchmarkProblems.BenchmarkProblem import BenchmarkProblem
@@ -12,6 +13,7 @@ from Core.EvaluatedFS import EvaluatedFS
 from Core.PRef import PRef
 from Core.PS import PS, STAR
 from Explanation.PRefManager import PRefManager
+from LCS.ConstrainedPSSearch.SolutionDifferencePSSearch import local_restricted_tm_ps_search
 from LCS.Conversions import get_rules_in_model
 from LCS.DifferenceExplainer.DescriptorsManager import DescriptorsManager
 from LCS.DifferenceExplainer.PatchManager import PatchManager
@@ -79,7 +81,7 @@ class DifferenceExplainer:
                                                rule_attributes_file=positive_rule_attribute_file,
                                                pRef=self.pRef,
                                                search_for_negative_traits=False,
-                                               verbose=True)
+                                               verbose=verbose)
         self.positive_lcs_manager.load_from_existing_if_possible()
 
         self.negative_lcs_manager = LCSManager(optimisation_problem=problem,
@@ -88,7 +90,7 @@ class DifferenceExplainer:
                                                rule_attributes_file=negative_rule_attribute_file,
                                                pRef=self.pRef,
                                                search_for_negative_traits=True,
-                                               verbose=True)
+                                               verbose=verbose)
         self.negative_lcs_manager.load_from_existing_if_possible()
 
         self.patch_manager = PatchManager(lcs_manager=self.positive_lcs_manager,
@@ -383,6 +385,9 @@ class DifferenceExplainer:
                 elif answer in {"toggle_negative_traits", "toggle-negative-traits"}:
                     self.allow_negative_traits = not self.allow_negative_traits
                     print(f"The negative traits are set to {self.allow_negative_traits}")
+                elif answer in {"consistency_test"}:
+                    self.rerun_explanation(solutions[0], solutions[1], trials=100, for_positive=True)
+                    self.rerun_explanation(solutions[0], solutions[1], trials=100, for_positive=False)
                 elif answer in {"rules"}:
                     self.handle_rules_query()
                 elif answer in {"v", "var", "variable"}:
@@ -627,3 +632,54 @@ class DifferenceExplainer:
                                       alternatives_to_produce=5,
                                       solution_to_modify=solution_to_modify,
                                       amount_of_variables_to_remove=6)
+
+
+
+    def rerun_explanation(self,
+                          sol_a: EvaluatedFS,
+                          sol_b: EvaluatedFS,
+                          trials: int,
+                          for_positive = True):
+
+        if sol_a.fitness == sol_b.fitness:
+            raise Exception("Trying to get pss of a pair with identical fitness...")
+
+        winner, loser = (sol_a, sol_b) if sol_a > sol_b else (sol_b, sol_a)
+        def get_ps(for_positive=True) -> PS:
+            algorithm = (self.positive_lcs_manager if for_positive else self.negative_lcs_manager).algorithm
+            pss = algorithm.get_pss_for_pair(winner, loser, only_return_one=True)
+            assert(len(pss) == 1)
+            return pss[0]
+
+        def get_hamming_distance(ps_a: PS, ps_b: PS) -> int:
+            return np.sum(ps_a.values != ps_b.values)
+
+
+        def get_shared_workers(ps_a: PS, ps_b: PS) -> int:
+            v_a, v_b = ps_a.values, ps_b.values
+            return np.sum((v_a != STAR) & (v_b != STAR) & (v_a == v_b))
+
+        pss = []
+        for _ in tqdm(range(trials)):
+            pss.append(get_ps(for_positive=for_positive))
+
+        for ps in pss:
+            print(ps)
+
+        hamming_distances = [get_hamming_distance(a, b)
+                             for a, b in itertools.combinations(pss, r=2)]
+
+        mean_hamming_distance = np.average(hamming_distances)
+        std_hamming_distance = np.std(hamming_distances)
+
+
+        shared_workers = [get_shared_workers(a, b)
+                          for a, b in itertools.combinations(pss, r=2)]
+
+        mean_shared_workers = np.average(shared_workers)
+        std_shared_workers = np.std(shared_workers)
+
+        print(f"{hamming_distances = }")
+        print(f"{shared_workers = }")
+        print(f"{mean_hamming_distance = }, {std_hamming_distance = }")
+        print(f"{mean_shared_workers = }, {std_shared_workers = }")
