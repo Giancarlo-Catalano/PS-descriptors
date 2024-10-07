@@ -7,7 +7,8 @@ from LCS.DifferenceExplainer.DifferenceExplainer import DifferenceExplainer
 def test_difference_explainer():
 
     def messing_around():
-        problem = GraphColouring.make_insular_instance(6)
+        #problem = GraphColouring.make_insular_instance(6)
+        problem = RoyalRoad(5, 4)
         folder = r"C:\Users\gac8\PycharmProjects\PS-descriptors-LCS\resources\explanations\messing_around"
         return problem, folder
 

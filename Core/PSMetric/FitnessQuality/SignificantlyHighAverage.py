@@ -74,7 +74,7 @@ class MannWhitneyU(Metric):
         self.pRef = pRef
 
     def get_p_value(self, supposed_greater: np.ndarray, supposed_lower: np.ndarray) -> float:
-        test = mannwhitneyu(supposed_greater, supposed_lower, alternative="greater")
+        test = mannwhitneyu(supposed_greater, supposed_lower, alternative="two-sided")  # TODO use greater.
         return test.pvalue
 
     def test_effect(self, ps: PS) -> float:
@@ -82,10 +82,12 @@ class MannWhitneyU(Metric):
         if len(when_present) < 2 or len(when_absent) < 2:
             return 1
 
-        if self.search_for_negative_traits:
-            return self.get_p_value(supposed_greater=when_absent, supposed_lower=when_present)
-        else:
-            return self.get_p_value(supposed_greater=when_present, supposed_lower=when_absent)
+        return self.get_p_value(supposed_greater=when_present, supposed_lower=when_absent)  # TODO revert
+        #
+        # if self.search_for_negative_traits:
+        #     return self.get_p_value(supposed_greater=when_absent, supposed_lower=when_present)
+        # else:
+        #     return self.get_p_value(supposed_greater=when_present, supposed_lower=when_absent)
 
 
     def get_single_score(self, ps: PS) -> float:
