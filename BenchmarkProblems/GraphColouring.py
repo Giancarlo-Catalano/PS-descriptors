@@ -139,7 +139,7 @@ class GraphColouring(BenchmarkProblem):
                 "external_edge_count": external_edge_count}
 
 
-    def repr_property(self, property_name:str, property_value:float, rank:(float, float), ps: PS):
+    def repr_property_new(self, property_name:str, property_value:float, rank:(float, float), ps: PS):
         #lower_rank, upper_rank = property_rank_range
         is_low = rank < 0.5
         rank_str = f"(rank = {int(rank * 100)}%)" # "~ {int(property_rank_range[1]*100)}%)"

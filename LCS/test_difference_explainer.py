@@ -8,7 +8,8 @@ def test_difference_explainer():
 
     def messing_around():
         #problem = GraphColouring.make_insular_instance(6)
-        problem = RoyalRoad(5, 4)
+        # problem = RoyalRoad(5, 4)
+        problem = EfficientBTProblem.from_default_files()
         folder = r"C:\Users\gac8\PycharmProjects\PS-descriptors-LCS\resources\explanations\messing_around"
         return problem, folder
 
@@ -18,7 +19,7 @@ def test_difference_explainer():
         folder = r"C:\Users\gac8\PycharmProjects\PS-descriptors-LCS\resources\explanations\heavy_BT_explain"
         return problem, folder
 
-    problem, folder = messing_around()
+    problem, folder = messing_around() # bt_problem()
 
     diff_explainer = DifferenceExplainer.from_folder(problem = problem,
                                                      folder = folder,
@@ -26,7 +27,7 @@ def test_difference_explainer():
                                                      allow_positive_traits = True,
                                                      verbose=False)
 
-    diff_explainer.explanation_loop(amount_of_fs_to_propose=6, suppress_errors=False)
+    diff_explainer.explanation_loop(amount_of_fs_to_propose=10, suppress_errors=False)
 
 
 test_difference_explainer()

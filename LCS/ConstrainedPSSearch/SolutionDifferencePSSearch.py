@@ -1,4 +1,4 @@
-from typing import Iterable
+from typing import Iterable, Optional
 
 import numpy as np
 from pymoo.algorithms.moo.nsga2 import NSGA2
@@ -103,13 +103,18 @@ def local_restricted_tm_ps_search(to_explain: FullSolution,
                       repair=ForceDifferenceMask(),
                       )
 
-    res = minimize(problem,
-                   algorithm,
-                   termination=('n_evals', ps_budget),
-                   verbose=verbose)
+    max_attempts = 5
+    res = None
+    for attempt in range(max_attempts):  # we have to do this because sometimes the search produces Nones
+        res = minimize(problem,
+                       algorithm,
+                       termination=('n_evals', ps_budget),
+                       verbose=verbose)
 
-    if (res.X is None) or (res.F is None) or (res.G is None):
-        raise Exception(f"From PyMoo's result, {res.X is None}, {res.F is None}, {res.G is None}")
+        if (res.X is not None) and (res.F is not None) and (res.G is not None):
+            break
+        elif verbose:
+            print("The PS search returned all None, so we're attempting again..")
 
     result_pss = [EvaluatedPS(problem.individual_to_ps(values).values, metric_scores=-ms)
                   for values, ms, satisfies_constr in zip(res.X, res.F, res.G)

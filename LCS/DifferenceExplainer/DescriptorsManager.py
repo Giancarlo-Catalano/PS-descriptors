@@ -6,6 +6,8 @@ from pandas.io.common import file_exists
 import utils
 from BenchmarkProblems.BenchmarkProblem import BenchmarkProblem
 from Core.PS import PS
+from Explanation.PRefManager import PRefManager
+from LCS.PSEvaluator import GeneralPSEvaluator
 from PSMiners.Mining import load_pss, write_pss_to_file
 
 
@@ -20,6 +22,8 @@ class DescriptorsManager:
     control_samples_per_size_category: int
     sizes_for_which_control_has_been_generated: Optional[set[int]]
 
+    pRef_manager: PRefManager
+
     verbose: bool
 
     def __init__(self,
@@ -27,6 +31,7 @@ class DescriptorsManager:
                  control_pss_file: str,
                  control_descriptors_table_file: str,
                  control_samples_per_size_category: int,
+                 pRef_manager: PRefManager,
                  verbose: bool = False):
         self.optimisation_problem = optimisation_problem
 
@@ -38,6 +43,8 @@ class DescriptorsManager:
 
         self.sizes_for_which_control_has_been_generated = None
         self.control_samples_per_size_category = control_samples_per_size_category
+
+        self.pRef_manager = pRef_manager
 
         self.verbose = verbose
 
@@ -72,9 +79,15 @@ class DescriptorsManager:
         else:
             self.sizes_for_which_control_has_been_generated = set()
 
+
+    def get_fitness_delta(self, ps: PS) -> float:
+        avg_when_present, avg_when_absent = self.pRef_manager.get_average_when_present_and_absent(ps)
+        return avg_when_present - avg_when_absent
+
     def get_descriptors_of_ps(self, ps: PS) -> dict[str, float]:
         result = self.optimisation_problem.get_descriptors_of_ps(ps)
         result["size"] = ps.fixed_count()
+        result["delta"] = self.get_fitness_delta(ps)
         return result
 
     def generate_data_for_new_size_category(self, size_category: int) -> pd.DataFrame:

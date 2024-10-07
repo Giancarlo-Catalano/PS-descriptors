@@ -314,6 +314,8 @@ class EfficientBTProblem(BTProblem):
             return (f"The skills cover a {'NARROW' if is_low else 'WIDE'} range, {rank_str}")
         elif property_name == "quantity_of_fav_rotas":
             return (f"{'FEW' if is_low else 'MANY'} workers got their preferred rota, {rank_str}" )
+        elif property_name == "delta":
+            return (f"The delta fitness = {property_value:.2f}, which has percentile {rank_str}")
         else:
             raise ValueError(f"Did not recognise the property {property_name} in EfficientBTProblem")
 

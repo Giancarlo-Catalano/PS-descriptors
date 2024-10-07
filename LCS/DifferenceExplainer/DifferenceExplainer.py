@@ -2,6 +2,7 @@ import itertools
 import os
 import random
 from collections import defaultdict
+from typing import Optional
 
 import numpy as np
 import xcs
@@ -67,6 +68,7 @@ class DifferenceExplainer:
                                                       control_pss_file=control_ps_file,
                                                       control_descriptors_table_file=descriptors_file,
                                                       control_samples_per_size_category=1000,
+                                                      pRef_manager = self.pRef_manager,
                                                       verbose=verbose)
 
         self.descriptors_manager.load_from_existing_if_possible()
@@ -184,7 +186,8 @@ class DifferenceExplainer:
         avg_when_present, avg_when_absent = self.pRef_manager.get_average_when_present_and_absent(ps)
         delta = avg_when_present - avg_when_absent
 
-        return (f"delta = {delta:.2f}, "
+        return (f"({'POSITIVE' if delta >= 0 else 'NEGATIVE'}), "
+                f"delta = {delta:.2f}, "
                 f"avg when present = {avg_when_present:.2f}, "
                 f"avg when absent = {avg_when_absent:.2f}")
         # f"p-value = {p_value:e}")
@@ -200,12 +203,15 @@ class DifferenceExplainer:
         def percentile_is_significant(percentile: float) -> bool:
             return (percentile < self.speciality_threshold) or (percentile > (1 - self.speciality_threshold))
 
-        names_values_percentiles = [(name, value, percentile)
-                                    for name, value, percentile in names_values_percentiles
-                                    if percentile_is_significant(percentile)]
+        # names_values_percentiles = [(name, value, percentile)
+        #                             for name, value, percentile in names_values_percentiles
+        #                             if percentile_is_significant(percentile) or name == "delta"]
+
+
 
         # sort by "extremeness"
         names_values_percentiles.sort(key=lambda x: abs(0.5 - x[2]), reverse=True)
+
         return names_values_percentiles
 
     def get_descriptors_string(self, ps: PS) -> str:
@@ -390,6 +396,8 @@ class DifferenceExplainer:
                     self.rerun_explanation(solutions[0], solutions[1], trials=100, for_positive=False)
                 elif answer in {"rules"}:
                     self.handle_rules_query()
+                elif answer in {"compare_delta_test"}:
+                    self.delta_diff_experiment(solutions)
                 elif answer in {"v", "var", "variable"}:
                     self.handle_variable_query()
                 elif answer in {"vs", "variable in solution"}:
@@ -683,3 +691,59 @@ class DifferenceExplainer:
         print(f"{shared_workers = }")
         print(f"{mean_hamming_distance = }, {std_hamming_distance = }")
         print(f"{mean_shared_workers = }, {std_shared_workers = }")
+
+
+
+
+    def delta_diff_experiment(self, good_solutions: list[EvaluatedFS]):
+        amount_of_trials = int(input("Amount of trials? "))
+
+        other_solutions = [self.pRef.get_nth_solution(random.randrange(self.pRef.sample_size))
+                           for good_sol in good_solutions]
+
+        def select_different(group_a, group_b) -> (EvaluatedFS, EvaluatedFS):
+            while True:
+                a = random.choice(group_a)
+                b = random.choice(group_b)
+                if a.fitness != b.fitness:
+                    if a < b:
+                        a, b = b, a
+                    return a, b
+
+
+        def get_delta_of_rule(rule: xcs.XCSClassifierRule) -> float:
+            return self.descriptors_manager.get_fitness_delta(rule.condition)
+
+        def get_deltas_for_pair(solution_a, solution_b) -> (list[float], list[float]):
+            self.ensure_pair_is_examined(solution_a, solution_b)
+
+            in_a, in_b = self.get_difference_rules(solution_a, solution_b)
+
+            return list(map(get_delta_of_rule, in_a)), list(map(get_delta_of_rule, in_b))
+
+
+        def safe_average(deltas) -> Optional[float]:
+            if len(deltas) == 0:
+                return None
+            else:
+                return np.average(deltas)
+
+        def trials_from_groups(kind: str, first_group, second_group):
+            for _ in tqdm(range(amount_of_trials)):
+                a, b = select_different(first_group, second_group)
+                self.ensure_pair_is_examined(a, b)
+                deltas_a, deltas_b = get_deltas_for_pair(a, b)
+
+                print(f"{kind}\t{safe_average(deltas_a)}\t{safe_average(deltas_b)}\t{len(deltas_a)}\t{len(deltas_b)}")
+
+        # good good
+        trials_from_groups("GG", good_solutions, good_solutions)
+        trials_from_groups("GO", good_solutions, other_solutions)
+        trials_from_groups("OO", other_solutions, other_solutions)
+
+
+
+
+
+
+
