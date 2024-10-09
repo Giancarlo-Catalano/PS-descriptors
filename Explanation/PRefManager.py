@@ -49,8 +49,8 @@ class PRefManager:
         else:
             if self.verbose:
                 print(f"Since no pRef file was found, one will be generated...")
-            self.generate_pRef_file(sample_size=10000,
-                                    which_algorithm="uniform SA")
+            self.generate_pRef_file(sample_size=20000,
+                                    which_algorithm="uniform GA")
 
     @staticmethod
     def generate_pRef(problem,

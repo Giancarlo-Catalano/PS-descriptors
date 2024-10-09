@@ -11,7 +11,8 @@ from BenchmarkProblems.Trapk import Trapk
 from Core.EvaluatedPS import EvaluatedPS
 from Core.FullSolution import FullSolution
 from Core.PS import PS
-from LCS.Operators import LocalPSGeometricSampling, ObjectiveSpaceAvoidance, ForceDifferenceMask
+from LCS.Operators import LocalPSGeometricSampling, ObjectiveSpaceAvoidance, ForceDifferenceMaskByActivatingOne, \
+    ForceDifferenceMaskByActivatingAll
 from LCS.PSEvaluator import GeneralPSEvaluator
 
 
@@ -52,7 +53,6 @@ class LocalRestrictedPymooProblem(Problem):
 
     def get_which_rows_satisfy_mask_constraint(self, X: np.ndarray) -> np.ndarray:
         return np.any(X[:, self.difference_variables], axis=1)
-
     def get_metrics_for_ps(self, ps: PS) -> list[float]:
         atomicity = self.objectives_evaluator.local_linkage_metric.get_atomicity(ps)
 
@@ -100,7 +100,7 @@ def local_restricted_tm_ps_search(to_explain: FullSolution,
                       mutation=BitflipMutation(prob=1 / problem.n_var),
                       eliminate_duplicates=True,
                       survival=ObjectiveSpaceAvoidance(pss_to_avoid),
-                      repair=ForceDifferenceMask(),
+                      repair=ForceDifferenceMaskByActivatingOne(),
                       )
 
     max_attempts = 5
@@ -115,10 +115,21 @@ def local_restricted_tm_ps_search(to_explain: FullSolution,
             break
         elif verbose:
             print("The PS search returned all None, so we're attempting again..")
+    else:  # yes I am happy to use a for else
+        raise Exception("For some mysterious reason, Pymoo keeps returning None instead of search results...")
 
     result_pss = [EvaluatedPS(problem.individual_to_ps(values).values, metric_scores=-ms)
                   for values, ms, satisfies_constr in zip(res.X, res.F, res.G)
                   if satisfies_constr]
+
+    if verbose:
+        pss_that_dont_satisfy = [EvaluatedPS(problem.individual_to_ps(values).values, metric_scores=-ms)
+                                 for values, ms, satisfies_constr in zip(res.X, res.F, res.G)
+                                 if not satisfies_constr]
+        if pss_that_dont_satisfy:
+            print("The pss which don't satisfy the constraints that appeared in the last generation are")
+            for ps in pss_that_dont_satisfy:
+                print(f"\t{ps}")
 
     if len(result_pss) == 0:
         if verbose:
@@ -127,8 +138,12 @@ def local_restricted_tm_ps_search(to_explain: FullSolution,
                           for values, ms, satisfies_constr in zip(res.X, res.F, res.G)]
             if len(result_pss)==0:
                 print("Even after relaxing the constraint, no solutions were found...")
-                raise Exception("No maching PSs could be found") # perhaps I should return nothing?
+                raise Exception("No matching PSs could be found") # perhaps I should return nothing?
 
+    if verbose:
+        print("The results of the search are")
+        for ps in result_pss:
+            print(ps)
     return result_pss
 
 

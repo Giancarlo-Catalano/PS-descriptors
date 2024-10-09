@@ -71,9 +71,9 @@ class SolutionDifferenceAlgorithm(xcs.XCSAlgorithm):
 
             linkage_threshold = self.ps_evaluator.local_linkage_metric.get_linkage_threshold()
 
-            pss = filter_pss(pss, ps_evaluator=self.ps_evaluator,
-                             atomicity_threshold=linkage_threshold,
-                             verbose=self.verbose_search)
+            # pss = filter_pss(pss, ps_evaluator=self.ps_evaluator,
+            #                  atomicity_threshold=linkage_threshold,
+            #                  verbose=self.verbose_search)
             assert (len(pss) > 0)
 
             if only_return_one:

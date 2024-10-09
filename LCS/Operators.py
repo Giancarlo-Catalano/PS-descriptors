@@ -73,7 +73,7 @@ class ObjectiveSpaceAvoidance(PyMooCustomCrowding):
 
 
 
-class ForceDifferenceMask(Repair):
+class ForceDifferenceMaskByActivatingOne(Repair):
 
     def _do(self, problem, Z, **kwargs):
 
@@ -85,11 +85,35 @@ class ForceDifferenceMask(Repair):
             to_activate  = random.choice(difference_variables)
             row[to_activate] = True
 
-        which_need_fixing = problem.get_which_rows_satisfy_mask_constraint(Z)
+        which_rows_satisfy = problem.get_which_rows_satisfy_mask_constraint(Z)
 
 
-        for row, needs_fixing in zip(Z, which_need_fixing):
-            if needs_fixing:
+        for row, satisfied in zip(Z, which_rows_satisfy):
+            if not satisfied:
                 fix_row(row)
 
         return Z
+
+
+    def _do_unsafe(self, problem, Z, **kwargs):
+        # this version has every difference variable turned on with a 50% chance.
+        # The issue is that it is not guaranteed to make the solutions satisfy the constraint...
+
+        which_rows_dont_satisfy = ~problem.get_which_rows_satisfy_mask_constraint(Z)
+        quantity_that_need_fixing = np.sum(which_rows_dont_satisfy)
+        quantity_vars_in_difference = len(problem.difference_variables)
+
+        # every difference variable has a 50/50 chance of being activated
+        new_assignments = np.random.random((quantity_that_need_fixing, quantity_vars_in_difference))
+        Z[which_rows_dont_satisfy, problem.difference_variables] = new_assignments
+        return Z
+
+
+class ForceDifferenceMaskByActivatingAll(Repair):
+
+    def _do(self, problem, Z, **kwargs):
+
+        Z[:, problem.difference_variables] = True
+        return Z
+
+

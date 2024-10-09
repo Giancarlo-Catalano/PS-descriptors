@@ -29,9 +29,6 @@ class LCSManager:
     pRef: PRef
     ps_evaluator: Optional[GeneralPSEvaluator]
 
-    lcs_environment: Optional[OneAtATimeSolutionDifferenceScenario]
-    lcs_scenario: Optional[Scenario]
-
     algorithm: Optional[SolutionDifferenceAlgorithm]
     model: Optional[SolutionDifferenceModel]
 
@@ -151,7 +148,7 @@ class LCSManager:
                                                 covering_population_size=covering_search_population,
                                                 verbose=verbose,
                                                 search_for_negative_traits = search_for_negative_traits,
-                                                verbose_search=False)
+                                                verbose_search=True)
 
         LCSManager.set_settings_for_lcs_algorithm(algorithm)
 
@@ -226,26 +223,7 @@ class LCSManager:
 
         return get_rules_in_action_set(correct_action_set), get_rules_in_action_set(wrong_action_set)
 
-    def explain_best_solution(self):
-        found_optima = self.pRef.get_top_n_solutions(1)[0]
-        print(f"The found optima is {self.optimisation_problem.repr_fs(found_optima)}")
-        print(f"It has fitness {found_optima.fitness}")
 
-        with announce("Training the model on the solution", self.verbose):
-            matches = self.investigate_solution(found_optima)
-
-            for rule in matches:
-                print(self.optimisation_problem.repr_ps(rule.condition))
-                print(f"Accuracy = {rule.accuracy:.2f}")
-
-    def polish_on_entire_dataset(self):
-        """NOTE this doesn't really work well"""
-        entire_dataset_environment = RandomPairsScenario(original_problem=self.optimisation_problem,
-                                                         pRef=self.pRef,
-                                                         training_cycles=1000,
-                                                         verbose=True)
-        observer = ScenarioObserver(entire_dataset_environment)
-        self.model.run(observer, learn=True)
 
     def explain_top_n_solutions(self, n: int):
         def print_model():
