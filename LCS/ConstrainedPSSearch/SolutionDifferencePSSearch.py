@@ -54,7 +54,7 @@ class LocalRestrictedPymooProblem(Problem):
     def get_which_rows_satisfy_mask_constraint(self, X: np.ndarray) -> np.ndarray:
         return np.any(X[:, self.difference_variables], axis=1)
     def get_metrics_for_ps(self, ps: PS) -> list[float]:
-        atomicity = self.objectives_evaluator.local_linkage_metric.get_atomicity(ps)
+        atomicity = self.objectives_evaluator.traditional_linkage.get_atomicity(ps)
 
         simplicity = len(ps) - ps.fixed_count()
 

@@ -1,3 +1,4 @@
+from BenchmarkProblems.BenchmarkProblem import BenchmarkProblem
 from Core.FullSolution import FullSolution
 from Core.PRef import PRef
 from Core.PSMetric.FitnessQuality.MeanFitness import MeanFitness
@@ -19,7 +20,8 @@ class GeneralPSEvaluator:
     traditional_linkage: TraditionalPerturbationLinkage
 
     def __init__(self,
-                 pRef: PRef):
+                 pRef: PRef,
+                 optimisation_problem: BenchmarkProblem):
         self.used_evaluations = 0
 
         self.fitness_p_value_metric = MannWhitneyU()
@@ -28,13 +30,14 @@ class GeneralPSEvaluator:
         self.mean_fitness_metric = MeanFitness()
         self.mean_fitness_metric.set_pRef(pRef)
 
-        self.local_linkage_metric = PerturbationOfSolution()
-        self.local_linkage_metric.set_pRef(pRef)
+        # self.local_linkage_metric = PerturbationOfSolution()
+        # self.local_linkage_metric.set_pRef(pRef)
 
-        self.traditional_linkage = None
+        self.traditional_linkage = TraditionalPerturbationLinkage(optimisation_problem)
 
     def set_solution(self, solution: FullSolution):
-        self.local_linkage_metric.set_solution(solution)
+        #self.local_linkage_metric.set_solution(solution)
+        self.traditional_linkage.set_solution(solution)
 
 
     def set_positive_or_negative(self, search_for_negative_traits: bool):

@@ -73,7 +73,7 @@ class DifferenceExplainer:
 
         self.descriptors_manager.load_from_existing_if_possible()
 
-        self.ps_evaluator = GeneralPSEvaluator(self.pRef_manager.pRef)
+        self.ps_evaluator = GeneralPSEvaluator(pRef=self.pRef_manager.pRef, optimisation_problem=problem)
 
         # the positive and negative manager are always initialised, but the flags allow_[neg, pos]_traits determine if they are used.
 

@@ -67,9 +67,6 @@ class SolutionDifferenceAlgorithm(xcs.XCSAlgorithm):
         with utils.announce("Mining the PSs...\n", self.verbose_search):
             # debug
 
-            self.ps_evaluator.traditional_linkage = TraditionalPerturbationLinkage(optimisation_problem=self.xcs_problem.original_problem)
-            self.ps_evaluator.traditional_linkage.set_current_solution(winner if self.search_for_negative_traits else loser)
-
             # end of debug
             pss = local_restricted_tm_ps_search(to_explain=loser if self.search_for_negative_traits else winner,
                                                 pss_to_avoid=[],
@@ -88,7 +85,7 @@ class SolutionDifferenceAlgorithm(xcs.XCSAlgorithm):
             assert (len(pss) > 0)
 
             if only_return_least_dependent:
-                pss = keep_with_lowest_dependence(pss, self.ps_evaluator.local_linkage_metric)
+                pss = keep_with_lowest_dependence(pss, self.ps_evaluator.traditional_linkage)
 
             if only_return_biggest:
                 pss = keep_biggest(pss)

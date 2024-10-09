@@ -3,10 +3,13 @@ from typing import Optional
 import numpy as np
 from scipy.stats import t
 
+from Core.FullSolution import FullSolution
 from Core.PRef import PRef
-from Core.PS import PS
+from Core.PS import PS, contains
 from Core.PSMetric.Metric import Metric
 from scipy.stats import mannwhitneyu
+
+from Core.SearchSpace import SearchSpace
 
 
 class SignificantlyHighAverage(Metric):
@@ -73,9 +76,10 @@ class MannWhitneyU(Metric):
     def set_pRef(self, pRef: PRef):
         self.pRef = pRef
 
-    def get_p_value(self, supposed_greater: np.ndarray, supposed_lower: np.ndarray) -> float:
-        test = mannwhitneyu(supposed_greater, supposed_lower, alternative="two-sided")  # TODO use greater.
-        # test = mannwhitneyu(supposed_greater, supposed_lower, alternative="greater")  # TODO use greater.
+    @classmethod
+    def get_p_value(cls, first_group: np.ndarray, second_group: np.ndarray) -> float:
+        test = mannwhitneyu(first_group, second_group, alternative="two-sided")
+        # test = mannwhitneyu(supposed_greater, supposed_lower, alternative="greater")
         return test.pvalue
 
     def test_effect(self, ps: PS) -> float:
@@ -83,7 +87,7 @@ class MannWhitneyU(Metric):
         if len(when_present) < 2 or len(when_absent) < 2:
             return 1
 
-        return self.get_p_value(supposed_greater=when_present, supposed_lower=when_absent)  # TODO revert
+        return self.get_p_value(first_group=when_present, second_group=when_absent)  # TODO revert
         #
         # if self.search_for_negative_traits:
         #     return self.get_p_value(supposed_greater=when_absent, supposed_lower=when_present)
@@ -97,3 +101,34 @@ class MannWhitneyU(Metric):
             return 1
         return self.test_effect(ps)
 
+
+
+class ForcefulMannWhitneyU(MannWhitneyU):
+    sample_size: int
+    search_space: SearchSpace
+
+
+
+    def __init__(self,
+                 sample_size: int,
+                 search_space: SearchSpace):
+        self.sample_size = sample_size
+        self.search_space = search_space
+        super().__init__()
+
+
+    def get_random_samples_without_pattern(self, ps: PS) -> list[FullSolution]:
+        if ps.is_empty():
+            raise Exception("Attempted to test for the empty pattern")
+
+        result = []
+        while len(result) < self.sample_size:
+            candidate = FullSolution.random(self.search_space)
+            if not contains(candidate, ps):
+                result.append(candidate)
+
+        return result
+
+
+    def apply_pattern_to_samples(self, samples: list[FullSolution], ps: PS):
+        pass

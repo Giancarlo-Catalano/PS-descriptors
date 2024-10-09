@@ -13,8 +13,9 @@ def test_difference_explainer():
         #problem = RoyalRoad(5, 4)
         problem = Trapk(5, 5)
         # problem = EfficientBTProblem.random_subset_of(EfficientBTProblem.from_default_files(),
-        #                                               quantity_workers_to_keep=12,
-        #                                               random_state=42)
+        #                                              quantity_workers_to_keep=50,
+         #                                            random_state=42)
+        #problem = EfficientBTProblem.from_default_files()
         folder = r"C:\Users\gac8\PycharmProjects\PS-descriptors-LCS\resources\explanations\messing_around"
         return problem, folder
 
