@@ -3,9 +3,11 @@ from typing import Optional
 import numpy as np
 from scipy.stats import t
 
+from Core.EvaluatedFS import EvaluatedFS
+from Core.FSEvaluator import FSEvaluator
 from Core.FullSolution import FullSolution
 from Core.PRef import PRef
-from Core.PS import PS, contains
+from Core.PS import PS, contains, STAR
 from Core.PSMetric.Metric import Metric
 from scipy.stats import mannwhitneyu
 
@@ -104,8 +106,12 @@ class MannWhitneyU(Metric):
 
 
 class ForcefulMannWhitneyU(MannWhitneyU):
+
+    """ This is not to be used as a fitness function!!!"""
     sample_size: int
     search_space: SearchSpace
+
+    fitness_evaluator: FSEvaluator
 
 
 
@@ -130,5 +136,24 @@ class ForcefulMannWhitneyU(MannWhitneyU):
         return result
 
 
-    def apply_pattern_to_samples(self, samples: list[FullSolution], ps: PS):
-        pass
+    def apply_pattern_to_samples(self, samples: list[FullSolution], ps: PS) -> list[FullSolution]:
+        samples_matrix = np.array([sample.values.copy() for sample in samples])
+        samples_matrix[:, ps.values != STAR] = ps.values[ps.values != STAR]
+
+        return [FullSolution(row) for row in samples_matrix]
+
+    def get_fitnesses(self, unevaluated_solutions: list[FullSolution]) -> list[float]:
+        return [self.fitness_evaluator.evaluate(solution)
+                for solution in unevaluated_solutions
+                ]
+
+
+    def check_effect_of_ps(self, ps: PS) -> (float, float):
+        without_pattern = self.get_random_samples_without_pattern(ps)
+        with_pattern = self.apply_pattern_to_samples(without_pattern, ps)
+
+        fitnesses_without = self.get_fitnesses(without_pattern)
+        fitnesses_with = self.get_fitnesses(with_pattern)
+        beneficial_test = mannwhitneyu(fitnesses_with, fitnesses_without, alternative="greater")
+        maleficial_test = mannwhitneyu(fitnesses_with, fitnesses_without, alternative="less")
+        return (beneficial_test.pvalue, maleficial_test.pvalue)
