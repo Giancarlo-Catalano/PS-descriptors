@@ -392,8 +392,16 @@ class DifferenceExplainer:
                     self.allow_negative_traits = not self.allow_negative_traits
                     print(f"The negative traits are set to {self.allow_negative_traits}")
                 elif answer in {"consistency_test"}:
-                    self.rerun_explanation(solutions[0], solutions[1], trials=100, for_positive=True)
-                    self.rerun_explanation(solutions[0], solutions[1], trials=100, for_positive=False)
+                    solution_to_investigate = solutions[0]
+                    solution_to_compare_against = self.pRef_manager.get_most_similar_solutions_to(solution_to_investigate, 2)[1]
+                    self.rerun_explanation(solution_to_investigate,
+                                           solution_to_compare_against,
+                                           trials=100,
+                                           for_positive=True)
+                    self.rerun_explanation(solution_to_investigate,
+                                           solution_to_compare_against,
+                                           trials=100,
+                                           for_positive=False)
                 elif answer in {"rules"}:
                     self.handle_rules_query()
                 elif answer in {"compare_delta_test"}:
@@ -655,7 +663,7 @@ class DifferenceExplainer:
         winner, loser = (sol_a, sol_b) if sol_a > sol_b else (sol_b, sol_a)
         def get_ps(for_positive=True) -> PS:
             algorithm = (self.positive_lcs_manager if for_positive else self.negative_lcs_manager).algorithm
-            pss = algorithm.get_pss_for_pair(winner, loser, only_return_one=True)
+            pss = algorithm.get_pss_for_pair(winner, loser, only_return_least_dependent=False, only_return_biggest=True)
             assert(len(pss) == 1)
             return pss[0]
 

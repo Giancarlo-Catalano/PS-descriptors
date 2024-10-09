@@ -1,6 +1,7 @@
 import copy
 import itertools
 import math
+import random
 from typing import TypeAlias
 
 import numpy as np
@@ -546,6 +547,23 @@ class EfficientBTProblem(BTProblem):
 
 
 
+    @classmethod
+    def subset_from(cls, original_problem, which_workers_to_keep: list[int]):
+        assert(isinstance(original_problem, EfficientBTProblem))
+        workers = [original_problem.workers[index] for index in which_workers_to_keep]
+        return cls(workers = workers,
+                   calendar_length=original_problem.calendar_length,
+                   weights=original_problem.weights,
+                   use_faulty_fitness_function=original_problem.use_faulty_fitness_function,
+                   rota_preference_weight=original_problem.rota_preference_weight)
+
+
+    @classmethod
+    def random_subset_of(cls, original_problem, quantity_workers_to_keep, random_state: int = 120):
+        random.seed(random_state)
+        amount_of_workers_in_total = len(original_problem.workers)
+        which_workers_to_keep = random.choices(range(amount_of_workers_in_total), k=quantity_workers_to_keep)
+        return cls.subset_from(original_problem, which_workers_to_keep)
 
 
 

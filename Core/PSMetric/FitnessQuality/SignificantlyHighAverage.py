@@ -75,6 +75,7 @@ class MannWhitneyU(Metric):
 
     def get_p_value(self, supposed_greater: np.ndarray, supposed_lower: np.ndarray) -> float:
         test = mannwhitneyu(supposed_greater, supposed_lower, alternative="two-sided")  # TODO use greater.
+        # test = mannwhitneyu(supposed_greater, supposed_lower, alternative="greater")  # TODO use greater.
         return test.pvalue
 
     def test_effect(self, ps: PS) -> float:

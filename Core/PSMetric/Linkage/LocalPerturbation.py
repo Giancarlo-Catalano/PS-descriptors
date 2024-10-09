@@ -31,7 +31,7 @@ class PerturbationOfSolution(Metric):
             return  # saves repeated calculations
         self.current_solution = solution
         self.current_linkage_table = self.get_linkage_table_for_solution(self.current_solution,
-                                                                         difference_upper_bound=len(solution) // 2)
+                                                                         difference_upper_bound=len(solution) - 1)
 
         return  # just to set a break point
 

@@ -2,7 +2,9 @@ from Core.FullSolution import FullSolution
 from Core.PRef import PRef
 from Core.PSMetric.FitnessQuality.MeanFitness import MeanFitness
 from Core.PSMetric.FitnessQuality.SignificantlyHighAverage import MannWhitneyU
+from Core.PSMetric.Linkage.Additivity import MutualInformation
 from Core.PSMetric.Linkage.LocalPerturbation import PerturbationOfSolution
+from Core.PSMetric.Linkage.TraditionalPerturbationLinkage import TraditionalPerturbationLinkage
 from Core.PSMetric.Metric import Metric
 
 
@@ -13,6 +15,8 @@ class GeneralPSEvaluator:
     used_evaluations: int
 
     mean_fitness_metric: Metric
+
+    traditional_linkage: TraditionalPerturbationLinkage
 
     def __init__(self,
                  pRef: PRef):
@@ -27,8 +31,9 @@ class GeneralPSEvaluator:
         self.local_linkage_metric = PerturbationOfSolution()
         self.local_linkage_metric.set_pRef(pRef)
 
+        self.traditional_linkage = None
+
     def set_solution(self, solution: FullSolution):
-        #self.linkage_metric.set_solution(solution)
         self.local_linkage_metric.set_solution(solution)
 
 

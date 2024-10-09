@@ -7,6 +7,7 @@ from xcs import scenarios
 import utils
 from Core.EvaluatedFS import EvaluatedFS
 from Core.PS import PS
+from Core.PSMetric.Linkage.TraditionalPerturbationLinkage import TraditionalPerturbationLinkage
 from LCS.Conversions import condition_to_ps
 from LCS.PSFilter import filter_pss, keep_biggest, keep_with_lowest_dependence
 from LCS.XCSComponents.SolutionDifferenceModel import SolutionDifferenceModel
@@ -51,7 +52,11 @@ class SolutionDifferenceAlgorithm(xcs.XCSAlgorithm):
         super().__init__()
 
 
-    def get_pss_for_pair(self, winner: EvaluatedFS, loser: EvaluatedFS, only_return_one:bool = True) -> list[PS]:
+    def get_pss_for_pair(self,
+                         winner: EvaluatedFS,
+                         loser: EvaluatedFS,
+                         only_return_least_dependent:bool = False,
+                         only_return_biggest: bool = False) -> list[PS]:
         difference_mask: np.ndarray = winner.values != loser.values
 
         if self.verbose:
@@ -60,6 +65,12 @@ class SolutionDifferenceAlgorithm(xcs.XCSAlgorithm):
 
         # search for the appropriate patterns using NSGAII (using Pymoo)
         with utils.announce("Mining the PSs...\n", self.verbose_search):
+            # debug
+
+            self.ps_evaluator.traditional_linkage = TraditionalPerturbationLinkage(optimisation_problem=self.xcs_problem.original_problem)
+            self.ps_evaluator.traditional_linkage.set_current_solution(winner if self.search_for_negative_traits else loser)
+
+            # end of debug
             pss = local_restricted_tm_ps_search(to_explain=loser if self.search_for_negative_traits else winner,
                                                 pss_to_avoid=[],
                                                 must_include_mask=difference_mask,
@@ -69,16 +80,18 @@ class SolutionDifferenceAlgorithm(xcs.XCSAlgorithm):
                                                 search_for_negative_traits=self.search_for_negative_traits,
                                                 verbose=self.verbose_search)
 
-            linkage_threshold = self.ps_evaluator.local_linkage_metric.get_linkage_threshold()
+            # linkage_threshold = self.ps_evaluator.local_linkage_metric.get_linkage_threshold()
 
             # pss = filter_pss(pss, ps_evaluator=self.ps_evaluator,
             #                  atomicity_threshold=linkage_threshold,
             #                  verbose=self.verbose_search)
             assert (len(pss) > 0)
 
-            if only_return_one:
-                # pss = keep_biggest(pss)
+            if only_return_least_dependent:
                 pss = keep_with_lowest_dependence(pss, self.ps_evaluator.local_linkage_metric)
+
+            if only_return_biggest:
+                pss = keep_biggest(pss)
             return pss
 
     def cover_with_many(self, match_set: xcs.MatchSet, only_return_one: bool = False) -> list[xcs.ClassifierRule]:
@@ -98,7 +111,7 @@ class SolutionDifferenceAlgorithm(xcs.XCSAlgorithm):
         if self.verbose:
             print(f"Covering ({'negative' if self.search_for_negative_traits else 'positive'}) for {winner = }, {loser = }")
 
-        pss = self.get_pss_for_pair(winner, loser)
+        pss = self.get_pss_for_pair(winner, loser, only_return_least_dependent=False, only_return_biggest=True)
 
         def ps_to_rule(ps: PS) -> xcs.XCSClassifierRule:
             return xcs.XCSClassifierRule(
