@@ -16,7 +16,6 @@ from Core.PRef import PRef
 from Core.PS import PS, STAR
 from Core.PSMetric.FitnessQuality.SignificantlyHighAverage import ForcefulMannWhitneyU
 from Explanation.PRefManager import PRefManager
-from LCS.ConstrainedPSSearch.SolutionDifferencePSSearch import local_restricted_tm_ps_search
 from LCS.Conversions import get_rules_in_model
 from LCS.DifferenceExplainer.DescriptorsManager import DescriptorsManager
 from LCS.DifferenceExplainer.PatchManager import PatchManager
@@ -287,8 +286,8 @@ class DifferenceExplainer:
             lcs_manager.investigate_pair_if_necessary(sol_a, sol_b)
 
     def explain_solution(self, solution: EvaluatedFS, amount_to_check_against: int):
-        to_compare_against = self.pRef_manager.get_most_similar_solutions_to(solution=solution,
-                                                                             amount_to_return=amount_to_check_against)
+        to_compare_against = PRefManager.get_most_similar_solutions_to(pRef=self.pRef, solution=solution,
+                                                                       amount_to_return=amount_to_check_against)
 
         for alternative in to_compare_against:
             self.ensure_pair_is_examined(solution, alternative)
@@ -391,8 +390,7 @@ class DifferenceExplainer:
                     print(f"The negative traits are set to {self.allow_negative_traits}")
                 elif answer in {"consistency_test"}:
                     solution_to_investigate = solutions[0]
-                    solution_to_compare_against = \
-                    self.pRef_manager.get_most_similar_solutions_to(solution_to_investigate, 2)[1]
+                    solution_to_compare_against = PRefManager.get_most_similar_solution_to(self.pRef, solution_to_investigate)
                     self.rerun_explanation(solution_to_investigate,
                                            solution_to_compare_against,
                                            trials=100,
@@ -668,6 +666,14 @@ class DifferenceExplainer:
         def get_hamming_distance(ps_a: PS, ps_b: PS) -> int:
             return np.sum(ps_a.values != ps_b.values)
 
+        def get_jaccard_distance(ps_a: PS, ps_b: PS) -> float:
+            fixed_a = ps_a.values != STAR
+            fixed_b = ps_b.values != STAR
+            intersection = np.sum(fixed_a & fixed_b)
+            union = np.sum(fixed_a | fixed_b)
+
+            return intersection / union
+
         def get_shared_workers(ps_a: PS, ps_b: PS) -> int:
             v_a, v_b = ps_a.values, ps_b.values
             return np.sum((v_a != STAR) & (v_b != STAR) & (v_a == v_b))
@@ -682,19 +688,18 @@ class DifferenceExplainer:
         hamming_distances = [get_hamming_distance(a, b)
                              for a, b in itertools.combinations(pss, r=2)]
 
-        mean_hamming_distance = np.average(hamming_distances)
-        std_hamming_distance = np.std(hamming_distances)
-
         shared_workers = [get_shared_workers(a, b)
                           for a, b in itertools.combinations(pss, r=2)]
+
+        jaccard_distances = [get_jaccard_distance(a, b)
+                             for a, b in itertools.combinations(pss, r=2)]
 
         mean_shared_workers = np.average(shared_workers)
         std_shared_workers = np.std(shared_workers)
 
         print(f"{hamming_distances = }")
         print(f"{shared_workers = }")
-        print(f"{mean_hamming_distance = }, {std_hamming_distance = }")
-        print(f"{mean_shared_workers = }, {std_shared_workers = }")
+        print(f"{jaccard_distances = }")
 
     def delta_diff_experiment(self, good_solutions: list[EvaluatedFS]):
         amount_of_trials = int(input("Amount of trials? "))
@@ -749,7 +754,6 @@ class DifferenceExplainer:
         selection = int(input("Please select the ps to be tested "))
         if selection < 0 or selection > len(pss):
             raise Exception("Invalid index entered for pss")
-
 
         selected_ps = pss[selection]
         fs_evaluator = FSEvaluator(self.problem.fitness_function)

@@ -148,7 +148,7 @@ class LCSManager:
                                                 covering_population_size=covering_search_population,
                                                 verbose=verbose,
                                                 search_for_negative_traits = search_for_negative_traits,
-                                                verbose_search=True)
+                                                verbose_search=False)
 
         LCSManager.set_settings_for_lcs_algorithm(algorithm)
 

@@ -67,11 +67,9 @@ class SignificantlyHighAverage(Metric):
 
 class MannWhitneyU(Metric):
     pRef: Optional[PRef]
-    search_for_negative_traits: bool
 
     def __init__(self):
         self.pRef = None
-        self.search_for_negative_traits = False
 
         super().__init__()
 
@@ -81,7 +79,6 @@ class MannWhitneyU(Metric):
     @classmethod
     def get_p_value(cls, first_group: np.ndarray, second_group: np.ndarray) -> float:
         test = mannwhitneyu(first_group, second_group, alternative="two-sided")
-        # test = mannwhitneyu(supposed_greater, supposed_lower, alternative="greater")
         return test.pvalue
 
     def test_effect(self, ps: PS) -> float:
@@ -89,12 +86,7 @@ class MannWhitneyU(Metric):
         if len(when_present) < 2 or len(when_absent) < 2:
             return 1
 
-        return self.get_p_value(first_group=when_present, second_group=when_absent)  # TODO revert
-        #
-        # if self.search_for_negative_traits:
-        #     return self.get_p_value(supposed_greater=when_absent, supposed_lower=when_present)
-        # else:
-        #     return self.get_p_value(supposed_greater=when_present, supposed_lower=when_absent)
+        return self.get_p_value(first_group=when_present, second_group=when_absent)
 
 
     def get_single_score(self, ps: PS) -> float:

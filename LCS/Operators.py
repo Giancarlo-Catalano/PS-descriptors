@@ -1,5 +1,5 @@
 import random
-from typing import Iterable, Any
+from typing import Iterable, Any, Optional
 
 import numpy as np
 from pymoo.core.repair import Repair
@@ -75,7 +75,7 @@ class ObjectiveSpaceAvoidance(PyMooCustomCrowding):
 
 class ForceDifferenceMaskByActivatingOne(Repair):
 
-    def _do(self, problem, Z, **kwargs):
+    def add_one_where_needed(self, problem, Z, **kwargs):
 
         # assert(isinstance(problem, TMLocalRestrictedPymooProblem)) # including this requires a circular import
         difference_variables = problem.difference_variables
@@ -95,17 +95,30 @@ class ForceDifferenceMaskByActivatingOne(Repair):
         return Z
 
 
-    def _do_unsafe(self, problem, Z, **kwargs):
+    def _do_unsafe(self, problem, Z, **kwargs) -> (np.ndarray, bool):
         # this version has every difference variable turned on with a 50% chance.
         # The issue is that it is not guaranteed to make the solutions satisfy the constraint...
+        # the second value in the tuple indicates whether Z was modified or not)
 
         which_rows_dont_satisfy = ~problem.get_which_rows_satisfy_mask_constraint(Z)
+
+        if not np.any(which_rows_dont_satisfy):
+            return (Z, False)
         quantity_that_need_fixing = np.sum(which_rows_dont_satisfy)
         quantity_vars_in_difference = len(problem.difference_variables)
 
         # every difference variable has a 50/50 chance of being activated
         new_assignments = np.random.random((quantity_that_need_fixing, quantity_vars_in_difference))
-        Z[which_rows_dont_satisfy, problem.difference_variables] = new_assignments
+        Z[which_rows_dont_satisfy] = new_assignments
+        return (Z, True)
+
+    def _do(self, problem, Z, **kwargs):
+        # simply does _do_unsafe until it is safe
+        while True:
+            Z, was_modified = self._do_unsafe(problem, Z)
+            if not was_modified:
+                break
+
         return Z
 
 

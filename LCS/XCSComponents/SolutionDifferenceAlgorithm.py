@@ -11,7 +11,7 @@ from Core.PSMetric.Linkage.TraditionalPerturbationLinkage import TraditionalPert
 from LCS.Conversions import condition_to_ps
 from LCS.PSFilter import filter_pss, keep_biggest, keep_with_lowest_dependence
 from LCS.XCSComponents.SolutionDifferenceModel import SolutionDifferenceModel
-from LCS.ConstrainedPSSearch.SolutionDifferencePSSearch import local_restricted_tm_ps_search
+from LCS.ConstrainedPSSearch.SolutionDifferencePSSearch import local_constrained_ps_search
 from LCS.XCSComponents.SolutionDifferenceScenario import GenericSolutionDifferenceScenario
 from LCS.PSEvaluator import GeneralPSEvaluator
 from LCS.XCSComponents.CombinatorialRules import CombinatorialCondition
@@ -57,7 +57,6 @@ class SolutionDifferenceAlgorithm(xcs.XCSAlgorithm):
                          loser: EvaluatedFS,
                          only_return_least_dependent:bool = False,
                          only_return_biggest: bool = False) -> list[PS]:
-        difference_mask: np.ndarray = winner.values != loser.values
 
         if self.verbose:
             print(
@@ -68,27 +67,16 @@ class SolutionDifferenceAlgorithm(xcs.XCSAlgorithm):
             # debug
 
             # end of debug
-            pss = local_restricted_tm_ps_search(to_explain=loser if self.search_for_negative_traits else winner,
-                                                pss_to_avoid=[],
-                                                must_include_mask=difference_mask,
-                                                population_size=self.covering_population_size,
-                                                ps_evaluator=self.ps_evaluator,
-                                                ps_budget=self.covering_search_budget,
-                                                search_for_negative_traits=self.search_for_negative_traits,
-                                                verbose=self.verbose_search)
+            pss = local_constrained_ps_search(to_explain=loser if self.search_for_negative_traits else winner,
+                                              background_solution=loser,
+                                              population_size=self.covering_population_size,
+                                              ps_evaluator=self.ps_evaluator,
+                                              ps_budget=self.covering_search_budget,
+                                              only_return_biggest=only_return_biggest,
+                                              only_return_least_dependent=only_return_least_dependent,
+                                              verbose=self.verbose_search)
 
-            # linkage_threshold = self.ps_evaluator.local_linkage_metric.get_linkage_threshold()
-
-            # pss = filter_pss(pss, ps_evaluator=self.ps_evaluator,
-            #                  atomicity_threshold=linkage_threshold,
-            #                  verbose=self.verbose_search)
             assert (len(pss) > 0)
-
-            if only_return_least_dependent:
-                pss = keep_with_lowest_dependence(pss, self.ps_evaluator.traditional_linkage)
-
-            if only_return_biggest:
-                pss = keep_biggest(pss)
             return pss
 
     def cover_with_many(self, match_set: xcs.MatchSet, only_return_one: bool = False) -> list[xcs.ClassifierRule]:

@@ -138,8 +138,10 @@ class PRefManager:
     def get_atomicity_contributions(self, ps: PS) -> np.ndarray:
         return self.evaluator.get_atomicity_contributions(ps, normalised=True)
 
-    def get_most_similar_solutions_to(self, solution: EvaluatedFS, amount_to_return: int) -> list[EvaluatedFS]:
-        differences = np.sum(self.pRef.full_solution_matrix != solution.values, axis=1)
+
+    @classmethod
+    def get_most_similar_solutions_to(cls, pRef: PRef, solution: FullSolution, amount_to_return: int) -> list[EvaluatedFS]:
+        differences = np.sum(pRef.full_solution_matrix != solution.values, axis=1)
         index_and_differences = list(enumerate(differences))
         index_and_differences.sort(key = utils.second)
 
@@ -151,7 +153,7 @@ class PRefManager:
             if difference == 0:
                 continue
 
-            solution_to_consider = self.pRef.get_nth_solution(index)
+            solution_to_consider = pRef.get_nth_solution(index)
             if solution_to_consider == solution:
                 continue
 
@@ -159,3 +161,6 @@ class PRefManager:
 
         return result
 
+    @classmethod
+    def get_most_similar_solution_to(cls, pRef: PRef, solution: FullSolution) -> EvaluatedFS:
+        return PRefManager.get_most_similar_solutions_to(pRef, solution, 1)[0] # TODO test this
