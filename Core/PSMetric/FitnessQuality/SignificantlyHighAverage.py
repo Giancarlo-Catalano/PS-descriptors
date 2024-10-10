@@ -1,7 +1,7 @@
 from typing import Optional
 
 import numpy as np
-from scipy.stats import t
+from scipy.stats import t, PermutationMethod
 
 from Core.EvaluatedFS import EvaluatedFS
 from Core.FSEvaluator import FSEvaluator
@@ -67,18 +67,19 @@ class SignificantlyHighAverage(Metric):
 
 class MannWhitneyU(Metric):
     pRef: Optional[PRef]
+    test_method: [str | PermutationMethod]
 
     def __init__(self):
         self.pRef = None
+        self.test_method = "asymptotic"
 
         super().__init__()
 
     def set_pRef(self, pRef: PRef):
         self.pRef = pRef
 
-    @classmethod
-    def get_p_value(cls, first_group: np.ndarray, second_group: np.ndarray) -> float:
-        test = mannwhitneyu(first_group, second_group, alternative="two-sided")
+    def get_p_value(self, first_group: np.ndarray, second_group: np.ndarray) -> float:
+        test = mannwhitneyu(first_group, second_group, alternative="two-sided", method=self.test_method)
         return test.pvalue
 
     def test_effect(self, ps: PS) -> float:

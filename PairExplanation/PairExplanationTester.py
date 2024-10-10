@@ -12,7 +12,7 @@ from Explanation.PRefManager import PRefManager
 from LCS import PSEvaluator
 from LCS.ConstrainedPSSearch.SolutionDifferencePSSearch import local_constrained_ps_search
 from LCS.PSEvaluator import GeneralPSEvaluator
-from utils import announce
+from utils import announce, execution_time
 
 
 class PairExplanationTester:
@@ -85,8 +85,7 @@ class PairExplanationTester:
                                           background_solution: FullSolution,
                                           only_return_biggest: bool = False,
                                           only_return_least_dependent: bool = False,
-                                          runs: int = 100,
-                                          verbose: bool = False):
+                                          runs: int = 100):
         if self.verbose:
             print(f"consistency_test_on_solution_pair({main_solution = }, "
                   f"{background_solution = }, "
@@ -102,13 +101,20 @@ class PairExplanationTester:
                                                ps_budget=self.ps_search_budget,
                                                only_return_least_dependent=only_return_least_dependent,
                                                only_return_biggest=only_return_biggest,
-                                               verbose=verbose)
+                                               verbose=self.verbose)
 
         pss = []
-        for run_index in tqdm(range(runs)):
-            pss.extend(single_test())
+        with execution_time() as time:
+            for run_index in tqdm(range(runs)):
+                pss.extend(single_test())
 
-        return self.get_consistency_of_pss(pss)
+        runtime = time.execution_time
+
+
+        results =  self.get_consistency_of_pss(pss)
+        results["total_runtime"] = runtime
+        results["runs"] = runs
+        return results
 
     def consistency_test_on_optima(self,
                                    runs: int,

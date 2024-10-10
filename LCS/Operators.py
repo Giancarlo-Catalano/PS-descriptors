@@ -102,24 +102,32 @@ class ForceDifferenceMaskByActivatingOne(Repair):
 
         which_rows_dont_satisfy = ~problem.get_which_rows_satisfy_mask_constraint(Z)
 
-        if not np.any(which_rows_dont_satisfy):
-            return (Z, False)
+
         quantity_that_need_fixing = np.sum(which_rows_dont_satisfy)
+        print(f"{quantity_that_need_fixing = }")
+        if quantity_that_need_fixing < 1:
+            return (Z, False)
         quantity_vars_in_difference = len(problem.difference_variables)
 
         # every difference variable has a 50/50 chance of being activated
-        new_assignments = np.random.random((quantity_that_need_fixing, quantity_vars_in_difference))
-        Z[which_rows_dont_satisfy] = new_assignments
+        new_assignments = np.random.random((quantity_that_need_fixing, quantity_vars_in_difference)) > 0.5
+        new_assignments[~np.any(new_assignments, axis=1)] = True
+
+        Z[which_rows_dont_satisfy][:, problem.difference_variables] = new_assignments
         return (Z, True)
 
     def _do(self, problem, Z, **kwargs):
-        # simply does _do_unsafe until it is safe
-        while True:
-            Z, was_modified = self._do_unsafe(problem, Z)
-            if not was_modified:
-                break
+        ## why isn't this working?!!!
+        Z[~np.any(Z[:, problem.difference_variables], axis=1)][:, problem.difference_variables] = True
 
         return Z
+        # # simply does _do_unsafe until it is safe
+        # while True:
+        #     Z, was_modified = self._do_unsafe(problem, Z)
+        #     if not was_modified:
+        #         break
+        #
+        # return Z
 
 
 class ForceDifferenceMaskByActivatingAll(Repair):

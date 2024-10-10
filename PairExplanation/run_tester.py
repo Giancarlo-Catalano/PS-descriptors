@@ -1,9 +1,12 @@
+from BenchmarkProblems.EfficientBTProblem.EfficientBTProblem import EfficientBTProblem
 from BenchmarkProblems.RoyalRoad import RoyalRoad
 from PairExplanation.PairExplanationTester import PairExplanationTester
 
 
 def run_tester():
-    problem = RoyalRoad(4, 4)
+    problem = EfficientBTProblem.random_subset_of(EfficientBTProblem.from_default_files(),
+                                                  quantity_workers_to_keep=30,
+                                                  random_state=42)
 
 
     tester = PairExplanationTester(optimisation_problem=problem,
@@ -13,8 +16,17 @@ def run_tester():
                                    pRef_creation_method="uniform GA",
                                    verbose=True)
 
-    results = tester.consistency_test_on_optima(runs=100, only_return_biggest=True)
-    print(results)
+
+    all_results = dict()
+
+    for search_budget in [1000, 2000, 5000, 10000]:
+        tester.ps_search_budget = search_budget
+        for search_population_size in [50, 100, 200]:
+            print(f"Searching through {search_budget = }, {search_population_size}")
+            tester.ps_search_population_size = search_population_size
+            all_results[(search_budget, search_population_size)] = tester.consistency_test_on_optima(runs=100, only_return_biggest=True)
+
+    print(all_results)
 
 
 
