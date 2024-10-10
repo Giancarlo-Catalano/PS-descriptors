@@ -105,7 +105,7 @@ class MannWhitneyU(Metric):
 
 
 
-class ForcefulMannWhitneyU(MannWhitneyU):
+class ForcefulMannWhitneyU(Metric):
 
     """ This is not to be used as a fitness function!!!"""
     sample_size: int
@@ -117,9 +117,11 @@ class ForcefulMannWhitneyU(MannWhitneyU):
 
     def __init__(self,
                  sample_size: int,
-                 search_space: SearchSpace):
+                 search_space: SearchSpace,
+                 fitness_evaluator: FSEvaluator):
         self.sample_size = sample_size
         self.search_space = search_space
+        self.fitness_evaluator = fitness_evaluator
         super().__init__()
 
 

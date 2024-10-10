@@ -11,8 +11,10 @@ from tqdm import tqdm
 import utils
 from BenchmarkProblems.BenchmarkProblem import BenchmarkProblem
 from Core.EvaluatedFS import EvaluatedFS
+from Core.FSEvaluator import FSEvaluator
 from Core.PRef import PRef
 from Core.PS import PS, STAR
+from Core.PSMetric.FitnessQuality.SignificantlyHighAverage import ForcefulMannWhitneyU
 from Explanation.PRefManager import PRefManager
 from LCS.ConstrainedPSSearch.SolutionDifferencePSSearch import local_restricted_tm_ps_search
 from LCS.Conversions import get_rules_in_model
@@ -68,7 +70,7 @@ class DifferenceExplainer:
                                                       control_pss_file=control_ps_file,
                                                       control_descriptors_table_file=descriptors_file,
                                                       control_samples_per_size_category=1000,
-                                                      pRef_manager = self.pRef_manager,
+                                                      pRef_manager=self.pRef_manager,
                                                       verbose=verbose)
 
         self.descriptors_manager.load_from_existing_if_possible()
@@ -207,8 +209,6 @@ class DifferenceExplainer:
         #                             for name, value, percentile in names_values_percentiles
         #                             if percentile_is_significant(percentile) or name == "delta"]
 
-
-
         # sort by "extremeness"
         names_values_percentiles.sort(key=lambda x: abs(0.5 - x[2]), reverse=True)
 
@@ -261,7 +261,6 @@ class DifferenceExplainer:
         # f"A.fitness = {solution_a.fitness}, "
         # f"B.fitness = {solution_b.fitness}")
 
-
         self.ensure_pair_is_examined(solution_a, solution_b)
 
         in_a, in_b = self.get_difference_rules(solution_a, solution_b)
@@ -279,7 +278,6 @@ class DifferenceExplainer:
     def get_known_rules_in_solution(self, solution: EvaluatedFS) -> list[xcs.XCSClassifierRule]:
         return [rule for lcs_manager in self.get_lcs_managers_in_use
                 for rule in lcs_manager.get_matches_with_solution(solution)]
-
 
     def ensure_pair_is_examined(self, sol_a: EvaluatedFS, sol_b: EvaluatedFS):
         if sol_a == sol_b:
@@ -393,7 +391,8 @@ class DifferenceExplainer:
                     print(f"The negative traits are set to {self.allow_negative_traits}")
                 elif answer in {"consistency_test"}:
                     solution_to_investigate = solutions[0]
-                    solution_to_compare_against = self.pRef_manager.get_most_similar_solutions_to(solution_to_investigate, 2)[1]
+                    solution_to_compare_against = \
+                    self.pRef_manager.get_most_similar_solutions_to(solution_to_investigate, 2)[1]
                     self.rerun_explanation(solution_to_investigate,
                                            solution_to_compare_against,
                                            trials=100,
@@ -406,6 +405,8 @@ class DifferenceExplainer:
                     self.handle_rules_query()
                 elif answer in {"compare_delta_test"}:
                     self.delta_diff_experiment(solutions)
+                elif answer in {"test_ps"}:
+                    self.handle_test_ps_query()
                 elif answer in {"v", "var", "variable"}:
                     self.handle_variable_query()
                 elif answer in {"vs", "variable in solution"}:
@@ -529,7 +530,6 @@ class DifferenceExplainer:
             else:
                 print("The command was not recognised, please try again")
 
-
     def carry_out_experiment(self, seed: int,
                              amount_of_variables_to_remove: int,
                              solution_to_modify: EvaluatedFS,
@@ -539,11 +539,10 @@ class DifferenceExplainer:
             solution=solution_to_modify,
             amount_to_remove=amount_of_variables_to_remove)
 
-
         alternatives = [self.patch_manager.fix_solution(incomplete_solution, method="random")
-                            for i in range(alternatives_to_produce)]
+                        for i in range(alternatives_to_produce)]
         alternatives = [EvaluatedFS(solution, self.problem.fitness_function(solution))
-                            for solution in alternatives]
+                        for solution in alternatives]
 
         all_selectable_solutions = [solution_to_modify] + alternatives
 
@@ -554,15 +553,15 @@ class DifferenceExplainer:
             for index, alternative in enumerate(alternatives):
                 print(f"\t[{index + 1}]\t{alternative.as_full_solution()}")
 
-
         def finish_game(selected_option: int):
             positions = ["1st", "2nd", "3rd"] + [f"{n}th" for n in range(4, 10)]
             best_fitness = max(alternative.fitness for alternative in alternatives)
 
             alternatives_with_index = list(enumerate(alternatives))
             alternatives_with_index.sort(key=utils.second, reverse=True)
-            alternatives_with_index_and_position = [(alternative, original_index+1, position)
-                                                    for (position, (original_index, alternative)) in enumerate(alternatives_with_index)]
+            alternatives_with_index_and_position = [(alternative, original_index + 1, position)
+                                                    for (position, (original_index, alternative)) in
+                                                    enumerate(alternatives_with_index)]
 
             alternatives_with_index_and_position.sort(key=utils.second)
 
@@ -570,9 +569,9 @@ class DifferenceExplainer:
                 print(f"[{shown_index}]->{positions[position]}"
                       f"\t{alternative}, {'(your choice)' if shown_index == selected_option else ''}")
 
-            your_position = alternatives_with_index_and_position[selected_option-1][2]
+            your_position = alternatives_with_index_and_position[selected_option - 1][2]
             print(f"Your option was the {positions[your_position]}")
-            if alternatives_with_index_and_position[selected_option-1][0].fitness == best_fitness:
+            if alternatives_with_index_and_position[selected_option - 1][0].fitness == best_fitness:
                 print("Congrats!")
 
         print("The original solution is not usable, and your job is to find a suitable replacement")
@@ -628,7 +627,7 @@ class DifferenceExplainer:
                     self.ensure_pair_is_examined(sol_a, sol_b)
                     self.explain_difference(sol_a, sol_b)
             elif user_input in {"show_useful_output"}:
-                for sol_a_index, sol_b_index in itertools.combinations(range(alternatives_to_produce+1), r=2):
+                for sol_a_index, sol_b_index in itertools.combinations(range(alternatives_to_produce + 1), r=2):
                     sol_a = all_selectable_solutions[sol_a_index]
                     sol_b = all_selectable_solutions[sol_b_index]
 
@@ -649,27 +648,25 @@ class DifferenceExplainer:
                                       solution_to_modify=solution_to_modify,
                                       amount_of_variables_to_remove=6)
 
-
-
     def rerun_explanation(self,
                           sol_a: EvaluatedFS,
                           sol_b: EvaluatedFS,
                           trials: int,
-                          for_positive = True):
+                          for_positive=True):
 
         if sol_a.fitness == sol_b.fitness:
             raise Exception("Trying to get pss of a pair with identical fitness...")
 
         winner, loser = (sol_a, sol_b) if sol_a > sol_b else (sol_b, sol_a)
+
         def get_ps(for_positive=True) -> PS:
             algorithm = (self.positive_lcs_manager if for_positive else self.negative_lcs_manager).algorithm
             pss = algorithm.get_pss_for_pair(winner, loser, only_return_least_dependent=False, only_return_biggest=True)
-            assert(len(pss) == 1)
+            assert (len(pss) == 1)
             return pss[0]
 
         def get_hamming_distance(ps_a: PS, ps_b: PS) -> int:
             return np.sum(ps_a.values != ps_b.values)
-
 
         def get_shared_workers(ps_a: PS, ps_b: PS) -> int:
             v_a, v_b = ps_a.values, ps_b.values
@@ -688,7 +685,6 @@ class DifferenceExplainer:
         mean_hamming_distance = np.average(hamming_distances)
         std_hamming_distance = np.std(hamming_distances)
 
-
         shared_workers = [get_shared_workers(a, b)
                           for a, b in itertools.combinations(pss, r=2)]
 
@@ -699,9 +695,6 @@ class DifferenceExplainer:
         print(f"{shared_workers = }")
         print(f"{mean_hamming_distance = }, {std_hamming_distance = }")
         print(f"{mean_shared_workers = }, {std_shared_workers = }")
-
-
-
 
     def delta_diff_experiment(self, good_solutions: list[EvaluatedFS]):
         amount_of_trials = int(input("Amount of trials? "))
@@ -718,7 +711,6 @@ class DifferenceExplainer:
                         a, b = b, a
                     return a, b
 
-
         def get_delta_of_rule(rule: xcs.XCSClassifierRule) -> float:
             return self.descriptors_manager.get_fitness_delta(rule.condition)
 
@@ -728,7 +720,6 @@ class DifferenceExplainer:
             in_a, in_b = self.get_difference_rules(solution_a, solution_b)
 
             return list(map(get_delta_of_rule, in_a)), list(map(get_delta_of_rule, in_b))
-
 
         def safe_average(deltas) -> Optional[float]:
             if len(deltas) == 0:
@@ -749,9 +740,24 @@ class DifferenceExplainer:
         trials_from_groups("GO", good_solutions, other_solutions)
         trials_from_groups("OO", other_solutions, other_solutions)
 
+    def handle_test_ps_query(self):
+        pss = self.all_pss
+
+        for index, ps, in enumerate(pss):
+            print(f"[{index}]\t{ps}")
+
+        selection = int(input("Please select the ps to be tested "))
+        if selection < 0 or selection > len(pss):
+            raise Exception("Invalid index entered for pss")
 
 
+        selected_ps = pss[selection]
+        fs_evaluator = FSEvaluator(self.problem.fitness_function)
+        tester = ForcefulMannWhitneyU(sample_size=100,
+                                      search_space=self.problem.search_space,
+                                      fitness_evaluator=fs_evaluator)
 
+        beneficial_p_value, maleficial_p_value = tester.check_effect_of_ps(selected_ps)
 
-
-
+        print(f"The beneficial p-value is {beneficial_p_value:.4f}")
+        print(f"The maleficial p-value is {maleficial_p_value:.4f}")
