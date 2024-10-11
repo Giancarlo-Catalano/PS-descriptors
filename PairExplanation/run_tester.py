@@ -4,9 +4,10 @@ from PairExplanation.PairExplanationTester import PairExplanationTester
 
 
 def run_tester():
-    problem = EfficientBTProblem.random_subset_of(EfficientBTProblem.from_default_files(),
-                                                  quantity_workers_to_keep=30,
-                                                  random_state=42)
+    # problem = EfficientBTProblem.random_subset_of(EfficientBTProblem.from_default_files(),
+    #                                               quantity_workers_to_keep=30,
+    #                                               random_state=42)
+    problem = RoyalRoad(5)
 
 
     tester = PairExplanationTester(optimisation_problem=problem,

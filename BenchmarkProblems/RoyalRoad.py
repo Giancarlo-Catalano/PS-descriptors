@@ -7,7 +7,7 @@ from Core.PS import PS
 
 class RoyalRoad(UnitaryProblem):
 
-    def __init__(self, amount_of_cliques: int, clique_size: int):
+    def __init__(self, amount_of_cliques: int, clique_size: int = 4):
         super().__init__(amount_of_cliques, clique_size)
 
     def get_problem_name(self) -> str:
