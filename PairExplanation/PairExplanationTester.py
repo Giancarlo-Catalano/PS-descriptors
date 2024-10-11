@@ -99,8 +99,7 @@ class PairExplanationTester:
                                                population_size=self.ps_search_population_size,
                                                ps_evaluator=self.ps_evaluator,
                                                ps_budget=self.ps_search_budget,
-                                               only_return_least_dependent=only_return_least_dependent,
-                                               only_return_biggest=only_return_biggest,
+                                               culling_method="overlap",
                                                verbose=self.verbose)
 
         pss = []

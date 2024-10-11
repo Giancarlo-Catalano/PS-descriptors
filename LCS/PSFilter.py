@@ -1,5 +1,7 @@
 from typing import Optional, Callable
 
+import numpy as np
+
 import utils
 from Core.PS import PS
 from Core.PSMetric.Linkage import LocalPerturbation
@@ -97,15 +99,22 @@ def filter_pss(pss: list[PS],
 
 
 
-def keep_biggest(pss: list[PS]) -> list[PS]:
+def keep_biggest(pss: list[PS]) -> PS:
     """returns a singleton list containing the pss with the most variables being fixed, (i know it's counterintuitive"""
     """assumes simplicity is the first metric"""
     sizes = [ps.fixed_count() for ps in pss]
     # print(f"Of the sizes present ({sizes}), we'll return {max(sizes)}")
     # print("\n".join("\t".join(f"{m:.2f}" for m in ps.metric_scores) for ps in pss))
-    return [min(pss, key=lambda x:x.metric_scores[0])]
+    return min(pss, key=lambda x:x.metric_scores[0])
 
 
-def keep_with_lowest_dependence(pss: list[PS], local_linkage_metric: TraditionalPerturbationLinkage) -> list[PS]:
+def keep_with_lowest_dependence(pss: list[PS], local_linkage_metric: TraditionalPerturbationLinkage) -> PS:
     pss_and_dependence = [(ps, local_linkage_metric.get_dependence(ps)) for ps in pss]
-    return [min(pss_and_dependence, key=utils.second)[0]]
+    return min(pss_and_dependence, key=utils.second)[0]
+
+
+def merge_pss_into_one(pss: list[PS]) -> PS:
+    # assumes that no PSS are in disagreement
+    pss_matrix = np.array([ps.values for ps in pss])
+    final_values = np.max(pss_matrix, axis=0)  # since stars are -1
+    return PS(final_values)

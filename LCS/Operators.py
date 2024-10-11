@@ -118,7 +118,10 @@ class ForceDifferenceMaskByActivatingOne(Repair):
 
     def _do(self, problem, Z, **kwargs):
         ## why isn't this working?!!!
-        Z[~np.any(Z[:, problem.difference_variables], axis=1)][:, problem.difference_variables] = True
+        unfeasible_rows = ~np.any(Z[:, problem.difference_variables], axis=1)
+        cells_to_modify = np.ix_(unfeasible_rows, problem.difference_variables) # otherwise the assignment doesn't work
+        Z[cells_to_modify] = True
+        #Z[~np.any(Z[:, problem.difference_variables], axis=1)][:, problem.difference_variables] = True
 
         return Z
         # # simply does _do_unsafe until it is safe

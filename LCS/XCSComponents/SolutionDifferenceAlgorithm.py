@@ -72,8 +72,7 @@ class SolutionDifferenceAlgorithm(xcs.XCSAlgorithm):
                                               population_size=self.covering_population_size,
                                               ps_evaluator=self.ps_evaluator,
                                               ps_budget=self.covering_search_budget,
-                                              only_return_biggest=only_return_biggest,
-                                              only_return_least_dependent=only_return_least_dependent,
+                                              culling_method="least_dependent",
                                               verbose=self.verbose_search)
 
             assert (len(pss) > 0)

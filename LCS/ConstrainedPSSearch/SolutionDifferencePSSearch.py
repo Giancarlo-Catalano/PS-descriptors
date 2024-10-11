@@ -1,4 +1,4 @@
-from typing import Iterable, Optional
+from typing import Iterable, Optional, Literal
 
 import numpy as np
 from pymoo.algorithms.moo.nsga2 import NSGA2
@@ -14,7 +14,7 @@ from Core.PS import PS
 from LCS.Operators import LocalPSGeometricSampling, ObjectiveSpaceAvoidance, ForceDifferenceMaskByActivatingOne, \
     ForceDifferenceMaskByActivatingAll
 from LCS.PSEvaluator import GeneralPSEvaluator
-from LCS.PSFilter import keep_with_lowest_dependence, keep_biggest
+from LCS.PSFilter import keep_with_lowest_dependence, keep_biggest, merge_pss_into_one
 
 
 class LocalRestrictedPymooProblem(Problem):
@@ -82,8 +82,7 @@ def local_constrained_ps_search(to_explain: FullSolution,
                                 ps_evaluator: GeneralPSEvaluator,
                                 ps_budget: int,
                                 population_size: int,
-                                only_return_least_dependent: bool = False,
-                                only_return_biggest: bool = False,
+                                culling_method=Optional[Literal["biggest", "least_dependent", "overlap"]],
                                 verbose=True) -> list[PS]:
     must_include_mask: np.ndarray = to_explain.values != background_solution.values
 
@@ -142,10 +141,14 @@ def local_constrained_ps_search(to_explain: FullSolution,
         for ps in result_pss:
             print(ps)
 
-    if only_return_least_dependent:
-        result_pss = keep_with_lowest_dependence(result_pss, ps_evaluator.traditional_linkage)
+    if culling_method is not None:
+        if culling_method == "biggest":
+            result_pss = [keep_biggest(result_pss)]
+        elif culling_method == "least_dependent":
+            result_pss = [keep_with_lowest_dependence(result_pss, ps_evaluator.traditional_linkage)]
+        elif culling_method == "overlap":
+            result_pss = [merge_pss_into_one(result_pss)]
 
-    if only_return_biggest:
-        result_pss = keep_biggest(result_pss)
+        print(f"After the culling({culling_method}), the final PS is {result_pss[0]}")
 
     return result_pss
