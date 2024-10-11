@@ -82,12 +82,18 @@ class MannWhitneyU(Metric):
         test = mannwhitneyu(first_group, second_group, alternative="two-sided", method=self.test_method)
         return test.pvalue
 
+    def get_p_value_fast(self, first_group: np.ndarray, second_group: np.ndarray, restrict_size: int) -> float:
+
+        test = mannwhitneyu(first_group[:restrict_size], second_group[:restrict_size], alternative="two-sided", method=self.test_method)
+        return test.pvalue
+
     def test_effect(self, ps: PS) -> float:
         when_present, when_absent = self.pRef.fitnesses_of_observations_and_complement(ps)
         if len(when_present) < 2 or len(when_absent) < 2:
             return 1
 
-        return self.get_p_value(first_group=when_present, second_group=when_absent)
+        return self.get_p_value_fast(first_group=when_present, second_group=when_absent, restrict_size=1000)
+        #return self.get_p_value(first_group=when_present, second_group=when_absent)
 
 
     def get_single_score(self, ps: PS) -> float:

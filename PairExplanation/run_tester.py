@@ -1,13 +1,15 @@
+import json
+
 from BenchmarkProblems.EfficientBTProblem.EfficientBTProblem import EfficientBTProblem
 from BenchmarkProblems.RoyalRoad import RoyalRoad
 from PairExplanation.PairExplanationTester import PairExplanationTester
 
 
 def run_tester():
-    # problem = EfficientBTProblem.random_subset_of(EfficientBTProblem.from_default_files(),
-    #                                               quantity_workers_to_keep=30,
-    #                                               random_state=42)
-    problem = RoyalRoad(5)
+    problem = EfficientBTProblem.random_subset_of(EfficientBTProblem.from_default_files(),
+                                                  quantity_workers_to_keep=30,
+                                                  random_state=42)
+    # problem = RoyalRoad(5)
 
 
     tester = PairExplanationTester(optimisation_problem=problem,
@@ -15,18 +17,22 @@ def run_tester():
                                    ps_search_population=50,
                                    pRef_size=10000,
                                    pRef_creation_method="uniform GA",
-                                   verbose=True)
+                                   verbose=False)
 
 
     all_results = dict()
 
-    for search_budget in [1000, 2000, 5000, 10000]:
+    for search_budget in [1000, 10000]:
         tester.ps_search_budget = search_budget
-        for search_population_size in [50, 100, 200]:
+        for search_population_size in [50, 200]:
             print(f"Searching through {search_budget = }, {search_population_size}")
             tester.ps_search_population_size = search_population_size
-            all_results[(search_budget, search_population_size)] = tester.consistency_test_on_optima(runs=100, only_return_biggest=True)
+            all_results[f"{search_budget}, {search_population_size}"] = tester.consistency_test_on_optima(runs=100, culling_method="overlap")
 
+
+    file_path = r"C:\Users\gac8\PycharmProjects\PS-descriptors-LCS\resources\explanations\messing_around\results_of_consistency_search.json"
+    with open(file_path, "w") as file:
+        json.dump(all_results, file)
     print(all_results)
 
 

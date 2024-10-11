@@ -61,7 +61,7 @@ class PairExplanationTester:
 
     def get_consistency_of_pss(self, pss: list[PS]) -> dict:
         def get_hamming_distance(ps_a: PS, ps_b: PS) -> int:
-            return np.sum(ps_a.values != ps_b.values)
+            return int(np.sum(ps_a.values != ps_b.values))
 
         def get_jaccard_distance(ps_a: PS, ps_b: PS) -> float:
             fixed_a = ps_a.values != STAR
@@ -69,7 +69,7 @@ class PairExplanationTester:
             intersection = np.sum(fixed_a & fixed_b)
             union = np.sum(fixed_a | fixed_b)
 
-            return intersection / union
+            return float(intersection / union)
 
         hamming_distances = [get_hamming_distance(a, b)
                              for a, b in itertools.combinations(pss, r=2)]
@@ -83,15 +83,13 @@ class PairExplanationTester:
     def consistency_test_on_solution_pair(self,
                                           main_solution: FullSolution,
                                           background_solution: FullSolution,
-                                          only_return_biggest: bool = False,
-                                          only_return_least_dependent: bool = False,
+                                          culling_method: str,
                                           runs: int = 100):
         if self.verbose:
             print(f"consistency_test_on_solution_pair({main_solution = }, "
                   f"{background_solution = }, "
                   f"{runs =}, "
-                  f"{only_return_least_dependent = }, "
-                  f"{only_return_biggest}")
+                  f"{culling_method = }")
 
         def single_test():
             return local_constrained_ps_search(to_explain=main_solution,
@@ -109,21 +107,19 @@ class PairExplanationTester:
 
         runtime = time.execution_time
 
-
-        results =  self.get_consistency_of_pss(pss)
+        results = self.get_consistency_of_pss(pss)
         results["total_runtime"] = runtime
         results["runs"] = runs
+        results["sizes"] = [ps.fixed_count() for ps in pss]
         return results
 
     def consistency_test_on_optima(self,
                                    runs: int,
-                                   only_return_biggest=False,
-                                   only_return_least_dependent=False) -> dict:
+                                   culling_method: str) -> dict:
         optima = self.pRef.get_top_n_solutions(1)[0]
         closest_to_optima = PRefManager.get_most_similar_solution_to(pRef=self.pRef,
                                                                      solution=optima)  # excludes the solution itself
 
         return self.consistency_test_on_solution_pair(optima, closest_to_optima,
-                                                      only_return_biggest=only_return_biggest,
-                                                      only_return_least_dependent=only_return_least_dependent,
+                                                      culling_method=culling_method,
                                                       runs=runs)

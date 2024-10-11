@@ -149,6 +149,7 @@ def local_constrained_ps_search(to_explain: FullSolution,
         elif culling_method == "overlap":
             result_pss = [merge_pss_into_one(result_pss)]
 
-        print(f"After the culling({culling_method}), the final PS is {result_pss[0]}")
+        if verbose:
+            print(f"After the culling({culling_method}), the final PS is {result_pss[0]}")
 
     return result_pss
