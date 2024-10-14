@@ -38,7 +38,8 @@ def run_tester():
     problem = EfficientBTProblem.random_subset_of(EfficientBTProblem.from_default_files(),
                                                   quantity_workers_to_keep=30,
                                                   skills_to_use = {"woodworking", "fibre", "tech support", "electricity"},
-                                                  random_state=42)
+                                                  random_state=42,
+                                                  max_rota_length=3)
     # problem = RoyalRoad(5)
 
 
@@ -51,7 +52,7 @@ def run_tester():
 
 
     results = tester.accuracy_test(amount_of_samples=100)
-    file_path = r"C:\Users\gac8\PycharmProjects\PS-descriptors-LCS\resources\explanations\messing_around\results_of_accuracy_search_different.json"
+    file_path = r"C:\Users\gac8\PycharmProjects\PS-descriptors-LCS\resources\explanations\messing_around\results_of_accuracy_search_reduced.json"
     with open(file_path, "w") as file:
         json.dump(results, file)
     print(results)

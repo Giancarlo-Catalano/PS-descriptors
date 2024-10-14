@@ -27,10 +27,10 @@ class WorkDay:
 
     def __repr__(self):
         if self.working:
-            return "V"
+            return "W"
             #return f"{self.start_time}~{self.end_time}"
         else:
-            return "----"
+            return "_"
 
 class RotaPattern:
     workweek_length: int
@@ -113,6 +113,11 @@ class RotaPattern:
             new_days = new_days[:len(bigger)]
             new_smaller = RotaPattern(self.workweek_length, new_days)
             return compare_when_same_length(new_smaller, bigger)
+
+
+    def __hash__(self):
+        tuple_of_bools = tuple(day.working for day in self.days)
+        return hash(tuple_of_bools)
 
     def to_numpy_array(self) -> np.ndarray:
         return np.array([day.working for day in self.days])
