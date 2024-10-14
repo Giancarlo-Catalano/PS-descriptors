@@ -17,7 +17,7 @@ from Explanation.PRefManager import PRefManager
 from PSMiners.PyMoo.SequentialCrowdingMiner import SequentialCrowdingMiner
 import logging
 
-from utils import execution_time
+from utils import execution_timer
 
 logger = logging.getLogger(__name__)
 
@@ -132,7 +132,7 @@ class HyperparameterEvaluator:
                                         eval_limit = TerminationCriteria.PSEvaluationLimit(self.ps_budget)
                                         finish_early_if_all_found = TerminationCriteria.UntilAllTargetsFound(targets)
                                         termination_criteria = TerminationCriteria.UnionOfCriteria(eval_limit, finish_early_if_all_found)
-                                        with execution_time() as timer:
+                                        with execution_timer() as timer:
                                             miner.run(termination_criteria, verbose=verbose)
                                         mined_pss = miner.get_results()
                                         found = targets.intersection(mined_pss)
@@ -151,7 +151,7 @@ class HyperparameterEvaluator:
                                                      "smallest_errors": [smallest_errors],
                                                      "uses_custom_crowding_operator": uses_custom_crowding_operator,
                                                      "vars_covered": self.get_count_of_covered_vars(found),
-                                                     "runtime":timer.execution_time,
+                                                     "runtime":timer.execution_timer,
                                                      "used_evaluations":miner.get_used_evaluations()}
                                     except Exception as e:  # TODO change this
                                         if not ignore_errors:

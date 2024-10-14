@@ -57,7 +57,7 @@ def get_descriptive_stats(data: np.ndarray) -> (float, float, float, float, floa
 class ExecutionTime(ContextDecorator):
     start_time: float
     end_time: float
-    execution_time: float
+    runtime: float
 
     def __enter__(self):
         self.start_time = time.time()
@@ -65,13 +65,13 @@ class ExecutionTime(ContextDecorator):
 
     def __exit__(self, exc_type, exc_value, traceback):
         self.end_time = time.time()
-        self.execution_time = self.end_time - self.start_time
+        self.runtime = self.end_time - self.start_time
 
     def __str__(self):
-        return f"{self.execution_time:.6f}"
+        return f"{self.runtime:.6f}"
 
 
-def execution_time():
+def execution_timer():
     return ExecutionTime()
 
 
@@ -92,7 +92,7 @@ class Announce(ContextDecorator):
 
     def __exit__(self, exc_type, exc_val, exc_tb):
         self.timer.__exit__(exc_type, exc_val, exc_tb)
-        runtime = self.timer.execution_time
+        runtime = self.timer.runtime
         if self.verbose:
             print(f"...Finished (took {runtime:2f} seconds)")
 

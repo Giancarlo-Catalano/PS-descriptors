@@ -2,7 +2,7 @@ import copy
 import itertools
 import math
 import random
-from typing import TypeAlias
+from typing import TypeAlias, Optional
 
 import numpy as np
 
@@ -548,9 +548,23 @@ class EfficientBTProblem(BTProblem):
 
 
     @classmethod
-    def subset_from(cls, original_problem, which_workers_to_keep: list[int]):
+    def subset_from(cls,
+                    original_problem,
+                    which_workers_to_keep: list[int],
+                    skills_conversion_dict: Optional[dict[str, str]]):
         assert(isinstance(original_problem, EfficientBTProblem))
+
+        def worker_with_new_skills(original_worker) -> Worker:
+            new_skills = {skills_conversion_dict[old_skill] for old_skill in original_worker.available_skills}
+            return Worker(available_skills=new_skills,
+                          available_rotas=original_worker.available_rotas,
+                          name = original_worker.name,
+                          worker_id = original_worker.worker_id)
+
         workers = [original_problem.workers[index] for index in which_workers_to_keep]
+
+        if skills_conversion_dict is not None:
+            workers = list(map(worker_with_new_skills, workers))
         return cls(workers = workers,
                    calendar_length=original_problem.calendar_length,
                    weights=original_problem.weights,
@@ -559,11 +573,20 @@ class EfficientBTProblem(BTProblem):
 
 
     @classmethod
-    def random_subset_of(cls, original_problem, quantity_workers_to_keep, random_state: int = 120):
+    def random_subset_of(cls,
+                         original_problem,
+                         quantity_workers_to_keep: int,
+                         skills_to_use: set[str],
+                         random_state: int = 120):
         random.seed(random_state)
         amount_of_workers_in_total = len(original_problem.workers)
         which_workers_to_keep = random.choices(range(amount_of_workers_in_total), k=quantity_workers_to_keep)
-        return cls.subset_from(original_problem, which_workers_to_keep)
+        skills_to_choose_from = list(skills_to_use)
+        skills_conversion_dict = {original_skill: random.choice(skills_to_choose_from)
+                                  for original_skill in original_problem.all_skills}
+        return cls.subset_from(original_problem,
+                               which_workers_to_keep,
+                               skills_conversion_dict)
 
 
 

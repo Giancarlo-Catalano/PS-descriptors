@@ -1,18 +1,21 @@
 import itertools
+import random
 
 import numpy as np
 from tqdm import tqdm
 
 from BenchmarkProblems.BenchmarkProblem import BenchmarkProblem
+from Core.EvaluatedFS import EvaluatedFS
 from Core.FSEvaluator import FSEvaluator
 from Core.FullSolution import FullSolution
 from Core.PRef import PRef
 from Core.PS import PS, STAR
+from Core.PSMetric.FitnessQuality.SignificantlyHighAverage import ForcefulMannWhitneyU
 from Explanation.PRefManager import PRefManager
 from LCS import PSEvaluator
 from LCS.ConstrainedPSSearch.SolutionDifferencePSSearch import local_constrained_ps_search
 from LCS.PSEvaluator import GeneralPSEvaluator
-from utils import announce, execution_time
+from utils import announce, execution_timer
 
 
 class PairExplanationTester:
@@ -59,6 +62,16 @@ class PairExplanationTester:
                                          which_algorithm=self.pRef_creation_method,
                                          sample_size=self.pRef_size)
 
+
+    def find_pss(self, main_solution: FullSolution, background_solution: FullSolution, culling_method: str) -> list[PS]:
+        return local_constrained_ps_search(to_explain=main_solution,
+                                    background_solution=background_solution,
+                                    population_size=self.ps_search_population_size,
+                                    ps_evaluator=self.ps_evaluator,
+                                    ps_budget=self.ps_search_budget,
+                                    culling_method=culling_method,
+                                    verbose=self.verbose)
+
     def get_consistency_of_pss(self, pss: list[PS]) -> dict:
         def get_hamming_distance(ps_a: PS, ps_b: PS) -> int:
             return int(np.sum(ps_a.values != ps_b.values))
@@ -91,21 +104,12 @@ class PairExplanationTester:
                   f"{runs =}, "
                   f"{culling_method = }")
 
-        def single_test():
-            return local_constrained_ps_search(to_explain=main_solution,
-                                               background_solution=background_solution,
-                                               population_size=self.ps_search_population_size,
-                                               ps_evaluator=self.ps_evaluator,
-                                               ps_budget=self.ps_search_budget,
-                                               culling_method="overlap",
-                                               verbose=self.verbose)
-
         pss = []
-        with execution_time() as time:
+        with execution_timer() as time:
             for run_index in tqdm(range(runs)):
-                pss.extend(single_test())
+                pss.extend(self.find_pss(main_solution, background_solution, culling_method="overlap"))
 
-        runtime = time.execution_time
+        runtime = time.runtime
 
         results = self.get_consistency_of_pss(pss)
         results["total_runtime"] = runtime
@@ -123,3 +127,48 @@ class PairExplanationTester:
         return self.consistency_test_on_solution_pair(optima, closest_to_optima,
                                                       culling_method=culling_method,
                                                       runs=runs)
+
+
+
+    def get_accuracy_of_explanations_on_pair(self,
+                                              main_solution: EvaluatedFS,
+                                              background_solution: EvaluatedFS,
+                                              p_value_tester: ForcefulMannWhitneyU):
+
+        with execution_timer() as timer:
+            ps = self.find_pss(main_solution, background_solution, culling_method="overlap")[0]
+
+        beneficial_p_value, maleficial_p_value = p_value_tester.check_effect_of_ps(ps)
+
+        situation = "expected_positive" if main_solution > background_solution else "expected_negative"
+        hamming_distance = int(np.sum(main_solution.values != background_solution.values))
+
+        return {"situation": situation,
+                "greater_p_value": beneficial_p_value,
+                "lower_p_value": maleficial_p_value,
+                "main_fitness": main_solution.fitness,
+                "background_fitness": background_solution.fitness,
+                "hamming_distance": hamming_distance,
+                "time": timer.runtime}
+
+    def accuracy_test(self,
+                      amount_of_samples: int):
+        def pick_random_solution_pair() -> (EvaluatedFS, EvaluatedFS):
+            main_solution = self.pRef.get_nth_solution(index = random.randrange(self.pRef.sample_size))
+            background_solution = PRefManager.get_most_similar_solution_to(pRef = self.pRef, solution=main_solution)
+            return main_solution, background_solution
+
+
+        mwu_tester = ForcefulMannWhitneyU(sample_size=1000,
+                                          search_space=self.optimisation_problem.search_space,
+                                          fitness_evaluator=self.fs_evaluator)
+        results = []
+        for iteration in tqdm(range(amount_of_samples)):
+            main_solution, background_solution = pick_random_solution_pair()
+            datapoint = self.get_accuracy_of_explanations_on_pair(main_solution, background_solution, mwu_tester)
+            results.append(datapoint)
+
+
+        return results
+
+

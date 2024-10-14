@@ -238,13 +238,13 @@ def measure_T2_success_rate(benchmark_problem:BenchmarkProblem):
 
     result_dict = {}
     for generation in generations_to_evolve_for:
-        with utils.execution_time() as pref_timer:
+        with utils.execution_timer() as pref_timer:
             new_pRef = run_generations_and_get_pRef(generation)
             total_generations = generation
-        warnings.warn(f"Generating the pref for generation {generation} took {pref_timer.execution_time} seconds")
-        with utils.execution_time() as miner_timer:
+        warnings.warn(f"Generating the pref for generation {generation} took {pref_timer.execution_timer} seconds")
+        with utils.execution_timer() as miner_timer:
             found_targets: int = run_ps_miner(new_pRef)
-        warnings.warn(f"The run to {generation} took {miner_timer.execution_time} seconds")
+        warnings.warn(f"The run to {generation} took {miner_timer.execution_timer} seconds")
         result_dict[generation] = found_targets
 
     print(json.dumps(result_dict))
