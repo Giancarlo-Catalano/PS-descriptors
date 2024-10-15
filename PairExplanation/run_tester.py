@@ -44,19 +44,24 @@ def run_tester():
 
 
     tester = PairExplanationTester(optimisation_problem=problem,
-                                   ps_search_budget=100,
-                                   ps_search_population=50,
-                                   pRef_size=1000,
+                                   ps_search_budget=2000,
+                                   ps_search_population=100,
+                                   pRef_size=10000,
                                    pRef_creation_method="uniform GA",
                                    verbose=False)
 
 
-    tester.get_random_explanation()
-    #results = tester.accuracy_test(amount_of_samples=100)
-    # file_path = r"C:\Users\gac8\PycharmProjects\PS-descriptors-LCS\resources\explanations\messing_around\results_of_accuracy_search_reduced.json"
-    # with open(file_path, "w") as file:
-    #     json.dump(results, file)
-    # print(results)
+    #tester.get_random_explanation()
+    #results = tester.consistency_test_on_optima(runs=100, culling_method=tester.preferred_culling_method)
+    results = tester.accuracy_test(amount_of_samples=100)
+    file_path = r"C:\Users\gac8\PycharmProjects\PS-descriptors-LCS\resources\explanations\messing_around\results_of_accuracy_search_biggest.json"
+    with open(file_path, "w") as file:
+        json.dump(results, file)
+    print(json.dumps(results))
+
+
+    #print("And the problem was ")
+    #problem.print_for_google_sheets()
 
 
 run_tester()

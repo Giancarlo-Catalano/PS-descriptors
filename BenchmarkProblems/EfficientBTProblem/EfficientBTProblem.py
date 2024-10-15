@@ -563,8 +563,6 @@ class EfficientBTProblem(BTProblem):
                           name=original_worker.name,
                           worker_id=original_worker.worker_id)
 
-
-
         workers = [original_problem.workers[index] for index in which_workers_to_keep]
 
         if skills_conversion_dict is not None:
@@ -594,8 +592,65 @@ class EfficientBTProblem(BTProblem):
         skills_conversion_dict = {original_skill: random.choice(skills_to_choose_from)
                                   for original_skill in original_problem.all_skills}
 
-        rota_lengths = [random.randrange(1, max_rota_length)*7 for _ in which_workers_to_keep]
-        return cls.subset_from(original_problem = original_problem,
+        rota_lengths = [random.randrange(1, max_rota_length + 1) * 7 for _ in which_workers_to_keep]
+        return cls.subset_from(original_problem=original_problem,
                                which_workers_to_keep=which_workers_to_keep,
                                skills_conversion_dict=skills_conversion_dict,
                                rota_lengths=rota_lengths)
+
+    def print_for_google_sheets(self):
+        all_rotas = list(set(rota for worker in self.workers
+                             for rota in worker.available_rotas))
+
+        max_amount_of_skills = max(len(worker.available_skills) for worker in self.workers)
+        max_amount_of_rotas = max(len(worker.available_rotas) for worker in self.workers)
+
+        ordered_skills = list(self.all_skills)
+
+        def get_rota_name(rota: RotaPattern) -> str:
+            index = all_rotas.index(rota)
+            return f"{index + 1}"
+
+        def get_rota_representation(rota: RotaPattern) -> str:
+            return "\t".join(f"{day}" for day in rota.days)
+
+        def get_skillset_repr(skillset: set[str]) -> str:
+            return "\t".join(("" if skill in skillset else skill) for skill in ordered_skills)
+
+        def get_worker_representation(worker: Worker) -> str:
+            skills_str = get_skillset_repr(worker.available_skills)
+            rotas_str = "\t".join(get_rota_name(rota) for rota in worker.available_rotas)
+            return "\t".join([worker.name, skills_str, rotas_str])
+
+        # print the workers
+        for worker in self.workers:
+            print(get_worker_representation(worker))
+
+        print("\n" * 4)
+
+        # print the rotas
+        for rota in all_rotas:
+            print("\t".join([get_rota_name(rota), get_rota_representation(rota)]))
+
+    def print_ps_for_google_sheets(self, ps: PS):
+        fixed_variables = [(index, value) for index, value in enumerate(ps.values) if value != STAR]
+
+        def get_items_from_fixed_variable(index, value) -> dict:
+            return {"worker": self.workers[index],
+                    "chosen_rota_index": value,
+                    "chosen_rota": self.extended_patterns[index][value]}
+
+        items = [get_items_from_fixed_variable(index, value)
+                 for index, value in enumerate(ps.values) if value != STAR]
+
+        def get_rota_representation(rota: np.ndarray) -> str:
+            return "\t".join("W" if working else "-" for working in rota)
+
+        def print_item(item: dict):
+            return "\t".join([item["worker"].name,
+                              f"{item['chosen_rota_index']}",
+                              get_rota_representation(item["chosen_rota"])
+                              ])
+
+        for item in items:
+            print(item)

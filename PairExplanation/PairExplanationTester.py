@@ -5,6 +5,9 @@ import numpy as np
 from tqdm import tqdm
 
 import utils
+from BenchmarkProblems.BT.BTProblem import BTProblem
+from BenchmarkProblems.BT.RotaPattern import RotaPattern
+from BenchmarkProblems.BT.Worker import Worker
 from BenchmarkProblems.BenchmarkProblem import BenchmarkProblem
 from Core.EvaluatedFS import EvaluatedFS
 from Core.FSEvaluator import FSEvaluator
@@ -236,4 +239,9 @@ class PairExplanationTester:
         self.produce_explanation_sample(main_solution=solution_to_explain,
                                         background_solutions=background_solutions,
                                         descriptors_manager = descriptors_manager)
+
+
+
+
+
 
