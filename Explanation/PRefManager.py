@@ -87,21 +87,27 @@ class PRefManager:
     def instantiate_mean(self):
         self.pRef_mean = np.average(self.cached_pRef.fitness_array)
 
+
+    def set_pRef(self, pRef: PRef):
+        self.cached_pRef = pRef
+
+        if self.instantiate_own_evaluator:
+            self.instantiate_evaluator()
+        self.instantiate_mean()
+
     def generate_pRef_file(self, sample_size: int,
                            which_algorithm,
                            force_include: Optional[list[FullSolution]] = None):
         """ options for which_algorithm are "uniform", "GA", "SA", "GA_best", "SA_best",
         you can use multiple by space-separating them, eg "uniform SA" """
 
-        self.cached_pRef = PRefManager.generate_pRef(self.problem,
+        pRef = PRefManager.generate_pRef(self.problem,
                                                      sample_size,
                                                      which_algorithm,
                                                      force_include=force_include,
                                                      verbose=self.verbose)
 
-        if self.instantiate_own_evaluator:
-            self.instantiate_evaluator()
-        self.instantiate_mean()
+        self.set_pRef(pRef)
 
         with announce(f"Writing the pRef to {self.pRef_file}", self.verbose):
             self.cached_pRef.save(file=self.pRef_file)

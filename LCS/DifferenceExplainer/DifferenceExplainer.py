@@ -193,35 +193,12 @@ class DifferenceExplainer:
                 f"avg when absent = {avg_when_absent:.2f}")
         # f"p-value = {p_value:e}")
 
-    def get_significant_descriptors_of_ps(self, ps: PS) -> list[(str, float, float)]:
-        descriptors = self.descriptors_manager.get_descriptors_of_ps(ps)
-        size = ps.fixed_count()
-        percentiles = self.descriptors_manager.get_percentiles_for_descriptors(ps_size=size, ps_descriptors=descriptors)
 
-        names_values_percentiles = [(name, descriptors[name], percentiles[name]) for name in percentiles]
-
-        # then we only consider values which are worth reporting
-        def percentile_is_significant(percentile: float) -> bool:
-            return (percentile < self.speciality_threshold) or (percentile > (1 - self.speciality_threshold))
-
-        # names_values_percentiles = [(name, value, percentile)
-        #                             for name, value, percentile in names_values_percentiles
-        #                             if percentile_is_significant(percentile) or name == "delta"]
-
-        # sort by "extremeness"
-        names_values_percentiles.sort(key=lambda x: abs(0.5 - x[2]), reverse=True)
-
-        return names_values_percentiles
-
-    def get_descriptors_string(self, ps: PS) -> str:
-        names_values_percentiles = self.get_significant_descriptors_of_ps(ps)
-        return "\n".join(self.problem.repr_property(name, value, percentile, ps)
-                         for name, value, percentile in names_values_percentiles)
 
     def get_ps_description(self, ps: PS) -> str:
         return utils.indent("\n".join([self.problem.repr_extra_ps_info(ps),
                                        self.get_fitness_delta_string(ps),
-                                       self.get_descriptors_string(ps)]))
+                                       self.descriptors_manager.get_descriptors_string(ps)]))
 
     def get_difference_rules(self, solution_a: EvaluatedFS, solution_b: EvaluatedFS) -> (list[PS], list[PS]):
         in_a = []

@@ -51,11 +51,12 @@ def run_tester():
                                    verbose=False)
 
 
-    results = tester.accuracy_test(amount_of_samples=100)
-    file_path = r"C:\Users\gac8\PycharmProjects\PS-descriptors-LCS\resources\explanations\messing_around\results_of_accuracy_search_reduced.json"
-    with open(file_path, "w") as file:
-        json.dump(results, file)
-    print(results)
+    tester.get_random_explanation()
+    #results = tester.accuracy_test(amount_of_samples=100)
+    # file_path = r"C:\Users\gac8\PycharmProjects\PS-descriptors-LCS\resources\explanations\messing_around\results_of_accuracy_search_reduced.json"
+    # with open(file_path, "w") as file:
+    #     json.dump(results, file)
+    # print(results)
 
 
 run_tester()

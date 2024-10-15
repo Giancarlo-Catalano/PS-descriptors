@@ -4,6 +4,7 @@ import random
 import numpy as np
 from tqdm import tqdm
 
+import utils
 from BenchmarkProblems.BenchmarkProblem import BenchmarkProblem
 from Core.EvaluatedFS import EvaluatedFS
 from Core.FSEvaluator import FSEvaluator
@@ -14,6 +15,7 @@ from Core.PSMetric.FitnessQuality.SignificantlyHighAverage import ForcefulMannWh
 from Explanation.PRefManager import PRefManager
 from LCS import PSEvaluator
 from LCS.ConstrainedPSSearch.SolutionDifferencePSSearch import local_constrained_ps_search
+from LCS.DifferenceExplainer.DescriptorsManager import DescriptorsManager
 from LCS.PSEvaluator import GeneralPSEvaluator
 from utils import announce, execution_timer
 
@@ -33,14 +35,18 @@ class PairExplanationTester:
 
     verbose: bool
 
+    preferred_culling_method: str
+
     def __init__(self,
                  optimisation_problem: BenchmarkProblem,
                  ps_search_budget: int,
                  ps_search_population: int,
                  pRef_creation_method: str = "uniform GA",
                  pRef_size: int = 10000,
+                 preferred_culling_method: str = "biggest",
                  verbose: bool = False):
         self.verbose = verbose
+        self.preferred_culling_method = preferred_culling_method
 
         self.optimisation_problem = optimisation_problem
         self.ps_search_budget = ps_search_budget
@@ -56,6 +62,7 @@ class PairExplanationTester:
             self.pRef = self.generate_pRef()
 
         self.ps_evaluator = GeneralPSEvaluator(optimisation_problem=self.optimisation_problem, pRef=self.pRef)
+
 
     def generate_pRef(self) -> PRef:
         return PRefManager.generate_pRef(problem=self.optimisation_problem,
@@ -107,7 +114,9 @@ class PairExplanationTester:
         pss = []
         with execution_timer() as time:
             for run_index in tqdm(range(runs)):
-                pss.extend(self.find_pss(main_solution, background_solution, culling_method="overlap"))
+                pss.extend(self.find_pss(main_solution,
+                                         background_solution,
+                                         culling_method=self.preferred_culling_method))
 
         runtime = time.runtime
 
@@ -136,7 +145,9 @@ class PairExplanationTester:
                                               p_value_tester: ForcefulMannWhitneyU):
 
         with execution_timer() as timer:
-            ps = self.find_pss(main_solution, background_solution, culling_method="overlap")[0]
+            ps = self.find_pss(main_solution,
+                               background_solution,
+                               culling_method=self.preferred_culling_method)[0]
 
         beneficial_p_value, maleficial_p_value = p_value_tester.check_effect_of_ps(ps)
 
@@ -171,4 +182,58 @@ class PairExplanationTester:
 
         return results
 
+
+    def produce_explanation_sample(self,
+                                   main_solution: EvaluatedFS,
+                                   background_solutions: list[EvaluatedFS],
+                                   descriptors_manager: DescriptorsManager):
+
+        pss = []
+        for background_solution in tqdm(background_solutions):
+            new_pss = self.find_pss(main_solution,
+                                    background_solution,
+                                    culling_method=self.preferred_culling_method)
+            pss.extend(new_pss)
+
+        print(f"For the solution \n\t{self.optimisation_problem.repr_fs(main_solution)}\n, and the {len(background_solutions)} background solutions:")
+        for background_solution, pattern in zip(background_solutions, pss):
+            description = descriptors_manager.get_descriptors_string(ps=pattern)
+            print(f"background = \n{utils.indent(self.optimisation_problem.repr_fs(background_solution))}")
+            print(f"pattern = \n{utils.indent(self.optimisation_problem.repr_ps(pattern))}")
+            print(f"description = \n{utils.indent(description)}")
+            print(f"\n")
+
+
+    def get_background_solutions(self, main_solution: EvaluatedFS, background_solution_count: int) -> list[EvaluatedFS]:
+        return PRefManager.get_most_similar_solutions_to(pRef = self.pRef,
+                                                         solution = main_solution,
+                                                         amount_to_return=background_solution_count)
+
+
+    def get_temporary_descriptors_manager(self) -> DescriptorsManager:
+        pRef_manager = PRefManager(problem = self.optimisation_problem,
+                                   pRef_file = None,
+                                   instantiate_own_evaluator=False,
+                                   verbose=True)
+        pRef_manager.set_pRef(self.pRef)
+
+        descriptors_manager = DescriptorsManager(optimisation_problem=self.optimisation_problem,
+                           control_pss_file=None,
+                           control_descriptors_table_file=None,
+                           control_samples_per_size_category=1000,
+                           pRef_manager=pRef_manager,
+                           verbose=True)
+
+        descriptors_manager.start_from_scratch()
+        return descriptors_manager
+
+    def get_random_explanation(self):
+        solution_to_explain = self.pRef.get_nth_solution(index = random.randrange(self.pRef.sample_size))
+        background_solutions = self.get_background_solutions(main_solution=solution_to_explain,
+                                                             background_solution_count=5)
+
+        descriptors_manager = self.get_temporary_descriptors_manager()
+        self.produce_explanation_sample(main_solution=solution_to_explain,
+                                        background_solutions=background_solutions,
+                                        descriptors_manager = descriptors_manager)
 

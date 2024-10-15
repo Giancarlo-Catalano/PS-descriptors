@@ -24,6 +24,8 @@ class DescriptorsManager:
 
     pRef_manager: PRefManager
 
+    speciality_threshold: float
+
     verbose: bool
 
     def __init__(self,
@@ -32,6 +34,7 @@ class DescriptorsManager:
                  control_descriptors_table_file: str,
                  control_samples_per_size_category: int,
                  pRef_manager: PRefManager,
+                 speciality_threshold: float = 0.9,
                  verbose: bool = False):
         self.optimisation_problem = optimisation_problem
 
@@ -45,6 +48,8 @@ class DescriptorsManager:
         self.control_samples_per_size_category = control_samples_per_size_category
 
         self.pRef_manager = pRef_manager
+
+        self.speciality_threshold = speciality_threshold
 
         self.verbose = verbose
 
@@ -136,6 +141,32 @@ class DescriptorsManager:
         return {descriptor_name: get_percentile_of_descriptor(descriptor_name)
                 for descriptor_name in ps_descriptors
                 if descriptor_name != "size"}
+
+
+    def get_significant_descriptors_of_ps(self, ps: PS) -> list[(str, float, float)]:
+        descriptors = self.get_descriptors_of_ps(ps)
+        size = ps.fixed_count()
+        percentiles = self.get_percentiles_for_descriptors(ps_size=size, ps_descriptors=descriptors)
+
+        names_values_percentiles = [(name, descriptors[name], percentiles[name]) for name in percentiles]
+
+        # then we only consider values which are worth reporting
+        def percentile_is_significant(percentile: float) -> bool:
+            return (percentile < self.speciality_threshold) or (percentile > (1 - self.speciality_threshold))
+
+        # names_values_percentiles = [(name, value, percentile)
+        #                             for name, value, percentile in names_values_percentiles
+        #                             if percentile_is_significant(percentile) or name == "delta"]
+
+        # sort by "extremeness"
+        names_values_percentiles.sort(key=lambda x: abs(0.5 - x[2]), reverse=True)
+
+        return names_values_percentiles
+
+    def get_descriptors_string(self, ps: PS) -> str:
+        names_values_percentiles = self.get_significant_descriptors_of_ps(ps)
+        return "\n".join(self.optimisation_problem.repr_property(name, value, percentile, ps)
+                         for name, value, percentile in names_values_percentiles)
 
 
 
