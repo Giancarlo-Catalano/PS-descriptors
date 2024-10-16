@@ -494,3 +494,7 @@ def parse_simple_input(format_string: str, user_input: str, explain_error=False)
             return None
 
     return result_numbers
+
+
+
+weekdays = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"]

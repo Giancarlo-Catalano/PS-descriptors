@@ -192,7 +192,7 @@ class EfficientBTProblem(BTProblem):
                                           skill: Skill) -> WeekRanges:
         indexes = self.workers_by_skills[skill]
         summed_patterns: ExtendedPattern = np.sum([chosen_patterns[index] for index in indexes],
-                                                  axis=0)  # not np.sum because it doesn't support generators
+                                                  axis=0)
         summed_patterns = summed_patterns.reshape((-1, 7))
         return get_range_scores(summed_patterns, self.use_faulty_fitness_function)
 
@@ -633,8 +633,6 @@ class EfficientBTProblem(BTProblem):
             print("\t".join([get_rota_name(rota), get_rota_representation(rota)]))
 
     def print_ps_for_google_sheets(self, ps: PS):
-        fixed_variables = [(index, value) for index, value in enumerate(ps.values) if value != STAR]
-
         def get_items_from_fixed_variable(index, value) -> dict:
             return {"worker": self.workers[index],
                     "chosen_rota_index": value,
@@ -654,3 +652,28 @@ class EfficientBTProblem(BTProblem):
 
         for item in items:
             print(item)
+
+    def breakdown_of_fitness_function(self, solution: FullSolution) -> dict:
+        chosen_patterns = self.get_chosen_patterns_from_fs(solution)
+        quantity_of_unliked_rotas = np.sum(solution.values != 0)
+
+        result = {"quantity_unliked_rotas": quantity_of_unliked_rotas,
+                  "by_skill": {skill: None for skill in self.all_skills},
+                  "by_weekday": {weekday: None for weekday in utils.weekdays},
+                  "by_skill_and_weekday": {
+                      skill: {weekday: None for weekday in utils.weekdays}
+                      for skill in self.all_skills
+                  }
+                  }
+
+        for skill in self.all_skills:
+            ranges = self.get_ranges_for_weekdays_for_skill(chosen_patterns, skill)
+            result["by_skill"][skill] = self.aggregate_range_scores(ranges)
+            for range_score, weekday in zip(ranges, utils.weekdays):
+                result["by_skill_and_weekday"][skill][weekday] = range_score
+
+        for weekday in utils.weekdays:
+            result["by_weekday"][weekday] = sum(result["by_skill_and_weekday"][skill][weekday]
+                                       for skill in self.all_skills)
+
+        return result

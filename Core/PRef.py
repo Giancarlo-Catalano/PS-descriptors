@@ -243,6 +243,10 @@ class PRef:
 
         return [self.get_nth_solution(index) for index, _ in best_indexes_and_fitnesses]
 
+    def get_best_solution(self) -> EvaluatedFS:
+        best_index: int = np.argmax(self.fitness_array)
+        return self.get_nth_solution(best_index)
+
 
 def plot_solutions_in_pRef(pRef: PRef, filename: str):
     x_points, y_points = utils.unzip(list(enumerate(pRef.fitness_array)))

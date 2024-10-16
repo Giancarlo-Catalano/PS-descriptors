@@ -38,3 +38,6 @@ class FullSolution:
 
     def copy(self):
         return FullSolution(self.values)
+
+    def get_hamming_distance(self, other) -> int:
+        return int(np.sum(self.values != other.values))

@@ -156,6 +156,18 @@ class PS:
         return cls(map(char_to_value, without_spaces))
 
 
+    def get_hamming_distance(self, other) -> int:
+        return int(np.sum(self.values != other.values))
+
+    def get_jaccard_distance(self, other) -> float:
+        fixed_a = self.values != STAR
+        fixed_b = other.values != STAR
+        intersection = np.sum(fixed_a & fixed_b)
+        union = np.sum(fixed_a | fixed_b)
+
+        return float(intersection / union)
+
+
 
 def contains(fs: FullSolution, ps: PS) -> bool:
     return all(x_psi_i in {STAR, x_i} for x_psi_i, x_i in zip(ps.values, fs.values))

@@ -9,6 +9,7 @@ from BenchmarkProblems.BT.BTProblem import BTProblem
 from BenchmarkProblems.BT.RotaPattern import RotaPattern
 from BenchmarkProblems.BT.Worker import Worker
 from BenchmarkProblems.BenchmarkProblem import BenchmarkProblem
+from BenchmarkProblems.EfficientBTProblem.EfficientBTProblem import EfficientBTProblem
 from Core.EvaluatedFS import EvaluatedFS
 from Core.FSEvaluator import FSEvaluator
 from Core.FullSolution import FullSolution
@@ -82,9 +83,10 @@ class PairExplanationTester:
                                     culling_method=culling_method,
                                     verbose=self.verbose)
 
+
+
+
     def get_consistency_of_pss(self, pss: list[PS]) -> dict:
-        def get_hamming_distance(ps_a: PS, ps_b: PS) -> int:
-            return int(np.sum(ps_a.values != ps_b.values))
 
         def get_jaccard_distance(ps_a: PS, ps_b: PS) -> float:
             fixed_a = ps_a.values != STAR
@@ -94,10 +96,10 @@ class PairExplanationTester:
 
             return float(intersection / union)
 
-        hamming_distances = [get_hamming_distance(a, b)
+        hamming_distances = [PS.get_hamming_distance(a, b)
                              for a, b in itertools.combinations(pss, r=2)]
 
-        jaccard_distances = [get_jaccard_distance(a, b)
+        jaccard_distances = [PS.get_jaccard_distance(a, b)
                              for a, b in itertools.combinations(pss, r=2)]
 
         return {"hamming_distances": hamming_distances,
@@ -155,7 +157,7 @@ class PairExplanationTester:
         beneficial_p_value, maleficial_p_value = p_value_tester.check_effect_of_ps(ps)
 
         situation = "expected_positive" if main_solution > background_solution else "expected_negative"
-        hamming_distance = int(np.sum(main_solution.values != background_solution.values))
+        hamming_distance = main_solution.get_hamming_distance(background_solution)
 
         return {"situation": situation,
                 "greater_p_value": beneficial_p_value,
@@ -188,7 +190,7 @@ class PairExplanationTester:
 
     def produce_explanation_sample(self,
                                    main_solution: EvaluatedFS,
-                                   background_solutions: list[EvaluatedFS],
+                                   background_solutions: list[FullSolution],
                                    descriptors_manager: DescriptorsManager):
 
         pss = []
@@ -239,6 +241,79 @@ class PairExplanationTester:
         self.produce_explanation_sample(main_solution=solution_to_explain,
                                         background_solutions=background_solutions,
                                         descriptors_manager = descriptors_manager)
+
+
+
+    def get_saturday_score_of_solution(self, fs: FullSolution) -> float:
+        assert (isinstance(self.optimisation_problem, EfficientBTProblem))
+        fitness_breakdown = self.optimisation_problem.breakdown_of_fitness_function(fs)
+        return fitness_breakdown["by_weekday"]["Saturday"]
+
+    def get_solutions_with_better_saturdays(self, main_solution: FullSolution) -> list[FullSolution]:
+        # they are also sorted by similarity
+        assert(isinstance(self.optimisation_problem, EfficientBTProblem))
+
+        solutions_and_satfits = [(solution, self.get_saturday_score_of_solution(solution))
+                                  for solution in self.pRef.get_evaluated_FSs()]
+        own_satfit = self.get_saturday_score_of_solution(main_solution)
+
+        eligible_solutions = [solution
+                                 for solution, satfit in solutions_and_satfits
+                                 if satfit < own_satfit]  # also removes main_solution
+
+
+
+        eligible_solutions.sort(key=lambda x: x.get_hamming_distance(main_solution))
+
+        return eligible_solutions
+
+
+
+
+    def get_explanation_to_improve_saturday(self):
+        main_solution = self.pRef.get_best_solution()
+        eligible_saturday_improvements = self.get_solutions_with_better_saturdays(main_solution)
+        if len(eligible_saturday_improvements) == 0:
+            print("Seems that the solution already has the best saturdays...")
+        background_solution = eligible_saturday_improvements[0]
+        """ It would be interesting to plot the background solutions with
+                x_axis = satfit
+                y_axis = hamming_distance(main_solution)"""
+
+
+
+        def prune_tradeoff(hamming_sat_data: list[(int, float)]) -> list[(int, float)]:
+            all_hamming_distances = set(hamming for hamming, satfit in hamming_sat_data)
+            best_for_hamming_distance_dict = dict()
+            for hamming_distance_category in all_hamming_distances:
+                best_for_hamming_distance_dict[hamming_distance_category] = min(satfit for hamming, satfit in hamming_sat_data if hamming == hamming_distance_category)
+
+            return list(best_for_hamming_distance_dict.items())
+
+        interesting_data = [
+            (alternative.get_hamming_distance(main_solution), self.get_saturday_score_of_solution(alternative))
+            for alternative in eligible_saturday_improvements]
+
+        pruned_interesting_data = prune_tradeoff(interesting_data)
+
+        main_solution_satfit = self.get_saturday_score_of_solution(main_solution)
+        background_satfit = self.get_saturday_score_of_solution(background_solution)
+
+
+        print(f"You are intending to improve the Saturday score of the known optima, which has satfit = {main_solution_satfit}")
+        print(f"The background solution that has better satfit and is the closest "
+              f"has hamming distance = {background_solution.get_hamming_distance(main_solution)},"
+              f"and satfit = {background_satfit}")
+
+        descriptors_manager = self.get_temporary_descriptors_manager()
+        self.produce_explanation_sample(main_solution=main_solution,
+                                        background_solutions=[background_solution],
+                                        descriptors_manager=descriptors_manager)
+
+
+
+
+
 
 
 
