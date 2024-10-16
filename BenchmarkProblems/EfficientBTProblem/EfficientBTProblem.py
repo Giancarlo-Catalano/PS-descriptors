@@ -602,9 +602,6 @@ class EfficientBTProblem(BTProblem):
         all_rotas = list(set(rota for worker in self.workers
                              for rota in worker.available_rotas))
 
-        max_amount_of_skills = max(len(worker.available_skills) for worker in self.workers)
-        max_amount_of_rotas = max(len(worker.available_rotas) for worker in self.workers)
-
         ordered_skills = list(self.all_skills)
 
         def get_rota_name(rota: RotaPattern) -> str:

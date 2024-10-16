@@ -5,6 +5,7 @@ from pandas.io.common import file_exists
 
 import utils
 from BenchmarkProblems.BenchmarkProblem import BenchmarkProblem
+from Core.PRef import PRef
 from Core.PS import PS
 from Explanation.PRefManager import PRefManager
 from LCS.PSEvaluator import GeneralPSEvaluator
@@ -168,6 +169,24 @@ class DescriptorsManager:
         return "\n".join(self.optimisation_problem.repr_property(name, value, percentile, ps)
                          for name, value, percentile in names_values_percentiles)
 
+
+    @classmethod
+    def get_empty_descriptor_manager(cls, problem: BenchmarkProblem, pRef: PRef):
+        pRef_manager = PRefManager(problem=problem,
+                                   pRef_file=None,
+                                   instantiate_own_evaluator=False,
+                                   verbose=True)
+        pRef_manager.set_pRef(pRef)
+
+        descriptors_manager = DescriptorsManager(optimisation_problem=problem,
+                                                 control_pss_file=None,
+                                                 control_descriptors_table_file=None,
+                                                 control_samples_per_size_category=1000,
+                                                 pRef_manager=pRef_manager,
+                                                 verbose=True)
+
+        descriptors_manager.start_from_scratch()
+        return descriptors_manager
 
 
 
