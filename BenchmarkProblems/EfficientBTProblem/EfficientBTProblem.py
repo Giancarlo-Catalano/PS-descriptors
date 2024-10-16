@@ -644,14 +644,13 @@ class EfficientBTProblem(BTProblem):
         def get_rota_representation(rota: np.ndarray) -> str:
             return "\t".join("W" if working else "-" for working in rota)
 
-        def print_item(item: dict):
+        def item_to_string(item: dict):
             return "\t".join([item["worker"].name,
-                              f"{item['chosen_rota_index']}",
+                              f"{utils.alphabet[item['chosen_rota_index']]}",
                               get_rota_representation(item["chosen_rota"])
                               ])
-
         for item in items:
-            print(item)
+            print(item_to_string(item))
 
     def breakdown_of_fitness_function(self, solution: FullSolution) -> dict:
         chosen_patterns = self.get_chosen_patterns_from_fs(solution)
@@ -664,7 +663,7 @@ class EfficientBTProblem(BTProblem):
                       skill: {weekday: None for weekday in utils.weekdays}
                       for skill in self.all_skills
                   }
-                  }
+              }
 
         for skill in self.all_skills:
             ranges = self.get_ranges_for_weekdays_for_skill(chosen_patterns, skill)

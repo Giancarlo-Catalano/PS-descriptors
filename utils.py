@@ -498,3 +498,6 @@ def parse_simple_input(format_string: str, user_input: str, explain_error=False)
 
 
 weekdays = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"]
+
+
+alphabet = list("ABCDEFGHIJKLMNOPQRSTUVWXYZ")

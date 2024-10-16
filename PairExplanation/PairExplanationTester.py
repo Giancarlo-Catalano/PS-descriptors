@@ -209,6 +209,12 @@ class PairExplanationTester:
             print(f"\n")
 
 
+        print("Additionally, here is the ps in google sheets form")
+        assert(isinstance(self.optimisation_problem, EfficientBTProblem))
+        self.optimisation_problem.print_ps_for_google_sheets(pss[0])
+
+
+
     def get_background_solutions(self, main_solution: EvaluatedFS, background_solution_count: int) -> list[EvaluatedFS]:
         return PRefManager.get_most_similar_solutions_to(pRef = self.pRef,
                                                          solution = main_solution,
