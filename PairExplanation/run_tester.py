@@ -2,6 +2,7 @@ import json
 
 from BenchmarkProblems.EfficientBTProblem.EfficientBTProblem import EfficientBTProblem
 from BenchmarkProblems.RoyalRoad import RoyalRoad
+from PairExplanation.BTProblemPrettyPrinter import BTProblemPrettyPrinter
 from PairExplanation.PairExplanationTester import PairExplanationTester
 
 
@@ -60,10 +61,25 @@ def run_tester():
     # print(json.dumps(results))
 
 
-    #print("And the problem was ")
-    #problem.print_for_google_sheets()
+    pretty_printer = BTProblemPrettyPrinter(descriptor_manager=None,
+                                            pair_finder=tester,
+                                            problem = problem)
 
-    tester.get_explanation_to_improve_saturday()
+    print("And the problem was ")
+    def header(header_name: str):
+        print(f"\n\n\n\n###{header_name}###")
+
+
+    header("WORKERS")
+    print(pretty_printer.repr_problem_workers())
+
+    header("ROTAS")
+    print(pretty_printer.repr_problem_rotas())
+
+    ps = tester.get_explanation_to_improve_saturday()
+
+    header("Partial Solution")
+    print(pretty_printer.repr_partial_solution(ps))
 
 
 run_tester()

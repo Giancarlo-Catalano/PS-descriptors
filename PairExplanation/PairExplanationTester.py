@@ -191,7 +191,7 @@ class PairExplanationTester:
     def produce_explanation_sample(self,
                                    main_solution: EvaluatedFS,
                                    background_solutions: list[FullSolution],
-                                   descriptors_manager: DescriptorsManager):
+                                   descriptors_manager: DescriptorsManager) -> PS:
 
         pss = []
         for background_solution in tqdm(background_solutions):
@@ -208,10 +208,8 @@ class PairExplanationTester:
             print(f"description = \n{utils.indent(description)}")
             print(f"\n")
 
+        return pss[0]
 
-        print("Additionally, here is the ps in google sheets form")
-        assert(isinstance(self.optimisation_problem, EfficientBTProblem))
-        self.optimisation_problem.print_ps_for_google_sheets(pss[0])
 
 
 
@@ -296,11 +294,11 @@ class PairExplanationTester:
 
             return list(best_for_hamming_distance_dict.items())
 
-        interesting_data = [
-            (alternative.get_hamming_distance(main_solution), self.get_saturday_score_of_solution(alternative))
-            for alternative in eligible_saturday_improvements]
-
-        pruned_interesting_data = prune_tradeoff(interesting_data)
+        # interesting_data = [
+        #     (alternative.get_hamming_distance(main_solution), self.get_saturday_score_of_solution(alternative))
+        #     for alternative in eligible_saturday_improvements]
+        #
+        # pruned_interesting_data = prune_tradeoff(interesting_data)
 
         main_solution_satfit = self.get_saturday_score_of_solution(main_solution)
         background_satfit = self.get_saturday_score_of_solution(background_solution)
@@ -312,9 +310,11 @@ class PairExplanationTester:
               f"and satfit = {background_satfit}")
 
         descriptors_manager = self.get_temporary_descriptors_manager()
-        self.produce_explanation_sample(main_solution=main_solution,
+        ps = self.produce_explanation_sample(main_solution=main_solution,
                                         background_solutions=[background_solution],
                                         descriptors_manager=descriptors_manager)
+
+        return ps
 
 
 
