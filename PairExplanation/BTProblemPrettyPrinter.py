@@ -1,5 +1,7 @@
 from typing import Optional
 
+import numpy as np
+
 import utils
 from BenchmarkProblems.BT.RotaPattern import RotaPattern
 from BenchmarkProblems.BT.Worker import Worker
@@ -50,9 +52,10 @@ class BTProblemPrettyPrinter:
         """ The pattern [WWW---- WWW----] can be simplified into [WWW----] """
 
         """There's absolutely a better way to do this but I'm worried of not handling edge cases, so here's a plain approach"""
+
         def cut_rota(rota: RotaPattern, amount_of_weeks: int) -> RotaPattern:
-            days = rota.days[:(7*amount_of_weeks)]
-            return RotaPattern(workweek_length = 7, days = days)
+            days = rota.days[:(7 * amount_of_weeks)]
+            return RotaPattern(workweek_length=7, days=days)
 
         if (rota.days[:7] == rota.days[7:]):
             print("poop")
@@ -68,7 +71,6 @@ class BTProblemPrettyPrinter:
 
         return replacement_rota
 
-
     def get_index_of_rota(self, rota: RotaPattern) -> int:
         return self.all_rotas_list.index(rota)
 
@@ -77,7 +79,7 @@ class BTProblemPrettyPrinter:
 
     def repr_rota_index(self, rota: RotaPattern) -> str:
         index = self.all_rotas_list.index(rota)
-        return f"ROTA {index+1}"
+        return f"ROTA {index + 1}"
 
     def repr_rota(self, rota: RotaPattern) -> str:
         return "\t".join(f"{day}" for day in rota.days)
@@ -88,7 +90,7 @@ class BTProblemPrettyPrinter:
             new_days.extend(rota.days)
 
         new_days = new_days[:self.problem.calendar_length]
-        new_rota = RotaPattern(workweek_length=rota.workweek_length, days = new_days)
+        new_rota = RotaPattern(workweek_length=rota.workweek_length, days=new_days)
         return self.repr_rota(new_rota)
 
     def repr_skillset(self, skillset: set[str]) -> str:
@@ -98,8 +100,6 @@ class BTProblemPrettyPrinter:
         skills_str = self.repr_skillset(worker.available_skills)
         rotas_str = "\t".join(self.repr_rota_index(rota) for rota in worker.available_rotas)
         return "\t".join([worker.name, skills_str, rotas_str])
-
-
 
     def repr_problem_workers(self) -> str:
         return "\n".join(map(self.repr_worker, self.problem.workers))
@@ -122,13 +122,23 @@ class BTProblemPrettyPrinter:
 
         return "\n".join([repr_assigned_worker(w, c) for w, c in workers_and_choices])
 
-
     def repr_full_solution(self, fs: FullSolution) -> str:
         return self.repr_partial_solution(PS.from_FS(fs))
 
+    def get_calendar_counts_for_ps(self, ps: PS) -> dict:
+        present_rotas_and_skills = [
+            (self.problem.extended_patterns[index][choice], self.problem.workers[index].available_skills)
+            for index, choice in enumerate(ps.values) if choice != STAR]
+
+        def get_calendar_for_skill(skill: str) -> np.ndarray:
+            return np.sum([pattern for pattern, skillset in present_rotas_and_skills if skill in skillset], axis=0)
+
+        return {skill: get_calendar_for_skill(skill) for skill in self.all_skills_list}
 
 
+    def repr_skill_calendar(self, skill_calendar: dict) -> str:
+        def repr_for_skill(skill: str) -> str:
+            return "\t".join([skill]+[f"{x}" for x in skill_calendar[skill]])
 
-
-
+        return "\n".join(repr_for_skill(skill) for skill in self.all_skills_list)
 

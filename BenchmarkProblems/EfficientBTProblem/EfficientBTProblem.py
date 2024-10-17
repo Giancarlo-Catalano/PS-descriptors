@@ -595,11 +595,6 @@ class EfficientBTProblem(BTProblem):
         skills_conversion_dict = {original_skill: random.choice(skills_to_choose_from)
                                   for original_skill in sorted(original_problem.all_skills)}
 
-        print(f"{skills_to_choose_from =}")
-        print("The skills conversion dict is")
-        for original, new in skills_conversion_dict.items():
-            print(f"{original = }, {new = }")
-
         random.seed(random_state)
         rota_lengths = [random.randrange(1, max_rota_length + 1) * 7 for _ in which_workers_to_keep]
         return cls.subset_from(original_problem=original_problem,

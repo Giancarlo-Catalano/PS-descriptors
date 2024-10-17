@@ -76,10 +76,15 @@ def run_tester():
     header("ROTAS")
     print(pretty_printer.repr_problem_rotas())
 
-    ps = tester.get_explanation_to_improve_saturday()
+    ps = tester.get_explanation_to_improve_weekday("Tuesday")
 
     header("Partial Solution")
     print(pretty_printer.repr_partial_solution(ps))
+
+
+    header("Calendar for skill")
+    calendar = pretty_printer.get_calendar_counts_for_ps(ps)
+    print(pretty_printer.repr_skill_calendar(calendar))
 
 
 run_tester()

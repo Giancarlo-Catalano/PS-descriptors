@@ -69,6 +69,7 @@ class PairExplanationTester:
 
 
     def generate_pRef(self) -> PRef:
+        random.setstate
         return PRefManager.generate_pRef(problem=self.optimisation_problem,
                                          which_algorithm=self.pRef_creation_method,
                                          sample_size=self.pRef_size)
@@ -246,24 +247,25 @@ class PairExplanationTester:
                                         background_solutions=background_solutions,
                                         descriptors_manager = descriptors_manager)
 
-
-
-    def get_saturday_score_of_solution(self, fs: FullSolution) -> float:
+    def get_weekday_score_of_solution(self, fs: FullSolution, weekday: str) -> float:
         assert (isinstance(self.optimisation_problem, EfficientBTProblem))
         fitness_breakdown = self.optimisation_problem.breakdown_of_fitness_function(fs)
-        return fitness_breakdown["by_weekday"]["Saturday"]
+        return fitness_breakdown["by_weekday"][weekday]
 
-    def get_solutions_with_better_saturdays(self, main_solution: FullSolution) -> list[FullSolution]:
+    def get_saturday_score_of_solution(self, fs: FullSolution) -> float:
+        return self.get_weekday_score_of_solution(fs, "Saturday")
+
+    def get_solutions_with_better_weekday(self, main_solution: FullSolution, weekday: str) -> list[FullSolution]:
         # they are also sorted by similarity
         assert(isinstance(self.optimisation_problem, EfficientBTProblem))
 
-        solutions_and_satfits = [(solution, self.get_saturday_score_of_solution(solution))
+        solutions_and_satfits = [(solution, self.get_weekday_score_of_solution(solution, weekday))
                                   for solution in self.pRef.get_evaluated_FSs()]
-        own_satfit = self.get_saturday_score_of_solution(main_solution)
+        own_satfit = self.get_weekday_score_of_solution(main_solution, weekday)
 
         eligible_solutions = [solution
                                  for solution, satfit in solutions_and_satfits
-                                 if satfit < own_satfit]  # also removes main_solution
+                                 if own_satfit - satfit > 1e-05]  # also removes main_solution
 
 
 
@@ -272,14 +274,37 @@ class PairExplanationTester:
         return eligible_solutions
 
 
+    def get_partially_better_solutions(self, main_solution: FullSolution) -> list[(FullSolution, np.ndarray, np.ndarray)]:
+        assert (isinstance(self.optimisation_problem, EfficientBTProblem))
+        def partial_fitness_for_solution(solution: FullSolution) -> np.ndarray:
+            partial_fit = self.optimisation_problem.breakdown_of_fitness_function(solution)
+            return np.array([partial_fit["by_weekday"][weekday] for weekday in utils.weekdays])
+
+        own_partial_fitness = partial_fitness_for_solution(main_solution)
+        full_solutions = self.pRef.get_evaluated_FSs()
+        pRef_partial_fitnesses = np.array([partial_fitness_for_solution(solution)
+                                           for solution in full_solutions])
+
+        better_value_matrix = (own_partial_fitness - pRef_partial_fitnesses) > 1e-05
+        useful_rows = np.any(better_value_matrix, axis=1)
+
+        wanted_solutions = [solution
+                            for solution, is_good in zip(full_solutions, useful_rows)
+                            if is_good]
+
+        wanted_partial_fitnesses = pRef_partial_fitnesses[useful_rows]
+        return list(zip(wanted_solutions, wanted_partial_fitnesses, better_value_matrix[useful_rows]))
 
 
-    def get_explanation_to_improve_saturday(self):
+
+
+    def get_explanation_to_improve_weekday(self, weekday: str):
         main_solution = self.pRef.get_best_solution()
-        eligible_saturday_improvements = self.get_solutions_with_better_saturdays(main_solution)
-        if len(eligible_saturday_improvements) == 0:
-            print("Seems that the solution already has the best saturdays...")
-        background_solution = eligible_saturday_improvements[0]
+        #partial_improvements = self.get_partially_better_solutions(main_solution)
+        eligible_weekday_improvements = self.get_solutions_with_better_weekday(main_solution, weekday)
+        if len(eligible_weekday_improvements) == 0:
+            print(f"Seems that the solution already has the best {weekday}s...")
+        background_solution = eligible_weekday_improvements[0]
         """ It would be interesting to plot the background solutions with
                 x_axis = satfit
                 y_axis = hamming_distance(main_solution)"""
@@ -294,17 +319,20 @@ class PairExplanationTester:
 
             return list(best_for_hamming_distance_dict.items())
 
-        # interesting_data = [
-        #     (alternative.get_hamming_distance(main_solution), self.get_saturday_score_of_solution(alternative))
-        #     for alternative in eligible_saturday_improvements]
-        #
-        # pruned_interesting_data = prune_tradeoff(interesting_data)
+        interesting_data = [
+            (alternative.get_hamming_distance(main_solution), self.get_weekday_score_of_solution(alternative, weekday))
+            for alternative in eligible_weekday_improvements]
 
-        main_solution_satfit = self.get_saturday_score_of_solution(main_solution)
-        background_satfit = self.get_saturday_score_of_solution(background_solution)
+        pruned_interesting_data = prune_tradeoff(interesting_data)
+
+        xs, ys = zip(*pruned_interesting_data)
+        utils.simple_scatterplot(x_label="Hamming distance", y_label="Partial fitness", xs=xs, ys=ys)
+
+        main_solution_satfit = self.get_weekday_score_of_solution(main_solution, weekday)
+        background_satfit = self.get_weekday_score_of_solution(background_solution, weekday)
 
 
-        print(f"You are intending to improve the Saturday score of the known optima, which has satfit = {main_solution_satfit}")
+        print(f"You are intending to improve the {weekday} score of the known optima, which has satfit = {main_solution_satfit}")
         print(f"The background solution that has better satfit and is the closest "
               f"has hamming distance = {background_solution.get_hamming_distance(main_solution)},"
               f"and satfit = {background_satfit}")
