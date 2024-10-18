@@ -1,5 +1,3 @@
-from typing import Optional
-
 import numpy as np
 
 import utils
@@ -9,30 +7,20 @@ from BenchmarkProblems.EfficientBTProblem.EfficientBTProblem import EfficientBTP
 from Core.FullSolution import FullSolution
 from Core.PS import PS, STAR
 from LCS.DifferenceExplainer.DescriptorsManager import DescriptorsManager
-from PairExplanation.PairExplanationTester import PairExplanationTester
 
 
 class BTProblemPrettyPrinter:
     problem: EfficientBTProblem
     descriptor_manager: DescriptorsManager
-    pair_finder: PairExplanationTester
 
     all_rotas_list: list[RotaPattern]
     all_skills_list: list[str]
 
-    @property
-    def pRef(self):
-        return self.pair_finder.pRef
-
     def __init__(self,
                  problem: EfficientBTProblem,
-                 descriptor_manager: Optional[DescriptorsManager],
-                 pair_finder: PairExplanationTester):
+                 descriptor_manager: DescriptorsManager):
         self.problem = problem
-        self.pair_finder = pair_finder  # note that this is done first so that the self.pRef property works
 
-        if descriptor_manager is None:
-            descriptor_manager = DescriptorsManager.get_empty_descriptor_manager(problem, self.pRef)
         self.descriptor_manager = descriptor_manager
 
         self.all_rotas_list = self.get_all_rotas_list(self.problem)
@@ -56,9 +44,6 @@ class BTProblemPrettyPrinter:
         def cut_rota(rota: RotaPattern, amount_of_weeks: int) -> RotaPattern:
             days = rota.days[:(7 * amount_of_weeks)]
             return RotaPattern(workweek_length=7, days=days)
-
-        if (rota.days[:7] == rota.days[7:]):
-            print("poop")
 
         original_rota_weeks = len(rota.days) // 7
 
@@ -94,7 +79,7 @@ class BTProblemPrettyPrinter:
         return self.repr_rota(new_rota)
 
     def repr_skillset(self, skillset: set[str]) -> str:
-        return "\t".join(("" if skill in skillset else skill) for skill in self.all_skills_list)
+        return "\t".join((skill if skill in skillset else "") for skill in self.all_skills_list)
 
     def repr_worker(self, worker: Worker) -> str:
         skills_str = self.repr_skillset(worker.available_skills)
@@ -122,6 +107,15 @@ class BTProblemPrettyPrinter:
 
         return "\n".join([repr_assigned_worker(w, c) for w, c in workers_and_choices])
 
+
+    def repr_extra_information_for_partial_solution(self, ps: PS) -> str:
+        calendar = self.get_calendar_counts_for_ps(ps)
+        return self.repr_skill_calendar(calendar)
+
+    def repr_extra_information_for_full_solution(self, fs: FullSolution) -> str:
+        return self.repr_extra_information_for_partial_solution(PS.from_FS(fs))
+
+
     def repr_full_solution(self, fs: FullSolution) -> str:
         return self.repr_partial_solution(PS.from_FS(fs))
 
@@ -131,7 +125,10 @@ class BTProblemPrettyPrinter:
             for index, choice in enumerate(ps.values) if choice != STAR]
 
         def get_calendar_for_skill(skill: str) -> np.ndarray:
-            return np.sum([pattern for pattern, skillset in present_rotas_and_skills if skill in skillset], axis=0)
+            relevant_patterns = [pattern for pattern, skillset in present_rotas_and_skills if skill in skillset]
+            if len(relevant_patterns) == 0:
+                return np.zeros(shape = self.problem.calendar_length, dtype=int)
+            return np.sum(relevant_patterns, axis=0)
 
         return {skill: get_calendar_for_skill(skill) for skill in self.all_skills_list}
 

@@ -164,10 +164,14 @@ class DescriptorsManager:
 
         return names_values_percentiles
 
-    def get_descriptors_string(self, ps: PS) -> str:
-        names_values_percentiles = self.get_significant_descriptors_of_ps(ps)
+
+    def descriptors_tuples_into_string(self, names_values_percentiles: list[(str, float, float)], ps: PS) -> str:
         return "\n".join(self.optimisation_problem.repr_property(name, value, percentile, ps)
                          for name, value, percentile in names_values_percentiles)
+
+    def get_descriptors_string(self, ps: PS) -> str:
+        names_values_percentiles = self.get_significant_descriptors_of_ps(ps)
+        return self.descriptors_tuples_into_string(names_values_percentiles, ps)
 
 
     @classmethod

@@ -21,6 +21,7 @@ from LCS import PSEvaluator
 from LCS.ConstrainedPSSearch.SolutionDifferencePSSearch import local_constrained_ps_search
 from LCS.DifferenceExplainer.DescriptorsManager import DescriptorsManager
 from LCS.PSEvaluator import GeneralPSEvaluator
+from PairExplanation.BakedPairwiseExplanation import BakedPairwiseExplanation
 from utils import announce, execution_timer
 
 
@@ -67,25 +68,20 @@ class PairExplanationTester:
 
         self.ps_evaluator = GeneralPSEvaluator(optimisation_problem=self.optimisation_problem, pRef=self.pRef)
 
-
     def generate_pRef(self) -> PRef:
         random.setstate
         return PRefManager.generate_pRef(problem=self.optimisation_problem,
                                          which_algorithm=self.pRef_creation_method,
                                          sample_size=self.pRef_size)
 
-
     def find_pss(self, main_solution: FullSolution, background_solution: FullSolution, culling_method: str) -> list[PS]:
         return local_constrained_ps_search(to_explain=main_solution,
-                                    background_solution=background_solution,
-                                    population_size=self.ps_search_population_size,
-                                    ps_evaluator=self.ps_evaluator,
-                                    ps_budget=self.ps_search_budget,
-                                    culling_method=culling_method,
-                                    verbose=self.verbose)
-
-
-
+                                           background_solution=background_solution,
+                                           population_size=self.ps_search_population_size,
+                                           ps_evaluator=self.ps_evaluator,
+                                           ps_budget=self.ps_search_budget,
+                                           culling_method=culling_method,
+                                           verbose=self.verbose)
 
     def get_consistency_of_pss(self, pss: list[PS]) -> dict:
 
@@ -135,7 +131,7 @@ class PairExplanationTester:
     def consistency_test_on_optima(self,
                                    runs: int,
                                    culling_method: str) -> dict:
-        optima = self.pRef.get_top_n_solutions(1)[0]
+        optima = self.pRef.get_best_solution()
         closest_to_optima = PRefManager.get_most_similar_solution_to(pRef=self.pRef,
                                                                      solution=optima)  # excludes the solution itself
 
@@ -143,12 +139,10 @@ class PairExplanationTester:
                                                       culling_method=culling_method,
                                                       runs=runs)
 
-
-
     def get_accuracy_of_explanations_on_pair(self,
-                                              main_solution: EvaluatedFS,
-                                              background_solution: EvaluatedFS,
-                                              p_value_tester: ForcefulMannWhitneyU):
+                                             main_solution: EvaluatedFS,
+                                             background_solution: EvaluatedFS,
+                                             p_value_tester: ForcefulMannWhitneyU):
 
         with execution_timer() as timer:
             ps = self.find_pss(main_solution,
@@ -171,10 +165,9 @@ class PairExplanationTester:
     def accuracy_test(self,
                       amount_of_samples: int):
         def pick_random_solution_pair() -> (EvaluatedFS, EvaluatedFS):
-            main_solution = self.pRef.get_nth_solution(index = random.randrange(self.pRef.sample_size))
-            background_solution = PRefManager.get_most_similar_solution_to(pRef = self.pRef, solution=main_solution)
+            main_solution = self.pRef.get_nth_solution(index=random.randrange(self.pRef.sample_size))
+            background_solution = PRefManager.get_most_similar_solution_to(pRef=self.pRef, solution=main_solution)
             return main_solution, background_solution
-
 
         mwu_tester = ForcefulMannWhitneyU(sample_size=1000,
                                           search_space=self.optimisation_problem.search_space,
@@ -185,9 +178,7 @@ class PairExplanationTester:
             datapoint = self.get_accuracy_of_explanations_on_pair(main_solution, background_solution, mwu_tester)
             results.append(datapoint)
 
-
         return results
-
 
     def produce_explanation_sample(self,
                                    main_solution: EvaluatedFS,
@@ -201,7 +192,8 @@ class PairExplanationTester:
                                     culling_method=self.preferred_culling_method)
             pss.extend(new_pss)
 
-        print(f"For the solution \n\t{self.optimisation_problem.repr_fs(main_solution)}\n, and the {len(background_solutions)} background solutions:")
+        print(
+            f"For the solution \n\t{self.optimisation_problem.repr_fs(main_solution)}\n, and the {len(background_solutions)} background solutions:")
         for background_solution, pattern in zip(background_solutions, pss):
             description = descriptors_manager.get_descriptors_string(ps=pattern)
             print(f"background = \n{utils.indent(self.optimisation_problem.repr_fs(background_solution))}")
@@ -211,41 +203,37 @@ class PairExplanationTester:
 
         return pss[0]
 
-
-
-
     def get_background_solutions(self, main_solution: EvaluatedFS, background_solution_count: int) -> list[EvaluatedFS]:
-        return PRefManager.get_most_similar_solutions_to(pRef = self.pRef,
-                                                         solution = main_solution,
+        return PRefManager.get_most_similar_solutions_to(pRef=self.pRef,
+                                                         solution=main_solution,
                                                          amount_to_return=background_solution_count)
 
-
     def get_temporary_descriptors_manager(self) -> DescriptorsManager:
-        pRef_manager = PRefManager(problem = self.optimisation_problem,
-                                   pRef_file = None,
+        pRef_manager = PRefManager(problem=self.optimisation_problem,
+                                   pRef_file=None,
                                    instantiate_own_evaluator=False,
                                    verbose=True)
         pRef_manager.set_pRef(self.pRef)
 
         descriptors_manager = DescriptorsManager(optimisation_problem=self.optimisation_problem,
-                           control_pss_file=None,
-                           control_descriptors_table_file=None,
-                           control_samples_per_size_category=1000,
-                           pRef_manager=pRef_manager,
-                           verbose=True)
+                                                 control_pss_file=None,
+                                                 control_descriptors_table_file=None,
+                                                 control_samples_per_size_category=1000,
+                                                 pRef_manager=pRef_manager,
+                                                 verbose=True)
 
         descriptors_manager.start_from_scratch()
         return descriptors_manager
 
     def get_random_explanation(self):
-        solution_to_explain = self.pRef.get_nth_solution(index = random.randrange(self.pRef.sample_size))
+        solution_to_explain = self.pRef.get_nth_solution(index=random.randrange(self.pRef.sample_size))
         background_solutions = self.get_background_solutions(main_solution=solution_to_explain,
                                                              background_solution_count=5)
 
         descriptors_manager = self.get_temporary_descriptors_manager()
         self.produce_explanation_sample(main_solution=solution_to_explain,
                                         background_solutions=background_solutions,
-                                        descriptors_manager = descriptors_manager)
+                                        descriptors_manager=descriptors_manager)
 
     def get_weekday_score_of_solution(self, fs: FullSolution, weekday: str) -> float:
         assert (isinstance(self.optimisation_problem, EfficientBTProblem))
@@ -257,25 +245,24 @@ class PairExplanationTester:
 
     def get_solutions_with_better_weekday(self, main_solution: FullSolution, weekday: str) -> list[FullSolution]:
         # they are also sorted by similarity
-        assert(isinstance(self.optimisation_problem, EfficientBTProblem))
+        assert (isinstance(self.optimisation_problem, EfficientBTProblem))
 
         solutions_and_satfits = [(solution, self.get_weekday_score_of_solution(solution, weekday))
-                                  for solution in self.pRef.get_evaluated_FSs()]
+                                 for solution in self.pRef.get_evaluated_FSs()]
         own_satfit = self.get_weekday_score_of_solution(main_solution, weekday)
 
         eligible_solutions = [solution
-                                 for solution, satfit in solutions_and_satfits
-                                 if own_satfit - satfit > 1e-05]  # also removes main_solution
-
-
+                              for solution, satfit in solutions_and_satfits
+                              if own_satfit - satfit > 1e-05]  # also removes main_solution
 
         eligible_solutions.sort(key=lambda x: x.get_hamming_distance(main_solution))
 
         return eligible_solutions
 
-
-    def get_partially_better_solutions(self, main_solution: FullSolution) -> list[(FullSolution, np.ndarray, np.ndarray)]:
+    def get_partially_better_solutions(self, main_solution: FullSolution) -> list[
+        (FullSolution, np.ndarray, np.ndarray)]:
         assert (isinstance(self.optimisation_problem, EfficientBTProblem))
+
         def partial_fitness_for_solution(solution: FullSolution) -> np.ndarray:
             partial_fit = self.optimisation_problem.breakdown_of_fitness_function(solution)
             return np.array([partial_fit["by_weekday"][weekday] for weekday in utils.weekdays])
@@ -295,12 +282,11 @@ class PairExplanationTester:
         wanted_partial_fitnesses = pRef_partial_fitnesses[useful_rows]
         return list(zip(wanted_solutions, wanted_partial_fitnesses, better_value_matrix[useful_rows]))
 
-
-
-
-    def get_explanation_to_improve_weekday(self, weekday: str):
-        main_solution = self.pRef.get_best_solution()
-        #partial_improvements = self.get_partially_better_solutions(main_solution)
+    def get_explanation_to_improve_weekday(self,
+                                           main_solution: FullSolution,
+                                           weekday: str,
+                                           descriptors_manager: DescriptorsManager)->BakedPairwiseExplanation:
+        # partial_improvements = self.get_partially_better_solutions(main_solution)
         eligible_weekday_improvements = self.get_solutions_with_better_weekday(main_solution, weekday)
         if len(eligible_weekday_improvements) == 0:
             print(f"Seems that the solution already has the best {weekday}s...")
@@ -309,13 +295,12 @@ class PairExplanationTester:
                 x_axis = satfit
                 y_axis = hamming_distance(main_solution)"""
 
-
-
         def prune_tradeoff(hamming_sat_data: list[(int, float)]) -> list[(int, float)]:
             all_hamming_distances = set(hamming for hamming, satfit in hamming_sat_data)
             best_for_hamming_distance_dict = dict()
             for hamming_distance_category in all_hamming_distances:
-                best_for_hamming_distance_dict[hamming_distance_category] = min(satfit for hamming, satfit in hamming_sat_data if hamming == hamming_distance_category)
+                best_for_hamming_distance_dict[hamming_distance_category] = min(
+                    satfit for hamming, satfit in hamming_sat_data if hamming == hamming_distance_category)
 
             return list(best_for_hamming_distance_dict.items())
 
@@ -331,26 +316,34 @@ class PairExplanationTester:
         main_solution_satfit = self.get_weekday_score_of_solution(main_solution, weekday)
         background_satfit = self.get_weekday_score_of_solution(background_solution, weekday)
 
-
-        print(f"You are intending to improve the {weekday} score of the known optima, which has satfit = {main_solution_satfit}")
+        print(
+            f"You are intending to improve the {weekday} score of the known optima, which has satfit = {main_solution_satfit}")
         print(f"The background solution that has better satfit and is the closest "
               f"has hamming distance = {background_solution.get_hamming_distance(main_solution)},"
               f"and satfit = {background_satfit}")
 
-        descriptors_manager = self.get_temporary_descriptors_manager()
-        ps = self.produce_explanation_sample(main_solution=main_solution,
-                                        background_solutions=[background_solution],
-                                        descriptors_manager=descriptors_manager)
-
-        return ps
+        return self.get_pairwise_explanation(main_solution,
+                                             background_solution,
+                                             descriptors_manager)
 
 
+    def get_pairwise_explanation(self,
+                                 main_solution: FullSolution,
+                                 background_solution: FullSolution,
+                                 descriptor: DescriptorsManager):
+        pss = self.find_pss(main_solution,
+                            background_solution,
+                            culling_method=self.preferred_culling_method)
 
+        if len(pss) < 1:
+            raise Exception("The pairwise explanation tester was not able to find a satisfactory explanation...")
 
+        ps = pss[0]
 
-
-
-
-
-
-
+        names_values_percentiles = descriptor.get_significant_descriptors_of_ps(ps)
+        descriptor_string = descriptor.descriptors_tuples_into_string(names_values_percentiles, ps)
+        return BakedPairwiseExplanation(main_solution,
+                                        background_solution,
+                                        ps,
+                                        descriptor_tuple=names_values_percentiles,
+                                        explanation_text=descriptor_string)
