@@ -162,3 +162,46 @@ class ForcefulMannWhitneyU(Metric):
 
 
 
+
+
+class ForcefulMannWhitneyUOnNearOptima:
+
+    near_optima_solutions: list[EvaluatedFS]
+    pre_extracted_fitnesses_without: np.ndarray
+    pre_extracted_solutions_without: np.ndarray
+    evaluator: FSEvaluator
+
+
+    def __init__(self,
+                 near_optima_solutions: list[EvaluatedFS],
+                 evaluator: FSEvaluator):
+        self.near_optima_solutions = near_optima_solutions
+        self.pre_extracted_fitnesses_without = np.array([fs.fitness for fs in self.near_optima_solutions])
+        self.pre_extracted_solutions_without = np.array([fs.values for fs in self.near_optima_solutions])
+        self.evaluator = evaluator
+
+
+    @classmethod
+    def from_pRef(cls,
+                  pRef: PRef,
+                  how_many: int,
+                  evaluator: FSEvaluator):
+        near_optima = pRef.get_top_n_solutions(how_many)
+        return ForcefulMannWhitneyUOnNearOptima(near_optima_solutions=near_optima, evaluator = evaluator)
+
+
+
+    def get_new_fitnesses_when_forcing_ps(self, ps: PS) -> np.ndarray:
+        samples_matrix = self.pre_extracted_solutions_without.copy()
+        samples_matrix[:, ps.values != STAR] = ps.values[ps.values != STAR]
+        fitnesses = np.array([self.evaluator.evaluate(FullSolution(row)) for row in samples_matrix])
+
+        return fitnesses
+
+
+    def test_ps(self, ps: PS) -> (float, float):
+        fitnesses_without = self.pre_extracted_fitnesses_without
+        fitnesses_with = self.get_new_fitnesses_when_forcing_ps(ps)
+        beneficial_test = mannwhitneyu(fitnesses_with, fitnesses_without, alternative="greater")
+        maleficial_test = mannwhitneyu(fitnesses_with, fitnesses_without, alternative="less")
+        return beneficial_test.pvalue, maleficial_test.pvalue
