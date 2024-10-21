@@ -35,10 +35,17 @@ class BakedPairwiseExplanation:
         print(pretty_printer.repr_full_solution(self.background_solution))
         print(pretty_printer.repr_extra_information_for_full_solution(self.background_solution))
 
+        print("The difference between the solutions is ")
+        print(pretty_printer.repr_difference_between_solutions(self.main_solution, self.background_solution))
+
         print("Partial solution = ")
         print(pretty_printer.repr_partial_solution(self.difference_pattern))
         print(pretty_printer.repr_extra_information_for_partial_solution(self.difference_pattern))
 
-
         print("Explanation string")
         print(self.explanation_text)
+
+        print("The fitnesses are")
+        print(pretty_printer.problem.fitness_function(self.main_solution))
+        print(pretty_printer.problem.fitness_function(self.background_solution))
+

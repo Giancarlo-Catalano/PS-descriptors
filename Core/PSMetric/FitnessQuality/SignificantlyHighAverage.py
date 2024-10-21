@@ -158,3 +158,7 @@ class ForcefulMannWhitneyU(Metric):
         beneficial_test = mannwhitneyu(fitnesses_with, fitnesses_without, alternative="greater")
         maleficial_test = mannwhitneyu(fitnesses_with, fitnesses_without, alternative="less")
         return (beneficial_test.pvalue, maleficial_test.pvalue)
+
+
+
+

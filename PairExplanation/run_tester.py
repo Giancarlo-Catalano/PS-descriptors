@@ -41,7 +41,8 @@ def run_tester():
                                                   quantity_workers_to_keep=30,
                                                   skills_to_use={"woodworking", "fibre", "tech support", "electricity"},
                                                   random_state=seed,
-                                                  max_rota_length=3)
+                                                  max_rota_length=3,
+                                                  calendar_length = 8*7)
     # problem = RoyalRoad(5)
 
     tester = PairExplanationTester(optimisation_problem=problem,
@@ -75,20 +76,23 @@ def run_tester():
     header("ROTAS")
     print(pretty_printer.repr_problem_rotas())
 
-    header("Optima FS")
-    optima = tester.pRef.get_best_solution()
-    print(pretty_printer.repr_full_solution(optima))
+    header("Main FS")
+    best_n_solutions = tester.pRef.get_top_n_solutions(10)
+    center_solution = best_n_solutions[5]
+    print(pretty_printer.repr_full_solution(center_solution))
+    print(pretty_printer.repr_extra_information_for_full_solution(center_solution))
 
     header("Pairwise explanations")
     random.seed(seed)
-    near_optimal_solutions = tester.pRef.get_top_n_solutions(30)
-    amount_of_pairs_to_generate = 4
-    main_solutions = random.sample(population=near_optimal_solutions, k=amount_of_pairs_to_generate)
-    background_solutions = [tester.get_background_solutions(sol, 1)[0]
-                            for sol in main_solutions]
 
-    pairwise_explanations = [tester.get_pairwise_explanation(m, b, descriptor=descriptor)
-                    for m, b in zip(main_solutions, background_solutions)]
+    background_solutions = [best_n_solutions[index] for index in [0, 3, 7, 9]]  # before 5 is better, after 5 is worse
+
+    pairwise_explanations = [explanation for b in background_solutions
+                             for explanation in tester.get_pairwise_explanations(center_solution,
+                                                                                 b,
+                                                                                 descriptor=descriptor)]
+
+
 
 
     for explanation_item in pairwise_explanations:
@@ -98,10 +102,11 @@ def run_tester():
 
     header("Improving the weekdays")
 
-    weekday_improvement_explanation = tester.get_explanation_to_improve_weekday(optima, "Tuesday", descriptor)
+    weekday_improvement_explanations = tester.get_explanation_to_improve_weekday(center_solution, "Tuesday", descriptor)
 
     header("Partial Solution")
-    weekday_improvement_explanation.print_using_pretty_printer(pretty_printer)
+    for expl in weekday_improvement_explanations:
+        expl.print_using_pretty_printer(pretty_printer)
 
     # header("Calendar for skill")
     # calendar = pretty_printer.get_calendar_counts_for_ps(ps)

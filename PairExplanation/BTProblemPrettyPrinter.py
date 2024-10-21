@@ -4,8 +4,10 @@ import utils
 from BenchmarkProblems.BT.RotaPattern import RotaPattern
 from BenchmarkProblems.BT.Worker import Worker
 from BenchmarkProblems.EfficientBTProblem.EfficientBTProblem import EfficientBTProblem
+from Core.FSEvaluator import FSEvaluator
 from Core.FullSolution import FullSolution
 from Core.PS import PS, STAR
+from Core.PSMetric.FitnessQuality.SignificantlyHighAverage import MannWhitneyU, ForcefulMannWhitneyU
 from LCS.DifferenceExplainer.DescriptorsManager import DescriptorsManager
 
 
@@ -110,10 +112,17 @@ class BTProblemPrettyPrinter:
 
     def repr_extra_information_for_partial_solution(self, ps: PS) -> str:
         calendar = self.get_calendar_counts_for_ps(ps)
-        return self.repr_skill_calendar(calendar)
+        calendar_string = self.repr_skill_calendar(calendar)
+        penalties_strings = self.get_penalties_string(calendar)
+        hypothesis_string = self.get_hypothesis_string(ps)
+        return "\n".join([calendar_string, penalties_strings, hypothesis_string])
 
     def repr_extra_information_for_full_solution(self, fs: FullSolution) -> str:
-        return self.repr_extra_information_for_partial_solution(PS.from_FS(fs))
+        ps = PS.from_FS(fs)
+        calendar = self.get_calendar_counts_for_ps(ps)
+        calendar_string = self.repr_skill_calendar(calendar)
+        penalties_strings = self.get_penalties_string(calendar)
+        return "\n".join([calendar_string, penalties_strings])
 
 
     def repr_full_solution(self, fs: FullSolution) -> str:
@@ -138,4 +147,49 @@ class BTProblemPrettyPrinter:
             return "\t".join([skill]+[f"{x}" for x in skill_calendar[skill]])
 
         return "\n".join(repr_for_skill(skill) for skill in self.all_skills_list)
+
+    def get_penalties_string(self, calendar: dict[str, np.ndarray]):
+        def get_penalty_string(counts_of_workers: list[int]) -> str:
+            least = min(counts_of_workers)
+            most = max(counts_of_workers)
+
+            fitness = 1.0 if least == 0 else ((most-least)/most)**2
+            return f"max = {most}, min = {least}, p = {fitness:.2f}"
+
+        def repr_for_skill(skill: str) -> str:
+            counts = calendar[skill]
+            counts_by_weekday = counts.reshape((-1, 7))
+            counts_by_weekday = [list(counts_by_weekday[:, col]) for col in range(7)]
+            penalty_strings = list(map(get_penalty_string, counts_by_weekday))
+            return "\t".join([skill]+penalty_strings)
+
+        return "\n".join(repr_for_skill(skill) for skill in self.all_skills_list)
+
+    def repr_difference_between_solutions(self,
+                                          main_solution: FullSolution,
+                                          background_solution: FullSolution) -> str:
+        n = self.problem.search_space.amount_of_parameters
+        differences = [(index, value_in_a, value_in_b)
+                       for index, value_in_a, value_in_b
+                       in zip(range(n), main_solution.values, background_solution.values)
+                       if value_in_a != value_in_b]
+
+
+        def repr_difference(difference: (int, int, int)) -> str:
+            index, value_in_a, value_in_b = difference
+            worker_name = self.problem.workers[index].name
+            return (f"{worker_name}, "
+                    f"in main has choice {self.repr_rota_choice(value_in_a)},"
+                    f"in background has choice {self.repr_rota_choice(value_in_b)}")
+
+        return "\n".join(map(repr_difference, differences))
+
+    def get_hypothesis_string(self, ps: PS):
+        fitness_evaluator = FSEvaluator(self.problem.fitness_function)
+        hypothesis_tester = ForcefulMannWhitneyU(fitness_evaluator = fitness_evaluator,
+                                                 sample_size = 1000,
+                                                 search_space = self.problem.search_space)
+
+        beneficial_p_value, maleficial_p_value = hypothesis_tester.check_effect_of_ps(ps)
+        return f"{beneficial_p_value = }, {maleficial_p_value = }"
 

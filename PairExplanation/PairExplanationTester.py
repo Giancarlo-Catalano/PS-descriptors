@@ -285,7 +285,7 @@ class PairExplanationTester:
     def get_explanation_to_improve_weekday(self,
                                            main_solution: FullSolution,
                                            weekday: str,
-                                           descriptors_manager: DescriptorsManager)->BakedPairwiseExplanation:
+                                           descriptors_manager: DescriptorsManager)->list[BakedPairwiseExplanation]:
         # partial_improvements = self.get_partially_better_solutions(main_solution)
         eligible_weekday_improvements = self.get_solutions_with_better_weekday(main_solution, weekday)
         if len(eligible_weekday_improvements) == 0:
@@ -322,15 +322,15 @@ class PairExplanationTester:
               f"has hamming distance = {background_solution.get_hamming_distance(main_solution)},"
               f"and satfit = {background_satfit}")
 
-        return self.get_pairwise_explanation(main_solution,
-                                             background_solution,
-                                             descriptors_manager)
+        return self.get_pairwise_explanations(main_solution,
+                                              background_solution,
+                                              descriptors_manager)
 
 
-    def get_pairwise_explanation(self,
-                                 main_solution: FullSolution,
-                                 background_solution: FullSolution,
-                                 descriptor: DescriptorsManager):
+    def get_pairwise_explanations(self,
+                                  main_solution: FullSolution,
+                                  background_solution: FullSolution,
+                                  descriptor: DescriptorsManager) -> list[BakedPairwiseExplanation]:
         pss = self.find_pss(main_solution,
                             background_solution,
                             culling_method=self.preferred_culling_method)
@@ -342,8 +342,25 @@ class PairExplanationTester:
 
         names_values_percentiles = descriptor.get_significant_descriptors_of_ps(ps)
         descriptor_string = descriptor.descriptors_tuples_into_string(names_values_percentiles, ps)
-        return BakedPairwiseExplanation(main_solution,
+
+
+        in_main = BakedPairwiseExplanation(main_solution,
                                         background_solution,
                                         ps,
                                         descriptor_tuple=names_values_percentiles,
                                         explanation_text=descriptor_string)
+
+        in_background = BakedPairwiseExplanation(main_solution,
+                                           background_solution,
+                                           ps,
+                                           descriptor_tuple=names_values_percentiles,
+                                           explanation_text=descriptor_string)
+
+        return [in_main, in_background]
+
+
+    def find_main_fs(self) -> FullSolution:
+        # returns not quite the optimal solution, but one that is near the top
+        # more specifically it returns the nth best
+        n = 5
+        return self.pRef.get_top_n_solutions(n)[-1]

@@ -536,6 +536,7 @@ class EfficientBTProblem(BTProblem):
                     original_problem,
                     which_workers_to_keep: list[int],
                     rota_lengths: Optional[list[int]],
+                    calendar_length: int,
                     skills_conversion_dict: Optional[dict[str, str]]):
         assert (isinstance(original_problem, EfficientBTProblem))
 
@@ -573,7 +574,7 @@ class EfficientBTProblem(BTProblem):
                        for worker, rota_length in zip(workers, rota_lengths)]
 
         return cls(workers=workers,
-                   calendar_length=original_problem.calendar_length,
+                   calendar_length=calendar_length,
                    weights=original_problem.weights,
                    use_faulty_fitness_function=original_problem.use_faulty_fitness_function,
                    rota_preference_weight=original_problem.rota_preference_weight)
@@ -584,6 +585,7 @@ class EfficientBTProblem(BTProblem):
                          quantity_workers_to_keep: int,
                          skills_to_use: set[str],
                          max_rota_length: int,
+                         calendar_length: int,
                          random_state: int = 120):
         amount_of_workers_in_total = len(original_problem.workers)
 
@@ -600,6 +602,7 @@ class EfficientBTProblem(BTProblem):
         return cls.subset_from(original_problem=original_problem,
                                which_workers_to_keep=which_workers_to_keep,
                                skills_conversion_dict=skills_conversion_dict,
+                               calendar_length = calendar_length,
                                rota_lengths=rota_lengths)
 
     def print_for_google_sheets(self):
