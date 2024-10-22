@@ -136,10 +136,17 @@ class PRefManager:
         p_value = 1 - t.cdf(abs(t_score), df=n - 1)
         return p_value, sample_mean
 
+
+    def safe_mean(self, fitnesses: np.ndarray) -> float:
+        if len(fitnesses) > 0:
+            return np.average(fitnesses)
+        else:
+            return self.pRef_mean
+
     def get_average_when_present_and_absent(self, ps: PS) -> (float, float):
-        p_value, _ = self.t_test_for_mean_with_ps(ps)
+        #p_value, _ = self.t_test_for_mean_with_ps(ps)
         observations, not_observations = self.pRef.fitnesses_of_observations_and_complement(ps)
-        return np.average(observations), np.average(not_observations)
+        return self.safe_mean(observations), self.safe_mean(not_observations)
 
     def get_atomicity_contributions(self, ps: PS) -> np.ndarray:
         return self.evaluator.get_atomicity_contributions(ps, normalised=True)

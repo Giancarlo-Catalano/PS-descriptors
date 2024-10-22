@@ -35,7 +35,7 @@ class DescriptorsManager:
                  control_descriptors_table_file: str,
                  control_samples_per_size_category: int,
                  pRef_manager: PRefManager,
-                 speciality_threshold: float = 0.9,
+                 speciality_threshold: float = 0.1,
                  verbose: bool = False):
         self.optimisation_problem = optimisation_problem
 
@@ -155,9 +155,10 @@ class DescriptorsManager:
         def percentile_is_significant(percentile: float) -> bool:
             return (percentile < self.speciality_threshold) or (percentile > (1 - self.speciality_threshold))
 
-        # names_values_percentiles = [(name, value, percentile)
-        #                             for name, value, percentile in names_values_percentiles
-        #                             if percentile_is_significant(percentile) or name == "delta"]
+        # only keep significant descriptors
+        names_values_percentiles = [(name, value, percentile)
+                                    for name, value, percentile in names_values_percentiles
+                                    if percentile_is_significant(percentile) or name == "delta"]
 
         # sort by "extremeness"
         names_values_percentiles.sort(key=lambda x: abs(0.5 - x[2]), reverse=True)

@@ -15,7 +15,7 @@ from Core.FSEvaluator import FSEvaluator
 from Core.FullSolution import FullSolution
 from Core.PRef import PRef
 from Core.PS import PS, STAR
-from Core.PSMetric.FitnessQuality.SignificantlyHighAverage import ForcefulMannWhitneyU
+from Core.PSMetric.FitnessQuality.SignificantlyHighAverage import WilcoxonTest
 from Explanation.PRefManager import PRefManager
 from LCS import PSEvaluator
 from LCS.ConstrainedPSSearch.SolutionDifferencePSSearch import local_constrained_ps_search
@@ -142,14 +142,14 @@ class PairExplanationTester:
     def get_accuracy_of_explanations_on_pair(self,
                                              main_solution: EvaluatedFS,
                                              background_solution: EvaluatedFS,
-                                             p_value_tester: ForcefulMannWhitneyU):
+                                             p_value_tester: WilcoxonTest):
 
         with execution_timer() as timer:
             ps = self.find_pss(main_solution,
                                background_solution,
                                culling_method=self.preferred_culling_method)[0]
 
-        beneficial_p_value, maleficial_p_value = p_value_tester.check_effect_of_ps(ps)
+        beneficial_p_value, maleficial_p_value = p_value_tester.get_p_values_of_ps(ps)
 
         situation = "expected_positive" if main_solution > background_solution else "expected_negative"
         hamming_distance = main_solution.get_hamming_distance(background_solution)
@@ -169,9 +169,9 @@ class PairExplanationTester:
             background_solution = PRefManager.get_most_similar_solution_to(pRef=self.pRef, solution=main_solution)
             return main_solution, background_solution
 
-        mwu_tester = ForcefulMannWhitneyU(sample_size=1000,
-                                          search_space=self.optimisation_problem.search_space,
-                                          fitness_evaluator=self.fs_evaluator)
+        mwu_tester = WilcoxonTest(sample_size=1000,
+                                  search_space=self.optimisation_problem.search_space,
+                                  fitness_evaluator=self.fs_evaluator)
         results = []
         for iteration in tqdm(range(amount_of_samples)):
             main_solution, background_solution = pick_random_solution_pair()
@@ -220,6 +220,7 @@ class PairExplanationTester:
                                                  control_descriptors_table_file=None,
                                                  control_samples_per_size_category=1000,
                                                  pRef_manager=pRef_manager,
+                                                 speciality_threshold=0.1,
                                                  verbose=True)
 
         descriptors_manager.start_from_scratch()
@@ -285,7 +286,7 @@ class PairExplanationTester:
     def get_explanation_to_improve_weekday(self,
                                            main_solution: FullSolution,
                                            weekday: str,
-                                           descriptors_manager: DescriptorsManager)->list[BakedPairwiseExplanation]:
+                                           descriptors_manager: DescriptorsManager) -> BakedPairwiseExplanation:
         # partial_improvements = self.get_partially_better_solutions(main_solution)
         eligible_weekday_improvements = self.get_solutions_with_better_weekday(main_solution, weekday)
         if len(eligible_weekday_improvements) == 0:
@@ -322,15 +323,14 @@ class PairExplanationTester:
               f"has hamming distance = {background_solution.get_hamming_distance(main_solution)},"
               f"and satfit = {background_satfit}")
 
-        return self.get_pairwise_explanations(main_solution,
-                                              background_solution,
-                                              descriptors_manager)
+        return self.get_pairwise_explanation(main_solution,
+                                             background_solution,
+                                             descriptors_manager)
 
-
-    def get_pairwise_explanations(self,
-                                  main_solution: FullSolution,
-                                  background_solution: FullSolution,
-                                  descriptor: DescriptorsManager) -> list[BakedPairwiseExplanation]:
+    def get_pairwise_explanation(self,
+                                 main_solution: FullSolution,
+                                 background_solution: FullSolution,
+                                 descriptor: DescriptorsManager) -> BakedPairwiseExplanation:
         pss = self.find_pss(main_solution,
                             background_solution,
                             culling_method=self.preferred_culling_method)
@@ -343,21 +343,13 @@ class PairExplanationTester:
         names_values_percentiles = descriptor.get_significant_descriptors_of_ps(ps)
         descriptor_string = descriptor.descriptors_tuples_into_string(names_values_percentiles, ps)
 
-
         in_main = BakedPairwiseExplanation(main_solution,
-                                        background_solution,
-                                        ps,
-                                        descriptor_tuple=names_values_percentiles,
-                                        explanation_text=descriptor_string)
-
-        in_background = BakedPairwiseExplanation(main_solution,
                                            background_solution,
                                            ps,
                                            descriptor_tuple=names_values_percentiles,
                                            explanation_text=descriptor_string)
 
-        return [in_main, in_background]
-
+        return in_main
 
     def find_main_fs(self) -> FullSolution:
         # returns not quite the optimal solution, but one that is near the top

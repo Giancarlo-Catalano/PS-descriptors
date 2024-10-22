@@ -2,7 +2,9 @@ import json
 import random
 
 from BenchmarkProblems.EfficientBTProblem.EfficientBTProblem import EfficientBTProblem
+from Core.PSMetric.FitnessQuality.SignificantlyHighAverage import WilcoxonTest, WilcoxonNearOptima
 from PairExplanation.BTProblemPrettyPrinter import BTProblemPrettyPrinter
+from PairExplanation.BakedPairwiseExplanation import BakedPairwiseExplanation
 from PairExplanation.PairExplanationTester import PairExplanationTester
 
 
@@ -65,6 +67,15 @@ def run_tester():
                                             problem=problem)
 
 
+
+    hypothesis_tester = WilcoxonTest(sample_size=1000,
+                                     search_space=problem.search_space,
+                                     fitness_evaluator=tester.fs_evaluator)
+    near_optima_hypothesis_tester = WilcoxonNearOptima(pRef = tester.pRef,
+                                                       evaluator=tester.fs_evaluator,
+                                                       samples_required=100)
+
+
     print("And the problem was ")
 
     def header(header_name: str):
@@ -82,31 +93,46 @@ def run_tester():
     print(pretty_printer.repr_full_solution(center_solution))
     print(pretty_printer.repr_extra_information_for_full_solution(center_solution))
 
+    center_fitness = problem.fitness_function(center_solution)
+
     header("Pairwise explanations")
     random.seed(seed)
 
-    background_solutions = [best_n_solutions[index] for index in [0, 3, 7, 9]]  # before 5 is better, after 5 is worse
+    background_indexes = [0, 3, 7, 9]
+    background_solutions = [best_n_solutions[index] for index in background_indexes]  # before 5 is better, after 5 is worse
 
-    pairwise_explanations = [explanation for b in background_solutions
-                             for explanation in tester.get_pairwise_explanations(center_solution,
-                                                                                 b,
-                                                                                 descriptor=descriptor)]
+    from_main_pairwise_explanations = [tester.get_pairwise_explanation(center_solution,
+                                                                                b,
+                                                                                descriptor=descriptor)
+                                       for b in background_solutions]
+
+    from_other_pairwise_explanations = [tester.get_pairwise_explanation(b,
+                                                                                center_solution,
+                                                                                descriptor=descriptor)
+                                       for b in background_solutions]
 
 
+    def print_explanation(expl: BakedPairwiseExplanation):
+        expl.print_using_pretty_printer(pretty_printer, show_solutions=False,
+                                        hypothesis_tester=hypothesis_tester,
+                                        near_optima_hypothesis_tester=near_optima_hypothesis_tester)
+
+    for expl, background_index in zip(from_main_pairwise_explanations, background_indexes):
+        header(f"explanation item, it was a subset of MAIN, compared to {background_index}")
+        print_explanation(expl)
+
+    for expl, background_index in zip(from_other_pairwise_explanations, background_indexes):
+        header(f"explanation item, it was a subset of {background_index}, compared to MAIN")
+        print_explanation(expl)
 
 
-    for explanation_item in pairwise_explanations:
-        header("explanation item")
-        explanation_item.print_using_pretty_printer(pretty_printer)
-
-
-    header("Improving the weekdays")
-
-    weekday_improvement_explanations = tester.get_explanation_to_improve_weekday(center_solution, "Tuesday", descriptor)
-
-    header("Partial Solution")
-    for expl in weekday_improvement_explanations:
-        expl.print_using_pretty_printer(pretty_printer)
+    # header("Improving the weekdays")
+    #
+    # weekday_improvement_explanation = tester.get_explanation_to_improve_weekday(center_solution, "Tuesday", descriptor)
+    #
+    # header("Partial Solution")
+    # for expl in [weekday_improvement_explanation]:
+    #     print_explanation(expl)
 
     # header("Calendar for skill")
     # calendar = pretty_printer.get_calendar_counts_for_ps(ps)

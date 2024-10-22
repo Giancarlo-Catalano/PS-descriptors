@@ -14,7 +14,7 @@ from Core.EvaluatedFS import EvaluatedFS
 from Core.FSEvaluator import FSEvaluator
 from Core.PRef import PRef
 from Core.PS import PS, STAR
-from Core.PSMetric.FitnessQuality.SignificantlyHighAverage import ForcefulMannWhitneyU
+from Core.PSMetric.FitnessQuality.SignificantlyHighAverage import WilcoxonTest
 from Explanation.PRefManager import PRefManager
 from LCS.Conversions import get_rules_in_model
 from LCS.DifferenceExplainer.DescriptorsManager import DescriptorsManager
@@ -734,11 +734,11 @@ class DifferenceExplainer:
 
         selected_ps = pss[selection]
         fs_evaluator = FSEvaluator(self.problem.fitness_function)
-        tester = ForcefulMannWhitneyU(sample_size=100,
-                                      search_space=self.problem.search_space,
-                                      fitness_evaluator=fs_evaluator)
+        tester = WilcoxonTest(sample_size=100,
+                              search_space=self.problem.search_space,
+                              fitness_evaluator=fs_evaluator)
 
-        beneficial_p_value, maleficial_p_value = tester.check_effect_of_ps(selected_ps)
+        beneficial_p_value, maleficial_p_value = tester.get_p_values_of_ps(selected_ps)
 
         print(f"The beneficial p-value is {beneficial_p_value:.4f}")
         print(f"The maleficial p-value is {maleficial_p_value:.4f}")

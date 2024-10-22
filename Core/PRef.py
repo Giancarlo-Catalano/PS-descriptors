@@ -247,6 +247,16 @@ class PRef:
         best_index: int = np.argmax(self.fitness_array)
         return self.get_nth_solution(best_index)
 
+    def get_sorted(self) -> Any:  # returns a pRef
+        enumerated_fitnesses = sorted(enumerate(self.fitness_array), key=utils.second, reverse=True)
+        new_indexes, new_fitnesses = zip(*enumerated_fitnesses)
+        new_indexes = np.array(new_indexes) ## otherwise the indexing doesn't work??
+        new_fitnesses = np.array(new_fitnesses)
+        new_full_solution_matrix = self.full_solution_matrix[new_indexes]
+        return PRef(fitness_array=new_fitnesses,
+                    full_solution_matrix=new_full_solution_matrix,
+                    search_space=self.search_space)
+
 
 def plot_solutions_in_pRef(pRef: PRef, filename: str):
     x_points, y_points = utils.unzip(list(enumerate(pRef.fitness_array)))

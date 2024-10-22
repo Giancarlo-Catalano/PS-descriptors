@@ -6,8 +6,10 @@ from BenchmarkProblems.BT.Worker import Worker
 from BenchmarkProblems.EfficientBTProblem.EfficientBTProblem import EfficientBTProblem
 from Core.FSEvaluator import FSEvaluator
 from Core.FullSolution import FullSolution
+from Core.PRef import PRef
 from Core.PS import PS, STAR
-from Core.PSMetric.FitnessQuality.SignificantlyHighAverage import MannWhitneyU, ForcefulMannWhitneyU
+from Core.PSMetric.FitnessQuality.SignificantlyHighAverage import MannWhitneyU, WilcoxonTest, \
+    WilcoxonNearOptima
 from LCS.DifferenceExplainer.DescriptorsManager import DescriptorsManager
 
 
@@ -17,6 +19,7 @@ class BTProblemPrettyPrinter:
 
     all_rotas_list: list[RotaPattern]
     all_skills_list: list[str]
+
 
     def __init__(self,
                  problem: EfficientBTProblem,
@@ -101,20 +104,26 @@ class BTProblemPrettyPrinter:
                                if choice != STAR]
 
         def repr_assigned_worker(worker: Worker, choice: int) -> str:
+            actual_rota = worker.available_rotas[choice]
             skillset_str = self.repr_skillset(worker.available_skills)
             rota_choice_label = self.repr_rota_choice(choice)
-            actual_rota_str = self.repr_extended_rota(worker.available_rotas[choice])
+            rota_index_label = self.repr_rota_index(actual_rota)
+            actual_rota_str = self.repr_extended_rota(actual_rota)
 
-            return "\t".join([worker.name, rota_choice_label, skillset_str, actual_rota_str])
+            return "\t".join([worker.name, rota_choice_label, rota_index_label, skillset_str, actual_rota_str])
 
         return "\n".join([repr_assigned_worker(w, c) for w, c in workers_and_choices])
 
 
-    def repr_extra_information_for_partial_solution(self, ps: PS) -> str:
+    def repr_extra_information_for_partial_solution(self,
+                                                    ps: PS,
+                                                    hypothesis_tester: WilcoxonTest,
+                                                    near_optima_hypothesis_tester: WilcoxonNearOptima) -> str:
+        """ The pRef is used to carry out some hypothesis testing on near_optima solutions"""
         calendar = self.get_calendar_counts_for_ps(ps)
         calendar_string = self.repr_skill_calendar(calendar)
         penalties_strings = self.get_penalties_string(calendar)
-        hypothesis_string = self.get_hypothesis_string(ps)
+        hypothesis_string = self.get_hypothesis_string(ps, hypothesis_tester, near_optima_hypothesis_tester)
         return "\n".join([calendar_string, penalties_strings, hypothesis_string])
 
     def repr_extra_information_for_full_solution(self, fs: FullSolution) -> str:
@@ -184,12 +193,16 @@ class BTProblemPrettyPrinter:
 
         return "\n".join(map(repr_difference, differences))
 
-    def get_hypothesis_string(self, ps: PS):
-        fitness_evaluator = FSEvaluator(self.problem.fitness_function)
-        hypothesis_tester = ForcefulMannWhitneyU(fitness_evaluator = fitness_evaluator,
-                                                 sample_size = 1000,
-                                                 search_space = self.problem.search_space)
+    def get_hypothesis_string(self,
+                              ps: PS,
+                              hypothesis_tester: WilcoxonTest,
+                              near_optima_hypothesis_tester: WilcoxonNearOptima):
 
-        beneficial_p_value, maleficial_p_value = hypothesis_tester.check_effect_of_ps(ps)
-        return f"{beneficial_p_value = }, {maleficial_p_value = }"
+        greater_p_value, lower_p_value = hypothesis_tester.get_p_values_of_ps(ps)
+        near_optima_greater_p_value, near_optima_lower_p_value = near_optima_hypothesis_tester.get_p_values_of_ps(ps)
+
+        return (f"{greater_p_value = }, "
+                f"{lower_p_value = }, "
+                f"{near_optima_greater_p_value = }, "
+                f"{near_optima_lower_p_value = }")
 

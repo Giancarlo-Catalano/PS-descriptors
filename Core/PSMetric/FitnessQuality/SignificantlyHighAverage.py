@@ -1,7 +1,7 @@
 from typing import Optional
 
 import numpy as np
-from scipy.stats import t, PermutationMethod
+from scipy.stats import t, PermutationMethod, wilcoxon
 
 from Core.EvaluatedFS import EvaluatedFS
 from Core.FSEvaluator import FSEvaluator
@@ -84,7 +84,8 @@ class MannWhitneyU(Metric):
 
     def get_p_value_fast(self, first_group: np.ndarray, second_group: np.ndarray, restrict_size: int) -> float:
 
-        test = mannwhitneyu(first_group[:restrict_size], second_group[:restrict_size], alternative="two-sided", method=self.test_method)
+        test = mannwhitneyu(first_group[:restrict_size], second_group[:restrict_size], alternative="two-sided",
+                            method=self.test_method)
         return test.pvalue
 
     def test_effect(self, ps: PS) -> float:
@@ -93,8 +94,7 @@ class MannWhitneyU(Metric):
             return 1
 
         return self.get_p_value_fast(first_group=when_present, second_group=when_absent, restrict_size=1000)
-        #return self.get_p_value(first_group=when_present, second_group=when_absent)
-
+        # return self.get_p_value(first_group=when_present, second_group=when_absent)
 
     def get_single_score(self, ps: PS) -> float:
         """This is not meant to be used but I might as well write this one line"""
@@ -103,16 +103,12 @@ class MannWhitneyU(Metric):
         return self.test_effect(ps)
 
 
-
-class ForcefulMannWhitneyU(Metric):
-
+class WilcoxonTest:
     """ This is not to be used as a fitness function!!!"""
     sample_size: int
     search_space: SearchSpace
 
     fitness_evaluator: FSEvaluator
-
-
 
     def __init__(self,
                  sample_size: int,
@@ -122,7 +118,6 @@ class ForcefulMannWhitneyU(Metric):
         self.search_space = search_space
         self.fitness_evaluator = fitness_evaluator
         super().__init__()
-
 
     def get_random_samples_without_pattern(self, ps: PS) -> list[FullSolution]:
         if ps.is_empty():
@@ -136,7 +131,6 @@ class ForcefulMannWhitneyU(Metric):
 
         return result
 
-
     def apply_pattern_to_samples(self, samples: list[FullSolution], ps: PS) -> list[FullSolution]:
         samples_matrix = np.array([sample.values.copy() for sample in samples])
         samples_matrix[:, ps.values != STAR] = ps.values[ps.values != STAR]
@@ -145,63 +139,69 @@ class ForcefulMannWhitneyU(Metric):
 
     def get_fitnesses(self, unevaluated_solutions: list[FullSolution]) -> list[float]:
         return [self.fitness_evaluator.evaluate(solution)
-                for solution in unevaluated_solutions
-                ]
+                for solution in unevaluated_solutions]
 
+    @classmethod
+    def get_p_values_given_fitnesses(cls, fitnesses_without: np.ndarray, fitnesses_with: np.ndarray):
+        differences = fitnesses_with - fitnesses_without
+        res_greater = wilcoxon(differences, alternative="greater")
+        res_lower = wilcoxon(differences, alternative="less")
+        return (res_greater.pvalue, res_lower.pvalue)
 
-    def check_effect_of_ps(self, ps: PS) -> (float, float):
+    def get_p_values_of_ps(self, ps: PS) -> (float, float):
         without_pattern = self.get_random_samples_without_pattern(ps)
         with_pattern = self.apply_pattern_to_samples(without_pattern, ps)
 
-        fitnesses_without = self.get_fitnesses(without_pattern)
-        fitnesses_with = self.get_fitnesses(with_pattern)
-        beneficial_test = mannwhitneyu(fitnesses_with, fitnesses_without, alternative="greater")
-        maleficial_test = mannwhitneyu(fitnesses_with, fitnesses_without, alternative="less")
-        return (beneficial_test.pvalue, maleficial_test.pvalue)
+        fitnesses_without = np.array(self.get_fitnesses(without_pattern))
+        fitnesses_with = np.array(self.get_fitnesses(with_pattern))
+
+        return self.get_p_values_given_fitnesses(fitnesses_without, fitnesses_with)
 
 
-
-
-
-
-class ForcefulMannWhitneyUOnNearOptima:
-
-    near_optima_solutions: list[EvaluatedFS]
-    pre_extracted_fitnesses_without: np.ndarray
-    pre_extracted_solutions_without: np.ndarray
+class WilcoxonNearOptima:
     evaluator: FSEvaluator
-
+    sorted_pRef: PRef
+    samples_required: int
 
     def __init__(self,
-                 near_optima_solutions: list[EvaluatedFS],
-                 evaluator: FSEvaluator):
-        self.near_optima_solutions = near_optima_solutions
-        self.pre_extracted_fitnesses_without = np.array([fs.fitness for fs in self.near_optima_solutions])
-        self.pre_extracted_solutions_without = np.array([fs.values for fs in self.near_optima_solutions])
+                 evaluator: FSEvaluator,
+                 pRef: PRef,
+                 samples_required: int):
         self.evaluator = evaluator
+        self.sorted_pRef = pRef.get_sorted()
+        self.samples_required = samples_required
 
 
-    @classmethod
-    def from_pRef(cls,
-                  pRef: PRef,
-                  how_many: int,
-                  evaluator: FSEvaluator):
-        near_optima = pRef.get_top_n_solutions(how_many)
-        return ForcefulMannWhitneyUOnNearOptima(near_optima_solutions=near_optima, evaluator = evaluator)
+    def get_solutions_without_pattern(self, ps: PS) -> (np.ndarray, np.ndarray):
+        """returns the solutions and their original fitness"""
+        pattern = ps.values
+
+        rows_to_be_observed = self.sorted_pRef.full_solution_matrix[:, pattern != STAR]
+        pattern_fixed_values = pattern[pattern!=STAR]
+
+        winning_rows_indexes = []
+        for row_index, observed_row in enumerate(rows_to_be_observed):
+            if not np.array_equal(observed_row, pattern_fixed_values):
+                winning_rows_indexes.append(row_index)
+                if len(winning_rows_indexes) >= self.samples_required:
+                    break
+        else:
+            raise Exception(f"Was not able to gather enough solutions without the pattern {ps} to prove that it is good")
+
+        full_solution_matrix = self.sorted_pRef.full_solution_matrix[winning_rows_indexes]
+        fitnesses = self.sorted_pRef.fitness_array[winning_rows_indexes]
+        return full_solution_matrix, fitnesses
 
 
 
-    def get_new_fitnesses_when_forcing_ps(self, ps: PS) -> np.ndarray:
-        samples_matrix = self.pre_extracted_solutions_without.copy()
+    def get_new_fitnesses_when_forcing_ps(self, old_solutions: np.ndarray, ps: PS) -> np.ndarray:
+        samples_matrix = old_solutions.copy()
         samples_matrix[:, ps.values != STAR] = ps.values[ps.values != STAR]
         fitnesses = np.array([self.evaluator.evaluate(FullSolution(row)) for row in samples_matrix])
 
         return fitnesses
 
-
-    def test_ps(self, ps: PS) -> (float, float):
-        fitnesses_without = self.pre_extracted_fitnesses_without
-        fitnesses_with = self.get_new_fitnesses_when_forcing_ps(ps)
-        beneficial_test = mannwhitneyu(fitnesses_with, fitnesses_without, alternative="greater")
-        maleficial_test = mannwhitneyu(fitnesses_with, fitnesses_without, alternative="less")
-        return beneficial_test.pvalue, maleficial_test.pvalue
+    def get_p_values_of_ps(self, ps: PS) -> (float, float):
+        solutions_without, fitnesses_without = self.get_solutions_without_pattern(ps)
+        fitnesses_with = self.get_new_fitnesses_when_forcing_ps(solutions_without, ps)
+        return WilcoxonTest.get_p_values_given_fitnesses(fitnesses_without, fitnesses_with)
