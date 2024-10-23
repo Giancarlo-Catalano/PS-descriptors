@@ -15,7 +15,7 @@ from Core.FSEvaluator import FSEvaluator
 from Core.FullSolution import FullSolution
 from Core.PRef import PRef
 from Core.PS import PS, STAR
-from Core.PSMetric.FitnessQuality.SignificantlyHighAverage import WilcoxonTest
+from Core.PSMetric.FitnessQuality.SignificantlyHighAverage import WilcoxonTest, WilcoxonNearOptima, effect_string
 from Explanation.PRefManager import PRefManager
 from LCS import PSEvaluator
 from LCS.ConstrainedPSSearch.SolutionDifferencePSSearch import local_constrained_ps_search
@@ -208,7 +208,7 @@ class PairExplanationTester:
                                                          solution=main_solution,
                                                          amount_to_return=background_solution_count)
 
-    def get_temporary_descriptors_manager(self) -> DescriptorsManager:
+    def get_temporary_descriptors_manager(self, control_samples_per_size_category: int = 1000) -> DescriptorsManager:
         pRef_manager = PRefManager(problem=self.optimisation_problem,
                                    pRef_file=None,
                                    instantiate_own_evaluator=False,
@@ -218,7 +218,7 @@ class PairExplanationTester:
         descriptors_manager = DescriptorsManager(optimisation_problem=self.optimisation_problem,
                                                  control_pss_file=None,
                                                  control_descriptors_table_file=None,
-                                                 control_samples_per_size_category=1000,
+                                                 control_samples_per_size_category=control_samples_per_size_category,
                                                  pRef_manager=pRef_manager,
                                                  speciality_threshold=0.1,
                                                  verbose=True)
@@ -351,8 +351,46 @@ class PairExplanationTester:
 
         return in_main
 
-    def find_main_fs(self) -> FullSolution:
-        # returns not quite the optimal solution, but one that is near the top
-        # more specifically it returns the nth best
-        n = 5
-        return self.pRef.get_top_n_solutions(n)[-1]
+    def evaluate_explanation(self,
+                             expl: BakedPairwiseExplanation,
+                             hypothesis_tester: WilcoxonTest,
+                             near_optima_hypothesis_tester: WilcoxonNearOptima) -> dict:
+
+        main_fitness, background_fitness = [self.optimisation_problem.fitness_function(s)
+                                            for s in [expl.main_solution, expl.background_solution]]
+
+        better_solution = ""
+        if main_fitness > background_fitness:
+            better_solution = "main"
+        elif background_fitness > main_fitness:
+            better_solution = "background"
+        else:
+            better_solution = "equivalent"
+
+        greater_p_value, lower_p_value = hypothesis_tester.get_p_values_of_ps(expl.difference_pattern)
+        near_optima_greater_p_value, near_optima_lower_p_value = near_optima_hypothesis_tester.get_p_values_of_ps(
+            expl.difference_pattern)
+
+        threshold = 0.05
+        normal_effect = effect_string(greater_p_value, lower_p_value, threshold)
+        near_optima_effect = effect_string(near_optima_greater_p_value, near_optima_lower_p_value, threshold)
+
+        result = {"greater_p_value": greater_p_value,
+                  "lower_p_value": lower_p_value,
+                  "near_optima_greater_p_value": near_optima_greater_p_value,
+                  "near_optima_lower_p_value": near_optima_lower_p_value,
+                  "main_fitness": main_fitness,
+                  "background_fitness": background_fitness,
+                  "better_solution": better_solution,
+                  "threshold": threshold,
+                  "normal_effect": normal_effect,
+                  "near_optima_effect": near_optima_effect,
+                  "is_accurate": None, }
+
+        match (better_solution, normal_effect, near_optima_effect):
+            case ("main", _, "Positive") | ("background", _, "Negative"):
+                result["is_accurate"] = True
+            case (_, _, "Inconclusive"):
+                result["is_accurate"] = False
+
+        return result

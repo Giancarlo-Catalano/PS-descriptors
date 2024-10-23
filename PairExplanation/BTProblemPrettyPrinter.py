@@ -9,7 +9,7 @@ from Core.FullSolution import FullSolution
 from Core.PRef import PRef
 from Core.PS import PS, STAR
 from Core.PSMetric.FitnessQuality.SignificantlyHighAverage import MannWhitneyU, WilcoxonTest, \
-    WilcoxonNearOptima
+    WilcoxonNearOptima, get_hypothesis_string
 from LCS.DifferenceExplainer.DescriptorsManager import DescriptorsManager
 
 
@@ -123,7 +123,7 @@ class BTProblemPrettyPrinter:
         calendar = self.get_calendar_counts_for_ps(ps)
         calendar_string = self.repr_skill_calendar(calendar)
         penalties_strings = self.get_penalties_string(calendar)
-        hypothesis_string = self.get_hypothesis_string(ps, hypothesis_tester, near_optima_hypothesis_tester)
+        hypothesis_string = get_hypothesis_string(ps, hypothesis_tester, near_optima_hypothesis_tester)
         return "\n".join([calendar_string, penalties_strings, hypothesis_string])
 
     def repr_extra_information_for_full_solution(self, fs: FullSolution) -> str:
@@ -193,16 +193,5 @@ class BTProblemPrettyPrinter:
 
         return "\n".join(map(repr_difference, differences))
 
-    def get_hypothesis_string(self,
-                              ps: PS,
-                              hypothesis_tester: WilcoxonTest,
-                              near_optima_hypothesis_tester: WilcoxonNearOptima):
 
-        greater_p_value, lower_p_value = hypothesis_tester.get_p_values_of_ps(ps)
-        near_optima_greater_p_value, near_optima_lower_p_value = near_optima_hypothesis_tester.get_p_values_of_ps(ps)
-
-        return (f"{greater_p_value = }, "
-                f"{lower_p_value = }, "
-                f"{near_optima_greater_p_value = }, "
-                f"{near_optima_lower_p_value = }")
 

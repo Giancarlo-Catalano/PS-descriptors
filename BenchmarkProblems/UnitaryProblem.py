@@ -70,6 +70,10 @@ class UnitaryProblem(BenchmarkProblem):
         cliques = ps.values.reshape((-1, self.clique_size))
         return "["+"  ".join(repr_clique(clique) for clique in cliques)+"]"
 
+    def repr_fs(self, full_solution: FullSolution) -> str:
+        as_ps = PS.from_FS(full_solution)
+        return self.repr_ps(as_ps)
+
     def get_targets(self) -> list[PS]:
         optimal_clique_values = self.get_optimal_clique(self.clique_size).values
 

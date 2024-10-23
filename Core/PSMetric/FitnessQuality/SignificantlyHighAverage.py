@@ -142,11 +142,11 @@ class WilcoxonTest:
                 for solution in unevaluated_solutions]
 
     @classmethod
-    def get_p_values_given_fitnesses(cls, fitnesses_without: np.ndarray, fitnesses_with: np.ndarray):
+    def get_p_values_given_fitnesses(cls, fitnesses_without: np.ndarray, fitnesses_with: np.ndarray) -> (float, float):
         differences = fitnesses_with - fitnesses_without
         res_greater = wilcoxon(differences, alternative="greater")
         res_lower = wilcoxon(differences, alternative="less")
-        return (res_greater.pvalue, res_lower.pvalue)
+        return (float(res_greater.pvalue), float(res_lower.pvalue))
 
     def get_p_values_of_ps(self, ps: PS) -> (float, float):
         without_pattern = self.get_random_samples_without_pattern(ps)
@@ -171,13 +171,12 @@ class WilcoxonNearOptima:
         self.sorted_pRef = pRef.get_sorted()
         self.samples_required = samples_required
 
-
     def get_solutions_without_pattern(self, ps: PS) -> (np.ndarray, np.ndarray):
         """returns the solutions and their original fitness"""
         pattern = ps.values
 
         rows_to_be_observed = self.sorted_pRef.full_solution_matrix[:, pattern != STAR]
-        pattern_fixed_values = pattern[pattern!=STAR]
+        pattern_fixed_values = pattern[pattern != STAR]
 
         winning_rows_indexes = []
         for row_index, observed_row in enumerate(rows_to_be_observed):
@@ -186,13 +185,12 @@ class WilcoxonNearOptima:
                 if len(winning_rows_indexes) >= self.samples_required:
                     break
         else:
-            raise Exception(f"Was not able to gather enough solutions without the pattern {ps} to prove that it is good")
+            raise Exception(
+                f"Was not able to gather enough solutions without the pattern {ps} to prove that it is good")
 
         full_solution_matrix = self.sorted_pRef.full_solution_matrix[winning_rows_indexes]
         fitnesses = self.sorted_pRef.fitness_array[winning_rows_indexes]
         return full_solution_matrix, fitnesses
-
-
 
     def get_new_fitnesses_when_forcing_ps(self, old_solutions: np.ndarray, ps: PS) -> np.ndarray:
         samples_matrix = old_solutions.copy()
@@ -205,3 +203,36 @@ class WilcoxonNearOptima:
         solutions_without, fitnesses_without = self.get_solutions_without_pattern(ps)
         fitnesses_with = self.get_new_fitnesses_when_forcing_ps(solutions_without, ps)
         return WilcoxonTest.get_p_values_given_fitnesses(fitnesses_without, fitnesses_with)
+
+
+def effect_string(greater_p, lower_p, threshold=0.05) -> str:
+    greater_is_significant = greater_p < threshold
+    lower_is_significant = lower_p < threshold
+
+    match (greater_is_significant, lower_is_significant):
+        case (True, False):
+            return "Positive"
+        case (False, True):
+            return "Negative"
+        case (True, True):
+            return "Both"
+        case (False, False):
+            return "Inconclusive"
+
+def get_hypothesis_string(ps: PS,
+                          hypothesis_tester: WilcoxonTest,
+                          near_optima_hypothesis_tester: WilcoxonNearOptima):
+    greater_p_value, lower_p_value = hypothesis_tester.get_p_values_of_ps(ps)
+    near_optima_greater_p_value, near_optima_lower_p_value = near_optima_hypothesis_tester.get_p_values_of_ps(ps)
+
+    threshold = 0.05
+
+    human_string = (f"Global effect: {effect_string(greater_p_value, lower_p_value)}, "
+                    f"local optima effect: {effect_string(near_optima_greater_p_value, near_optima_lower_p_value)}")
+
+    p_values_string = (f"{greater_p_value = }, "
+                       f"{lower_p_value = }, "
+                       f"{near_optima_greater_p_value = }, "
+                       f"{near_optima_lower_p_value = }")
+
+    return human_string + "\n" + p_values_string
