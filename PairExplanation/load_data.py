@@ -16,6 +16,12 @@ from utils import announce
 json_file = r"C:\Users\gac8\PycharmProjects\PS-descriptors-LCS\PairExplanation\everything.json"
 pRef_file = r"C:\Users\gac8\PycharmProjects\PS-descriptors-LCS\PairExplanation\pRef.npz"
 
+skill_emoji_dict = {"electricity": "⚡",
+                    "fibre": "📞",
+                    "tech support": "💻",
+                    "woodworking": "🔨",
+                    "plumbing": "🔧"}
+
 seed = 42
 problem = EfficientBTProblem.random_subset_of(EfficientBTProblem.from_default_files(),
                                               quantity_workers_to_keep=30,
@@ -37,11 +43,14 @@ def explanation_is_correct(expl, expl_generator, hypothesis_tester, near_optima_
 def print_explanation(expl: BakedPairwiseExplanation,
                       pretty_printer, hypothesis_tester: Optional,
                       near_optima_hypothesis_tester: Optional):
-
     print(f"label = {expl.label}")
     expl.print_using_pretty_printer(pretty_printer, show_solutions=False,
                                     hypothesis_tester=hypothesis_tester,
                                     near_optima_hypothesis_tester=near_optima_hypothesis_tester)
+
+    print("\n")
+
+    print(expl.get_difference_in_rotas_table(pretty_printer))
     # is_correct = explanation_is_correct(expl)
     # print(f"{is_correct = }")
 
@@ -65,7 +74,12 @@ def generate_explanations(pRef: PRef):
     descriptor = tester.get_temporary_descriptors_manager(control_samples_per_size_category=1)
 
     pretty_printer = BTProblemPrettyPrinter(descriptor_manager=descriptor,
-                                            problem=problem)
+                                            problem=problem,
+                                            skill_emoji_dict={"electricity": "⚡",
+                                                              "fibre": "📞",
+                                                              "tech support": "💻",
+                                                              "woodworking": "🔨",
+                                                              "plumbing": "🔧"})
 
     hypothesis_tester = WilcoxonTest(sample_size=1000,
                                      search_space=problem.search_space,
@@ -136,7 +150,10 @@ def load_from_json():
                                    verbose=False)
 
     descriptor = tester.get_temporary_descriptors_manager(control_samples_per_size_category=1)
-    pretty_printer = BTProblemPrettyPrinter(problem, descriptor_manager=descriptor)
+    pretty_printer = BTProblemPrettyPrinter(problem,
+                                            descriptor_manager=descriptor,
+                                            skill_emoji_dict=skill_emoji_dict)
+
     hypothesis_tester = WilcoxonTest(sample_size=1000,
                                      search_space=problem.search_space,
                                      fitness_evaluator=tester.fs_evaluator)
@@ -154,7 +171,6 @@ def load_from_json():
                           pretty_printer,
                           hypothesis_tester,
                           near_optima_hypothesis_tester)
-
 
 
 # generate_pRef()

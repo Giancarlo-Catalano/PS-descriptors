@@ -1,3 +1,5 @@
+from typing import Optional
+
 import numpy as np
 
 import utils
@@ -20,15 +22,19 @@ class BTProblemPrettyPrinter:
     all_rotas_list: list[RotaPattern]
     all_skills_list: list[str]
 
+    skill_emoji_dict: Optional[dict[str, str]]
+
     def __init__(self,
                  problem: EfficientBTProblem,
-                 descriptor_manager: DescriptorsManager):
+                 descriptor_manager: DescriptorsManager,
+                 skill_emoji_dict: Optional[dict[str, str]]):
         self.problem = problem
 
         self.descriptor_manager = descriptor_manager
 
         self.all_rotas_list = self.get_all_rotas_list(self.problem)
         self.all_skills_list = sorted(list(self.problem.all_skills))
+        self.skill_emoji_dict = skill_emoji_dict
 
     @classmethod
     def get_all_rotas_list(cls, problem: EfficientBTProblem) -> list[RotaPattern]:
@@ -60,6 +66,13 @@ class BTProblemPrettyPrinter:
 
         return replacement_rota
 
+
+    def repr_skill(self, skill: str) -> str:
+        if self.skill_emoji_dict is None:
+            return skill
+        else:
+            return self.skill_emoji_dict[skill]
+
     def get_index_of_rota(self, rota: RotaPattern) -> int:
         return self.all_rotas_list.index(rota)
 
@@ -83,7 +96,7 @@ class BTProblemPrettyPrinter:
         return self.repr_rota(new_rota)
 
     def repr_skillset(self, skillset: set[str]) -> str:
-        return "\t".join((skill if skill in skillset else "") for skill in self.all_skills_list)
+        return "\t".join((self.repr_skill(skill) if skill in skillset else "") for skill in self.all_skills_list)
 
     def repr_worker(self, worker: Worker) -> str:
         skills_str = self.repr_skillset(worker.available_skills)
@@ -122,7 +135,7 @@ class BTProblemPrettyPrinter:
         calendar_string = self.repr_skill_calendar(calendar)
         penalties_strings = self.get_penalties_string(calendar)
         hypothesis_string = get_hypothesis_string(ps, hypothesis_tester, near_optima_hypothesis_tester)
-        return "\n".join([calendar_string, penalties_strings, hypothesis_string])
+        return "\n\n".join([calendar_string, penalties_strings, hypothesis_string])
 
     def repr_extra_information_for_full_solution(self, fs: FullSolution) -> str:
         ps = PS.from_FS(fs)
@@ -149,7 +162,7 @@ class BTProblemPrettyPrinter:
 
     def repr_skill_calendar(self, skill_calendar: dict) -> str:
         def repr_for_skill(skill: str) -> str:
-            return "\t".join([skill] + [f"{x}" for x in skill_calendar[skill]])
+            return "\t".join([self.repr_skill(skill)] + [f"{x}" for x in skill_calendar[skill]])
 
         return "\n".join(repr_for_skill(skill) for skill in self.all_skills_list)
 
@@ -166,7 +179,7 @@ class BTProblemPrettyPrinter:
             counts_by_weekday = counts.reshape((-1, 7))
             counts_by_weekday = [list(counts_by_weekday[:, col]) for col in range(7)]
             penalty_strings = list(map(get_penalty_string, counts_by_weekday))
-            return "\t".join([skill] + penalty_strings)
+            return "\t".join([self.repr_skill(skill)] + penalty_strings)
 
         return "\n".join(repr_for_skill(skill) for skill in self.all_skills_list)
 

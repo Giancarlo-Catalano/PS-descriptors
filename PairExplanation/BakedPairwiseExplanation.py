@@ -37,10 +37,12 @@ class BakedPairwiseExplanation:
         if show_solutions:
             print("main solution = ")
             print(pretty_printer.repr_full_solution(self.main_solution))
+            print("\n")
             print(pretty_printer.repr_extra_information_for_full_solution(self.main_solution))
 
             print("background solution = ")
             print(pretty_printer.repr_full_solution(self.background_solution))
+            print("\n")
             print(pretty_printer.repr_extra_information_for_full_solution(self.background_solution))
 
         print("The difference between the solutions is ")
@@ -49,6 +51,7 @@ class BakedPairwiseExplanation:
 
         print("Partial solution = ")
         print(pretty_printer.repr_partial_solution(self.difference_pattern))
+        print("\n")
         print(pretty_printer.repr_extra_information_for_partial_solution(self.difference_pattern,
                                                                          hypothesis_tester,
                                                                          near_optima_hypothesis_tester))
@@ -89,7 +92,7 @@ class BakedPairwiseExplanation:
 
     def get_difference_in_rotas_table(self, pretty_printer: BTProblemPrettyPrinter):
         different_variable_indexes = [index for index, is_different
-                                      in enumerate(self.main_solution.values != self.background_solution)
+                                      in enumerate(self.main_solution.values != self.background_solution.values)
                                       if is_different]
 
         for var_index in different_variable_indexes:
