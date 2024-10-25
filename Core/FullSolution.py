@@ -41,3 +41,10 @@ class FullSolution:
 
     def get_hamming_distance(self, other) -> int:
         return int(np.sum(self.values != other.values))
+
+    def to_json(self):
+        return {"values": self.values.tolist()}
+
+    @classmethod
+    def from_json(cls, json_dict: dict):
+        return cls(json_dict["values"])

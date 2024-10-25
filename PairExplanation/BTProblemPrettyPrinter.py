@@ -20,7 +20,6 @@ class BTProblemPrettyPrinter:
     all_rotas_list: list[RotaPattern]
     all_skills_list: list[str]
 
-
     def __init__(self,
                  problem: EfficientBTProblem,
                  descriptor_manager: DescriptorsManager):
@@ -114,7 +113,6 @@ class BTProblemPrettyPrinter:
 
         return "\n".join([repr_assigned_worker(w, c) for w, c in workers_and_choices])
 
-
     def repr_extra_information_for_partial_solution(self,
                                                     ps: PS,
                                                     hypothesis_tester: WilcoxonTest,
@@ -133,7 +131,6 @@ class BTProblemPrettyPrinter:
         penalties_strings = self.get_penalties_string(calendar)
         return "\n".join([calendar_string, penalties_strings])
 
-
     def repr_full_solution(self, fs: FullSolution) -> str:
         return self.repr_partial_solution(PS.from_FS(fs))
 
@@ -145,15 +142,14 @@ class BTProblemPrettyPrinter:
         def get_calendar_for_skill(skill: str) -> np.ndarray:
             relevant_patterns = [pattern for pattern, skillset in present_rotas_and_skills if skill in skillset]
             if len(relevant_patterns) == 0:
-                return np.zeros(shape = self.problem.calendar_length, dtype=int)
+                return np.zeros(shape=self.problem.calendar_length, dtype=int)
             return np.sum(relevant_patterns, axis=0)
 
         return {skill: get_calendar_for_skill(skill) for skill in self.all_skills_list}
 
-
     def repr_skill_calendar(self, skill_calendar: dict) -> str:
         def repr_for_skill(skill: str) -> str:
-            return "\t".join([skill]+[f"{x}" for x in skill_calendar[skill]])
+            return "\t".join([skill] + [f"{x}" for x in skill_calendar[skill]])
 
         return "\n".join(repr_for_skill(skill) for skill in self.all_skills_list)
 
@@ -162,7 +158,7 @@ class BTProblemPrettyPrinter:
             least = min(counts_of_workers)
             most = max(counts_of_workers)
 
-            fitness = 1.0 if least == 0 else ((most-least)/most)**2
+            fitness = 1.0 if least == 0 else ((most - least) / most) ** 2
             return f"max = {most}, min = {least}, p = {fitness:.2f}"
 
         def repr_for_skill(skill: str) -> str:
@@ -170,7 +166,7 @@ class BTProblemPrettyPrinter:
             counts_by_weekday = counts.reshape((-1, 7))
             counts_by_weekday = [list(counts_by_weekday[:, col]) for col in range(7)]
             penalty_strings = list(map(get_penalty_string, counts_by_weekday))
-            return "\t".join([skill]+penalty_strings)
+            return "\t".join([skill] + penalty_strings)
 
         return "\n".join(repr_for_skill(skill) for skill in self.all_skills_list)
 
@@ -183,7 +179,6 @@ class BTProblemPrettyPrinter:
                        in zip(range(n), main_solution.values, background_solution.values)
                        if value_in_a != value_in_b]
 
-
         def repr_difference(difference: (int, int, int)) -> str:
             index, value_in_a, value_in_b = difference
             worker_name = self.problem.workers[index].name
@@ -193,5 +188,9 @@ class BTProblemPrettyPrinter:
 
         return "\n".join(map(repr_difference, differences))
 
+    def get_worker_name(self, worker_index: int) -> str:
+        return self.problem.workers[worker_index].name
 
-
+    def get_value_as_rota_index(self, worker_index: int, chosen_rota: int) -> str:
+        rota = self.problem.workers[worker_index].available_rotas[chosen_rota]
+        return self.repr_rota_index(rota)

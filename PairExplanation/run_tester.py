@@ -4,6 +4,7 @@ import random
 from BenchmarkProblems.EfficientBTProblem.EfficientBTProblem import EfficientBTProblem
 from BenchmarkProblems.RoyalRoad import RoyalRoad
 from Core.PSMetric.FitnessQuality.SignificantlyHighAverage import WilcoxonTest, WilcoxonNearOptima
+from Explanation.PRefManager import PRefManager
 from PairExplanation.BTProblemPrettyPrinter import BTProblemPrettyPrinter
 from PairExplanation.BakedPairwiseExplanation import BakedPairwiseExplanation
 from PairExplanation.PairExplanationTester import PairExplanationTester
@@ -46,13 +47,16 @@ def run_tester():
                                                   random_state=seed,
                                                   max_rota_length=3,
                                                   calendar_length=8 * 7)
+
+    pRef = PRefManager.generate_pRef(problem=problem,
+                                         which_algorithm="uniform GA",
+                                         sample_size=10000)
     # problem = RoyalRoad(5)
 
     tester = PairExplanationTester(optimisation_problem=problem,
                                    ps_search_budget=2000,
                                    ps_search_population=100,
-                                   pRef_size=10000,
-                                   pRef_creation_method="uniform GA",
+                                   pRef = pRef,
                                    verbose=False)
 
     # tester.get_random_explanation()
@@ -141,56 +145,20 @@ def run_tester():
     # calendar = pretty_printer.get_calendar_counts_for_ps(ps)
     # print(pretty_printer.repr_skill_calendar(calendar))
 
-    """
-    "max = 18, 
-min = 12, 
-p = 0.11"			"max = 25, 
-min = 21, 
-p = 0.03"			"max = 26, 
-min = 25, 
-p = 0.00"			"max = 23, min = 22, 
-p = 0.00"			"max = 19, min = 19, 
-p = 0.00"			"max = 14, min = 7, 
-p = 0.25"			"max = 6, min = 5, 
-p = 0.03"		
-"max = 16, min = 10, 
-p = 0.14"			"max = 19, min = 16, 
-p = 0.02"			"max = 20, min = 19, 
-p = 0.00"			"max = 18, min = 16, 
-p = 0.01"			"max = 15, min = 13, 
-p = 0.02"			"max = 10, min = 5, 
-p = 0.25"			"max = 5, min = 4,
-p = 0.04"		
-"max = 5, min = 3, 
-p = 0.16"			"max = 5, min = 4, 
-p = 0.04"			"max = 6, min = 6, 
-p = 0.00"			"max = 5, min = 4, 
-p = 0.04"			"max = 3, min = 3, 
-p = 0.00"			"max = 3, min = 1, 
-p = 0.44"			"max = 2, min = 2, 
-p = 0.00"		
-"max = 6, min = 6, 
-p = 0.00"			"max = 7, min = 7, 
-p = 0.00"			"max = 8, min = 8, 
-p = 0.00"			"max = 8, min = 8, 
-p = 0.00"			"max = 4, min = 4, 
-p = 0.00"			"max = 0, min = 0, 
-p = 1.00"			"max = 3, 
-min = 3, 
-p = 0.00"		
-    
-    """
+
 
 
 def run_tester_on_RR():
     seed = 42
     problem = RoyalRoad(5)
 
+    pRef = PRefManager.generate_pRef(problem=problem,
+                                     which_algorithm="uniform GA",
+                                     sample_size=10000)
     tester = PairExplanationTester(optimisation_problem=problem,
                                    ps_search_budget=2000,
                                    ps_search_population=100,
-                                   pRef_size=10000,
-                                   pRef_creation_method="uniform GA",
+                                   pRef=pRef,
                                    verbose=False)
 
     descriptor = tester.get_temporary_descriptors_manager(control_samples_per_size_category=1)

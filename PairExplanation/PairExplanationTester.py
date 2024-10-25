@@ -33,9 +33,6 @@ class PairExplanationTester:
     fs_evaluator: FSEvaluator
     ps_evaluator: GeneralPSEvaluator
 
-    pRef_creation_method: str
-    pRef_size: int
-
     pRef: PRef
 
     verbose: bool
@@ -46,8 +43,7 @@ class PairExplanationTester:
                  optimisation_problem: BenchmarkProblem,
                  ps_search_budget: int,
                  ps_search_population: int,
-                 pRef_creation_method: str = "uniform GA",
-                 pRef_size: int = 10000,
+                 pRef: PRef,
                  preferred_culling_method: str = "biggest",
                  verbose: bool = False):
         self.verbose = verbose
@@ -56,23 +52,10 @@ class PairExplanationTester:
         self.optimisation_problem = optimisation_problem
         self.ps_search_budget = ps_search_budget
         self.ps_search_population_size = ps_search_population
-        self.pRef_size = pRef_size
-
-        self.pRef_creation_method = pRef_creation_method
-
-        self.fs_evaluator = FSEvaluator(optimisation_problem.fitness_function)
-
-        with announce(f"Creating the pRef of size {self.pRef_size}, method = {self.pRef_creation_method}",
-                      self.verbose):
-            self.pRef = self.generate_pRef()
+        self.pRef = pRef
 
         self.ps_evaluator = GeneralPSEvaluator(optimisation_problem=self.optimisation_problem, pRef=self.pRef)
-
-    def generate_pRef(self) -> PRef:
-        random.setstate
-        return PRefManager.generate_pRef(problem=self.optimisation_problem,
-                                         which_algorithm=self.pRef_creation_method,
-                                         sample_size=self.pRef_size)
+        self.fs_evaluator = FSEvaluator(fitness_function=optimisation_problem.fitness_function)
 
     def find_pss(self, main_solution: FullSolution, background_solution: FullSolution, culling_method: str) -> list[PS]:
         return local_constrained_ps_search(to_explain=main_solution,
@@ -346,7 +329,7 @@ class PairExplanationTester:
         in_main = BakedPairwiseExplanation(main_solution,
                                            background_solution,
                                            ps,
-                                           descriptor_tuple=names_values_percentiles,
+                                           descriptor_tuples=names_values_percentiles,
                                            explanation_text=descriptor_string)
 
         return in_main
