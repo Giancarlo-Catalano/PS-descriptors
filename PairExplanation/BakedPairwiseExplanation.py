@@ -1,3 +1,6 @@
+import numpy as np
+
+import utils
 from BenchmarkProblems.BenchmarkProblem import BenchmarkProblem
 from Core.FullSolution import FullSolution
 from Core.PS import PS
@@ -89,8 +92,7 @@ class BakedPairwiseExplanation:
         print("Explanation string")
         print(self.explanation_text)
 
-
-    def get_difference_in_rotas_table(self, pretty_printer: BTProblemPrettyPrinter):
+    def get_difference_in_rotas_table(self, pretty_printer: BTProblemPrettyPrinter) -> str:
         different_variable_indexes = [index for index, is_different
                                       in enumerate(self.main_solution.values != self.background_solution.values)
                                       if is_different]
@@ -103,13 +105,10 @@ class BakedPairwiseExplanation:
             rota_index_main_label = pretty_printer.get_value_as_rota_index(var_index, rota_choice_in_main)
             rota_index_background_label = pretty_printer.get_value_as_rota_index(var_index, rota_in_background)
 
-            print("\t".join([worker_name,
-                             f"{rota_choice_in_main} = {rota_index_main_label}",
-                             f"{rota_in_background} = {rota_index_background_label}"
-                             ]))
-
-
-
+            return "\t".join([worker_name,
+                             f"{pretty_printer.repr_rota_choice(rota_choice_in_main)} = {rota_index_main_label}",
+                             f"{pretty_printer.repr_rota_choice(rota_in_background)} = {rota_index_background_label}"
+                             ])
 
     def to_json(self) -> dict:
         return {"main_solution": self.main_solution.to_json(),
@@ -125,9 +124,50 @@ class BakedPairwiseExplanation:
         background_solution = FullSolution.from_json(json_dict["background_solution"])
         difference_pattern = PS.from_json(json_dict["difference_pattern"])
         return cls(main_solution=main_solution,
-                   background_solution = background_solution,
-                   difference_pattern = difference_pattern,
-                   descriptor_tuples= json_dict["descriptor_tuples"],
+                   background_solution=background_solution,
+                   difference_pattern=difference_pattern,
+                   descriptor_tuples=json_dict["descriptor_tuples"],
                    explanation_text=json_dict["explanation_text"],
-                   label = json_dict["label"])
+                   label=json_dict["label"])
 
+    def get_changes_in_calendar(self, pretty_printer: BTProblemPrettyPrinter) -> str:
+        main_solution_calendar_counts = pretty_printer.get_calendar_counts_for_ps(PS.from_FS(self.main_solution))
+        back_solution_calendar_counts = pretty_printer.get_calendar_counts_for_ps(PS.from_FS(self.background_solution))
+
+        def aggregate_difference_tuples(diffs: list[(str, [int], int, int, int)]) -> list[(str, [int], int, int, int)]:
+            """Not my best work..."""
+            skill_before_after_weekday_dict = {(skill, before, after, weekday): []
+                                               for skill, weeks, weekday, before, after in diffs}
+
+            for skill, weeks, weekday, before, after in diffs:
+                skill_before_after_weekday_dict[(skill, before, after, weekday)].extend(weeks)
+
+            return [(key[0], weeks, key[3], key[1], key[2]) for key, weeks in skill_before_after_weekday_dict.items()]
+
+
+
+        def get_differences_for_skill(skill: str) -> list[(str, [int], int, int, int)]:
+            main_calendar = main_solution_calendar_counts[skill]
+            back_calendar = back_solution_calendar_counts[skill]
+            calendar_differences: np.ndarray = main_calendar != back_calendar
+            different_day_indices = [index for index, is_different in enumerate(calendar_differences) if is_different]
+
+            diffs = [(skill, [day // 7], day % 7, back_calendar[day], main_calendar[day]) for day in different_day_indices]
+            return aggregate_difference_tuples(diffs)
+
+        def repr_difference(diff_tuple: (str, [int], int, int, int)) -> str:
+            # note that before, after = background, main
+            skill, weeks, weekday, before, after = diff_tuple
+            weeks_str = "Week"+("s" if len(weeks)>1 else "")+ " "+ ",".join(f"{w+1}" for w in weeks)
+            weekday_str = utils.weekdays[weekday]
+            return "\t".join([pretty_printer.repr_skill(skill),
+                              weeks_str,
+                             weekday_str,
+                              f"{after}",
+                              f"{before}"])
+
+        all_differences = [diff_tuple
+                           for skill in pretty_printer.all_skills_list
+                           for diff_tuple in get_differences_for_skill(skill)]
+
+        return "\n".join(map(repr_difference, all_differences))

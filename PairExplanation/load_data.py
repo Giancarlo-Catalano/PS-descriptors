@@ -51,6 +51,7 @@ def print_explanation(expl: BakedPairwiseExplanation,
     print("\n")
 
     print(expl.get_difference_in_rotas_table(pretty_printer))
+    print(expl.get_changes_in_calendar(pretty_printer))
     # is_correct = explanation_is_correct(expl)
     # print(f"{is_correct = }")
 

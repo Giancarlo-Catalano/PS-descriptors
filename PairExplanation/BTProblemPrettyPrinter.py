@@ -207,3 +207,10 @@ class BTProblemPrettyPrinter:
     def get_value_as_rota_index(self, worker_index: int, chosen_rota: int) -> str:
         rota = self.problem.workers[worker_index].available_rotas[chosen_rota]
         return self.repr_rota_index(rota)
+
+
+
+    def repr_day(self, day_index: int) -> str:
+        week = (day_index // 7) + 1
+        weekday = utils.weekdays[day_index % 7]
+        return f"Week {week}, {weekday}"
