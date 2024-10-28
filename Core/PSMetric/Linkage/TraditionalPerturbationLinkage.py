@@ -129,3 +129,6 @@ class TraditionalPerturbationLinkage(Metric):
                     if ps[var_b != STAR]]
 
         return np.average(linkages)
+    def get_table_for_ps(self, ps: PS) -> np.ndarray:
+        fixed_vars = ps.get_fixed_variable_positions()
+        return self.linkage_table[fixed_vars, :][:, fixed_vars]

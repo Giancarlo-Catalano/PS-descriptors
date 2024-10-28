@@ -160,6 +160,7 @@ class BTProblemPrettyPrinter:
 
         return {skill: get_calendar_for_skill(skill) for skill in self.all_skills_list}
 
+
     def repr_skill_calendar(self, skill_calendar: dict) -> str:
         def repr_for_skill(skill: str) -> str:
             return "\t".join([self.repr_skill(skill)] + [f"{x}" for x in skill_calendar[skill]])

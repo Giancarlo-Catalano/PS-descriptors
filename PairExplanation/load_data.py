@@ -7,6 +7,7 @@ from BenchmarkProblems.EfficientBTProblem.EfficientBTProblem import EfficientBTP
 from BenchmarkProblems.RoyalRoad import RoyalRoad
 from Core.PRef import PRef
 from Core.PSMetric.FitnessQuality.SignificantlyHighAverage import WilcoxonTest, WilcoxonNearOptima
+from Core.PSMetric.Linkage.TraditionalPerturbationLinkage import TraditionalPerturbationLinkage
 from Explanation.PRefManager import PRefManager
 from PairExplanation.BTProblemPrettyPrinter import BTProblemPrettyPrinter
 from PairExplanation.BakedPairwiseExplanation import BakedPairwiseExplanation
@@ -44,16 +45,20 @@ def print_explanation(expl: BakedPairwiseExplanation,
                       pretty_printer, hypothesis_tester: Optional,
                       near_optima_hypothesis_tester: Optional):
     print(f"label = {expl.label}")
-    expl.print_using_pretty_printer(pretty_printer, show_solutions=False,
-                                    hypothesis_tester=hypothesis_tester,
-                                    near_optima_hypothesis_tester=near_optima_hypothesis_tester)
+    # expl.print_using_pretty_printer(pretty_printer, show_solutions=False,
+    #                                 hypothesis_tester=hypothesis_tester,
+    #                                 near_optima_hypothesis_tester=near_optima_hypothesis_tester)
 
     print("\n")
 
     print(expl.get_difference_in_rotas_table(pretty_printer))
-    print(expl.get_changes_in_calendar(pretty_printer))
+    # print(expl.get_changes_in_calendar(pretty_printer))
+    print(expl.get_changes_in_range(pretty_printer))
     # is_correct = explanation_is_correct(expl)
+    print(expl.get_ps_table(pretty_printer))
     # print(f"{is_correct = }")
+
+    print(expl.explanation_text)
 
 
 def generate_pRef():
@@ -162,6 +167,9 @@ def load_from_json():
                                                        evaluator=tester.fs_evaluator,
                                                        samples_required=100)
 
+    linkage_learner = TraditionalPerturbationLinkage(problem)
+
+
     with open(json_file, "r") as json_fid:
         expls_jsons = json.load(json_fid)
 
@@ -172,11 +180,17 @@ def load_from_json():
                           pretty_printer,
                           hypothesis_tester,
                           near_optima_hypothesis_tester)
+        linkage_learner.set_solution(expl.main_solution)
+        table = linkage_learner.get_table_for_ps(expl.difference_pattern)
+        print("Hey! Wait! I have a new complaint!")
 
 
-# generate_pRef()
-# pRef = PRef.load(pRef_file)
-# generate_explanations(pRef)
+
+
+
+#generate_pRef()
+#pRef = PRef.load(pRef_file)
+#generate_explanations(pRef)
 
 
 load_from_json()

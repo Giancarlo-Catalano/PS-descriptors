@@ -92,12 +92,9 @@ class BakedPairwiseExplanation:
         print("Explanation string")
         print(self.explanation_text)
 
-    def get_difference_in_rotas_table(self, pretty_printer: BTProblemPrettyPrinter) -> str:
-        different_variable_indexes = [index for index, is_different
-                                      in enumerate(self.main_solution.values != self.background_solution.values)
-                                      if is_different]
 
-        for var_index in different_variable_indexes:
+    def get_comparison_of_solution_on_variables(self, different_variables: list[int], pretty_printer: BTProblemPrettyPrinter) -> str:
+        def get_row_for_index(var_index: int) -> str:
             rota_choice_in_main = self.main_solution.values[var_index]
             rota_in_background = self.background_solution.values[var_index]
 
@@ -106,9 +103,25 @@ class BakedPairwiseExplanation:
             rota_index_background_label = pretty_printer.get_value_as_rota_index(var_index, rota_in_background)
 
             return "\t".join([worker_name,
-                             f"{pretty_printer.repr_rota_choice(rota_choice_in_main)} = {rota_index_main_label}",
-                             f"{pretty_printer.repr_rota_choice(rota_in_background)} = {rota_index_background_label}"
-                             ])
+                              f"{pretty_printer.repr_rota_choice(rota_choice_in_main)} = {rota_index_main_label}",
+                              f"{pretty_printer.repr_rota_choice(rota_in_background)} = {rota_index_background_label}"
+                              ])
+
+        return "\n".join(map(get_row_for_index, different_variables))
+
+
+    def get_difference_in_rotas_table(self, pretty_printer: BTProblemPrettyPrinter) -> str:
+        different_variable_indexes = [index for index, is_different
+                                      in enumerate(self.main_solution.values != self.background_solution.values)
+                                      if is_different]
+
+        return self.get_comparison_of_solution_on_variables(different_variable_indexes, pretty_printer)
+
+    def get_ps_table(self, pretty_printer: BTProblemPrettyPrinter) -> str:
+        different_variable_indexes = self.difference_pattern.get_fixed_variable_positions()
+
+        return self.get_comparison_of_solution_on_variables(different_variable_indexes, pretty_printer)
+
 
     def to_json(self) -> dict:
         return {"main_solution": self.main_solution.to_json(),
@@ -171,3 +184,34 @@ class BakedPairwiseExplanation:
                            for diff_tuple in get_differences_for_skill(skill)]
 
         return "\n".join(map(repr_difference, all_differences))
+
+    def get_changes_in_range(self, pretty_printer: BTProblemPrettyPrinter) -> str:
+        main_maxmins = pretty_printer.problem.get_minimums_and_maximums_dict_for_fs(self.main_solution)
+        back_maxmins = pretty_printer.problem.get_minimums_and_maximums_dict_for_fs(self.background_solution)
+
+
+        differences = []
+
+        for skill in pretty_printer.all_skills_list:
+            for weekday in utils.weekdays:
+                min_in_main = main_maxmins[skill][weekday]["minimum"]
+                min_in_back = back_maxmins[skill][weekday]["minimum"]
+                max_in_main = main_maxmins[skill][weekday]["maximum"]
+                max_in_back = back_maxmins[skill][weekday]["maximum"]
+                if (min_in_main, max_in_main) != (min_in_back, max_in_back):
+                    if (min_in_main==max_in_main) and (min_in_back == max_in_back):
+                        continue
+                    differences.append((skill, weekday, min_in_main, max_in_main, min_in_back, max_in_back))
+
+        def repr_difference(big_tuple) -> str:
+            (skill, weekday, min_in_main, max_in_main, min_in_back, max_in_back) = big_tuple
+            return "\t".join([pretty_printer.repr_skill(skill),
+                              weekday,
+                              f"{min_in_main}~{max_in_main}",
+                              f"{min_in_back}~{max_in_back}"])
+
+        return "\n".join(map(repr_difference, differences))
+
+
+
+

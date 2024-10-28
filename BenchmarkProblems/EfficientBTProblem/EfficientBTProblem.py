@@ -602,7 +602,7 @@ class EfficientBTProblem(BTProblem):
         return cls.subset_from(original_problem=original_problem,
                                which_workers_to_keep=which_workers_to_keep,
                                skills_conversion_dict=skills_conversion_dict,
-                               calendar_length = calendar_length,
+                               calendar_length=calendar_length,
                                rota_lengths=rota_lengths)
 
     def print_for_google_sheets(self):
@@ -653,6 +653,7 @@ class EfficientBTProblem(BTProblem):
                               f"{utils.alphabet[item['chosen_rota_index']]}",
                               get_rota_representation(item["chosen_rota"])
                               ])
+
         for item in items:
             print(item_to_string(item))
 
@@ -667,7 +668,7 @@ class EfficientBTProblem(BTProblem):
                       skill: {weekday: None for weekday in utils.weekdays}
                       for skill in self.all_skills
                   }
-              }
+                  }
 
         for skill in self.all_skills:
             ranges = self.get_ranges_for_weekdays_for_skill(chosen_patterns, skill)
@@ -677,6 +678,29 @@ class EfficientBTProblem(BTProblem):
 
         for weekday in utils.weekdays:
             result["by_weekday"][weekday] = sum(result["by_skill_and_weekday"][skill][weekday]
-                                       for skill in self.all_skills)
+                                                for skill in self.all_skills)
 
         return result
+
+    def get_minimums_and_maximums_dict_for_fs(self, fs: FullSolution) -> dict[str, dict[str, dict[str, int]]]:
+        # the dict is [skill][weekday]["minimum" | "maximum"]
+        # patterns_by_skill = {skill: [] for skill in self.all_skills}
+        workers_and_rotas = [(self.workers[index], self.extended_patterns[index][chosen])
+                             for index, chosen in enumerate(fs.values)]
+
+        patterns_by_skill = {skill: [rota for (worker, rota)
+                                     in workers_and_rotas
+                                     if skill in worker.available_skills]
+                             for skill in self.all_skills}
+
+        def get_maxmin_dict_for_patterns(patterns: list[np.ndarray]):
+            summed_pattern = np.sum(patterns, axis=0)
+            coiled_pattern = summed_pattern.reshape((-1, 7))
+            maxs = np.max(coiled_pattern, axis=0)
+            mins = np.min(coiled_pattern, axis=0)
+            return {weekday: {"maximum": maximum, "minimum": minimum}
+                    for weekday, maximum, minimum in zip(utils.weekdays, maxs, mins)}
+
+        return {skill: get_maxmin_dict_for_patterns(patterns_by_skill[skill])
+                for skill in patterns_by_skill}
+
