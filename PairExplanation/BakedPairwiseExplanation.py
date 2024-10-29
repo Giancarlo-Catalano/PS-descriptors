@@ -12,7 +12,7 @@ from PairExplanation.BTProblemPrettyPrinter import BTProblemPrettyPrinter
 class BakedPairwiseExplanation:
     main_solution: FullSolution
     background_solution: FullSolution
-    difference_pattern: PS
+    partial_solution: PS
     explanation_text: str
     descriptor_dict: list[(str, float, float)]
     label: str
@@ -26,7 +26,7 @@ class BakedPairwiseExplanation:
                  label: str = "no label"):
         self.main_solution = main_solution
         self.background_solution = background_solution
-        self.difference_pattern = difference_pattern
+        self.partial_solution = difference_pattern
         self.explanation_text = explanation_text
         self.descriptor_dict = descriptor_tuples
         self.label = label
@@ -53,9 +53,9 @@ class BakedPairwiseExplanation:
                                                                self.background_solution))
 
         print("Partial solution = ")
-        print(pretty_printer.repr_partial_solution(self.difference_pattern))
+        print(pretty_printer.repr_partial_solution(self.partial_solution))
         print("\n")
-        print(pretty_printer.repr_extra_information_for_partial_solution(self.difference_pattern,
+        print(pretty_printer.repr_extra_information_for_partial_solution(self.partial_solution,
                                                                          hypothesis_tester,
                                                                          near_optima_hypothesis_tester))
 
@@ -84,8 +84,8 @@ class BakedPairwiseExplanation:
             print(f"It has fitness {background_fitness}")
 
         print("Partial solution = ")
-        print(problem.repr_ps(self.difference_pattern))
-        print(get_hypothesis_string(self.difference_pattern,
+        print(problem.repr_ps(self.partial_solution))
+        print(get_hypothesis_string(self.partial_solution,
                                     hypothesis_tester,
                                     near_optima_hypothesis_tester))
 
@@ -118,7 +118,7 @@ class BakedPairwiseExplanation:
         return self.get_comparison_of_solution_on_variables(different_variable_indexes, pretty_printer)
 
     def get_ps_table(self, pretty_printer: BTProblemPrettyPrinter) -> str:
-        different_variable_indexes = self.difference_pattern.get_fixed_variable_positions()
+        different_variable_indexes = self.partial_solution.get_fixed_variable_positions()
 
         return self.get_comparison_of_solution_on_variables(different_variable_indexes, pretty_printer)
 
@@ -126,7 +126,7 @@ class BakedPairwiseExplanation:
     def to_json(self) -> dict:
         return {"main_solution": self.main_solution.to_json(),
                 "background_solution": self.background_solution.to_json(),
-                "difference_pattern": self.difference_pattern.to_json(),
+                "difference_pattern": self.partial_solution.to_json(),
                 "descriptor_tuples": self.descriptor_dict,
                 "explanation_text": self.explanation_text,
                 "label": self.label}

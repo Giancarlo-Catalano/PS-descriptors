@@ -1,17 +1,20 @@
 import itertools
 import json
+import os
 import random
 from typing import Optional
 
 from BenchmarkProblems.EfficientBTProblem.EfficientBTProblem import EfficientBTProblem
 from BenchmarkProblems.RoyalRoad import RoyalRoad
 from Core.PRef import PRef
+from Core.PS import STAR
 from Core.PSMetric.FitnessQuality.SignificantlyHighAverage import WilcoxonTest, WilcoxonNearOptima
 from Core.PSMetric.Linkage.TraditionalPerturbationLinkage import TraditionalPerturbationLinkage
 from Explanation.PRefManager import PRefManager
 from PairExplanation.BTProblemPrettyPrinter import BTProblemPrettyPrinter
 from PairExplanation.BakedPairwiseExplanation import BakedPairwiseExplanation
 from PairExplanation.PairExplanationTester import PairExplanationTester
+from PairExplanation.WeightedGraphVisualiser import WeightedGraphVisualiser
 from utils import announce
 
 json_file = r"C:\Users\gac8\PycharmProjects\PS-descriptors-LCS\PairExplanation\everything.json"
@@ -146,6 +149,55 @@ def generate_explanations(pRef: PRef):
     print(f"The explanations were stored in {pss_output_file}")
 
 
+def store_textual_explanation(expl: BakedPairwiseExplanation,
+                              destination: str,
+                              pretty_printer: BTProblemPrettyPrinter):
+    text_to_be_stored = ""
+    text_to_be_stored += expl.get_difference_in_rotas_table(pretty_printer)
+    text_to_be_stored += "\n"
+    text_to_be_stored += expl.get_changes_in_range(pretty_printer)
+    text_to_be_stored += "\n"
+    text_to_be_stored += expl.get_ps_table(pretty_printer)
+    text_to_be_stored += "\n"
+    text_to_be_stored += expl.explanation_text
+
+    with open(destination, "w", encoding="utf-8") as file:
+        file.write(text_to_be_stored)
+
+
+def store_linkage_image(expl: BakedPairwiseExplanation,
+                        destination: str,
+                        pretty_printer: BTProblemPrettyPrinter,
+                        linkage_learner: TraditionalPerturbationLinkage,
+                        weighted_graph_visualiser: WeightedGraphVisualiser):
+    ps = expl.partial_solution
+    workers = pretty_printer.problem.workers
+    names = [workers[index].name for index in ps.get_fixed_variable_positions()]
+    linkage_table = linkage_learner.get_table_for_ps(ps)
+    plot = weighted_graph_visualiser.make_plot(linkage_table, names)
+    plot.savefig(destination)
+
+
+def store_explanation(expl: BakedPairwiseExplanation,
+                      pretty_printer: BTProblemPrettyPrinter,
+                      linkage_learner: TraditionalPerturbationLinkage,
+                      weighted_graph_visualiser: WeightedGraphVisualiser):
+    root = r"C:\Users\gac8\PycharmProjects\PS-descriptors-LCS\resources\explanations\explanation_sheets"
+    text_file_name = f"text_{expl.label}.txt"
+    image_file_name = f"image_{expl.label}.png"
+
+    text_destination = os.path.join(root, text_file_name)
+    image_destination = os.path.join(root, image_file_name)
+
+    store_textual_explanation(expl, destination=text_destination,
+                              pretty_printer = pretty_printer)
+
+    store_linkage_image(expl, destination=image_destination,
+                        linkage_learner=linkage_learner,
+                        weighted_graph_visualiser=weighted_graph_visualiser,
+                        pretty_printer=pretty_printer)
+
+
 def load_from_json():
     pRef = PRef.load(pRef_file)
 
@@ -168,6 +220,7 @@ def load_from_json():
                                                        samples_required=100)
 
     linkage_learner = TraditionalPerturbationLinkage(problem)
+    graph_visualiser = WeightedGraphVisualiser()
 
 
     with open(json_file, "r") as json_fid:
@@ -181,16 +234,16 @@ def load_from_json():
                           hypothesis_tester,
                           near_optima_hypothesis_tester)
         linkage_learner.set_solution(expl.main_solution)
-        table = linkage_learner.get_table_for_ps(expl.difference_pattern)
+        store_explanation(expl,
+                          pretty_printer,
+                          linkage_learner,
+                          graph_visualiser)
         print("Hey! Wait! I have a new complaint!")
 
 
-
-
-
-#generate_pRef()
-#pRef = PRef.load(pRef_file)
-#generate_explanations(pRef)
+# generate_pRef()
+# pRef = PRef.load(pRef_file)
+# generate_explanations(pRef)
 
 
 load_from_json()

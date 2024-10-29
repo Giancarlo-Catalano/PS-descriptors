@@ -501,3 +501,15 @@ weekdays = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", 
 
 
 alphabet = list("ABCDEFGHIJKLMNOPQRSTUVWXYZ")
+
+
+def remap_array(original: np.ndarray, new_min: float, new_max: float):
+    observed_min = np.min(original)
+    observed_max = np.max(original)
+
+    if observed_max - observed_min < 1e-05:
+        return np.ones_like(original) / 2
+
+    in_zero_one = (original - observed_min) / (observed_max - observed_min)
+
+    return in_zero_one * (new_max-new_min) + new_min

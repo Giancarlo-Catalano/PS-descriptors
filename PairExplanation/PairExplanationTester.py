@@ -350,9 +350,9 @@ class PairExplanationTester:
         else:
             better_solution = "equivalent"
 
-        greater_p_value, lower_p_value = hypothesis_tester.get_p_values_of_ps(expl.difference_pattern)
+        greater_p_value, lower_p_value = hypothesis_tester.get_p_values_of_ps(expl.partial_solution)
         near_optima_greater_p_value, near_optima_lower_p_value = near_optima_hypothesis_tester.get_p_values_of_ps(
-            expl.difference_pattern)
+            expl.partial_solution)
 
         threshold = 0.05
         normal_effect = effect_string(greater_p_value, lower_p_value, threshold)
