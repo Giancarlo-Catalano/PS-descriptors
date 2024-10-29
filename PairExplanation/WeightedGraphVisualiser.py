@@ -27,7 +27,7 @@ class WeightedGraphVisualiser:
 
     def list_of_strings_to_label_dict(self, node_names: list[str]) -> dict[int, str]:
         # also note that the nodes are 1 indexed???
-        return {index: name for index, name in enumerate(node_names)}
+        return {(index+1): name for index, name in enumerate(node_names)}
 
     def weights_to_edge_thicknesses(self, original_weights_dict: dict[(int, int), float]) -> list[float]:
         original_items = list(original_weights_dict.items())
@@ -40,9 +40,12 @@ class WeightedGraphVisualiser:
         return self.weights_to_edge_thicknesses(old_edge_weights)
 
     def get_graph_and_positions(self, weight_matrix: np.ndarray) -> (nx.Graph, Any):
+        plt.clf()
         important_connections = self.get_important_connections_from_weight_matrix(weight_matrix)
 
         graph = nx.Graph()
+        n = weight_matrix.shape[0]
+        #graph.add_nodes_from(range(1, n+1))  # use this to forcefully include the nodes
         for node_a, node_b, weight in important_connections:
             graph.add_edge(node_a, node_b, weight=weight)
 
@@ -61,7 +64,14 @@ class WeightedGraphVisualiser:
     def draw_fancy_nodes(self, graph: nx.Graph, positions, node_name_dict):
         # draws the text in bold and with a near-white background
         labels = self.list_of_strings_to_label_dict(node_name_dict)
-        nx.draw_networkx_labels(graph, positions, labels=labels,
+
+        # then we have to remove the labels for the nodes which are not included in the graph
+        new_labels = {prev_key: prev_value
+                      for prev_key,prev_value in labels.items()
+                      if prev_key in positions}
+
+        print(f"{positions = }")
+        nx.draw_networkx_labels(graph, positions, labels=new_labels,
                                 font_color='black', font_size=self.font_size,
                                 font_weight='bold',
                                 bbox=dict(facecolor='white', edgecolor='none', alpha=0.8))
@@ -77,7 +87,7 @@ class WeightedGraphVisualiser:
                 node_color='skyblue' if self.show_nodes else 'white',
                 node_size=0)
 
-        self.draw_fancy_edges(graph, positions)
+       # self.draw_fancy_edges(graph, positions)
         self.draw_fancy_nodes(graph, positions, node_names)
 
         plt.title("Weighted Graph Visualization")
@@ -110,5 +120,3 @@ def main():
     plot = graph_visualiser.make_plot(weight_matrix, names)
     plot.show()
 
-
-main()

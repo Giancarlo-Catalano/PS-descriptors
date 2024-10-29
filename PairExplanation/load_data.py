@@ -154,11 +154,11 @@ def store_textual_explanation(expl: BakedPairwiseExplanation,
                               pretty_printer: BTProblemPrettyPrinter):
     text_to_be_stored = ""
     text_to_be_stored += expl.get_difference_in_rotas_table(pretty_printer)
-    text_to_be_stored += "\n"
+    text_to_be_stored += "\n\n"
     text_to_be_stored += expl.get_changes_in_range(pretty_printer)
-    text_to_be_stored += "\n"
+    text_to_be_stored += "\n\n"
     text_to_be_stored += expl.get_ps_table(pretty_printer)
-    text_to_be_stored += "\n"
+    text_to_be_stored += "\n\n"
     text_to_be_stored += expl.explanation_text
 
     with open(destination, "w", encoding="utf-8") as file:
@@ -171,6 +171,7 @@ def store_linkage_image(expl: BakedPairwiseExplanation,
                         linkage_learner: TraditionalPerturbationLinkage,
                         weighted_graph_visualiser: WeightedGraphVisualiser):
     ps = expl.partial_solution
+    print(f"This ps has {ps.fixed_count()} fixed variables")
     workers = pretty_printer.problem.workers
     names = [workers[index].name for index in ps.get_fixed_variable_positions()]
     linkage_table = linkage_learner.get_table_for_ps(ps)
