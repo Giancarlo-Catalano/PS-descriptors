@@ -158,13 +158,12 @@ def get_coverage(cohort: Cohort) -> float:
     return np.average(total_pattern)  # happens to be equal to quantity_working_days / quantity_days
 
 
-def get_amount_of_covered_weekends(cohort: Cohort) -> (float, float):
+def get_qty_of_covered_weekends(cohort: Cohort) -> list[float]:
     covered_days = sum(member.chosen_rota_extended for member in cohort)
     covered_days = np.array(covered_days, dtype=bool).reshape((-1, 7))
-    covered_saturdays = np.sum(covered_days[:, 5], dtype=float)
-    covered_sundays = np.sum(covered_days[:, 6], dtype=float)
 
-    return float(covered_saturdays), float(covered_sundays)
+    covered_weekdays = np.sum(covered_days, axis=1, dtype=float)
+    return list(covered_weekdays)
 
 
 class EfficientBTProblem(BTProblem):
@@ -233,7 +232,7 @@ class EfficientBTProblem(BTProblem):
         # mean_WSP, mean_error_WSP = utils.get_mean_and_mean_error(working_saturday_proportions)
         mean_SQ, mean_error_SQ = utils.get_mean_and_mean_error(skill_quantities)
 
-        covered_saturdays, covered_sundays = get_amount_of_covered_weekends(cohort)
+        coverage_weekdays = get_qty_of_covered_weekends(cohort)
 
         coverage = get_coverage(cohort)
         skill_diversity = get_skill_variation(cohort)
@@ -247,12 +246,17 @@ class EfficientBTProblem(BTProblem):
             # "mean_error_WWD" : mean_error_WWD,
             "mean_RD": mean_RD,
             # "mean_error_RD" : mean_error_RD,
-            "covered_sats": covered_saturdays,
-            "covered_suns": covered_sundays,
+            "covered_monday": coverage_weekdays[0],
+            "covered_tuesday": coverage_weekdays[1],
+            "covered_wednesday": coverage_weekdays[2],
+            "covered_thursday": coverage_weekdays[3],
+            "covered_friday": coverage_weekdays[4],
+            "covered_saturday": coverage_weekdays[5],
+            "covered_sunday": coverage_weekdays[6],
             # "mean_error_WSP" : mean_error_WSP,
             "mean_SQ": mean_SQ,
             # "mean_error_SQ": mean_error_SQ,
-            "skill_diversity": skill_diversity,
+            # "skill_diversity": skill_diversity,
             "skill_coverage": skill_coverage,
             # "day_coverage": coverage,
             "quantity_of_fav_rotas": quantity_of_fav_rotas
@@ -310,7 +314,9 @@ class EfficientBTProblem(BTProblem):
             return (f"{'FEW' if is_low else 'MANY'} workers got their preferred rota, {rank_str}")
         elif property_name == "delta":
             return (f"The delta fitness = {property_value:.2f}, which has percentile {rank_str}")
-        else:
+        elif property_name.startswith("covered_"):
+            weekday = property_name.split("_")[1]
+            return f"On {weekday}, the coverage is {'LOW' if is_low else 'HIGH'}, {rank_str}"
             raise ValueError(f"Did not recognise the property {property_name} in EfficientBTProblem")
 
     @classmethod

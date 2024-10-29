@@ -47,7 +47,7 @@ class LocalRestrictedPymooProblem(Problem):
         return PS(sol_value if x_value else -1 for (sol_value, x_value) in zip(self.solution_to_explain.values, x))
 
     def get_which_rows_satisfy_mask_constraint(self, X: np.ndarray) -> np.ndarray:
-        return np.all(X[:, self.difference_variables], axis=1)
+        return np.any(X[:, self.difference_variables], axis=1)
 
     def get_metrics_for_ps(self, ps: PS) -> list[float]:
         atomicity = self.objectives_evaluator.traditional_linkage.get_atomicity(ps)

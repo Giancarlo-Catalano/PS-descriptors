@@ -203,7 +203,7 @@ class PairExplanationTester:
                                                  control_descriptors_table_file=None,
                                                  control_samples_per_size_category=control_samples_per_size_category,
                                                  pRef_manager=pRef_manager,
-                                                 speciality_threshold=0.1,
+                                                 speciality_threshold=0.5,
                                                  verbose=True)
 
         descriptors_manager.start_from_scratch()

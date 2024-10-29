@@ -80,7 +80,7 @@ def generate_explanations(pRef: PRef):
                                    pRef=pRef,
                                    verbose=False)
 
-    descriptor = tester.get_temporary_descriptors_manager(control_samples_per_size_category=1)
+    descriptor = tester.get_temporary_descriptors_manager(control_samples_per_size_category=1000)
 
     pretty_printer = BTProblemPrettyPrinter(descriptor_manager=descriptor,
                                             problem=problem,
@@ -208,7 +208,7 @@ def load_from_json():
                                    pRef=pRef,
                                    verbose=False)
 
-    descriptor = tester.get_temporary_descriptors_manager(control_samples_per_size_category=1)
+    descriptor = tester.get_temporary_descriptors_manager(control_samples_per_size_category=1000)
     pretty_printer = BTProblemPrettyPrinter(problem,
                                             descriptor_manager=descriptor,
                                             skill_emoji_dict=skill_emoji_dict)
