@@ -239,7 +239,6 @@ def load_from_json():
                           pretty_printer,
                           linkage_learner,
                           graph_visualiser)
-        print("Hey! Wait! I have a new complaint!")
 
 
 # generate_pRef()

@@ -27,7 +27,7 @@ class WeightedGraphVisualiser:
 
     def list_of_strings_to_label_dict(self, node_names: list[str]) -> dict[int, str]:
         # also note that the nodes are 1 indexed???
-        return {(index+1): name for index, name in enumerate(node_names)}
+        return {(index): name for index, name in enumerate(node_names)}
 
     def weights_to_edge_thicknesses(self, original_weights_dict: dict[(int, int), float]) -> list[float]:
         original_items = list(original_weights_dict.items())
@@ -70,7 +70,6 @@ class WeightedGraphVisualiser:
                       for prev_key,prev_value in labels.items()
                       if prev_key in positions}
 
-        print(f"{positions = }")
         nx.draw_networkx_labels(graph, positions, labels=new_labels,
                                 font_color='black', font_size=self.font_size,
                                 font_weight='bold',
