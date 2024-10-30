@@ -104,15 +104,15 @@ def generate_explanations(pRef: PRef):
     print(pretty_printer.repr_problem_rotas())
 
     header("Main FS")
-    best_n_solutions = tester.pRef.get_top_n_solutions(10)
-    center_solution = best_n_solutions[5]
+    best_n_solutions = tester.pRef.get_top_n_solutions(16)
+    center_solution = best_n_solutions[0]
     print(problem.repr_full_solution(center_solution))
     print(f"It has fitness {center_solution.fitness}")
 
     header("Pairwise explanations")
     random.seed(seed)
 
-    background_indexes = [0, 3, 7, 9]
+    background_indexes = list(range(1, 15))
     background_solutions = [best_n_solutions[index] for index in
                             background_indexes]  # before 5 is better, after 5 is worse
 
@@ -122,26 +122,13 @@ def generate_explanations(pRef: PRef):
                                        for b in background_solutions]
 
     for expl, background_index in zip(from_main_pairwise_explanations, background_indexes):
-        expl.label = f"main = 5, back = {background_index}"
-
-    from_other_pairwise_explanations = [tester.get_pairwise_explanation(b,
-                                                                        center_solution,
-                                                                        descriptor=descriptor)
-                                        for b in background_solutions]
-
-    for expl, background_index in zip(from_other_pairwise_explanations, background_indexes):
-        expl.label = f"main = {background_index}, back = 5"
+        expl.label = f"optima vs solution[{background_index}]"
 
     for expl, background_index in zip(from_main_pairwise_explanations, background_indexes):
         header(f"explanation item, it was a subset of MAIN, compared to {background_index}")
         print_explanation(expl, pretty_printer, hypothesis_tester, near_optima_hypothesis_tester)
 
-    for expl, background_index in zip(from_other_pairwise_explanations, background_indexes):
-        header(f"explanation item, it was a subset of {background_index}, compared to MAIN")
-        print_explanation(expl, pretty_printer, hypothesis_tester, near_optima_hypothesis_tester)
-
-    pss_json = [expl.to_json() for expl in
-                itertools.chain(from_main_pairwise_explanations, from_other_pairwise_explanations)]
+    pss_json = [expl.to_json() for expl in from_main_pairwise_explanations]
 
     with open(json_file, "w") as pss_output_file:
         json.dump(pss_json, pss_output_file, indent=4)

@@ -3,6 +3,8 @@ import random
 from typing import Any
 
 import matplotlib.pyplot as plt
+import matplotlib.colors as mcolors
+import matplotlib.cm as cm
 import networkx as nx
 import numpy as np
 
@@ -41,6 +43,7 @@ class WeightedGraphVisualiser:
 
     def get_graph_and_positions(self, weight_matrix: np.ndarray) -> (nx.Graph, Any):
         plt.clf()
+        plt.figure(figsize=(5, 5))
         important_connections = self.get_important_connections_from_weight_matrix(weight_matrix)
 
         graph = nx.Graph()
@@ -49,7 +52,7 @@ class WeightedGraphVisualiser:
         for node_a, node_b, weight in important_connections:
             graph.add_edge(node_a, node_b, weight=weight)
 
-        positions = nx.spring_layout(graph)
+        positions = nx.spring_layout(graph, iterations = 50)
 
         return graph, positions
 
@@ -75,16 +78,25 @@ class WeightedGraphVisualiser:
                                 font_weight='bold',
                                 bbox=dict(facecolor='white', edgecolor='none', alpha=0.8))
 
+
+    def get_importance_of_nodes_as_colours(self, weight_matrix: np.ndarray, graph: nx.Graph) -> list:
+        importances = np.diag(weight_matrix)
+        norm = mcolors.Normalize(vmin=min(importances), vmax=max(importances))
+        white_to_green = mcolors.LinearSegmentedColormap.from_list("WhiteToGreen", ["white", "green"])
+        node_colors = [white_to_green(norm(importances[n])) for n in graph.nodes]
+        return node_colors
+
     def make_plot(self, weight_matrix: np.ndarray, node_names: list[str]):
         graph, positions = self.get_graph_and_positions(weight_matrix)
 
         edge_thicknesses = self.get_edge_thicknesses_of_graph(graph)
+        node_colours = self.get_importance_of_nodes_as_colours(weight_matrix, graph)
         nx.draw(graph, positions,
                 width=edge_thicknesses,
+                node_color = node_colours if self.show_proportional_nodes else 'white',
                 edge_color='grey',
                 with_labels=False,  # because we're going to draw over them anyway
-                node_color='skyblue' if self.show_nodes else 'white',
-                node_size=0)
+                node_size=1000)
 
        # self.draw_fancy_edges(graph, positions)
         self.draw_fancy_nodes(graph, positions, node_names)
