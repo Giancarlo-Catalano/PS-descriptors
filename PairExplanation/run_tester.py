@@ -33,7 +33,7 @@ def consistency_test():
             all_results[f"{search_budget}, {search_population_size}"] = tester.consistency_test_on_optima(runs=100,
                                                                                                           culling_method="overlap")
 
-    file_path = r"C:\Users\gac8\PycharmProjects\PS-descriptors-LCS\resources\explanations\messing_around\results_of_consistency_search.json"
+    file_path = r"/resources/explanations/old_material/messing_around\results_of_consistency_search.json"
     with open(file_path, "w") as file:
         json.dump(all_results, file)
     print(all_results)

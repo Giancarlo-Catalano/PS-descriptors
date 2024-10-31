@@ -159,4 +159,14 @@ class BTProblem(BenchmarkProblem):
         return df
 
 
+    @classmethod
+    def from_json(cls, json_data: dict):
+        workers = [Worker.from_json(worker_json) for worker_json in json_data["workers"]]
+        calendar_length = json_data["calendar_length"]
+        weights = json_data["weights"]
+        return cls(workers = workers,
+                   calendar_length = calendar_length,
+                   weights = weights)
+
+
 

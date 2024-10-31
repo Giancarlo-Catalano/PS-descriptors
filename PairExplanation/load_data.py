@@ -233,4 +233,31 @@ def load_from_json():
 # generate_explanations(pRef)
 
 
-load_from_json()
+# load_from_json()
+
+
+def store_problem_into_file(problem: EfficientBTProblem, path: str) -> None:
+    problem_json = problem.to_json()
+    with open(path, "w") as file:
+        json.dump(problem_json, file, indent=4)
+
+    print("Stored the problem into the file file")
+
+
+def load_bt_problem_from_file(path: str) -> EfficientBTProblem:
+    with open(path, "r") as file:
+        json_data = json.load(file)
+    return EfficientBTProblem.from_json(json_data)
+
+
+
+
+def store_normal_problem():
+    destination = r"C:\Users\gac8\PycharmProjects\PS-descriptors-LCS\resources\explanations\problems\problem_A.json"
+    store_problem_into_file(problem, destination)
+
+
+again_problem_A = load_bt_problem_from_file(r"C:\Users\gac8\PycharmProjects\PS-descriptors-LCS\resources\explanations\problems\problem_A.json")
+
+
+
