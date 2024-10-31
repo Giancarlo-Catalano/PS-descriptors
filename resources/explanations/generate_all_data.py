@@ -30,10 +30,11 @@ root = r"C:\Users\gac8\PycharmProjects\PS-descriptors-LCS\resources\explanations
 problem_A_path = os.path.join(root, "problem_A.json")
 problem_B_path = os.path.join(root, "problem_B.json")
 
-text_file_path = os.path.join(root, "problem_representations.txt")
+problem_representation_file_path = os.path.join(root, "problem_representations.txt")
 pRef_A_path = os.path.join(root, "pRef_A.npz")
 pRef_B_path = os.path.join(root, "pRef_B.npz")
 
+optima_representation_file_path = os.path.join(root, "optima_representations.txt")
 
 conversion_json_path = os.path.join(root, "conversion_A_to_B.json")
 
@@ -109,10 +110,10 @@ def generate_problem_tables():
     text_contents += "ROTAS for problem A\n"
     text_contents += pretty_printer_B.repr_problem_rotas()
 
-    with open(text_file_path, "w", encoding="utf-8") as text_file:
+    with open(problem_representation_file_path, "w", encoding="utf-8") as text_file:
         text_file.write(text_contents)
 
-    print(f"Wrote the problem tables onto file {text_file_path}")
+    print(f"Wrote the problem tables onto file {problem_representation_file_path}")
 
 
 def generate_pRef_files():
@@ -146,6 +147,37 @@ def generate_pRef_files():
 
 
 
+def generate_optima_representations():
+    problem_A = load_bt_problem_from_file(problem_A_path)
+    problem_B = load_bt_problem_from_file(problem_B_path)
+
+    pRef_A = PRef.load(pRef_A_path)
+    pRef_B = PRef.load(pRef_B_path)
+
+    def get_string_of_best(pRef: PRef, problem: EfficientBTProblem) -> str:
+        optima = pRef.get_best_solution()
+        pretty_printer = BTProblemPrettyPrinter(descriptor_manager=None,
+                                                  problem=problem,
+                                                  skill_emoji_dict=skill_emoji_dict)
+
+
+        return pretty_printer.repr_full_solution(optima)
+
+
+    text_contents = ""
+
+    text_contents += "Optima of Problem A\n"
+    text_contents += get_string_of_best(pRef_A, problem_A)
+    text_contents += "\n"*3
+    text_contents += "Optima of Problem B\n"
+    text_contents += get_string_of_best(pRef_B, problem_B)
+
+    with open(optima_representation_file_path, "w", encoding="utf-8") as optima_file:
+        optima_file.write(text_contents)
+
+    print(f"Wrote the representation of the optima in {optima_representation_file_path}")
+
 # generate_problem_files()
 # generate_problem_tables()
 # generate_pRef_files()
+generate_optima_representations()
