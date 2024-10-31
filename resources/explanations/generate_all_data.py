@@ -4,12 +4,15 @@ import os
 import random
 from typing import Optional
 
+import numpy as np
+
 from BenchmarkProblems.EfficientBTProblem.EfficientBTProblem import EfficientBTProblem
 from BenchmarkProblems.RoyalRoad import RoyalRoad
 from Core.PRef import PRef
 from Core.PS import STAR
 from Core.PSMetric.FitnessQuality.SignificantlyHighAverage import WilcoxonTest, WilcoxonNearOptima
 from Core.PSMetric.Linkage.TraditionalPerturbationLinkage import TraditionalPerturbationLinkage
+from Core.SearchSpace import SearchSpace
 from Explanation.PRefManager import PRefManager
 from LCS.DifferenceExplainer.DescriptorsManager import DescriptorsManager
 from PairExplanation.BTProblemPrettyPrinter import BTProblemPrettyPrinter
@@ -23,9 +26,14 @@ skill_emoji_dict = {"electricity": "⚡",
                     "woodworking": "🔨",
                     "plumbing": "🔧"}
 
-root = r"C:\Users\gac8\PycharmProjects\PS-descriptors-LCS\resources\explanations\problems"
+root = r"C:\Users\gac8\PycharmProjects\PS-descriptors-LCS\resources\explanations\latest_material"
 problem_A_path = os.path.join(root, "problem_A.json")
 problem_B_path = os.path.join(root, "problem_B.json")
+
+text_file_path = os.path.join(root, "problem_representations.txt")
+pRef_A_path = os.path.join(root, "pRef_A.npz")
+pRef_B_path = os.path.join(root, "pRef_B.npz")
+
 
 conversion_json_path = os.path.join(root, "conversion_A_to_B.json")
 
@@ -53,12 +61,6 @@ def generate_problem_files():
                                                     random_state=seed,
                                                     max_rota_length=3,
                                                     calendar_length=8 * 7)
-
-    root = r"C:\Users\gac8\PycharmProjects\PS-descriptors-LCS\resources\explanations\problems"
-    problem_A_path = os.path.join(root, "problem_A.json")
-    problem_B_path = os.path.join(root, "problem_B.json")
-
-    conversion_json_path = os.path.join(root, "conversion_A_to_B.json")
 
     problem_B, conversion = EfficientBTProblem.make_secretly_identical_instance(problem_A)
     store_problem_into_file(problem_A, problem_A_path)
@@ -88,7 +90,7 @@ def generate_problem_tables():
                                               problem=problem_B,
                                               skill_emoji_dict=skill_emoji_dict)
 
-    text_file_path = os.path.join(root, "problem_representation.txt")
+
 
     text_contents = ""
 
@@ -113,4 +115,37 @@ def generate_problem_tables():
     print(f"Wrote the problem tables onto file {text_file_path}")
 
 
-generate_problem_tables()
+def generate_pRef_files():
+    with open(conversion_json_path, "r") as conversion_file:
+        conversion_dict = json.load(conversion_file)
+
+    original_search_space_permutation = conversion_dict["worker_permutation_dict"]
+    search_space_permutation = [original_search_space_permutation[str(index)]
+                                for index in range(len(original_search_space_permutation))]
+
+    problem_A = load_bt_problem_from_file(problem_A_path)
+    pRef_A = PRefManager.generate_pRef(problem=problem_A,
+                                     which_algorithm="uniform GA",
+                                     sample_size=10000)
+
+    old_cardinalities = np.array(problem_A.search_space.cardinalities)
+    new_search_space = SearchSpace(old_cardinalities[search_space_permutation])
+
+    new_full_solution_matrix = pRef_A.full_solution_matrix[:, search_space_permutation]
+
+    pRef_B = PRef(fitness_array=pRef_A.fitness_array,
+                  search_space=new_search_space,
+                  full_solution_matrix=new_full_solution_matrix)
+
+    pRef_A.save(pRef_A_path)
+    print(f"The pRef for problem A was stored in {pRef_A_path}")
+
+
+    pRef_B.save(pRef_B_path)
+    print(f"The pRef for problem A was stored in {pRef_B_path}")
+
+
+
+# generate_problem_files()
+# generate_problem_tables()
+# generate_pRef_files()

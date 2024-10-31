@@ -8,7 +8,7 @@ from Core.custom_types import ArrayOfInts
 
 
 class UnitaryProblem(BenchmarkProblem):
-    """ This interface represents all problems where """
+    """ This interface represents all latest_material where """
     amount_of_cliques: int
     clique_size: int
 

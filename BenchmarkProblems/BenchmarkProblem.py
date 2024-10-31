@@ -7,7 +7,7 @@ from utils import announce
 
 
 class BenchmarkProblem:
-    """ This is an interface for toy problems, which makes my code much prettier"""
+    """ This is an interface for toy latest_material, which makes my code much prettier"""
     """ The main components of this class are:
      -  a search space: the combinatorial search space
      -  fitness_function: the fitness function to be MAXIMISED

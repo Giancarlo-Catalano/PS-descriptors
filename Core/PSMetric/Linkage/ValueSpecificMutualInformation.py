@@ -45,7 +45,7 @@ class ValueSpecificMutualInformation(Metric):
         indexes = np.random.randint(self.pRef.sample_size, size=amount_of_samples)
         fitnesses = self.pRef.fitness_array[indexes]
         who_won = fitnesses > np.roll(fitnesses,
-                                      1)  # note > and not >=. This is preferred because some problems have heavy fitness collisions
+                                      1)  # note > and not >=. This is preferred because some latest_material have heavy fitness collisions
         winning_indexes = indexes[who_won]
         winning_solutions = self.pRef.full_solution_matrix[winning_indexes, :]
 
@@ -189,7 +189,7 @@ class SolutionSpecificMutualInformation(Metric):
         indexes = np.random.randint(self.pRef.sample_size, size=amount_of_samples)
         fitnesses = self.pRef.fitness_array[indexes]
         who_won = fitnesses > np.roll(fitnesses,
-                                      1)  # self.solution.fitness  # note > and not >=. This is preferred because some problems have heavy fitness collisions
+                                      1)  # self.solution.fitness  # note > and not >=. This is preferred because some latest_material have heavy fitness collisions
         winning_indexes = indexes[who_won]
         winning_solutions = self.pRef.full_solution_matrix[winning_indexes, :]
         # wins_for_main_solution = np.sum(~who_won)
