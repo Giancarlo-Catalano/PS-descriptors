@@ -256,8 +256,23 @@ def store_normal_problem():
     destination = r"C:\Users\gac8\PycharmProjects\PS-descriptors-LCS\resources\explanations\problems\problem_A.json"
     store_problem_into_file(problem, destination)
 
+def make_two_secretly_identical_problems():
+    root = r"C:\Users\gac8\PycharmProjects\PS-descriptors-LCS\resources\explanations\problems"
+    problem_A_path = os.path.join(root, "problem_A.json")
+    problem_B_path = os.path.join(root, "problem_B.json")
 
-again_problem_A = load_bt_problem_from_file(r"C:\Users\gac8\PycharmProjects\PS-descriptors-LCS\resources\explanations\problems\problem_A.json")
+    conversion_json_path = os.path.join(root, "conversion_A_to_B.json")
+
+    problem_A = load_bt_problem_from_file(problem_A_path)
+    problem_B, conversion = EfficientBTProblem.make_secretly_identical_instance(problem_A)
+    store_problem_into_file(problem_B, problem_B_path)
+
+    with open(conversion_json_path, "w") as file:
+        json.dump(conversion, file, indent=4)
+
+
+make_two_secretly_identical_problems()
+
 
 
 
