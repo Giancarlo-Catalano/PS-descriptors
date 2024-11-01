@@ -1,3 +1,5 @@
+import json
+import os
 from typing import Optional
 
 import pandas as pd
@@ -14,8 +16,7 @@ from PSMiners.Mining import load_pss, write_pss_to_file
 
 class DescriptorsManager:
     optimisation_problem: BenchmarkProblem
-    control_pss_file: str
-    control_descriptors_table_file: str
+    directory: str
 
     control_pss: Optional[list[PS]]
     control_descriptors_table: Optional[pd.DataFrame]
@@ -23,71 +24,93 @@ class DescriptorsManager:
     control_samples_per_size_category: int
     sizes_for_which_control_has_been_generated: Optional[set[int]]
 
-    pRef_manager: PRefManager
-
     speciality_threshold: float
-
     verbose: bool
 
     def __init__(self,
                  optimisation_problem: BenchmarkProblem,
-                 control_pss_file: str,
-                 control_descriptors_table_file: str,
+                 control_pss: Optional[list[PS]],
+                 control_descriptors_table: Optional[pd.DataFrame],
                  control_samples_per_size_category: int,
-                 pRef_manager: PRefManager,
+                 sizes_for_which_control_has_been_generated: Optional[set[int]],
                  speciality_threshold: float = 0.1,
                  verbose: bool = False):
         self.optimisation_problem = optimisation_problem
-
-        self.control_pss_file = control_pss_file
-        self.control_descriptors_table_file = control_descriptors_table_file
-
-        self.control_pss = None
-        self.control_descriptors_table = None
-
-        self.sizes_for_which_control_has_been_generated = None
+        self.control_pss = control_pss
+        self.control_descriptors_table = control_descriptors_table
         self.control_samples_per_size_category = control_samples_per_size_category
-
-        self.pRef_manager = pRef_manager
-
+        self.sizes_for_which_control_has_been_generated = sizes_for_which_control_has_been_generated
         self.speciality_threshold = speciality_threshold
-
         self.verbose = verbose
 
+    @classmethod
+    def get_names_of_files(cls, directory: str) -> (str, str, str):
+        control_pss_file = os.path.join(directory, "control_pss.npz")
+        control_descriptors_table_file = os.path.join(directory, "control_descriptors_table_file")
+        other_settings_json_file = os.path.join(directory, "other_settings.json")
+        return control_pss_file, control_descriptors_table_file, other_settings_json_file
 
-    def load_from_existing_if_possible(self):
-        control_ps_file_exists = file_exists(self.control_pss_file)
-        ps_descriptor_table_file_exists = file_exists(self.control_descriptors_table_file)
-        if control_ps_file_exists and ps_descriptor_table_file_exists:
-            self.load_from_files()
-        else:
-            if control_ps_file_exists != ps_descriptor_table_file_exists:
-                raise Exception("Only one of the files for the control data is present!")
+    @classmethod
+    def load(cls,
+             problem: BenchmarkProblem,
+             directory: str,
+             verbose: bool = False):
+        control_pss_file, control_descriptors_table_file, other_settings_json_file = cls.get_names_of_files(directory)
 
-            if self.verbose:
-                print(f"Since no descriptor files were found, the model will be initialised as empty")
-            self.start_from_scratch()
-            # otherwise nothing needs to happen, the class initialised in a valid empty state
+        with open(other_settings_json_file, "w") as json_file:
+            json_data = json.load(json_file)
+
+        control_samples_per_size_category = json_data["control_samples_per_size_category"]
+        speciality_threshold = json_data["speciality_threshold"]
+        control_size_categories = json_data["control_size_categories"]
+
+        if not file_exists(control_pss_file):
+            raise Exception(f"Could not load the control pss file for the descriptors ({control_pss_file})")
+        if not file_exists(control_descriptors_table_file):
+            raise Exception(
+                f"Could not load control_descriptors_table_file for the descriptors ({control_descriptors_table_file})")
+
+        control_pss = load_pss(control_pss_file)
+        control_descriptors_table = pd.read_csv(control_descriptors_table_file)
+
+        return cls(optimisation_problem=problem,
+                   control_samples_per_size_category=control_samples_per_size_category,
+                   speciality_threshold=speciality_threshold,
+                   control_descriptors_table=control_descriptors_table,
+                   control_pss=control_pss,
+                   sizes_for_which_control_has_been_generated=control_size_categories,
+                   verbose=verbose)
+
+    def store(self, directory: str):
+        control_pss_file, control_descriptors_table_file, other_settings_json_file = self.get_names_of_files(directory)
+        write_pss_to_file(pss=self.control_pss, file=control_pss_file)
+        self.control_descriptors_table.to_csv(control_descriptors_table_file)
+
+        other_settings_json_contents = {"control_samples_per_size_category": self.control_samples_per_size_category,
+                                        "speciality_threshold": self.speciality_threshold,
+                                        "control_size_categories": self.sizes_for_which_control_has_been_generated}
+        with utils.open_and_make_directories(other_settings_json_file) as json_file:
+            json.dump(other_settings_json_contents, json_file, indent=4)
+
+    @classmethod
+    def with_no_samples_yet(cls, problem: BenchmarkProblem,
+                            specialty_threshold: float,
+                            control_samples_per_size_category: int,
+                            verbose: bool):
+        return cls(optimisation_problem=problem,
+                   control_samples_per_size_category=control_samples_per_size_category,
+                   speciality_threshold=specialty_threshold,
+                   control_descriptors_table=pd.DataFrame(),
+                   control_pss=[],
+                   sizes_for_which_control_has_been_generated=set(),
+                   verbose=verbose)
 
     @property
     def search_space(self):
         return self.optimisation_problem.search_space
 
-    def load_from_files(self):
-        if self.verbose:
-            print(f"Loading ps control data from {self.control_pss_file} and {self.control_descriptors_table_file}")
-
-        self.control_pss = load_pss(self.control_pss_file)
-        self.control_descriptors_table = pd.read_csv(self.control_descriptors_table_file)
-
-        if "size" in self.control_descriptors_table.columns:  # in the cases where the table file was created but the table was still empty.
-            self.sizes_for_which_control_has_been_generated = set(self.control_descriptors_table["size"].unique())
-        else:
-            self.sizes_for_which_control_has_been_generated = set()
-
-
     def get_fitness_delta(self, ps: PS) -> float:
-        avg_when_present, avg_when_absent = self.pRef_manager.get_average_when_present_and_absent(ps)
+        avg_when_present, avg_when_absent = PRefManager.get_average_when_present_and_absent(ps)
         return avg_when_present - avg_when_absent
 
     def get_descriptors_of_ps(self, ps: PS) -> dict[str, float]:
@@ -98,7 +121,7 @@ class DescriptorsManager:
 
     def generate_data_for_new_size_category(self, size_category: int) -> pd.DataFrame:
         """Generates the new control pss and the descriptors.
-        It updates the internal control pss, the descriptor table and the 'sizes_for_which_control_has_been_generated,
+        It updates the internal control pss, the descriptors table and the 'sizes_for_which_control_has_been_generated,
         and returns the new rows generated"""
 
         if self.verbose:
@@ -119,11 +142,6 @@ class DescriptorsManager:
         self.control_descriptors_table = pd.DataFrame()
         self.sizes_for_which_control_has_been_generated = set()
 
-    def write_to_files(self):
-        if self.verbose:
-            print(f"Storing the data in the files {self.control_pss_file}, {self.control_descriptors_table_file}")
-        write_pss_to_file(pss=self.control_pss, file=self.control_pss_file)
-        self.control_descriptors_table.to_csv(self.control_descriptors_table_file)
 
 
     def get_table_rows_where_size_is(self, size: int) -> pd.DataFrame:
@@ -142,7 +160,6 @@ class DescriptorsManager:
         return {descriptor_name: get_percentile_of_descriptor(descriptor_name)
                 for descriptor_name in ps_descriptors
                 if descriptor_name != "size"}
-
 
     def get_significant_descriptors_of_ps(self, ps: PS) -> list[(str, float, float)]:
         descriptors = self.get_descriptors_of_ps(ps)
@@ -165,7 +182,6 @@ class DescriptorsManager:
 
         return names_values_percentiles
 
-
     def descriptors_tuples_into_string(self, names_values_percentiles: list[(str, float, float)], ps: PS) -> str:
         return "\n".join(self.optimisation_problem.repr_property(name, value, percentile, ps)
                          for name, value, percentile in names_values_percentiles)
@@ -173,32 +189,3 @@ class DescriptorsManager:
     def get_descriptors_string(self, ps: PS) -> str:
         names_values_percentiles = self.get_significant_descriptors_of_ps(ps)
         return self.descriptors_tuples_into_string(names_values_percentiles, ps)
-
-
-    @classmethod
-    def get_empty_descriptor_manager(cls, problem: BenchmarkProblem, pRef: PRef):
-        pRef_manager = PRefManager(problem=problem,
-                                   pRef_file=None,
-                                   instantiate_own_evaluator=False,
-                                   verbose=True)
-        pRef_manager.set_pRef(pRef)
-
-        descriptors_manager = DescriptorsManager(optimisation_problem=problem,
-                                                 control_pss_file=None,
-                                                 control_descriptors_table_file=None,
-                                                 control_samples_per_size_category=1000,
-                                                 pRef_manager=pRef_manager,
-                                                 verbose=True)
-
-        descriptors_manager.start_from_scratch()
-        return descriptors_manager
-
-
-
-
-
-
-
-
-
-

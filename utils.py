@@ -1,3 +1,4 @@
+import errno
 import json
 import os
 import re
@@ -217,6 +218,21 @@ def as_float_tuple(items: Iterable) -> tuple:
 
 def make_folder_if_not_present(file_path: str):
     os.makedirs(os.path.dirname(file_path), exist_ok=True)
+
+
+def make_directory(path):
+    try:
+        os.makedirs(path)
+    except OSError as exc: # Python >2.5
+        if exc.errno == errno.EEXIST and os.path.isdir(path):
+            pass
+        else: raise
+
+def open_and_make_directories(path):
+    ''' Open "path" for writing, creating any parent directories as needed.
+    '''
+    make_directory(os.path.dirname(path))
+    return open(path, 'w', encoding= "utf-8")
 
 
 

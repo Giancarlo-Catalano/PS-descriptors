@@ -135,7 +135,7 @@ def run_tester():
 
     # header("Improving the weekdays")
     #
-    # weekday_improvement_explanation = tester.get_explanation_to_improve_weekday(center_solution, "Tuesday", descriptor)
+    # weekday_improvement_explanation = tester.get_explanation_to_improve_weekday(center_solution, "Tuesday", descriptors)
     #
     # header("Partial Solution")
     # for expl in [weekday_improvement_explanation]:
@@ -227,7 +227,7 @@ def run_tester_on_RR():
 
     # header("Improving the weekdays")
     #
-    # weekday_improvement_explanation = tester.get_explanation_to_improve_weekday(center_solution, "Tuesday", descriptor)
+    # weekday_improvement_explanation = tester.get_explanation_to_improve_weekday(center_solution, "Tuesday", descriptors)
     #
     # header("Partial Solution")
     # for expl in [weekday_improvement_explanation]:

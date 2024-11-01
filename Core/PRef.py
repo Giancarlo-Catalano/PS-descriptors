@@ -83,6 +83,8 @@ class PRef:
     full_solution_matrix: np.ndarray
     search_space: SearchSpace
 
+    cached_mean: float
+
     def __init__(self,
                  fitness_array: Iterable[Fitness],
                  full_solution_matrix: np.ndarray,
@@ -90,6 +92,7 @@ class PRef:
         self.fitness_array = np.array(fitness_array)
         self.full_solution_matrix = full_solution_matrix
         self.search_space = search_space
+        self.cached_mean = np.average(self.fitness_array)
 
     def __repr__(self):
         mean_fitness = np.average(self.fitness_array)
