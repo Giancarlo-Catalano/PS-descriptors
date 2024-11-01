@@ -9,7 +9,7 @@ import numpy as np
 from BenchmarkProblems.EfficientBTProblem.EfficientBTProblem import EfficientBTProblem
 from BenchmarkProblems.RoyalRoad import RoyalRoad
 from Core.PRef import PRef
-from Core.PS import STAR
+from Core.PS import STAR, PS
 from Core.PSMetric.FitnessQuality.SignificantlyHighAverage import WilcoxonTest, WilcoxonNearOptima
 from Core.PSMetric.Linkage.TraditionalPerturbationLinkage import TraditionalPerturbationLinkage
 from Core.SearchSpace import SearchSpace
@@ -91,8 +91,6 @@ def generate_problem_tables():
                                               problem=problem_B,
                                               skill_emoji_dict=skill_emoji_dict)
 
-
-
     text_contents = ""
 
     text_contents += "WORKERS for problem A\n"
@@ -126,8 +124,8 @@ def generate_pRef_files():
 
     problem_A = load_bt_problem_from_file(problem_A_path)
     pRef_A = PRefManager.generate_pRef(problem=problem_A,
-                                     which_algorithm="uniform GA",
-                                     sample_size=10000)
+                                       which_algorithm="uniform GA",
+                                       sample_size=10000)
 
     old_cardinalities = np.array(problem_A.search_space.cardinalities)
     new_search_space = SearchSpace(old_cardinalities[search_space_permutation])
@@ -141,10 +139,8 @@ def generate_pRef_files():
     pRef_A.save(pRef_A_path)
     print(f"The pRef for problem A was stored in {pRef_A_path}")
 
-
     pRef_B.save(pRef_B_path)
     print(f"The pRef for problem A was stored in {pRef_B_path}")
-
 
 
 def generate_optima_representations():
@@ -157,18 +153,20 @@ def generate_optima_representations():
     def get_string_of_best(pRef: PRef, problem: EfficientBTProblem) -> str:
         optima = pRef.get_best_solution()
         pretty_printer = BTProblemPrettyPrinter(descriptor_manager=None,
-                                                  problem=problem,
-                                                  skill_emoji_dict=skill_emoji_dict)
+                                                problem=problem,
+                                                skill_emoji_dict=skill_emoji_dict)
 
-
-        return pretty_printer.repr_full_solution(optima)
-
+        normal_representation = pretty_printer.repr_full_solution(optima)
+        calendar = pretty_printer.get_calendar_counts_for_ps(PS.from_FS(optima))
+        calendar_string = pretty_printer.repr_skill_calendar(calendar)
+        penalties_strings = pretty_printer.get_penalties_string(calendar)
+        return "\n\n".join([normal_representation, calendar_string, penalties_strings])
 
     text_contents = ""
 
     text_contents += "Optima of Problem A\n"
     text_contents += get_string_of_best(pRef_A, problem_A)
-    text_contents += "\n"*3
+    text_contents += "\n" * 3
     text_contents += "Optima of Problem B\n"
     text_contents += get_string_of_best(pRef_B, problem_B)
 
@@ -176,6 +174,7 @@ def generate_optima_representations():
         optima_file.write(text_contents)
 
     print(f"Wrote the representation of the optima in {optima_representation_file_path}")
+
 
 # generate_problem_files()
 # generate_problem_tables()

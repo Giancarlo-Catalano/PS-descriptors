@@ -167,7 +167,7 @@ class BTProblemPrettyPrinter:
 
         return "\n".join(repr_for_skill(skill) for skill in self.all_skills_list)
 
-    def get_penalties_string(self, calendar: dict[str, np.ndarray]):
+    def get_penalties_string(self, calendar: dict[str, np.ndarray]) -> str:
         def get_penalty_string(counts_of_workers: list[int]) -> str:
             least = min(counts_of_workers)
             most = max(counts_of_workers)
