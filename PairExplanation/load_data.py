@@ -10,9 +10,9 @@ from Core.PRef import PRef
 from Core.PS import STAR
 from Core.PSMetric.FitnessQuality.SignificantlyHighAverage import WilcoxonTest, WilcoxonNearOptima
 from Core.PSMetric.Linkage.TraditionalPerturbationLinkage import TraditionalPerturbationLinkage
-from Explanation.PRefManager import PRefManager
+from PairwiseExplanation.PRefManager import PRefManager
 from PairExplanation.BTProblemPrettyPrinter import BTProblemPrettyPrinter
-from PairExplanation.BakedPairwiseExplanation import BakedPairwiseExplanation
+from PairExplanation.PairwiseExplanation import PairwiseExplanation
 from PairExplanation.PairExplanationTester import PairExplanationTester
 from PairExplanation.WeightedGraphVisualiser import WeightedGraphVisualiser
 from utils import announce
@@ -44,7 +44,7 @@ def explanation_is_correct(expl, expl_generator, hypothesis_tester, near_optima_
     return assessment["is_accurate"]
 
 
-def print_explanation(expl: BakedPairwiseExplanation,
+def print_explanation(expl: PairwiseExplanation,
                       pretty_printer, hypothesis_tester: Optional,
                       near_optima_hypothesis_tester: Optional):
     print(f"label = {expl.label}")
@@ -136,7 +136,7 @@ def generate_explanations(pRef: PRef):
     print(f"The explanations were stored in {pss_output_file}")
 
 
-def store_textual_explanation(expl: BakedPairwiseExplanation,
+def store_textual_explanation(expl: PairwiseExplanation,
                               destination: str,
                               pretty_printer: BTProblemPrettyPrinter):
     text_to_be_stored = ""
@@ -152,7 +152,7 @@ def store_textual_explanation(expl: BakedPairwiseExplanation,
         file.write(text_to_be_stored)
 
 
-def store_linkage_image(expl: BakedPairwiseExplanation,
+def store_linkage_image(expl: PairwiseExplanation,
                         destination: str,
                         pretty_printer: BTProblemPrettyPrinter,
                         linkage_learner: TraditionalPerturbationLinkage,
@@ -166,7 +166,7 @@ def store_linkage_image(expl: BakedPairwiseExplanation,
     plot.savefig(destination)
 
 
-def store_explanation(expl: BakedPairwiseExplanation,
+def store_explanation(expl: PairwiseExplanation,
                       pretty_printer: BTProblemPrettyPrinter,
                       linkage_learner: TraditionalPerturbationLinkage,
                       weighted_graph_visualiser: WeightedGraphVisualiser):
@@ -214,7 +214,7 @@ def load_from_json():
     with open(json_file, "r") as json_fid:
         expls_jsons = json.load(json_fid)
 
-    expls = [BakedPairwiseExplanation.from_json(expl_json) for expl_json in expls_jsons]
+    expls = [PairwiseExplanation.from_json(expl_json) for expl_json in expls_jsons]
 
     for expl in expls:
         print_explanation(expl,

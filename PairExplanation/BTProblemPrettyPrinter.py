@@ -17,7 +17,7 @@ from LCS.DifferenceExplainer.DescriptorsManager import DescriptorsManager
 
 class BTProblemPrettyPrinter:
     problem: EfficientBTProblem
-    descriptor_manager: DescriptorsManager
+    descriptor_manager: Optional[DescriptorsManager]
 
     all_rotas_list: list[RotaPattern]
     all_skills_list: list[str]
@@ -26,8 +26,9 @@ class BTProblemPrettyPrinter:
 
     def __init__(self,
                  problem: EfficientBTProblem,
-                 descriptor_manager: DescriptorsManager,
-                 skill_emoji_dict: Optional[dict[str, str]]):
+                 skill_emoji_dict: Optional[dict[str, str]],
+                 descriptor_manager: Optional[DescriptorsManager] = None
+                 ):
         self.problem = problem
 
         self.descriptor_manager = descriptor_manager

@@ -19,9 +19,10 @@ from Core.SearchSpace import SearchSpace
 from Explanation.PRefManager import PRefManager
 from LCS.DifferenceExplainer.DescriptorsManager import DescriptorsManager
 from PairExplanation.BTProblemPrettyPrinter import BTProblemPrettyPrinter
-from PairExplanation.BakedPairwiseExplanation import BakedPairwiseExplanation
+from PairExplanation.PairwiseExplanation import PairwiseExplanation
 from PairExplanation.PairExplanationTester import PairExplanationTester
 from PairExplanation.WeightedGraphVisualiser import WeightedGraphVisualiser
+from resources.explanations.manage_explanations import ExplanationStorer
 from utils import open_and_make_directories
 
 skill_emoji_dict = {"electricity": "⚡",
@@ -44,7 +45,7 @@ optima_representation_file_path = os.path.join(root, "optima_representations.txt
 
 conversion_json_path = os.path.join(root, "conversion_A_to_B.json")
 
-descriptor_path = os.path.join(root, "descriptor_A")
+descriptor_A_folder = os.path.join(root, "descriptor_A")
 descriptor_B_folder = os.path.join(root, "descriptor_B")
 
 explanation_folder = os.path.join(root, "explanations")
@@ -201,99 +202,48 @@ def generate_descriptors():
                                                             verbose=False)
         descriptor.store(folder_name)
 
-    generate_descriptor_for_problem(problem_A, folder_name=descriptor_path)
-    print(f"Stored the descriptor for problem A in {descriptor_path}")
+    generate_descriptor_for_problem(problem_A, folder_name=descriptor_A)
+    print(f"Stored the descriptor for problem A in {descriptor_A}")
     generate_descriptor_for_problem(problem_B, folder_name=descriptor_B_folder)
     print(f"Stored the descriptor for problem B in {descriptor_B_folder}")
 
+def store_explanations_given_settings(problem_path,
+                                      descriptor_path,
+                                      pRef_path,
+                                      indexes_to_compare_against,
+                                      explanation_path: str):
+    problem = load_bt_problem_from_file(problem_path)
+    descriptor = DescriptorsManager.load(problem, directory=descriptor_path)
+    pRef = PRef.load(pRef_path)
+    pretty_printer = BTProblemPrettyPrinter(problem, descriptor_manager=descriptor,
+                                            skill_emoji_dict=skill_emoji_dict)
+
+    explanation_manager = ExplanationStorer(problem=problem,
+                                            descriptor=descriptor,
+                                            pretty_printer=pretty_printer,
+                                            explanation_directory=explanation_path,
+                                            pRef=pRef)
+    optima = pRef.get_best_solution()
+    best_solutions = pRef.get_top_n_solutions(max(indexes_to_compare_against))
+    background_solutions = [best_solutions[index] for index in indexes_to_compare_against]
+
+    # generate the explanations
+    explanations = [explanation_manager.generate_explanation(main_solution=optima,
+                                                             background_solution=b,
+                                                             label=f"Optima against solution{index}")
+                    for index, b in tqdm(enumerate(background_solutions))]
+
+    # store any changes to the descriptor
+    descriptor.store(descriptor_path)
+
+    # store the actual explanations
+    explanation_manager.store_explanations(explanations)
 
 def generate_explanations():
-    def store_explanations_given_settings(problem_path,
-                                          descriptor_path,
-                                          pRef_path,
-                                          indexes_to_compare_against,
-                                          explanation_path: str):
-        problem = load_bt_problem_from_file(problem_path)
-        descriptor = DescriptorsManager.load(problem, directory=descriptor_path)
-        pRef = PRef.load(pRef_path)
-        tester = PairExplanationTester(optimisation_problem=problem,
-                                       ps_search_budget=2000,
-                                       ps_search_population=100,
-                                       pRef=pRef,
-                                       verbose=False)
-        optima = pRef.get_best_solution()
-        best_solutions = pRef.get_top_n_solutions(max(indexes_to_compare_against))
-        background_solutions = [best_solutions[index] for index in indexes_to_compare_against]
+    indexes_to_compare_against = [1, 3, 5, 7, 9, 11, 13]
+    store_explanations_given_settings(problem_path=problem_A_path,
+                                      descriptor_path=descriprot)
 
-        explanations = [tester.get_pairwise_explanation(optima,
-                                                        b,
-                                                        descriptor=descriptor)
-                        for b in tqdm(background_solutions)]
-
-        for expl, index_compared_against in zip(explanations, indexes_to_compare_against):
-            expl.label = f"against solution[{index_compared_against}]"
-
-        descriptor.store(descriptor_path)
-
-        pretty_printer = BTProblemPrettyPrinter(problem, descriptor_manager=descriptor,
-                                                skill_emoji_dict=skill_emoji_dict)
-
-
-        linkage_learner = TraditionalPerturbationLinkage(problem)
-        weighted_graph_visualiser = WeightedGraphVisualiser()
-
-        store_explanations_as_json(explanations, explanation_path)
-        store_explanations_as_text(explanations, explanation_path, pretty_printer)
-        store_explanations_as_images(explanations, explanation_path, pretty_printer, linkage_learner, weighted_graph_visualiser)
-
-        return explanations
-
-    def store_explanations_as_json(explanations: list[BakedPairwiseExplanation], directory: str):
-        pss_json = [expl.to_json() for expl in explanations]
-        json_file_path = os.path.join(directory, "explanations.json")
-
-        with open_and_make_directories(json_file_path) as json_file:
-            json.dump(pss_json, json_file, indent=4)
-
-        print(f"The explanations were stored in json form at in {json_file_path}")
-
-    def store_explanations_as_text(explanations: list[BakedPairwiseExplanation],
-                                   directory: str,
-                                   pretty_printer: BTProblemPrettyPrinter):
-        def get_textual_explanation(expl: BakedPairwiseExplanation):
-            return "\n\n".join([f"label: {expl.label}",
-                                expl.get_difference_in_rotas_table(pretty_printer),
-                                expl.get_changes_in_range(pretty_printer),
-                                expl.get_ps_table(pretty_printer),
-                                expl.explanation_text])
-
-        explanations_text = ("\n" * 5).join(map(get_textual_explanation, explanations))
-        text_file_path = os.path.join(directory, "explanations.txt")
-
-        with open_and_make_directories(text_file_path) as text_file:
-            text_file.write(explanations_text)
-
-        print(f"The explanations were stored in textual form in {text_file_path}")
-
-
-    def store_explanations_as_images(explanations, directory, pretty_printer, linkage_learner, weighted_graph_visualiser):
-        images_directory = os.path.join(directory, "visual")
-
-        def store_linkage_image(expl: BakedPairwiseExplanation):
-            file_name = os.path.join(images_directory, f"expl_{expl.label}.png")
-            ps = expl.partial_solution
-            print(f"This ps has {ps.fixed_count()} fixed variables")
-            workers = pretty_printer.problem.workers
-            names = [workers[index].name for index in ps.get_fixed_variable_positions()]
-            linkage_table = linkage_learner.get_table_for_ps(ps)
-            plot = weighted_graph_visualiser.make_plot(linkage_table, names)
-            plot.savefig(file_name)
-
-        for expl in explanations:
-            store_linkage_image(expl)
-
-
-    # todo call store explanations given settings
 
 
 

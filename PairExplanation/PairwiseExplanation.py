@@ -9,7 +9,7 @@ from Core.PSMetric.FitnessQuality.SignificantlyHighAverage import WilcoxonTest, 
 from PairExplanation.BTProblemPrettyPrinter import BTProblemPrettyPrinter
 
 
-class BakedPairwiseExplanation:
+class PairwiseExplanation:
     main_solution: FullSolution
     background_solution: FullSolution
     partial_solution: PS

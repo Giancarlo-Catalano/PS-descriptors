@@ -64,6 +64,9 @@ def get_ps_miner(pRef: PRef,
 
 def write_pss_to_file(pss: list[PS], file: str):
     ps_matrix = np.array([ps.values for ps in pss])
+
+    with utils.open_and_make_directories(file) as dummy_file: # we do this to create the directories
+        dummy_file.write("Nothing to see here")
     np.savez(file, ps_matrix = ps_matrix)
 
 def write_evaluated_pss_to_file(e_pss: list[EvaluatedPS], file: str):

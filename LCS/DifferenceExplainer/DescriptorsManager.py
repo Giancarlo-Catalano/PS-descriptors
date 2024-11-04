@@ -62,7 +62,7 @@ class DescriptorsManager:
 
         control_samples_per_size_category = json_data["control_samples_per_size_category"]
         speciality_threshold = json_data["speciality_threshold"]
-        control_size_categories = json_data["control_size_categories"]
+        control_size_categories = set(json_data["control_size_categories"])
 
         if not file_exists(control_pss_file):
             raise Exception(f"Could not load the control pss file for the descriptors ({control_pss_file})")
@@ -88,7 +88,7 @@ class DescriptorsManager:
 
         other_settings_json_contents = {"control_samples_per_size_category": self.control_samples_per_size_category,
                                         "speciality_threshold": self.speciality_threshold,
-                                        "control_size_categories": self.sizes_for_which_control_has_been_generated}
+                                        "control_size_categories": list(self.sizes_for_which_control_has_been_generated)}
         with utils.open_and_make_directories(other_settings_json_file) as json_file:
             json.dump(other_settings_json_contents, json_file, indent=4)
 
@@ -109,14 +109,13 @@ class DescriptorsManager:
     def search_space(self):
         return self.optimisation_problem.search_space
 
-    def get_fitness_delta(self, ps: PS) -> float:
-        avg_when_present, avg_when_absent = PRefManager.get_average_when_present_and_absent(ps)
+    def get_fitness_delta(self, ps: PS, pRef: PRef) -> float:
+        avg_when_present, avg_when_absent = PRefManager.get_average_when_present_and_absent(ps, pRef)
         return avg_when_present - avg_when_absent
 
     def get_descriptors_of_ps(self, ps: PS) -> dict[str, float]:
         result = self.optimisation_problem.get_descriptors_of_ps(ps)
         result["size"] = ps.fixed_count()
-        result["delta"] = self.get_fitness_delta(ps)
         return result
 
     def generate_data_for_new_size_category(self, size_category: int) -> pd.DataFrame:

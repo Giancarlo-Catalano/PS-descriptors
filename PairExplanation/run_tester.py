@@ -4,9 +4,9 @@ import random
 from BenchmarkProblems.EfficientBTProblem.EfficientBTProblem import EfficientBTProblem
 from BenchmarkProblems.RoyalRoad import RoyalRoad
 from Core.PSMetric.FitnessQuality.SignificantlyHighAverage import WilcoxonTest, WilcoxonNearOptima
-from Explanation.PRefManager import PRefManager
+from PairwiseExplanation.PRefManager import PRefManager
 from PairExplanation.BTProblemPrettyPrinter import BTProblemPrettyPrinter
-from PairExplanation.BakedPairwiseExplanation import BakedPairwiseExplanation
+from PairExplanation.PairwiseExplanation import PairwiseExplanation
 from PairExplanation.PairExplanationTester import PairExplanationTester
 
 
@@ -87,7 +87,7 @@ def run_tester():
         assessment = tester.evaluate_explanation(expl, hypothesis_tester, near_optima_hypothesis_tester)
         return assessment["is_accurate"]
 
-    def print_explanation(expl: BakedPairwiseExplanation):
+    def print_explanation(expl: PairwiseExplanation):
         expl.print_using_pretty_printer(pretty_printer, show_solutions=False,
                                         hypothesis_tester=hypothesis_tester,
                                         near_optima_hypothesis_tester=near_optima_hypothesis_tester)
@@ -180,7 +180,7 @@ def run_tester_on_RR():
         return assessment["is_accurate"]
 
 
-    def print_explanation(expl: BakedPairwiseExplanation):
+    def print_explanation(expl: PairwiseExplanation):
         expl.print_normally(problem,
                             show_solutions=True,
                             hypothesis_tester=hypothesis_tester,

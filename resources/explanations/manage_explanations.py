@@ -1,0 +1,146 @@
+import json
+import os
+
+from BenchmarkProblems.BenchmarkProblem import BenchmarkProblem
+from BenchmarkProblems.EfficientBTProblem.EfficientBTProblem import EfficientBTProblem
+from Core.FullSolution import FullSolution
+from Core.PRef import PRef
+from Core.PSMetric.Linkage.TraditionalPerturbationLinkage import TraditionalPerturbationLinkage
+from LCS.DifferenceExplainer.DescriptorsManager import DescriptorsManager
+from PairExplanation.BTProblemPrettyPrinter import BTProblemPrettyPrinter
+from PairExplanation.PairwiseExplanation import PairwiseExplanation
+from PairExplanation.PairExplanationTester import PairExplanationTester
+from PairExplanation.WeightedGraphVisualiser import WeightedGraphVisualiser
+from utils import open_and_make_directories
+
+
+class ExplanationStorer:
+    problem: EfficientBTProblem
+    descriptor: DescriptorsManager
+    pretty_printer: BTProblemPrettyPrinter
+    pRef: PRef
+    explanation_directory: str
+    tester: PairExplanationTester
+    linkage_learner: TraditionalPerturbationLinkage
+
+    def __init__(self,
+                 problem: EfficientBTProblem,
+                 descriptor: DescriptorsManager,
+                 pretty_printer: BTProblemPrettyPrinter,
+                 pRef: PRef,
+                 explanation_directory: str):
+        self.problem = problem
+        self.descriptor = descriptor
+        self.pretty_printer = pretty_printer
+        self.pRef = pRef
+        self.explanation_directory = explanation_directory
+        self.tester = self.get_tester()
+        self.linkage_learner = self.get_linkage_learner()
+        self.weighted_graph_visualiser = self.get_graph_visualiser()
+
+    def get_tester(self):
+        return PairExplanationTester(optimisation_problem=self.problem,
+                                     ps_search_budget=2000,
+                                     ps_search_population=100,
+                                     pRef=self.pRef,
+                                     verbose=False)
+
+    def get_linkage_learner(self) -> TraditionalPerturbationLinkage:
+        return TraditionalPerturbationLinkage(self.problem)
+
+    def get_graph_visualiser(self) -> WeightedGraphVisualiser:
+        return WeightedGraphVisualiser()
+
+    def generate_explanation(self, main_solution: FullSolution,
+                             background_solution: FullSolution,
+                             label: str) -> PairwiseExplanation:
+        expl = self.tester.get_pairwise_explanation(main_solution,
+                                                    background_solution,
+                                                    descriptor=self.descriptor)
+        expl.label = label
+        return expl
+
+    def store_explanations(self, expls: list[PairwiseExplanation]):
+        json_destination = os.path.join(self.explanation_directory, "explanations.json")
+        text_destination = os.path.join(self.explanation_directory, "explanations.txt")
+        image_destination_folder = os.path.join(self.explanation_directory, "linkage_images")
+        self.store_explanations_as_json(expls, json_destination)
+        self.store_explanations_as_text(expls, text_destination)
+        self.store_explanations_as_images(expls, image_destination_folder)
+
+    def get_textual_explanation(self, expl: PairwiseExplanation):
+        return "\n\n".join([f"label: {expl.label}",
+                            expl.get_difference_in_rotas_table(self.pretty_printer),
+                            expl.get_changes_in_range(self.pretty_printer),
+                            expl.get_ps_table(self.pretty_printer),
+                            expl.explanation_text])
+
+    def store_linkage_image(self, expl: PairwiseExplanation, file_name: str):
+        ps = expl.partial_solution
+        print(f"This ps has {ps.fixed_count()} fixed variables")
+        workers = self.pretty_printer.problem.workers
+        names = [workers[index].name for index in ps.get_fixed_variable_positions()]
+        self.linkage_learner.set_solution(expl.main_solution)
+        linkage_table = self.linkage_learner.get_table_for_ps(ps)
+        plot = self.weighted_graph_visualiser.make_plot(linkage_table, names)
+        plot.savefig(file_name)
+
+    def store_single_explanation(self, expl: PairwiseExplanation,
+                                 textual_path: str,
+                                 json_path: str,
+                                 image_path: str):
+
+        with open_and_make_directories(textual_path) as text_file:
+            textual = self.get_textual_explanation(expl)
+            text_file.write(textual)
+
+        with open_and_make_directories(json_path) as json_file:
+            json_data = expl.to_json()
+            json.dump(json_data, json_file, indent=4)
+
+        self.store_linkage_image(expl, image_path)
+
+
+
+    def store_explanations_as_json(self, expls: list[PairwiseExplanation], json_destination: str):
+        pss_json = [expl.to_json() for expl in expls]
+
+        with open_and_make_directories(json_destination) as json_file:
+            json.dump(pss_json, json_file, indent=4)
+
+        print(f"The explanations were stored in json form at in {json_destination}")
+
+    def store_explanations_as_text(self, expls: list[PairwiseExplanation], text_destination: str):
+        def get_textual_explanation(expl: PairwiseExplanation):
+            return "\n\n".join([f"label: {expl.label}",
+                                expl.get_difference_in_rotas_table(self.pretty_printer),
+                                expl.get_changes_in_range(self.pretty_printer),
+                                expl.get_ps_table(self.pretty_printer),
+                                expl.explanation_text])
+
+        explanations_text = ("\n" * 5).join(map(get_textual_explanation, expls))
+
+        with open_and_make_directories(text_destination) as text_file:
+            text_file.write(explanations_text)
+
+        print(f"The explanations were stored in textual form in {text_destination}")
+
+    def store_explanations_as_images(self, expls: list[PairwiseExplanation], image_destination_folder: str):
+        def store_linkage_image(expl: PairwiseExplanation):
+            file_name = os.path.join(image_destination_folder, f"expl_{expl.label}.png")
+            ps = expl.partial_solution
+            print(f"This ps has {ps.fixed_count()} fixed variables")
+            workers = self.pretty_printer.problem.workers
+            names = [workers[index].name for index in ps.get_fixed_variable_positions()]
+            linkage_table = self.linkage_learner.get_table_for_ps(ps)
+            plot = self.weighted_graph_visualiser.make_plot(linkage_table, names)
+            plot.savefig(file_name)
+
+        for expl in expls:
+            store_linkage_image(expl)
+
+
+
+
+
+

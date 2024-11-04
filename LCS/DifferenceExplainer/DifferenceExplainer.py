@@ -694,7 +694,7 @@ class DifferenceExplainer:
                     return a, b
 
         def get_delta_of_rule(rule: xcs.XCSClassifierRule) -> float:
-            return self.descriptors_manager.get_fitness_delta(rule.condition)
+            return self.descriptors_manager.get_fitness_delta(rule.condition, self.pRef)
 
         def get_deltas_for_pair(solution_a, solution_b) -> (list[float], list[float]):
             self.ensure_pair_is_examined(solution_a, solution_b)

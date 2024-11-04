@@ -21,7 +21,7 @@ from LCS import PSEvaluator
 from LCS.ConstrainedPSSearch.SolutionDifferencePSSearch import local_constrained_ps_search
 from LCS.DifferenceExplainer.DescriptorsManager import DescriptorsManager
 from LCS.PSEvaluator import GeneralPSEvaluator
-from PairExplanation.BakedPairwiseExplanation import BakedPairwiseExplanation
+from PairExplanation.PairwiseExplanation import PairwiseExplanation
 from utils import announce, execution_timer
 
 
@@ -268,7 +268,7 @@ class PairExplanationTester:
     def get_explanation_to_improve_weekday(self,
                                            main_solution: FullSolution,
                                            weekday: str,
-                                           descriptors_manager: DescriptorsManager) -> BakedPairwiseExplanation:
+                                           descriptors_manager: DescriptorsManager) -> PairwiseExplanation:
         # partial_improvements = self.get_partially_better_solutions(main_solution)
         eligible_weekday_improvements = self.get_solutions_with_better_weekday(main_solution, weekday)
         if len(eligible_weekday_improvements) == 0:
@@ -312,7 +312,7 @@ class PairExplanationTester:
     def get_pairwise_explanation(self,
                                  main_solution: FullSolution,
                                  background_solution: FullSolution,
-                                 descriptor: DescriptorsManager) -> BakedPairwiseExplanation:
+                                 descriptor: DescriptorsManager) -> PairwiseExplanation:
         pss = self.find_pss(main_solution,
                             background_solution,
                             culling_method=self.preferred_culling_method)
@@ -325,16 +325,16 @@ class PairExplanationTester:
         names_values_percentiles = descriptor.get_significant_descriptors_of_ps(ps)
         descriptor_string = descriptor.descriptors_tuples_into_string(names_values_percentiles, ps)
 
-        in_main = BakedPairwiseExplanation(main_solution,
-                                           background_solution,
-                                           ps,
-                                           descriptor_tuples=names_values_percentiles,
-                                           explanation_text=descriptor_string)
+        in_main = PairwiseExplanation(main_solution,
+                                      background_solution,
+                                      ps,
+                                      descriptor_tuples=names_values_percentiles,
+                                      explanation_text=descriptor_string)
 
         return in_main
 
     def evaluate_explanation(self,
-                             expl: BakedPairwiseExplanation,
+                             expl: PairwiseExplanation,
                              hypothesis_tester: WilcoxonTest,
                              near_optima_hypothesis_tester: WilcoxonNearOptima) -> dict:
 
