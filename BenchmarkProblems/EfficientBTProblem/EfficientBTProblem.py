@@ -2,7 +2,7 @@ import copy
 import itertools
 import math
 import random
-from typing import TypeAlias, Optional
+from typing import TypeAlias, Optional, Any
 
 import numpy as np
 
@@ -709,4 +709,3 @@ class EfficientBTProblem(BTProblem):
 
         return {skill: get_maxmin_dict_for_patterns(patterns_by_skill[skill])
                 for skill in patterns_by_skill}
-

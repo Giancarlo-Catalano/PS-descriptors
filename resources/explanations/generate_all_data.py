@@ -239,11 +239,6 @@ def store_explanations_given_settings(problem_path,
     # store the actual explanations
     explanation_manager.store_explanations(explanations)
 
-def generate_explanations():
-    indexes_to_compare_against = [1, 3, 5, 7, 9, 11, 13]
-    store_explanations_given_settings(problem_path=problem_A_path,
-                                      descriptor_path=descriprot)
-
 
 
 

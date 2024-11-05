@@ -1,24 +1,21 @@
-import itertools
+import json
 import json
 import os
-import random
 from typing import Optional
 
 import numpy as np
 from tqdm import tqdm
 
-from BenchmarkProblems.BenchmarkProblem import BenchmarkProblem
+import utils
 from BenchmarkProblems.EfficientBTProblem.EfficientBTProblem import EfficientBTProblem
-from BenchmarkProblems.RoyalRoad import RoyalRoad
-from Core.FullSolution import FullSolution
 from Core.PRef import PRef
-from Core.PS import STAR, PS
+from Core.PS import PS
+from Core.SearchSpace import SearchSpace
 from Explanation.PRefManager import PRefManager
 from LCS.DifferenceExplainer.DescriptorsManager import DescriptorsManager
 from PairExplanation.BTProblemPrettyPrinter import BTProblemPrettyPrinter
 from PairExplanation.PairwiseExplanation import PairwiseExplanation
 from resources.explanations.manage_explanations import ExplanationStorer
-import utils
 
 # this file stores all the information for a given problem, including
 # problem definition, pRef, optima, explanations, descriptors and questions
@@ -30,14 +27,20 @@ skill_emoji_dict = {"electricity": "⚡",
                     "plumbing": "🔧"}
 
 
-class ProblemInfoManager:
+
+
+current_expl_directory = r"C:\Users\gac8\PycharmProjects\PS-descriptors-LCS\resources\explanations\Version_E"
+problem_A_path = os.path.join(current_expl_directory, "problem_A")
+problem_B_path = os.path.join(current_expl_directory, "problem_B")
+
+
+class QuestionnaireDataForProblemGenerator:
     problem: Optional[EfficientBTProblem]
     main_dir: str
 
     def __init__(self, problem, main_dir):
         self.problem = problem
         self.main_dir = main_dir
-
 
     @property
     def problem_path(self) -> str:
@@ -139,23 +142,26 @@ class ProblemInfoManager:
                                                       specialty_threshold=0.1,
                                                       verbose=False)
 
-
     def load_descriptor(self) -> DescriptorsManager:
-        return DescriptorsManager.load(problem = self.problem, directory=self.explanations_path)
+        return DescriptorsManager.load(problem=self.problem, directory=self.explanations_path)
 
     def store_descriptor(self, descriptor: DescriptorsManager):
         descriptor.store(directory=self.descriptor_path)
 
-    def explanation_text_folder_path(self, expl: PairwiseExplanation):
+    def get_specific_explanation_path(self, expl: PairwiseExplanation):
         return os.path.join(self.explanations_path, expl.label)
+
+    def get_filenames_for_explanation(self, expl) -> (str, str, str):
+        explanation_folder = self.get_specific_explanation_path(expl)
+        text_file_name = os.path.join(explanation_folder, "textual.txt")
+        json_file_name = os.path.join(explanation_folder, "explanation.json")
+        image_file_name = os.path.join(explanation_folder, "explanation.png")
+        return json_file_name, text_file_name, image_file_name
 
     def store_explanation(self,
                           expl: PairwiseExplanation,
                           explanation_manager: ExplanationStorer):
-        explanation_folder = self.explanation_text_folder_path(expl)
-        text_file_name = os.path.join(explanation_folder, "textual.txt")
-        json_file_name = os.path.join(explanation_folder, "explanation.json")
-        image_file_name = os.path.join(explanation_folder, "explanation.png")
+        json_file_name, text_file_name, image_file_name = self.get_filenames_for_explanation(expl)
 
         explanation_manager.store_single_explanation(expl, textual_path=text_file_name,
                                                      json_path=json_file_name,
@@ -166,21 +172,49 @@ class ProblemInfoManager:
               f"{json_file_name = }, "
               f"{image_file_name = }")
 
+    def load_explanation_from_folder(self, expl_folder_path: str, expl_label: str):
+        # we just use the json
+        json_file_name = os.path.join(expl_folder_path, "explanation.json")
+        with open(json_file_name, "r") as file:
+            json_data = json.load(file)
+            expl = PairwiseExplanation.from_json(json_data)
+            expl.label = expl_label
+            return expl
+
+
+    def load_explanations(self) -> list[PairwiseExplanation]:
+        # the only stuff that we need is in the json
+        # we get the label for the explanations from the folder names
+        explanations_path = self.explanations_path
+        folders = [(name, os.path.join(explanations_path, name))
+                   for name in os.listdir(explanations_path)]
+        descriptor_path = self.descriptor_path
+        folders = [(folder_name, path) for folder_name, path in folders
+                   if os.path.isdir(path)
+                   if path != descriptor_path]
+
+        explanations = [self.load_explanation_from_folder(path, label)
+                        for label, path in folders]
+
+        print(f"The explanations were loaded from the {explanations_path} folder, "
+              f"with the following labels: "+(", ".join(utils.unzip(folders)[0])))
+        return explanations
+
     def get_explanation_manager(self, descriptor: Optional[DescriptorsManager] = None) -> ExplanationStorer:
         if descriptor is None:
             descriptor = self.make_bootstrap_descriptor()
         return ExplanationStorer(descriptor=descriptor,
                                  explanation_directory=self.explanations_path,
-                                 pRef = self.load_pRef(),
+                                 pRef=self.load_pRef(),
                                  pretty_printer=self.make_pretty_printer(),
-                                 problem = self.problem)
+                                 problem=self.problem)
 
     def generate_and_store_explanations(self,
                                         explanation_manager: ExplanationStorer):
-        indexes_to_compare_against = [1, 3, 5, 7, 9, 11, 13]
+        indexes_to_compare_against = [1, 3, 5]
 
         pRef = explanation_manager.pRef
-        best_solutions = pRef.get_top_n_solutions(max(indexes_to_compare_against)+1)
+        best_solutions = pRef.get_top_n_solutions(max(indexes_to_compare_against) + 1)
         optima = best_solutions[0]
 
         # generate the explanations
@@ -200,13 +234,14 @@ class ProblemInfoManager:
         self.store_problem_json()
         self.store_problem_visualisations()
 
-        self.generate_and_store_pRef()
+        self.generate_and_store_pRef()  # note that this is overrriden in the permuted version
         self.store_optima_visualisations()
 
         explanation_manager = self.get_explanation_manager()
         self.generate_and_store_explanations(explanation_manager)
 
-def big_bang():
+
+def generate_for_first_problem():
     seed = 42
     problem = EfficientBTProblem.random_subset_of(EfficientBTProblem.from_default_files(),
                                                   quantity_workers_to_keep=30,
@@ -216,11 +251,89 @@ def big_bang():
                                                   max_rota_length=3,
                                                   calendar_length=8 * 7)
 
-    main_dir = r"C:\Users\gac8\PycharmProjects\PS-descriptors-LCS\resources\explanations\version_C"
-    problem_manager = ProblemInfoManager(problem, main_dir)
+    problem_manager = QuestionnaireDataForProblemGenerator(problem, problem_A_path)
 
     problem_manager.store_everything()
 
+class QuestionnaireDataForPermutedProblemGenerator(QuestionnaireDataForProblemGenerator):
+    original_problem_manager: QuestionnaireDataForProblemGenerator
+    conversion_data: Optional[dict]
+
+    def __init__(self,
+                 original_problem_folder: str,
+                 own_problem_folder: str):
+        super().__init__(problem=None, main_dir=own_problem_folder)
+        self.original_problem_manager = QuestionnaireDataForProblemGenerator(problem=None,
+                                                                             main_dir=original_problem_folder)
+        self.conversion_data = None
+
+    def load_original_problem(self):
+        self.original_problem_manager.load_problem()
+        print(f"Loaded the original problem from {self.original_problem_manager.main_dir}")
+
+    def load_conversion_data(self):
+        with open(self.conversion_json_path, "r") as conversion_json_file:
+            self.conversion_data = json.load(conversion_json_file)
+        print(f"Loaded the problem conversion data from {self.conversion_json_path}")
+
+    @property
+    def conversion_json_path(self):
+        return os.path.join(self.main_dir, "conversion.json")
+
+    def generate_conversion_and_problem(self):
+        self.problem, self.conversion_data = EfficientBTProblem.make_secretly_identical_instance(
+            self.original_problem_manager.problem)
+        print(f"Converted problem was generated")
+
+    def generate_and_store_pRef(self):
+        original_search_space_permutation = self.conversion_data["worker_permutation_dict"]
+        search_space_permutation = [original_search_space_permutation[index]
+                                    for index in range(len(original_search_space_permutation))]
+
+        old_cardinalities = np.array(self.original_problem_manager.problem.search_space.cardinalities)
+        new_search_space = SearchSpace(old_cardinalities[search_space_permutation])
+
+        original_pRef = self.original_problem_manager.load_pRef()
+        new_full_solution_matrix = original_pRef.full_solution_matrix[:, search_space_permutation]
+
+        own_pRef = PRef(fitness_array=original_pRef.fitness_array,
+                        search_space=new_search_space,
+                        full_solution_matrix=new_full_solution_matrix)
+        own_pRef.save(self.pRef_path)
+
+        print(f"The converted pRef was obtained and stored in {self.pRef_path}")
+
+
+    def generate_and_store_explanations(self,
+                                        explanation_manager: ExplanationStorer):
+        original_explanations = self.original_problem_manager.load_explanations()
+        own_explanations = [explanation_manager.convert_explanation(expl, self.conversion_data)
+                            for expl in original_explanations]
+
+        # store the actual explanations
+        for expl in own_explanations:
+            self.store_explanation(expl, explanation_manager)
+
+    def store_everything(self):
+        super().store_everything()
+
+        with utils.open_and_make_directories(self.conversion_json_path) as file:
+            json.dump(self.conversion_data, file, indent=4)
+
+        print(f"Stored the conversion file into {self.conversion_json_path}")
+
+
+
+
+def generate_for_second_problem():
+    problem_manager = QuestionnaireDataForPermutedProblemGenerator(original_problem_folder=problem_A_path,
+                                                                   own_problem_folder=problem_B_path)
+
+    problem_manager.load_original_problem()
+    problem_manager.generate_conversion_and_problem()
+    problem_manager.store_everything()
+def big_bang():
+    generate_for_first_problem()
+    generate_for_second_problem()
 
 big_bang()
-

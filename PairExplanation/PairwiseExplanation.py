@@ -14,21 +14,21 @@ class PairwiseExplanation:
     background_solution: FullSolution
     partial_solution: PS
     explanation_text: str
-    descriptor_dict: list[(str, float, float)]
+    descriptor_tuples: list[(str, float, float)]
     label: str
 
     def __init__(self,
                  main_solution: FullSolution,
                  background_solution: FullSolution,
-                 difference_pattern: PS,
+                 partial_solution: PS,
                  explanation_text: str,
                  descriptor_tuples: list[(str, float, float)],
                  label: str = "no label"):
         self.main_solution = main_solution
         self.background_solution = background_solution
-        self.partial_solution = difference_pattern
+        self.partial_solution = partial_solution
         self.explanation_text = explanation_text
-        self.descriptor_dict = descriptor_tuples
+        self.descriptor_tuples = descriptor_tuples
         self.label = label
 
     def print_using_pretty_printer(self,
@@ -127,7 +127,7 @@ class PairwiseExplanation:
         return {"main_solution": self.main_solution.to_json(),
                 "background_solution": self.background_solution.to_json(),
                 "difference_pattern": self.partial_solution.to_json(),
-                "descriptor_tuples": self.descriptor_dict,
+                "descriptor_tuples": self.descriptor_tuples,
                 "explanation_text": self.explanation_text,
                 "label": self.label}
 
@@ -138,7 +138,7 @@ class PairwiseExplanation:
         difference_pattern = PS.from_json(json_dict["difference_pattern"])
         return cls(main_solution=main_solution,
                    background_solution=background_solution,
-                   difference_pattern=difference_pattern,
+                   partial_solution=difference_pattern,
                    descriptor_tuples=json_dict["descriptor_tuples"],
                    explanation_text=json_dict["explanation_text"],
                    label=json_dict["label"])

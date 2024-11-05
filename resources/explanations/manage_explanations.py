@@ -5,6 +5,7 @@ from BenchmarkProblems.BenchmarkProblem import BenchmarkProblem
 from BenchmarkProblems.EfficientBTProblem.EfficientBTProblem import EfficientBTProblem
 from Core.FullSolution import FullSolution
 from Core.PRef import PRef
+from Core.PS import PS
 from Core.PSMetric.Linkage.TraditionalPerturbationLinkage import TraditionalPerturbationLinkage
 from LCS.DifferenceExplainer.DescriptorsManager import DescriptorsManager
 from PairExplanation.BTProblemPrettyPrinter import BTProblemPrettyPrinter
@@ -77,7 +78,6 @@ class ExplanationStorer:
 
     def store_linkage_image(self, expl: PairwiseExplanation, file_name: str):
         ps = expl.partial_solution
-        print(f"This ps has {ps.fixed_count()} fixed variables")
         workers = self.pretty_printer.problem.workers
         names = [workers[index].name for index in ps.get_fixed_variable_positions()]
         self.linkage_learner.set_solution(expl.main_solution)
@@ -138,6 +138,23 @@ class ExplanationStorer:
 
         for expl in expls:
             store_linkage_image(expl)
+
+    def convert_explanation(self, original: PairwiseExplanation, conversion_data: dict) -> PairwiseExplanation:
+        original_search_space_permutation = conversion_data["worker_permutation_dict"]
+        search_space_permutation = [original_search_space_permutation[index]
+                                    for index in range(len(original_search_space_permutation))]
+
+        converted_main_solution = FullSolution(original.main_solution.values[search_space_permutation])
+        converted_back_solution = FullSolution(original.main_solution.values[search_space_permutation])
+        converted_ps = PS(original.partial_solution.values[search_space_permutation])
+
+        new_explanation = PairwiseExplanation(converted_main_solution,
+                                              converted_back_solution,
+                                              partial_solution=converted_ps,
+                                              descriptor_tuples=original.descriptor_tuples,
+                                              explanation_text=original.explanation_text)
+        new_explanation.label = original.label
+        return new_explanation
 
 
 

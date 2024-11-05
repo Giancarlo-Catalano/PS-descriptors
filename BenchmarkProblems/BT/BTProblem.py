@@ -169,6 +169,7 @@ class BTProblem(BenchmarkProblem):
     def make_secretly_identical_instance(cls, original_problem) -> (Any, dict):
 
         n = len(original_problem.workers)
+
         def get_name_conversion_dict() -> dict[str, str]:
             names_in_current = {worker.name for worker in original_problem.workers}
             assert (len(names_in_current) == n)
@@ -207,10 +208,8 @@ class BTProblem(BenchmarkProblem):
                            "worker_permutation_dict": worker_permutation_dict,
                            "skill_permutation_dict": skill_permutation_dict}
 
-        new_problem = BTProblem(workers = new_workers,
-                        calendar_length = original_problem.calendar_length,
-                         weights = original_problem.calendar_length)
+        new_problem = cls(workers=new_workers,
+                                calendar_length=original_problem.calendar_length,
+                                weights=original_problem.weights)
 
         return new_problem, conversion_dict
-
-
