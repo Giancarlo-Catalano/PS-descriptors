@@ -1,33 +1,33 @@
-Quinn	A	ROTA 30	⚡	📞		🔨	W	W	W	W	W	_	_	W	W	W	W	W	_	_	W	W	W	W	W	_	_	W	W	W	W	W	_	_	W	W	W	W	W	_	_	W	W	W	W	W	_	_	W	W	W	W	W	_	_	W	W	W	W	W	_	_
-Cody	A	ROTA 30	⚡	📞		🔨	W	W	W	W	W	_	_	W	W	W	W	W	_	_	W	W	W	W	W	_	_	W	W	W	W	W	_	_	W	W	W	W	W	_	_	W	W	W	W	W	_	_	W	W	W	W	W	_	_	W	W	W	W	W	_	_
 Adam	B	ROTA 29	⚡	📞	💻	🔨	W	W	W	W	_	_	_	W	W	W	W	_	_	_	W	W	W	W	_	_	_	W	W	W	W	_	_	_	W	W	W	W	_	_	_	W	W	W	W	_	_	_	W	W	W	W	_	_	_	W	W	W	W	_	_	_
-Cora	B	ROTA 6	⚡				_	W	W	W	W	_	_	W	W	W	W	W	_	_	W	W	W	_	_	W	_	_	W	W	W	W	_	_	W	W	W	W	W	_	_	W	W	W	_	_	W	_	_	W	W	W	W	_	_	W	W	W	W	W	_	_
-Rory	B	ROTA 30				🔨	W	W	W	W	W	_	_	W	W	W	W	W	_	_	W	W	W	W	W	_	_	W	W	W	W	W	_	_	W	W	W	W	W	_	_	W	W	W	W	W	_	_	W	W	W	W	W	_	_	W	W	W	W	W	_	_
-Hunter	A	ROTA 2	⚡	📞		🔨	_	W	W	W	_	_	W	_	W	W	W	_	_	W	_	W	W	W	_	_	W	_	W	W	W	_	_	W	_	W	W	W	_	_	W	_	W	W	W	_	_	W	_	W	W	W	_	_	W	_	W	W	W	_	_	W
-Frankie	A	ROTA 2	⚡	📞	💻		_	W	W	W	_	_	W	_	W	W	W	_	_	W	_	W	W	W	_	_	W	_	W	W	W	_	_	W	_	W	W	W	_	_	W	_	W	W	W	_	_	W	_	W	W	W	_	_	W	_	W	W	W	_	_	W
-Poppy	B	ROTA 18	⚡				_	W	W	W	W	W	_	_	W	W	W	W	W	_	_	W	W	W	W	W	_	_	W	W	W	W	W	_	_	W	W	W	W	W	_	_	W	W	W	W	W	_	_	W	W	W	W	W	_	_	W	W	W	W	W	_
-Murray	C	ROTA 25	⚡				_	W	W	W	W	_	_	W	W	W	_	W	W	_	_	_	W	W	W	W	_	_	W	W	W	W	_	_	W	W	W	_	W	W	_	_	_	W	W	W	W	_	_	W	W	W	W	_	_	W	W	W	_	W	W	_
-Callie	A	ROTA 2	⚡			🔨	_	W	W	W	_	_	W	_	W	W	W	_	_	W	_	W	W	W	_	_	W	_	W	W	W	_	_	W	_	W	W	W	_	_	W	_	W	W	W	_	_	W	_	W	W	W	_	_	W	_	W	W	W	_	_	W
-Finley	C	ROTA 19	⚡	📞			W	W	W	_	W	W	_	_	W	W	W	_	_	_	_	_	W	W	W	W	_	W	W	W	_	W	W	_	_	W	W	W	_	_	_	_	_	W	W	W	W	_	W	W	W	_	W	W	_	_	W	W	W	_	_	_
-Ellis	A	ROTA 24	⚡	📞			W	W	W	W	W	_	_	W	W	W	W	W	_	_	_	W	W	W	W	W	_	W	W	W	W	W	_	_	W	W	W	W	W	_	_	_	W	W	W	W	W	_	W	W	W	W	W	_	_	W	W	W	W	W	_	_
-Luke	A	ROTA 8	⚡	📞			_	W	W	W	W	_	_	W	W	_	W	W	_	_	_	_	W	W	W	W	_	_	W	W	W	W	_	_	W	W	_	W	W	_	_	_	_	W	W	W	W	_	_	W	W	W	W	_	_	W	W	_	W	W	_	_
-Logan	C	ROTA 23	⚡	📞			W	W	W	_	W	W	_	W	W	W	_	W	W	_	W	W	W	_	W	W	_	W	W	W	_	W	W	_	W	W	W	_	W	W	_	W	W	W	_	W	W	_	W	W	W	_	W	W	_	W	W	W	_	W	W	_
-Innes	A	ROTA 24	⚡				W	W	W	W	W	_	_	W	W	W	W	W	_	_	_	W	W	W	W	W	_	W	W	W	W	W	_	_	W	W	W	W	W	_	_	_	W	W	W	W	W	_	W	W	W	W	W	_	_	W	W	W	W	W	_	_
-Lyla	C	ROTA 22		📞			W	W	W	_	W	W	_	_	W	W	W	_	W	_	W	W	W	_	W	W	_	_	W	W	W	_	W	_	W	W	W	_	W	W	_	_	W	W	W	_	W	_	W	W	W	_	W	W	_	_	W	W	W	_	W	_
-Skye	A	ROTA 30	⚡			🔨	W	W	W	W	W	_	_	W	W	W	W	W	_	_	W	W	W	W	W	_	_	W	W	W	W	W	_	_	W	W	W	W	W	_	_	W	W	W	W	W	_	_	W	W	W	W	W	_	_	W	W	W	W	W	_	_
-Thomas	A	ROTA 17	⚡				W	W	W	W	_	_	W	W	W	W	W	_	_	W	W	W	W	W	_	_	W	W	W	W	W	_	_	W	W	W	W	W	_	_	W	W	W	W	W	_	_	W	W	W	W	W	_	_	W	W	W	W	W	_	_	W
-Penelope	A	ROTA 30	⚡	📞			W	W	W	W	W	_	_	W	W	W	W	W	_	_	W	W	W	W	W	_	_	W	W	W	W	W	_	_	W	W	W	W	W	_	_	W	W	W	W	W	_	_	W	W	W	W	W	_	_	W	W	W	W	W	_	_
-Harlow	A	ROTA 23	⚡	📞	💻		W	W	W	_	W	W	_	W	W	W	_	W	W	_	W	W	W	_	W	W	_	W	W	W	_	W	W	_	W	W	W	_	W	W	_	W	W	W	_	W	W	_	W	W	W	_	W	W	_	W	W	W	_	W	W	_
-Mirren	A	ROTA 17		📞			W	W	W	W	_	_	W	W	W	W	W	_	_	W	W	W	W	W	_	_	W	W	W	W	W	_	_	W	W	W	W	W	_	_	W	W	W	W	W	_	_	W	W	W	W	W	_	_	W	W	W	W	W	_	_	W
-Lucy	A	ROTA 31	⚡	📞			W	W	W	W	W	W	_	_	W	W	W	W	_	_	_	W	W	W	W	W	_	W	W	W	W	W	W	_	_	W	W	W	W	_	_	_	W	W	W	W	W	_	W	W	W	W	W	W	_	_	W	W	W	W	_	_
-Amelia	D	ROTA 25	⚡	📞	💻		_	W	W	W	W	_	_	W	W	W	_	W	W	_	_	_	W	W	W	W	_	_	W	W	W	W	_	_	W	W	W	_	W	W	_	_	_	W	W	W	W	_	_	W	W	W	W	_	_	W	W	W	_	W	W	_
-Maisie	A	ROTA 5	⚡	📞	💻	🔨	W	_	W	W	_	_	W	W	_	W	W	_	_	W	W	_	W	W	_	_	W	W	_	W	W	_	_	W	W	_	W	W	_	_	W	W	_	W	W	_	_	W	W	_	W	W	_	_	W	W	_	W	W	_	_	W
-William	A	ROTA 30	⚡	📞			W	W	W	W	W	_	_	W	W	W	W	W	_	_	W	W	W	W	W	_	_	W	W	W	W	W	_	_	W	W	W	W	W	_	_	W	W	W	W	W	_	_	W	W	W	W	W	_	_	W	W	W	W	W	_	_
-Lachlan	A	ROTA 18	⚡				_	W	W	W	W	W	_	_	W	W	W	W	W	_	_	W	W	W	W	W	_	_	W	W	W	W	W	_	_	W	W	W	W	W	_	_	W	W	W	W	W	_	_	W	W	W	W	W	_	_	W	W	W	W	W	_
 Alice	B	ROTA 31	⚡				W	W	W	W	W	W	_	_	W	W	W	W	_	_	_	W	W	W	W	W	_	W	W	W	W	W	W	_	_	W	W	W	W	_	_	_	W	W	W	W	W	_	W	W	W	W	W	W	_	_	W	W	W	W	_	_
-Thea	A	ROTA 30	⚡	📞			W	W	W	W	W	_	_	W	W	W	W	W	_	_	W	W	W	W	W	_	_	W	W	W	W	W	_	_	W	W	W	W	W	_	_	W	W	W	W	W	_	_	W	W	W	W	W	_	_	W	W	W	W	W	_	_
-Niamh	A	ROTA 24		📞	💻		W	W	W	W	W	_	_	W	W	W	W	W	_	_	_	W	W	W	W	W	_	W	W	W	W	W	_	_	W	W	W	W	W	_	_	_	W	W	W	W	W	_	W	W	W	W	W	_	_	W	W	W	W	W	_	_
+Amelia	D	ROTA 25	⚡	📞	💻		_	W	W	W	W	_	_	W	W	W	_	W	W	_	_	_	W	W	W	W	_	_	W	W	W	W	_	_	W	W	W	_	W	W	_	_	_	W	W	W	W	_	_	W	W	W	W	_	_	W	W	W	_	W	W	_
 Angus	B	ROTA 11	⚡	📞			W	W	W	W	_	_	W	W	W	W	W	W	W	_	_	W	W	W	W	W	_	W	W	W	W	_	_	W	W	W	W	W	W	W	_	_	W	W	W	W	W	_	W	W	W	W	_	_	W	W	W	W	W	W	W	_
+Callie	A	ROTA 2	⚡			🔨	_	W	W	W	_	_	W	_	W	W	W	_	_	W	_	W	W	W	_	_	W	_	W	W	W	_	_	W	_	W	W	W	_	_	W	_	W	W	W	_	_	W	_	W	W	W	_	_	W	_	W	W	W	_	_	W
+Cody	A	ROTA 30	⚡	📞		🔨	W	W	W	W	W	_	_	W	W	W	W	W	_	_	W	W	W	W	W	_	_	W	W	W	W	W	_	_	W	W	W	W	W	_	_	W	W	W	W	W	_	_	W	W	W	W	W	_	_	W	W	W	W	W	_	_
+Cora	B	ROTA 6	⚡				_	W	W	W	W	_	_	W	W	W	W	W	_	_	W	W	W	_	_	W	_	_	W	W	W	W	_	_	W	W	W	W	W	_	_	W	W	W	_	_	W	_	_	W	W	W	W	_	_	W	W	W	W	W	_	_
+Ellis	A	ROTA 24	⚡	📞			W	W	W	W	W	_	_	W	W	W	W	W	_	_	_	W	W	W	W	W	_	W	W	W	W	W	_	_	W	W	W	W	W	_	_	_	W	W	W	W	W	_	W	W	W	W	W	_	_	W	W	W	W	W	_	_
+Finley	C	ROTA 19	⚡	📞			W	W	W	_	W	W	_	_	W	W	W	_	_	_	_	_	W	W	W	W	_	W	W	W	_	W	W	_	_	W	W	W	_	_	_	_	_	W	W	W	W	_	W	W	W	_	W	W	_	_	W	W	W	_	_	_
+Frankie	A	ROTA 2	⚡	📞	💻		_	W	W	W	_	_	W	_	W	W	W	_	_	W	_	W	W	W	_	_	W	_	W	W	W	_	_	W	_	W	W	W	_	_	W	_	W	W	W	_	_	W	_	W	W	W	_	_	W	_	W	W	W	_	_	W
+Harlow	A	ROTA 23	⚡	📞	💻		W	W	W	_	W	W	_	W	W	W	_	W	W	_	W	W	W	_	W	W	_	W	W	W	_	W	W	_	W	W	W	_	W	W	_	W	W	W	_	W	W	_	W	W	W	_	W	W	_	W	W	W	_	W	W	_
+Hunter	A	ROTA 2	⚡	📞		🔨	_	W	W	W	_	_	W	_	W	W	W	_	_	W	_	W	W	W	_	_	W	_	W	W	W	_	_	W	_	W	W	W	_	_	W	_	W	W	W	_	_	W	_	W	W	W	_	_	W	_	W	W	W	_	_	W
+Innes	A	ROTA 24	⚡				W	W	W	W	W	_	_	W	W	W	W	W	_	_	_	W	W	W	W	W	_	W	W	W	W	W	_	_	W	W	W	W	W	_	_	_	W	W	W	W	W	_	W	W	W	W	W	_	_	W	W	W	W	W	_	_
+Lachlan	A	ROTA 18	⚡				_	W	W	W	W	W	_	_	W	W	W	W	W	_	_	W	W	W	W	W	_	_	W	W	W	W	W	_	_	W	W	W	W	W	_	_	W	W	W	W	W	_	_	W	W	W	W	W	_	_	W	W	W	W	W	_
+Logan	C	ROTA 23	⚡	📞			W	W	W	_	W	W	_	W	W	W	_	W	W	_	W	W	W	_	W	W	_	W	W	W	_	W	W	_	W	W	W	_	W	W	_	W	W	W	_	W	W	_	W	W	W	_	W	W	_	W	W	W	_	W	W	_
+Lucy	A	ROTA 31	⚡	📞			W	W	W	W	W	W	_	_	W	W	W	W	_	_	_	W	W	W	W	W	_	W	W	W	W	W	W	_	_	W	W	W	W	_	_	_	W	W	W	W	W	_	W	W	W	W	W	W	_	_	W	W	W	W	_	_
+Luke	A	ROTA 8	⚡	📞			_	W	W	W	W	_	_	W	W	_	W	W	_	_	_	_	W	W	W	W	_	_	W	W	W	W	_	_	W	W	_	W	W	_	_	_	_	W	W	W	W	_	_	W	W	W	W	_	_	W	W	_	W	W	_	_
+Lyla	C	ROTA 22		📞			W	W	W	_	W	W	_	_	W	W	W	_	W	_	W	W	W	_	W	W	_	_	W	W	W	_	W	_	W	W	W	_	W	W	_	_	W	W	W	_	W	_	W	W	W	_	W	W	_	_	W	W	W	_	W	_
+Maisie	A	ROTA 5	⚡	📞	💻	🔨	W	_	W	W	_	_	W	W	_	W	W	_	_	W	W	_	W	W	_	_	W	W	_	W	W	_	_	W	W	_	W	W	_	_	W	W	_	W	W	_	_	W	W	_	W	W	_	_	W	W	_	W	W	_	_	W
+Mirren	A	ROTA 17		📞			W	W	W	W	_	_	W	W	W	W	W	_	_	W	W	W	W	W	_	_	W	W	W	W	W	_	_	W	W	W	W	W	_	_	W	W	W	W	W	_	_	W	W	W	W	W	_	_	W	W	W	W	W	_	_	W
+Murray	C	ROTA 25	⚡				_	W	W	W	W	_	_	W	W	W	_	W	W	_	_	_	W	W	W	W	_	_	W	W	W	W	_	_	W	W	W	_	W	W	_	_	_	W	W	W	W	_	_	W	W	W	W	_	_	W	W	W	_	W	W	_
+Niamh	A	ROTA 24		📞	💻		W	W	W	W	W	_	_	W	W	W	W	W	_	_	_	W	W	W	W	W	_	W	W	W	W	W	_	_	W	W	W	W	W	_	_	_	W	W	W	W	W	_	W	W	W	W	W	_	_	W	W	W	W	W	_	_
+Penelope	A	ROTA 30	⚡	📞			W	W	W	W	W	_	_	W	W	W	W	W	_	_	W	W	W	W	W	_	_	W	W	W	W	W	_	_	W	W	W	W	W	_	_	W	W	W	W	W	_	_	W	W	W	W	W	_	_	W	W	W	W	W	_	_
+Poppy	B	ROTA 18	⚡				_	W	W	W	W	W	_	_	W	W	W	W	W	_	_	W	W	W	W	W	_	_	W	W	W	W	W	_	_	W	W	W	W	W	_	_	W	W	W	W	W	_	_	W	W	W	W	W	_	_	W	W	W	W	W	_
+Quinn	A	ROTA 30	⚡	📞		🔨	W	W	W	W	W	_	_	W	W	W	W	W	_	_	W	W	W	W	W	_	_	W	W	W	W	W	_	_	W	W	W	W	W	_	_	W	W	W	W	W	_	_	W	W	W	W	W	_	_	W	W	W	W	W	_	_
+Rory	B	ROTA 30				🔨	W	W	W	W	W	_	_	W	W	W	W	W	_	_	W	W	W	W	W	_	_	W	W	W	W	W	_	_	W	W	W	W	W	_	_	W	W	W	W	W	_	_	W	W	W	W	W	_	_	W	W	W	W	W	_	_
+Skye	A	ROTA 30	⚡			🔨	W	W	W	W	W	_	_	W	W	W	W	W	_	_	W	W	W	W	W	_	_	W	W	W	W	W	_	_	W	W	W	W	W	_	_	W	W	W	W	W	_	_	W	W	W	W	W	_	_	W	W	W	W	W	_	_
+Thea	A	ROTA 30	⚡	📞			W	W	W	W	W	_	_	W	W	W	W	W	_	_	W	W	W	W	W	_	_	W	W	W	W	W	_	_	W	W	W	W	W	_	_	W	W	W	W	W	_	_	W	W	W	W	W	_	_	W	W	W	W	W	_	_
+Thomas	A	ROTA 17	⚡				W	W	W	W	_	_	W	W	W	W	W	_	_	W	W	W	W	W	_	_	W	W	W	W	W	_	_	W	W	W	W	W	_	_	W	W	W	W	W	_	_	W	W	W	W	W	_	_	W	W	W	W	W	_	_	W
+William	A	ROTA 30	⚡	📞			W	W	W	W	W	_	_	W	W	W	W	W	_	_	W	W	W	W	W	_	_	W	W	W	W	W	_	_	W	W	W	W	W	_	_	W	W	W	W	W	_	_	W	W	W	W	W	_	_	W	W	W	W	W	_	_
 
 ⚡	17	25	26	23	19	7	6	18	25	25	22	19	7	5	12	21	26	23	19	14	5	17	25	26	23	19	7	6	18	25	25	22	19	7	5	12	21	26	23	19	14	5	17	25	26	23	19	7	6	18	25	25	22	19	7	5
 📞	16	19	20	16	14	5	5	15	19	19	17	13	5	4	11	16	20	17	15	10	4	15	19	20	17	13	5	5	16	19	19	16	14	5	4	10	16	20	18	14	10	4	16	19	20	16	14	5	5	15	19	19	17	13	5	4

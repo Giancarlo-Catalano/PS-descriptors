@@ -4,12 +4,12 @@ label: Optima against solution[1]
 
 
 
-Louie	D = ROTA 25	D = ROTA 25
-Olivia	C = ROTA 19	C = ROTA 19
-Andrew	C = ROTA 22	C = ROTA 22
-Lilly	A = ROTA 24	A = ROTA 24
+Fraser	C = ROTA 19	C = ROTA 19
+Brodie	A = ROTA 24	A = ROTA 24
+Robert	A = ROTA 24	A = ROTA 24
+Kai	D = ROTA 25	D = ROTA 25
 
+On wednesday, the coverage is LOW, (rank = 2%)
 On saturday, the coverage is LOW, (rank = 3%)
-FEW workers got their preferred rota, (rank = 8%)
 
-The pattern was found to be beneficial (HIGHLY SIGNIFICANT), with p_value 2.6007968766738316e-165
+The pattern was found to be beneficial (HIGHLY SIGNIFICANT), with p_value 4.584756864799356e-165

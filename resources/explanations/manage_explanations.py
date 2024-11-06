@@ -55,7 +55,7 @@ class ExplanationStorer:
         return TraditionalPerturbationLinkage(self.problem)
 
     def get_graph_visualiser(self) -> WeightedGraphVisualiser:
-        return WeightedGraphVisualiser()
+        return WeightedGraphVisualiser(only_show_percentage=0.2)
 
     def generate_explanation(self, main_solution: FullSolution,
                              background_solution: FullSolution,

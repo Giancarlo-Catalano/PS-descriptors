@@ -3,6 +3,7 @@
     "speciality_threshold": 0.1,
     "control_size_categories": [
         4,
-        5
+        5,
+        6
     ]
 }

@@ -104,8 +104,10 @@ class BTProblemPrettyPrinter:
         rotas_str = "\t".join(self.repr_rota_index(rota) for rota in worker.available_rotas)
         return "\t".join([worker.name, skills_str, rotas_str])
 
+    def get_sorted_workers(self) -> list[Worker]:
+        return sorted(self.problem.workers, key=lambda w: w.name)
     def repr_problem_workers(self) -> str:
-        return "\n".join(map(self.repr_worker, self.problem.workers))
+        return "\n".join(map(self.repr_worker, self.get_sorted_workers()))
 
     def repr_problem_rotas(self) -> str:
         return "\n".join("\t".join([self.repr_rota_index(rota), self.repr_rota(rota)])
@@ -115,6 +117,8 @@ class BTProblemPrettyPrinter:
         workers_and_choices = [(worker, choice)
                                for worker, choice in zip(self.problem.workers, ps.values)
                                if choice != STAR]
+
+        workers_and_choices = sorted(workers_and_choices, key = lambda wc : wc[0].name)
 
         def repr_assigned_worker(worker: Worker, choice: int) -> str:
             actual_rota = worker.available_rotas[choice]

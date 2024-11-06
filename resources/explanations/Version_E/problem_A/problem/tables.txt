@@ -1,34 +1,34 @@
 WORKERS for problem A
-Quinn	⚡	📞		🔨	ROTA 30	ROTA 14	ROTA 24
-Cody	⚡	📞		🔨	ROTA 30
 Adam	⚡	📞	💻	🔨	ROTA 4	ROTA 29
-Cora	⚡				ROTA 32	ROTA 6
-Rory				🔨	ROTA 1	ROTA 30
-Hunter	⚡	📞		🔨	ROTA 2
-Frankie	⚡	📞	💻		ROTA 2	ROTA 4	ROTA 30	ROTA 29
-Poppy	⚡				ROTA 17	ROTA 18	ROTA 30
-Murray	⚡				ROTA 16	ROTA 30	ROTA 25	ROTA 9
-Callie	⚡			🔨	ROTA 2
-Finley	⚡	📞			ROTA 7	ROTA 9	ROTA 19	ROTA 6
-Ellis	⚡	📞			ROTA 24
-Luke	⚡	📞			ROTA 8
-Logan	⚡	📞			ROTA 13	ROTA 4	ROTA 23
-Innes	⚡				ROTA 24	ROTA 14	ROTA 20	ROTA 12
-Lyla		📞			ROTA 26	ROTA 10	ROTA 22
-Skye	⚡			🔨	ROTA 30
-Thomas	⚡				ROTA 17	ROTA 4	ROTA 29
-Penelope	⚡	📞			ROTA 30
-Harlow	⚡	📞	💻		ROTA 23
-Mirren		📞			ROTA 17
-Lucy	⚡	📞			ROTA 31
-Amelia	⚡	📞	💻		ROTA 15	ROTA 3	ROTA 14	ROTA 25
-Maisie	⚡	📞	💻	🔨	ROTA 5
-William	⚡	📞			ROTA 30	ROTA 14	ROTA 28
-Lachlan	⚡				ROTA 18
 Alice	⚡				ROTA 11	ROTA 31	ROTA 9	ROTA 6
-Thea	⚡	📞			ROTA 30	ROTA 24	ROTA 27
-Niamh		📞	💻		ROTA 24	ROTA 14
+Amelia	⚡	📞	💻		ROTA 15	ROTA 3	ROTA 14	ROTA 25
 Angus	⚡	📞			ROTA 14	ROTA 11	ROTA 21
+Callie	⚡			🔨	ROTA 2
+Cody	⚡	📞		🔨	ROTA 30
+Cora	⚡				ROTA 32	ROTA 6
+Ellis	⚡	📞			ROTA 24
+Finley	⚡	📞			ROTA 7	ROTA 9	ROTA 19	ROTA 6
+Frankie	⚡	📞	💻		ROTA 2	ROTA 4	ROTA 30	ROTA 29
+Harlow	⚡	📞	💻		ROTA 23
+Hunter	⚡	📞		🔨	ROTA 2
+Innes	⚡				ROTA 24	ROTA 14	ROTA 20	ROTA 12
+Lachlan	⚡				ROTA 18
+Logan	⚡	📞			ROTA 13	ROTA 4	ROTA 23
+Lucy	⚡	📞			ROTA 31
+Luke	⚡	📞			ROTA 8
+Lyla		📞			ROTA 26	ROTA 10	ROTA 22
+Maisie	⚡	📞	💻	🔨	ROTA 5
+Mirren		📞			ROTA 17
+Murray	⚡				ROTA 16	ROTA 30	ROTA 25	ROTA 9
+Niamh		📞	💻		ROTA 24	ROTA 14
+Penelope	⚡	📞			ROTA 30
+Poppy	⚡				ROTA 17	ROTA 18	ROTA 30
+Quinn	⚡	📞		🔨	ROTA 30	ROTA 14	ROTA 24
+Rory				🔨	ROTA 1	ROTA 30
+Skye	⚡			🔨	ROTA 30
+Thea	⚡	📞			ROTA 30	ROTA 24	ROTA 27
+Thomas	⚡				ROTA 17	ROTA 4	ROTA 29
+William	⚡	📞			ROTA 30	ROTA 14	ROTA 28
 
 
 ROTAS for problem A

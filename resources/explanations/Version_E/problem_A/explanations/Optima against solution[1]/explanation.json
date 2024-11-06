@@ -84,7 +84,7 @@
             -1,
             -1,
             0,
-            2,
+            -1,
             -1,
             -1,
             -1,
@@ -97,22 +97,22 @@
             -1,
             -1,
             -1,
-            -1,
+            0,
             -1
         ]
     },
     "descriptor_tuples": [
         [
+            "covered_wednesday",
+            5.0,
+            0.0285
+        ],
+        [
             "covered_saturday",
             5.0,
             0.03
-        ],
-        [
-            "quantity_of_fav_rotas",
-            1,
-            0.0885
         ]
     ],
-    "explanation_text": "On saturday, the coverage is LOW, (rank = 3%)\nFEW workers got their preferred rota, (rank = 8%)",
+    "explanation_text": "On wednesday, the coverage is LOW, (rank = 2%)\nOn saturday, the coverage is LOW, (rank = 3%)",
     "label": "Optima against solution[1]"
 }

@@ -7,10 +7,10 @@ Innes	A = ROTA 24	C = ROTA 20
 
 Finley	C = ROTA 19	C = ROTA 19
 Innes	A = ROTA 24	C = ROTA 20
-Lyla	C = ROTA 22	C = ROTA 22
 Amelia	D = ROTA 25	D = ROTA 25
+Niamh	A = ROTA 24	A = ROTA 24
 
+On wednesday, the coverage is LOW, (rank = 2%)
 On saturday, the coverage is LOW, (rank = 3%)
-FEW workers got their preferred rota, (rank = 8%)
 
-The pattern was found to be beneficial (HIGHLY SIGNIFICANT), with p_value 3.6068070000199634e-165
+The pattern was found to be beneficial (HIGHLY SIGNIFICANT), with p_value 4.240882159922674e-165

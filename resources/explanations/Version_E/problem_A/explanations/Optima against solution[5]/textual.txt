@@ -12,10 +12,11 @@ Angus	B = ROTA 11	C = ROTA 21
 
 Finley	C = ROTA 19	C = ROTA 19
 Innes	A = ROTA 24	C = ROTA 20
-Lyla	C = ROTA 22	C = ROTA 22
+Amelia	D = ROTA 25	D = ROTA 25
 Niamh	A = ROTA 24	A = ROTA 24
 Angus	B = ROTA 11	C = ROTA 21
 
+On wednesday, the coverage is LOW, (rank = 1%)
 On saturday, the coverage is LOW, (rank = 1%)
 
-The pattern was found to be beneficial (HIGHLY SIGNIFICANT), with p_value 5.375660608925423e-163
+The pattern was found to be beneficial (HIGHLY SIGNIFICANT), with p_value 2.6164536537656905e-165

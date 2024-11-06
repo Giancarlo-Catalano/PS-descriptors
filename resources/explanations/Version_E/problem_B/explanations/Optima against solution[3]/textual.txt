@@ -4,12 +4,12 @@ label: Optima against solution[3]
 
 
 
-Ivy	A = ROTA 24	A = ROTA 24
-Matilda	B = ROTA 6	B = ROTA 6
-Louie	D = ROTA 25	D = ROTA 25
-Olivia	C = ROTA 19	C = ROTA 19
-Lilly	A = ROTA 24	A = ROTA 24
+Fraser	C = ROTA 19	C = ROTA 19
+Brodie	A = ROTA 24	A = ROTA 24
+Robert	A = ROTA 24	A = ROTA 24
+Albie	B = ROTA 6	B = ROTA 6
+Kai	D = ROTA 25	D = ROTA 25
 
 
 
-The pattern was found to be beneficial (HIGHLY SIGNIFICANT), with p_value 3.2570973456465654e-165
+The pattern was found to be beneficial (HIGHLY SIGNIFICANT), with p_value 5.0162643368033785e-165
