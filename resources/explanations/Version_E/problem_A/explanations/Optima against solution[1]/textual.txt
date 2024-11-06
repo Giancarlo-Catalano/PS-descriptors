@@ -13,4 +13,4 @@ Amelia	D = ROTA 25	D = ROTA 25
 On saturday, the coverage is LOW, (rank = 3%)
 FEW workers got their preferred rota, (rank = 8%)
 
-The pattern was found to be negative (HIGHLY SIGNIFICANT), with p_value 3.6068070000199634e-165
+The pattern was found to be beneficial (HIGHLY SIGNIFICANT), with p_value 3.6068070000199634e-165

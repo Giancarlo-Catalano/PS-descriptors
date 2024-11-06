@@ -123,7 +123,7 @@ class PairwiseExplanation:
         return self.get_comparison_of_solution_on_variables(different_variable_indexes, pretty_printer)
 
     def get_hypothesis_test_results(self, hypothesis_tester: WilcoxonTest) -> str:
-        p_value_lower, p_value_higher = hypothesis_tester.get_p_values_of_ps(self.partial_solution)
+        p_value_higher, p_value_lower = hypothesis_tester.get_p_values_of_ps(self.partial_solution)
 
         lower_significance = utils.get_p_value_significance(p_value_lower)
         higher_significance = utils.get_p_value_significance(p_value_higher)

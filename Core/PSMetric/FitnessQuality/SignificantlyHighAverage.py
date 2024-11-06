@@ -143,12 +143,14 @@ class WilcoxonTest:
 
     @classmethod
     def get_p_values_given_fitnesses(cls, fitnesses_without: np.ndarray, fitnesses_with: np.ndarray) -> (float, float):
+        """ returns p_value for greater, lower"""
         differences = fitnesses_with - fitnesses_without
         res_greater = wilcoxon(differences, alternative="greater")
         res_lower = wilcoxon(differences, alternative="less")
         return (float(res_greater.pvalue), float(res_lower.pvalue))
 
     def get_p_values_of_ps(self, ps: PS) -> (float, float):
+        """ returns p_value for greater, lower"""
         without_pattern = self.get_random_samples_without_pattern(ps)
         with_pattern = self.apply_pattern_to_samples(without_pattern, ps)
 

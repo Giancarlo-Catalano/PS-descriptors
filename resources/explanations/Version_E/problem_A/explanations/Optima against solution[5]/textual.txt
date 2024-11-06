@@ -18,4 +18,4 @@ Angus	B = ROTA 11	C = ROTA 21
 
 On saturday, the coverage is LOW, (rank = 1%)
 
-The pattern was found to be negative (HIGHLY SIGNIFICANT), with p_value 5.375660608925423e-163
+The pattern was found to be beneficial (HIGHLY SIGNIFICANT), with p_value 5.375660608925423e-163

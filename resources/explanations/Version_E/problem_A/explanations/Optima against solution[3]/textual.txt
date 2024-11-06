@@ -16,4 +16,4 @@ Niamh	A = ROTA 24	A = ROTA 24
 
 
 
-The pattern was found to be negative (HIGHLY SIGNIFICANT), with p_value 5.809980322865671e-165
+The pattern was found to be beneficial (HIGHLY SIGNIFICANT), with p_value 5.809980322865671e-165

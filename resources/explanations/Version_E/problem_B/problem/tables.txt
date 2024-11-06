@@ -1,34 +1,34 @@
 WORKERS for problem A
-Erin	⚡			🔨	ROTA 30
-Freddie	⚡	📞		🔨	ROTA 2
-George	⚡	📞			ROTA 30
-Mila	⚡		💻	🔨	ROTA 23
-Hallie	⚡			🔨	ROTA 24
-Jack			💻	🔨	ROTA 24	ROTA 14
-Holly	⚡				ROTA 17	ROTA 4	ROTA 29
-Abigail	⚡				ROTA 32	ROTA 6
-Lochlan	⚡	📞			ROTA 2
-Aurora				🔨	ROTA 17
-Carson	⚡			🔨	ROTA 30	ROTA 14	ROTA 28
-Grace	⚡	📞	💻	🔨	ROTA 5
-Lara	⚡				ROTA 11	ROTA 31	ROTA 9	ROTA 6
-Aria	⚡		💻	🔨	ROTA 15	ROTA 3	ROTA 14	ROTA 25
-Roman	⚡			🔨	ROTA 14	ROTA 11	ROTA 21
-Carter	⚡			🔨	ROTA 30	ROTA 24	ROTA 27
-Darcie	⚡	📞	💻	🔨	ROTA 4	ROTA 29
-Archie	⚡				ROTA 18
-Evelyn	⚡			🔨	ROTA 31
-Elsie	⚡				ROTA 17	ROTA 18	ROTA 30
-Amber	⚡	📞		🔨	ROTA 30	ROTA 14	ROTA 24
-Sienna	⚡			🔨	ROTA 7	ROTA 9	ROTA 19	ROTA 6
-Finn				🔨	ROTA 26	ROTA 10	ROTA 22
-Iona	⚡			🔨	ROTA 13	ROTA 4	ROTA 23
-Lewis	⚡				ROTA 16	ROTA 30	ROTA 25	ROTA 9
-Jaxon	⚡	📞		🔨	ROTA 30
-Matthew	⚡				ROTA 24	ROTA 14	ROTA 20	ROTA 12
-Isaac	⚡			🔨	ROTA 8
-Michael		📞			ROTA 1	ROTA 30
-Matilda	⚡		💻	🔨	ROTA 2	ROTA 4	ROTA 30	ROTA 29
+Isla	⚡			🔨	ROTA 30
+George	⚡	📞		🔨	ROTA 2
+Nina	⚡	📞			ROTA 30
+Zoe	⚡		💻	🔨	ROTA 23
+Jessica	⚡			🔨	ROTA 24
+Ivy			💻	🔨	ROTA 24	ROTA 14
+Fergus	⚡				ROTA 17	ROTA 4	ROTA 29
+Matilda	⚡				ROTA 32	ROTA 6
+Arthur	⚡	📞			ROTA 2
+James				🔨	ROTA 17
+Muhammad	⚡			🔨	ROTA 30	ROTA 14	ROTA 28
+Archie	⚡	📞	💻	🔨	ROTA 5
+Maeve	⚡				ROTA 11	ROTA 31	ROTA 9	ROTA 6
+Louie	⚡		💻	🔨	ROTA 15	ROTA 3	ROTA 14	ROTA 25
+Rowan	⚡			🔨	ROTA 14	ROTA 11	ROTA 21
+Nova	⚡			🔨	ROTA 30	ROTA 24	ROTA 27
+Dylan	⚡	📞	💻	🔨	ROTA 4	ROTA 29
+Connor	⚡				ROTA 18
+Samuel	⚡			🔨	ROTA 31
+Eden	⚡				ROTA 17	ROTA 18	ROTA 30
+Summer	⚡	📞		🔨	ROTA 30	ROTA 14	ROTA 24
+Olivia	⚡			🔨	ROTA 7	ROTA 9	ROTA 19	ROTA 6
+Andrew				🔨	ROTA 26	ROTA 10	ROTA 22
+Robyn	⚡			🔨	ROTA 13	ROTA 4	ROTA 23
+Ollie	⚡				ROTA 16	ROTA 30	ROTA 25	ROTA 9
+Harper	⚡	📞		🔨	ROTA 30
+Lilly	⚡				ROTA 24	ROTA 14	ROTA 20	ROTA 12
+Hallie	⚡			🔨	ROTA 8
+Tommy		📞			ROTA 1	ROTA 30
+Orla	⚡		💻	🔨	ROTA 2	ROTA 4	ROTA 30	ROTA 29
 
 
 ROTAS for problem A
