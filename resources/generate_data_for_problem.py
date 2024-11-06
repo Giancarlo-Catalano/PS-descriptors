@@ -8,8 +8,10 @@ from tqdm import tqdm
 
 import utils
 from BenchmarkProblems.EfficientBTProblem.EfficientBTProblem import EfficientBTProblem
+from Core.FSEvaluator import FSEvaluator
 from Core.PRef import PRef
 from Core.PS import PS
+from Core.PSMetric.FitnessQuality.SignificantlyHighAverage import WilcoxonTest
 from Core.SearchSpace import SearchSpace
 from Explanation.PRefManager import PRefManager
 from LCS.DifferenceExplainer.DescriptorsManager import DescriptorsManager
@@ -200,14 +202,31 @@ class QuestionnaireDataForProblemGenerator:
               f"with the following labels: "+(", ".join(utils.unzip(folders)[0])))
         return explanations
 
+
+    def make_hypothesis_tester(self):
+        fs_evaluator = FSEvaluator(self.problem.fitness_function)
+        hypothesis_tester = WilcoxonTest(sample_size=1000,
+                                         search_space=self.problem.search_space,
+                                         fitness_evaluator=fs_evaluator)
+        return hypothesis_tester
+
     def get_explanation_manager(self, descriptor: Optional[DescriptorsManager] = None) -> ExplanationStorer:
         if descriptor is None:
             descriptor = self.make_bootstrap_descriptor()
+
+
         return ExplanationStorer(descriptor=descriptor,
                                  explanation_directory=self.explanations_path,
                                  pRef=self.load_pRef(),
                                  pretty_printer=self.make_pretty_printer(),
+                                 hypothesis_tester = self.make_hypothesis_tester(),
                                  problem=self.problem)
+
+    def reload_and_store_explanations(self, explanations_manager: ExplanationStorer):
+        print("Reloading and storing the explanations")
+        explanations = self.load_explanations()
+        for expl in explanations:
+            self.store_explanation(expl, explanations_manager)
 
     def generate_and_store_explanations(self,
                                         explanation_manager: ExplanationStorer):
@@ -230,7 +249,7 @@ class QuestionnaireDataForProblemGenerator:
         for expl in explanations:
             self.store_explanation(expl, explanation_manager)
 
-    def store_everything(self):
+    def store_everything(self, generate_explanations_ex_novo: bool):
         self.store_problem_json()
         self.store_problem_visualisations()
 
@@ -238,7 +257,10 @@ class QuestionnaireDataForProblemGenerator:
         self.store_optima_visualisations()
 
         explanation_manager = self.get_explanation_manager()
-        self.generate_and_store_explanations(explanation_manager)
+        if generate_explanations_ex_novo:
+            self.generate_and_store_explanations(explanation_manager)
+        else:
+            self.reload_and_store_explanations(explanation_manager)
 
 
 def generate_for_first_problem():
@@ -253,7 +275,7 @@ def generate_for_first_problem():
 
     problem_manager = QuestionnaireDataForProblemGenerator(problem, problem_A_path)
 
-    problem_manager.store_everything()
+    problem_manager.store_everything(generate_explanations_ex_novo=False)
 
 class QuestionnaireDataForPermutedProblemGenerator(QuestionnaireDataForProblemGenerator):
     original_problem_manager: QuestionnaireDataForProblemGenerator
@@ -314,8 +336,9 @@ class QuestionnaireDataForPermutedProblemGenerator(QuestionnaireDataForProblemGe
         for expl in own_explanations:
             self.store_explanation(expl, explanation_manager)
 
-    def store_everything(self):
-        super().store_everything()
+    def store_everything(self,
+                         generate_explanations_ex_novo: bool):
+        super().store_everything(generate_explanations_ex_novo=generate_explanations_ex_novo)
 
         with utils.open_and_make_directories(self.conversion_json_path) as file:
             json.dump(self.conversion_data, file, indent=4)
@@ -331,7 +354,7 @@ def generate_for_second_problem():
 
     problem_manager.load_original_problem()
     problem_manager.generate_conversion_and_problem()
-    problem_manager.store_everything()
+    problem_manager.store_everything(True)
 def big_bang():
     generate_for_first_problem()
     generate_for_second_problem()

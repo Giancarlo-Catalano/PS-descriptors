@@ -122,6 +122,22 @@ class PairwiseExplanation:
 
         return self.get_comparison_of_solution_on_variables(different_variable_indexes, pretty_printer)
 
+    def get_hypothesis_test_results(self, hypothesis_tester: WilcoxonTest) -> str:
+        p_value_lower, p_value_higher = hypothesis_tester.get_p_values_of_ps(self.partial_solution)
+
+        lower_significance = utils.get_p_value_significance(p_value_lower)
+        higher_significance = utils.get_p_value_significance(p_value_higher)
+
+
+        match (lower_significance, higher_significance):
+            case ("INSIGNIFICANT", "INSIGNIFICANT"):
+                return "The pattern was not found to be significantly positive or negative"
+            case ("INSIGNIFICANT", _):
+                return f"The pattern was found to be beneficial ({higher_significance}), with p_value {p_value_higher}"
+            case (_, "INSIGNIFICANT"):
+                return f"The pattern was found to be negative ({lower_significance}), with p_value {p_value_lower}"
+            case _:
+                return f"Somehow, the pattern is both positive and negative ({p_value_lower = }, {p_value_higher})"
 
     def to_json(self) -> dict:
         return {"main_solution": self.main_solution.to_json(),

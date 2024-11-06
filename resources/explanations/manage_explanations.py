@@ -1,11 +1,13 @@
 import json
 import os
+from typing import Optional
 
 from BenchmarkProblems.BenchmarkProblem import BenchmarkProblem
 from BenchmarkProblems.EfficientBTProblem.EfficientBTProblem import EfficientBTProblem
 from Core.FullSolution import FullSolution
 from Core.PRef import PRef
 from Core.PS import PS
+from Core.PSMetric.FitnessQuality.SignificantlyHighAverage import WilcoxonTest
 from Core.PSMetric.Linkage.TraditionalPerturbationLinkage import TraditionalPerturbationLinkage
 from LCS.DifferenceExplainer.DescriptorsManager import DescriptorsManager
 from PairExplanation.BTProblemPrettyPrinter import BTProblemPrettyPrinter
@@ -23,11 +25,13 @@ class ExplanationStorer:
     explanation_directory: str
     tester: PairExplanationTester
     linkage_learner: TraditionalPerturbationLinkage
+    hypothesis_tester: Optional[WilcoxonTest]
 
     def __init__(self,
                  problem: EfficientBTProblem,
                  descriptor: DescriptorsManager,
                  pretty_printer: BTProblemPrettyPrinter,
+                 hypothesis_tester: Optional[WilcoxonTest],
                  pRef: PRef,
                  explanation_directory: str):
         self.problem = problem
@@ -38,6 +42,7 @@ class ExplanationStorer:
         self.tester = self.get_tester()
         self.linkage_learner = self.get_linkage_learner()
         self.weighted_graph_visualiser = self.get_graph_visualiser()
+        self.hypothesis_tester = hypothesis_tester
 
     def get_tester(self):
         return PairExplanationTester(optimisation_problem=self.problem,
@@ -74,7 +79,8 @@ class ExplanationStorer:
                             expl.get_difference_in_rotas_table(self.pretty_printer),
                             expl.get_changes_in_range(self.pretty_printer),
                             expl.get_ps_table(self.pretty_printer),
-                            expl.explanation_text])
+                            expl.explanation_text,
+                            expl.get_hypothesis_test_results(self.hypothesis_tester)])
 
     def store_linkage_image(self, expl: PairwiseExplanation, file_name: str):
         ps = expl.partial_solution

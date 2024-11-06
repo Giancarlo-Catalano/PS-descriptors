@@ -529,3 +529,14 @@ def remap_array(original: np.ndarray, new_min: float, new_max: float):
     in_zero_one = (original - observed_min) / (observed_max - observed_min)
 
     return in_zero_one * (new_max-new_min) + new_min
+
+
+def get_p_value_significance(p_value: float) -> str:
+    if p_value > 0.05:
+        return "INSIGNIFICANT"
+    elif 0.01 < p_value <= 0.05:
+        return "SIGNIFICANT"
+    elif 0.001 < p_value <= 0.01:
+        return "VERY SIGNIFICANT"
+    else:
+        return "HIGHLY SIGNIFICANT"
