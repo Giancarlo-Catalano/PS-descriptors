@@ -1,0 +1,15 @@
+label: Optima against solution[5]
+
+
+
+
+
+Jack	A = ROTA 24	A = ROTA 24
+Roman	B = ROTA 11	B = ROTA 11
+Sienna	C = ROTA 19	C = ROTA 19
+Finn	C = ROTA 22	C = ROTA 22
+Matthew	A = ROTA 24	A = ROTA 24
+
+On saturday, the coverage is LOW, (rank = 1%)
+
+The pattern was found to be negative (HIGHLY SIGNIFICANT), with p_value 1.0412492080442189e-162
