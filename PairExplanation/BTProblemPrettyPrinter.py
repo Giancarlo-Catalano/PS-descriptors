@@ -178,7 +178,7 @@ class BTProblemPrettyPrinter:
             most = max(counts_of_workers)
 
             fitness = 1.0 if least == 0 else ((most - least) / most) ** 2
-            return f"max = {most}, min = {least}, p = {fitness:.2f}"
+            return f"\"max = {most},\nmin = {least},\n p = {fitness:.2f}\""
 
         def repr_for_skill(skill: str) -> str:
             counts = calendar[skill]

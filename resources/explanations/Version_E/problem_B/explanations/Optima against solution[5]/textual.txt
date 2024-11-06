@@ -4,11 +4,11 @@ label: Optima against solution[5]
 
 
 
-Fraser	C = ROTA 19	C = ROTA 19
-Brodie	A = ROTA 24	A = ROTA 24
-Robert	A = ROTA 24	A = ROTA 24
-Darcie	B = ROTA 11	B = ROTA 11
-Kai	D = ROTA 25	D = ROTA 25
+Struan	C = ROTA 19	C = ROTA 19
+Jaxon	A = ROTA 24	A = ROTA 24
+Hannah	A = ROTA 24	A = ROTA 24
+Aaron	B = ROTA 11	B = ROTA 11
+Myles	D = ROTA 25	D = ROTA 25
 
 On wednesday, the coverage is LOW, (rank = 1%)
 On saturday, the coverage is LOW, (rank = 1%)

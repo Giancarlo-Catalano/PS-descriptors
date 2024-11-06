@@ -4,11 +4,11 @@ label: Optima against solution[3]
 
 
 
-Fraser	C = ROTA 19	C = ROTA 19
-Brodie	A = ROTA 24	A = ROTA 24
-Robert	A = ROTA 24	A = ROTA 24
-Albie	B = ROTA 6	B = ROTA 6
-Kai	D = ROTA 25	D = ROTA 25
+Struan	C = ROTA 19	C = ROTA 19
+Jaxon	A = ROTA 24	A = ROTA 24
+Hannah	A = ROTA 24	A = ROTA 24
+Rosie	B = ROTA 6	B = ROTA 6
+Myles	D = ROTA 25	D = ROTA 25
 
 
 

@@ -1,34 +1,34 @@
 WORKERS for problem A
-Albie		📞			ROTA 32	ROTA 6
-Anna		📞	💻		ROTA 24
-Annie		📞	💻		ROTA 31
-Brodie		📞			ROTA 24	ROTA 14	ROTA 20	ROTA 12
-Charlotte	⚡				ROTA 1	ROTA 30
-Cole		📞	💻	🔨	ROTA 23
-Cooper		📞	💻		ROTA 30	ROTA 14	ROTA 28
-Darcie		📞	💻		ROTA 14	ROTA 11	ROTA 21
-David		📞	💻		ROTA 30
-Evie		📞			ROTA 17	ROTA 4	ROTA 29
-Fraser		📞	💻		ROTA 7	ROTA 9	ROTA 19	ROTA 6
-Gracie	⚡	📞	💻		ROTA 30	ROTA 14	ROTA 24
-Hallie	⚡	📞	💻	🔨	ROTA 4	ROTA 29
-Hamish		📞			ROTA 16	ROTA 30	ROTA 25	ROTA 9
-Harris		📞	💻	🔨	ROTA 2	ROTA 4	ROTA 30	ROTA 29
-Henry	⚡	📞	💻		ROTA 2
-Ivy	⚡	📞	💻	🔨	ROTA 5
-Joseph			💻		ROTA 26	ROTA 10	ROTA 22
-Kai		📞	💻	🔨	ROTA 15	ROTA 3	ROTA 14	ROTA 25
-Leon		📞	💻		ROTA 8
-Lewis	⚡	📞			ROTA 2
-Lochlan		📞	💻		ROTA 13	ROTA 4	ROTA 23
-Lottie		📞	💻		ROTA 30	ROTA 24	ROTA 27
-Louie		📞			ROTA 18
-Matilda	⚡	📞			ROTA 30
-Myla			💻		ROTA 17
-Nova		📞			ROTA 11	ROTA 31	ROTA 9	ROTA 6
-Robert			💻	🔨	ROTA 24	ROTA 14
-Samuel	⚡	📞	💻		ROTA 30
-Sofia		📞			ROTA 17	ROTA 18	ROTA 30
+Aaron		📞	💻		ROTA 14	ROTA 11	ROTA 21
+Albie		📞	💻	🔨	ROTA 23
+Arthur		📞	💻		ROTA 8
+Ava	⚡	📞	💻		ROTA 2
+Blair	⚡	📞	💻		ROTA 30	ROTA 14	ROTA 24
+Caleb	⚡				ROTA 1	ROTA 30
+Carter		📞	💻		ROTA 30	ROTA 24	ROTA 27
+Connor		📞	💻		ROTA 31
+Elsie		📞	💻		ROTA 30
+Emily			💻		ROTA 26	ROTA 10	ROTA 22
+Evie		📞			ROTA 16	ROTA 30	ROTA 25	ROTA 9
+George		📞			ROTA 18
+Grayson		📞	💻		ROTA 30	ROTA 14	ROTA 28
+Hamish		📞	💻		ROTA 24
+Hannah			💻	🔨	ROTA 24	ROTA 14
+James		📞	💻		ROTA 13	ROTA 4	ROTA 23
+Jaxon		📞			ROTA 24	ROTA 14	ROTA 20	ROTA 12
+Jessica	⚡	📞	💻		ROTA 30
+Joseph	⚡	📞	💻	🔨	ROTA 4	ROTA 29
+Kai		📞			ROTA 17	ROTA 4	ROTA 29
+Lily	⚡	📞	💻	🔨	ROTA 5
+Molly		📞	💻	🔨	ROTA 2	ROTA 4	ROTA 30	ROTA 29
+Muhammad	⚡	📞			ROTA 2
+Myles		📞	💻	🔨	ROTA 15	ROTA 3	ROTA 14	ROTA 25
+Orla		📞			ROTA 17	ROTA 18	ROTA 30
+Phoebe	⚡	📞			ROTA 30
+Rosie		📞			ROTA 32	ROTA 6
+Sonny			💻		ROTA 17
+Struan		📞	💻		ROTA 7	ROTA 9	ROTA 19	ROTA 6
+Zoe		📞			ROTA 11	ROTA 31	ROTA 9	ROTA 6
 
 
 ROTAS for problem A
