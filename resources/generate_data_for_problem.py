@@ -34,6 +34,7 @@ skill_emoji_dict = {"electricity": "⚡",
 current_expl_directory = r"C:\Users\gac8\PycharmProjects\PS-descriptors-LCS\resources\explanations\Version_E"
 problem_A_path = os.path.join(current_expl_directory, "problem_A")
 problem_B_path = os.path.join(current_expl_directory, "problem_B")
+example_problem_path = os.path.join(current_expl_directory, "example_problem")
 
 
 class QuestionnaireDataForProblemGenerator:
@@ -263,7 +264,7 @@ class QuestionnaireDataForProblemGenerator:
             self.reload_and_store_explanations(explanation_manager)
 
 
-def generate_for_first_problem():
+def generate_for_first_problem(generate_explanations_ex_novo: bool):
     seed = 42
     problem = EfficientBTProblem.random_subset_of(EfficientBTProblem.from_default_files(),
                                                   quantity_workers_to_keep=30,
@@ -275,7 +276,22 @@ def generate_for_first_problem():
 
     problem_manager = QuestionnaireDataForProblemGenerator(problem, problem_A_path)
 
-    problem_manager.store_everything(generate_explanations_ex_novo=False)
+    problem_manager.store_everything(generate_explanations_ex_novo)
+
+
+def generate_for_example_problem(generate_explanations_ex_novo):
+    seed = 6
+    problem = EfficientBTProblem.random_subset_of(EfficientBTProblem.from_default_files(),
+                                                  quantity_workers_to_keep=30,
+                                                  skills_to_use={"woodworking", "fibre", "tech support",
+                                                                 "electricity"},
+                                                  random_state=seed,
+                                                  max_rota_length=3,
+                                                  calendar_length=8 * 7)
+
+    problem_manager = QuestionnaireDataForProblemGenerator(problem, example_problem_path)
+
+    problem_manager.store_everything(generate_explanations_ex_novo)
 
 class QuestionnaireDataForPermutedProblemGenerator(QuestionnaireDataForProblemGenerator):
     original_problem_manager: QuestionnaireDataForProblemGenerator
@@ -337,8 +353,8 @@ class QuestionnaireDataForPermutedProblemGenerator(QuestionnaireDataForProblemGe
             self.store_explanation(expl, explanation_manager)
 
     def store_everything(self,
-                         generate_explanations_ex_novo: bool):
-        super().store_everything(generate_explanations_ex_novo=generate_explanations_ex_novo)
+                         obtain_explanations_from_original_problem: bool):
+        super().store_everything(generate_explanations_ex_novo=obtain_explanations_from_original_problem)
 
         with utils.open_and_make_directories(self.conversion_json_path) as file:
             json.dump(self.conversion_data, file, indent=4)
@@ -348,15 +364,17 @@ class QuestionnaireDataForPermutedProblemGenerator(QuestionnaireDataForProblemGe
 
 
 
-def generate_for_second_problem():
+def generate_for_second_problem(obtain_explanations_from_original_problem: bool):
     problem_manager = QuestionnaireDataForPermutedProblemGenerator(original_problem_folder=problem_A_path,
                                                                    own_problem_folder=problem_B_path)
 
     problem_manager.load_original_problem()
     problem_manager.generate_conversion_and_problem()
-    problem_manager.store_everything(True)
+    problem_manager.store_everything(obtain_explanations_from_original_problem)
 def big_bang():
-    generate_for_first_problem()
-    generate_for_second_problem()
+    generate_for_first_problem(generate_explanations_ex_novo=False)
+    generate_for_second_problem(obtain_explanations_from_original_problem=False)
+
+    generate_for_example_problem(generate_explanations_ex_novo=True)
 
 big_bang()

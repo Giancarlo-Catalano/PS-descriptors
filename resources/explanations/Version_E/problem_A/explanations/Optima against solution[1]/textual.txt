@@ -13,4 +13,4 @@ Niamh	A = ROTA 24	A = ROTA 24
 On wednesday, the coverage is LOW, (rank = 2%)
 On saturday, the coverage is LOW, (rank = 3%)
 
-The pattern was found to be beneficial (HIGHLY SIGNIFICANT), with p_value 4.240875018904619e-165
+The pattern was found to be beneficial (HIGHLY SIGNIFICANT), with p_value 4.240882159922674e-165

@@ -4,11 +4,11 @@ label: Optima against solution[3]
 
 
 
-Struan	C = ROTA 19	C = ROTA 19
-Jaxon	A = ROTA 24	A = ROTA 24
-Hannah	A = ROTA 24	A = ROTA 24
-Rosie	B = ROTA 6	B = ROTA 6
-Myles	D = ROTA 25	D = ROTA 25
+Ayla	C = ROTA 19	C = ROTA 19
+Mia	A = ROTA 24	A = ROTA 24
+Rowan	A = ROTA 24	A = ROTA 24
+Elsie	B = ROTA 6	B = ROTA 6
+Louis	D = ROTA 25	D = ROTA 25
 
 
 
