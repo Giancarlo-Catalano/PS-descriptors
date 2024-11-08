@@ -28,9 +28,6 @@ skill_emoji_dict = {"electricity": "⚡",
                     "woodworking": "🔨",
                     "plumbing": "🔧"}
 
-
-
-
 current_expl_directory = r"C:\Users\gac8\PycharmProjects\PS-descriptors-LCS\resources\explanations\Version_E"
 problem_A_path = os.path.join(current_expl_directory, "problem_A")
 problem_B_path = os.path.join(current_expl_directory, "problem_B")
@@ -184,7 +181,6 @@ class QuestionnaireDataForProblemGenerator:
             expl.label = expl_label
             return expl
 
-
     def load_explanations(self) -> list[PairwiseExplanation]:
         # the only stuff that we need is in the json
         # we get the label for the explanations from the folder names
@@ -200,9 +196,8 @@ class QuestionnaireDataForProblemGenerator:
                         for label, path in folders]
 
         print(f"The explanations were loaded from the {explanations_path} folder, "
-              f"with the following labels: "+(", ".join(utils.unzip(folders)[0])))
+              f"with the following labels: " + (", ".join(utils.unzip(folders)[0])))
         return explanations
-
 
     def make_hypothesis_tester(self):
         fs_evaluator = FSEvaluator(self.problem.fitness_function)
@@ -215,12 +210,11 @@ class QuestionnaireDataForProblemGenerator:
         if descriptor is None:
             descriptor = self.make_bootstrap_descriptor()
 
-
         return ExplanationStorer(descriptor=descriptor,
                                  explanation_directory=self.explanations_path,
                                  pRef=self.load_pRef(),
                                  pretty_printer=self.make_pretty_printer(),
-                                 hypothesis_tester = self.make_hypothesis_tester(),
+                                 hypothesis_tester=self.make_hypothesis_tester(),
                                  problem=self.problem)
 
     def reload_and_store_explanations(self, explanations_manager: ExplanationStorer):
@@ -293,6 +287,7 @@ def generate_for_example_problem(generate_explanations_ex_novo):
 
     problem_manager.store_everything(generate_explanations_ex_novo)
 
+
 class QuestionnaireDataForPermutedProblemGenerator(QuestionnaireDataForProblemGenerator):
     original_problem_manager: QuestionnaireDataForProblemGenerator
     conversion_data: Optional[dict]
@@ -341,7 +336,6 @@ class QuestionnaireDataForPermutedProblemGenerator(QuestionnaireDataForProblemGe
 
         print(f"The converted pRef was obtained and stored in {self.pRef_path}")
 
-
     def generate_and_store_explanations(self,
                                         explanation_manager: ExplanationStorer):
         original_explanations = self.original_problem_manager.load_explanations()
@@ -362,8 +356,6 @@ class QuestionnaireDataForPermutedProblemGenerator(QuestionnaireDataForProblemGe
         print(f"Stored the conversion file into {self.conversion_json_path}")
 
 
-
-
 def generate_for_second_problem(obtain_explanations_from_original_problem: bool):
     problem_manager = QuestionnaireDataForPermutedProblemGenerator(original_problem_folder=problem_A_path,
                                                                    own_problem_folder=problem_B_path)
@@ -371,10 +363,13 @@ def generate_for_second_problem(obtain_explanations_from_original_problem: bool)
     problem_manager.load_original_problem()
     problem_manager.generate_conversion_and_problem()
     problem_manager.store_everything(obtain_explanations_from_original_problem)
+
+
 def big_bang():
     generate_for_first_problem(generate_explanations_ex_novo=False)
     generate_for_second_problem(obtain_explanations_from_original_problem=False)
 
-    generate_for_example_problem(generate_explanations_ex_novo=True)
+    generate_for_example_problem(generate_explanations_ex_novo=False)
+
 
 big_bang()

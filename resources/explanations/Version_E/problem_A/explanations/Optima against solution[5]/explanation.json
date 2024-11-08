@@ -49,10 +49,10 @@
             0,
             0,
             2,
-            2,
+            0,
             2,
             0,
-            0,
+            1,
             0,
             0,
             0,
@@ -64,7 +64,7 @@
             1,
             0,
             0,
-            2
+            1
         ]
     },
     "difference_pattern": {
@@ -83,10 +83,10 @@
             -1,
             -1,
             -1,
+            -1,
+            -1,
+            -1,
             0,
-            -1,
-            -1,
-            -1,
             -1,
             -1,
             -1,
@@ -98,21 +98,10 @@
             -1,
             -1,
             0,
-            1
+            -1
         ]
     },
-    "descriptor_tuples": [
-        [
-            "covered_wednesday",
-            5.0,
-            0.01
-        ],
-        [
-            "covered_saturday",
-            5.0,
-            0.011
-        ]
-    ],
-    "explanation_text": "On wednesday, the coverage is LOW, (rank = 1%)\nOn saturday, the coverage is LOW, (rank = 1%)",
+    "descriptor_tuples": [],
+    "explanation_text": "",
     "label": "Optima against solution[5]"
 }

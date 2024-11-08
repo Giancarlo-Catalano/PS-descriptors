@@ -4,12 +4,12 @@ label: Optima against solution[1]
 
 
 
-Ayla	C = ROTA 19	C = ROTA 19
-Mia	A = ROTA 24	A = ROTA 24
-Rowan	A = ROTA 24	A = ROTA 24
-Louis	D = ROTA 25	D = ROTA 25
+Carson	A = ROTA 6	A = ROTA 6
+Freddie	C = ROTA 30	C = ROTA 30
+Arran	A = ROTA 6	A = ROTA 6
+Sienna	D = ROTA 24	D = ROTA 24
 
 On wednesday, the coverage is LOW, (rank = 2%)
 On saturday, the coverage is LOW, (rank = 3%)
 
-The pattern was found to be beneficial (HIGHLY SIGNIFICANT), with p_value 4.584759437618535e-165
+The pattern was found to be beneficial (HIGHLY SIGNIFICANT), with p_value 2.862897618935811e-165
