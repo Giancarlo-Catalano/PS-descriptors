@@ -12,8 +12,8 @@
     "workers": [
         {
             "available_skills": [
-                "electricity",
                 "woodworking",
+                "electricity",
                 "fibre"
             ],
             "available_rotas": [
@@ -35,8 +35,8 @@
         },
         {
             "available_skills": [
-                "electricity",
                 "woodworking",
+                "electricity",
                 "fibre"
             ],
             "available_rotas": [
@@ -50,10 +50,10 @@
         },
         {
             "available_skills": [
-                "electricity",
+                "tech support",
                 "woodworking",
-                "fibre",
-                "tech support"
+                "electricity",
+                "fibre"
             ],
             "available_rotas": [
                 {
@@ -104,8 +104,8 @@
         },
         {
             "available_skills": [
-                "electricity",
                 "woodworking",
+                "electricity",
                 "fibre"
             ],
             "available_rotas": [
@@ -119,9 +119,9 @@
         },
         {
             "available_skills": [
+                "tech support",
                 "electricity",
-                "fibre",
-                "tech support"
+                "fibre"
             ],
             "available_rotas": [
                 {
@@ -192,8 +192,8 @@
         },
         {
             "available_skills": [
-                "electricity",
-                "woodworking"
+                "woodworking",
+                "electricity"
             ],
             "available_rotas": [
                 {
@@ -328,8 +328,8 @@
         },
         {
             "available_skills": [
-                "electricity",
-                "woodworking"
+                "woodworking",
+                "electricity"
             ],
             "available_rotas": [
                 {
@@ -377,9 +377,9 @@
         },
         {
             "available_skills": [
+                "tech support",
                 "electricity",
-                "fibre",
-                "tech support"
+                "fibre"
             ],
             "available_rotas": [
                 {
@@ -419,9 +419,9 @@
         },
         {
             "available_skills": [
+                "tech support",
                 "electricity",
-                "fibre",
-                "tech support"
+                "fibre"
             ],
             "available_rotas": [
                 {
@@ -446,10 +446,10 @@
         },
         {
             "available_skills": [
+                "tech support",
                 "electricity",
                 "woodworking",
-                "fibre",
-                "tech support"
+                "fibre"
             ],
             "available_rotas": [
                 {
@@ -544,8 +544,8 @@
         },
         {
             "available_skills": [
-                "fibre",
-                "tech support"
+                "tech support",
+                "fibre"
             ],
             "available_rotas": [
                 {

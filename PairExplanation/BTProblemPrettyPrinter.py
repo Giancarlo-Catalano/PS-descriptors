@@ -43,11 +43,15 @@ class BTProblemPrettyPrinter:
         # note that two rotas which are equivalent might have different hash values,
         # so simply making a set of them is not guaranteed to remove duplicates
         # if we force the patterns to be in their minimal form, it should work!
-        list_of_rotas =  list({cls.simplify_rota(rota)
+
+        unique_rotas = list({cls.simplify_rota(rota)
                      for worker in problem.workers
                      for rota in worker.available_rotas})
-        random.shuffle(list_of_rotas)
-        return list_of_rotas
+
+        unique_rotas.sort(key=hash)
+        seed = hash(worker.name for worker in problem.workers)
+        random.seed(seed)
+        return unique_rotas
 
     @classmethod
     def simplify_rota(cls, rota: RotaPattern) -> RotaPattern:

@@ -1,15 +1,15 @@
 label: Optima against solution[5]
 
-Thomas	A = ROTA 29	B = ROTA 6
+Thomas	A = ROTA 12	B = ROTA 2
 
 ⚡	Monday	12~18	11~17
 ⚡	Sunday	5~6	4~5
 
-Finley	C = ROTA 18	C = ROTA 18
-Thomas	A = ROTA 29	B = ROTA 6
-Amelia	D = ROTA 26	D = ROTA 26
-Niamh	A = ROTA 11	A = ROTA 11
+Finley	C = ROTA 23	C = ROTA 23
+Thomas	A = ROTA 12	B = ROTA 2
+Amelia	D = ROTA 32	D = ROTA 32
+Niamh	A = ROTA 7	A = ROTA 7
 
 
 
-The pattern was found to be beneficial (HIGHLY SIGNIFICANT), with p_value 2.0579812205238359e-165
+The pattern was found to be beneficial (HIGHLY SIGNIFICANT), with p_value 1.6679187134968593e-165

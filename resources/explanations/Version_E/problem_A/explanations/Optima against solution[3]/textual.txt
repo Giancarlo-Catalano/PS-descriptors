@@ -1,19 +1,19 @@
 label: Optima against solution[3]
 
-Cora	B = ROTA 7	A = ROTA 14
-Innes	A = ROTA 11	C = ROTA 1
+Cora	B = ROTA 1	A = ROTA 15
+Innes	A = ROTA 7	C = ROTA 29
 
 ⚡	Monday	12~18	11~18
 ⚡	Tuesday	21~25	20~25
 ⚡	Thursday	22~23	22~24
 ⚡	Friday	19~19	18~20
 
-Cora	B = ROTA 7	A = ROTA 14
-Finley	C = ROTA 18	C = ROTA 18
-Innes	A = ROTA 11	C = ROTA 1
-Amelia	D = ROTA 26	D = ROTA 26
-Niamh	A = ROTA 11	A = ROTA 11
+Cora	B = ROTA 1	A = ROTA 15
+Finley	C = ROTA 23	C = ROTA 23
+Innes	A = ROTA 7	C = ROTA 29
+Amelia	D = ROTA 32	D = ROTA 32
+Niamh	A = ROTA 7	A = ROTA 7
 
 
 
-The pattern was found to be beneficial (HIGHLY SIGNIFICANT), with p_value 1.1818283031226756e-164
+The pattern was found to be beneficial (HIGHLY SIGNIFICANT), with p_value 7.677489389603393e-165

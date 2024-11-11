@@ -4,12 +4,12 @@ label: Optima against solution[3]
 
 
 
-Carson	A = ROTA 6	A = ROTA 6
-Freddie	C = ROTA 30	C = ROTA 30
-Ellie	B = ROTA 20	B = ROTA 20
-Arran	A = ROTA 6	A = ROTA 6
-Sienna	D = ROTA 24	D = ROTA 24
+Hope	A = ROTA 7	A = ROTA 7
+Hudson	A = ROTA 7	A = ROTA 7
+Nova	B = ROTA 1	B = ROTA 1
+Myla	D = ROTA 32	D = ROTA 32
+Emilia	C = ROTA 23	C = ROTA 23
 
 
 
-The pattern was found to be beneficial (HIGHLY SIGNIFICANT), with p_value 1.048401541886949e-164
+The pattern was found to be beneficial (HIGHLY SIGNIFICANT), with p_value 4.710163241043994e-165

@@ -258,7 +258,7 @@ class QuestionnaireDataForProblemGenerator:
             self.reload_and_store_explanations(explanation_manager)
 
 
-def generate_for_first_problem(generate_explanations_ex_novo: bool):
+def  generate_for_first_problem(generate_explanations_ex_novo: bool):
     seed = 42
     problem = EfficientBTProblem.random_subset_of(EfficientBTProblem.from_default_files(),
                                                   quantity_workers_to_keep=30,
@@ -367,9 +367,9 @@ def generate_for_second_problem(obtain_explanations_from_original_problem: bool)
 
 def big_bang():
     generate_for_first_problem(generate_explanations_ex_novo=False)
-    generate_for_second_problem(obtain_explanations_from_original_problem=False)
+    generate_for_second_problem(obtain_explanations_from_original_problem=True)
 
-    generate_for_example_problem(generate_explanations_ex_novo=False)
+    #generate_for_example_problem(generate_explanations_ex_novo=False)
 
 
 big_bang()
