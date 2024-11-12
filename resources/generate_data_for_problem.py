@@ -225,7 +225,7 @@ class QuestionnaireDataForProblemGenerator:
 
     def generate_and_store_explanations(self,
                                         explanation_manager: ExplanationStorer):
-        indexes_to_compare_against = [1, 5, 10, 15]
+        indexes_to_compare_against = [1, 2, 3, 5, 10, 20, 50, 100, 1000]
 
         pRef = explanation_manager.pRef
         best_solutions = pRef.get_top_n_solutions(max(indexes_to_compare_against) + 1)
@@ -366,7 +366,7 @@ def generate_for_second_problem(obtain_explanations_from_original_problem: bool)
 
 
 def big_bang():
-    generate_for_first_problem(generate_explanations_ex_novo=False)
+    generate_for_first_problem(generate_explanations_ex_novo=True)
     generate_for_second_problem(obtain_explanations_from_original_problem=True)
 
     #generate_for_example_problem(generate_explanations_ex_novo=False)

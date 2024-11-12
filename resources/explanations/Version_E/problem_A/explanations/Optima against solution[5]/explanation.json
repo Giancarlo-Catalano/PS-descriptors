@@ -49,10 +49,10 @@
             0,
             0,
             2,
-            0,
+            2,
             2,
             0,
-            1,
+            0,
             0,
             0,
             0,
@@ -64,7 +64,7 @@
             1,
             0,
             0,
-            1
+            2
         ]
     },
     "difference_pattern": {
@@ -83,10 +83,10 @@
             -1,
             -1,
             -1,
-            -1,
-            -1,
-            -1,
             0,
+            2,
+            -1,
+            -1,
             -1,
             -1,
             -1,
@@ -97,11 +97,22 @@
             -1,
             -1,
             -1,
-            0,
-            -1
+            -1,
+            1
         ]
     },
-    "descriptor_tuples": [],
-    "explanation_text": "",
+    "descriptor_tuples": [
+        [
+            "covered_saturday",
+            5.0,
+            0.011
+        ],
+        [
+            "quantity_of_fav_rotas",
+            1,
+            0.0425
+        ]
+    ],
+    "explanation_text": "On saturday, the coverage is LOW, (rank = 1%)\nFEW workers got their preferred rota, (rank = 4%)",
     "label": "Optima against solution[5]"
 }

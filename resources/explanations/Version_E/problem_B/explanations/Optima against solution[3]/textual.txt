@@ -4,12 +4,11 @@ label: Optima against solution[3]
 
 
 
-Hope	A = ROTA 7	A = ROTA 7
-Hudson	A = ROTA 7	A = ROTA 7
-Nova	B = ROTA 1	B = ROTA 1
-Myla	D = ROTA 32	D = ROTA 32
-Emilia	C = ROTA 23	C = ROTA 23
+Sofia	D = ROTA 32	D = ROTA 32
+Benjamin	C = ROTA 11	C = ROTA 11
+Eden	C = ROTA 23	C = ROTA 23
+Joseph	B = ROTA 1	B = ROTA 1
 
+FEW workers got their preferred rota, (rank = 1%)
 
-
-The pattern was found to be beneficial (HIGHLY SIGNIFICANT), with p_value 4.710163241043994e-165
+The pattern was found to be beneficial (HIGHLY SIGNIFICANT), with p_value 4.626184040268953e-165

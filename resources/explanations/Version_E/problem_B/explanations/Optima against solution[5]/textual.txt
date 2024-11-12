@@ -4,11 +4,13 @@ label: Optima against solution[5]
 
 
 
-Jax	A = ROTA 12	A = ROTA 12
-Hudson	A = ROTA 7	A = ROTA 7
-Myla	D = ROTA 32	D = ROTA 32
-Emilia	C = ROTA 23	C = ROTA 23
+Sofia	D = ROTA 32	D = ROTA 32
+Ada	B = ROTA 10	B = ROTA 10
+Benjamin	C = ROTA 11	C = ROTA 11
+Leo	A = ROTA 7	A = ROTA 7
+Eden	C = ROTA 23	C = ROTA 23
 
+On saturday, the coverage is LOW, (rank = 1%)
+FEW workers got their preferred rota, (rank = 4%)
 
-
-The pattern was found to be beneficial (HIGHLY SIGNIFICANT), with p_value 1.7925380235313537e-165
+The pattern was found to be beneficial (HIGHLY SIGNIFICANT), with p_value 3.306322076698274e-165

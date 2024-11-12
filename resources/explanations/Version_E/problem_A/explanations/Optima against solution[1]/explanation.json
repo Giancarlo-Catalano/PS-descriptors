@@ -49,7 +49,7 @@
             0,
             0,
             2,
-            3,
+            2,
             2,
             0,
             0,
@@ -105,14 +105,14 @@
         [
             "covered_wednesday",
             5.0,
-            0.028
+            0.0245
         ],
         [
             "covered_saturday",
             5.0,
-            0.03
+            0.028
         ]
     ],
-    "explanation_text": "On wednesday, the coverage is LOW, (rank = 2%)\nOn saturday, the coverage is LOW, (rank = 3%)",
+    "explanation_text": "On wednesday, the coverage is LOW, (rank = 2%)\nOn saturday, the coverage is LOW, (rank = 2%)",
     "label": "Optima against solution[1]"
 }

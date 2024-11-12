@@ -46,7 +46,7 @@ class ExplanationStorer:
 
     def get_tester(self):
         return PairExplanationTester(optimisation_problem=self.problem,
-                                     ps_search_budget=2000,
+                                     ps_search_budget=10000,
                                      ps_search_population=100,
                                      pRef=self.pRef,
                                      verbose=False)
