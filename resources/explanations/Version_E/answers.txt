@@ -1,0 +1,15 @@
+Results for question 1
+#1 -> [('Niamh', 'A')] -> penalty = 20.711482187154964
+#2 -> [('Finley', 'B')] -> penalty = 22.66200318312256
+#3 -> [('Finley', 'B'), ('Niamh', 'A')] -> penalty = 22.66200318312256
+#4 -> [('Amelia', 'C')] -> penalty = 24.995647099426133
+#5 -> [('Amelia', 'C'), ('Niamh', 'A')] -> penalty = 24.995647099426133
+#6 -> [('Finley', 'B'), ('Amelia', 'C')] -> penalty = 25.03444442167913
+Results for question 2
+Results for question 1
+Results for question 2
+#1 -> [('Theo', 'A')] -> penalty = 21.024806206632558
+#2 -> [('Benjamin', 'A')] -> penalty = 22.478624548266076
+#3 -> [('Ada', 'A')] -> penalty = 22.575788309603947
+#4 -> [('Sofia', 'A')] -> penalty = 22.632491260392104
+#5 -> [('Eden', 'A')] -> penalty = 22.68349548844728

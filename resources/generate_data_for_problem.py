@@ -9,6 +9,7 @@ from tqdm import tqdm
 import utils
 from BenchmarkProblems.EfficientBTProblem.EfficientBTProblem import EfficientBTProblem
 from Core.FSEvaluator import FSEvaluator
+from Core.FullSolution import FullSolution
 from Core.PRef import PRef
 from Core.PS import PS
 from Core.PSMetric.FitnessQuality.SignificantlyHighAverage import WilcoxonTest
@@ -38,7 +39,7 @@ class QuestionnaireDataForProblemGenerator:
     problem: Optional[EfficientBTProblem]
     main_dir: str
 
-    def __init__(self, problem, main_dir):
+    def __init__(self, problem = None, main_dir = "invalid"):
         self.problem = problem
         self.main_dir = main_dir
 
@@ -258,7 +259,41 @@ class QuestionnaireDataForProblemGenerator:
             self.reload_and_store_explanations(explanation_manager)
 
 
-def  generate_for_first_problem(generate_explanations_ex_novo: bool):
+    def store_answers(self,
+                      question_1_options: list,
+                      question_2_options: list):
+        pRef = self.load_pRef()
+        optima = pRef.get_best_solution()
+        def solution_if_worker_on_option(solution: FullSolution,
+                                         worker_name: str,
+                                         new_rota_choice: str):
+            worker_index = [index for index, worker in enumerate(self.problem.workers)
+                            if worker.name == worker_name][0]
+            value = utils.alphabet.index(new_rota_choice)
+            return solution.with_different_value(variable_index=worker_index, new_value=value)
+
+        def get_fitness_for_modification(option: list[(str, str)]):
+            current_solution = optima
+            for worker, new_rota in option:
+                current_solution = solution_if_worker_on_option(current_solution, worker, new_rota)
+            return self.problem.fitness_function(current_solution)
+
+
+        def arrange_modifications_by_entry(modifications):
+            mods_and_fits = [(modif, get_fitness_for_modification(modif)) for modif in modifications]
+            mods_and_fits.sort(key=utils.second, reverse=True)
+            for index, (modif, fitness) in enumerate(mods_and_fits):
+                print(f"#{index+1} -> {modif} -> penalty = {-fitness}")
+
+
+        print("Results for question 1")
+        arrange_modifications_by_entry(question_1_options)
+
+        print("Results for question 2")
+        arrange_modifications_by_entry(question_2_options)
+
+
+def generate_for_first_problem(generate_explanations_ex_novo: bool):
     seed = 42
     problem = EfficientBTProblem.random_subset_of(EfficientBTProblem.from_default_files(),
                                                   quantity_workers_to_keep=30,
@@ -356,6 +391,12 @@ class QuestionnaireDataForPermutedProblemGenerator(QuestionnaireDataForProblemGe
         print(f"Stored the conversion file into {self.conversion_json_path}")
 
 
+
+
+
+
+
+
 def generate_for_second_problem(obtain_explanations_from_original_problem: bool):
     problem_manager = QuestionnaireDataForPermutedProblemGenerator(original_problem_folder=problem_A_path,
                                                                    own_problem_folder=problem_B_path)
@@ -365,6 +406,9 @@ def generate_for_second_problem(obtain_explanations_from_original_problem: bool)
     problem_manager.store_everything(obtain_explanations_from_original_problem)
 
 
+
+
+
 def big_bang():
     generate_for_first_problem(generate_explanations_ex_novo=True)
     generate_for_second_problem(obtain_explanations_from_original_problem=True)
@@ -372,4 +416,34 @@ def big_bang():
     #generate_for_example_problem(generate_explanations_ex_novo=False)
 
 
-big_bang()
+def aftermath():
+    problem_A_manager = QuestionnaireDataForProblemGenerator(main_dir=problem_A_path)
+    problem_A_manager.load_problem()
+    problem_B_manager = QuestionnaireDataForPermutedProblemGenerator(original_problem_folder=problem_A_path,
+                                                                   own_problem_folder=problem_B_path)
+    problem_B_manager.load_problem()
+
+    finlay_mod = ("Finley", "B")
+    amelia_mod = ("Amelia", "C")
+    niamh_mod = ("Niamh", "A")
+    question_1_options = [[finlay_mod],
+                          [amelia_mod],
+                          [niamh_mod],
+                          [finlay_mod, amelia_mod],
+                          [finlay_mod, niamh_mod],
+                          [amelia_mod, niamh_mod]]
+    problem_A_manager.store_answers(question_1_options, [])
+
+    question_2_options = [
+                            [("Ada", "A")],
+                            [("Benjamin", "A")],
+                            [("Sofia", "A")],
+                            [("Eden", "A")],
+                            [("Theo", "A")],
+                          ]
+    problem_B_manager.store_answers([], question_2_options)
+
+#big_bang()
+
+
+aftermath()
