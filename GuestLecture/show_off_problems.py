@@ -1,0 +1,99 @@
+import numpy as np
+from tqdm import tqdm
+
+from BenchmarkProblems.BenchmarkProblem import BenchmarkProblem
+from BenchmarkProblems.Checkerboard import CheckerBoard
+from BenchmarkProblems.EfficientBTProblem.KnapSackProblem import KnapSackProblem
+from BenchmarkProblems.GraphColouring import GraphColouring
+from BenchmarkProblems.MultiDimensionalKnapsack import MultiDimensionalKnapsack
+from Core.FullSolution import FullSolution
+from Core.PS import PS, STAR
+from Explanation.PRefManager import PRefManager
+from PairExplanation.PairExplanationTester import PairExplanationTester
+from utils import announce
+
+
+def get_unexplained_parts(solution: FullSolution, partial_solutions: list[PS]) -> FullSolution:
+    explained_values = [False for value in solution.values]
+    for ps in partial_solutions:
+        for index, value in enumerate(ps.values):
+            if value != STAR:
+                explained_values[index] = True
+
+    result = solution.copy()
+    for index, has_been_explained in enumerate(explained_values):
+        if not has_been_explained:
+            result = result.with_different_value(index, -1)
+    return result
+
+
+def show_off_problem(problem: BenchmarkProblem,
+                     pRef_size: int = 20000,
+                     amount_of_pss_to_find: int = 4):
+    print(f"The problem is {problem}")
+
+    with announce("Generating the pRef for the GC problem"):
+        pRef = PRefManager.generate_pRef(problem=problem,
+                                         sample_size=pRef_size,
+                                         which_algorithm="uniform GA")
+
+    best_solutions = pRef.get_top_n_solutions(10)
+    optima = best_solutions[0]
+
+    explanation_generator = PairExplanationTester(optimisation_problem=problem,
+                                                  ps_search_budget=5000,
+                                                  ps_search_population=50,
+                                                  pRef=pRef,
+                                                  verbose=True)
+
+    def find_explanation(solution, previously_found_patterns) -> PS:
+        background: FullSolution = get_unexplained_parts(solution, previously_found_patterns)
+        print(f"Attempting to find the explanation for {solution}, with the background being {background}")
+        return explanation_generator.find_pss(solution,
+                                              background_solution=background,
+                                              culling_method="biggest")[0]
+
+    # generate the explanations
+    explanations: list[PS] = []
+    for _ in tqdm(range(amount_of_pss_to_find)):
+        explanation = find_explanation(optima, explanations)
+        print(f"The ps {explanation} was found")
+        explanations.append(explanation)
+
+    print("The best solution is ")
+    print(problem.repr_fs(optima))
+
+    print("The pss are ")
+    for ps in explanations:
+        print(problem.repr_ps(ps))
+        print("\n\n")
+
+
+def show_off_graph_colouring():
+    connections = []
+    connections.extend([(0, 1), (1, 2), (0, 2)])  # a clique of 3
+    connections.extend([(3, 4), (4, 5), (5, 6), (6, 7), (7, 8), (8, 9), (6, 9)])  # big dipper
+    problem = GraphColouring(amount_of_colours=3, amount_of_nodes=10, connections=connections)
+    show_off_problem(problem)
+
+
+def show_off_checkerboard():
+    problem = CheckerBoard(5, 5)
+    show_off_problem(problem)
+
+
+def show_off_knapsack():
+    items = [("apples", 50, 1.2),
+             ("turkey", 1500, 12.00),
+             ("dolmio", 200, 3.00),
+             ("beans", 150, 0.70),
+             ("carrots", 300, 2.50),
+             ("dilutingjuice", 1500, 7.00),
+             ("icecream", 300, 3.50),
+             ("milk", 1000, 4.00)]
+    problem = KnapSackProblem(items=items,
+                              weight_limit=2000)
+    show_off_problem(problem)
+
+
+show_off_knapsack()

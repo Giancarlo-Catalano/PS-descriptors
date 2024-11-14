@@ -96,7 +96,7 @@ def local_constrained_ps_search(to_explain: FullSolution,
                       mutation=BitflipMutation(prob=1 / problem.n_var),
                       eliminate_duplicates=True,
                       # survival=ObjectiveSpaceAvoidance(pss_to_avoid), # not done here.
-                      repair=ForceDifferenceMaskByActivatingAll(),
+                      repair=ForceDifferenceMaskByActivatingOne(),
                       )
 
     max_attempts = 5
