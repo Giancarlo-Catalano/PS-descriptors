@@ -1,11 +1,10 @@
-import numpy as np
 from tqdm import tqdm
 
 from BenchmarkProblems.BenchmarkProblem import BenchmarkProblem
 from BenchmarkProblems.Checkerboard import CheckerBoard
 from BenchmarkProblems.EfficientBTProblem.KnapSackProblem import KnapSackProblem
 from BenchmarkProblems.GraphColouring import GraphColouring
-from BenchmarkProblems.MultiDimensionalKnapsack import MultiDimensionalKnapsack
+from BenchmarkProblems.TSP import TSP, BooleanSearchSpaceTSP
 from Core.FullSolution import FullSolution
 from Core.PS import PS, STAR
 from Explanation.PRefManager import PRefManager
@@ -14,7 +13,7 @@ from utils import announce
 
 
 def get_unexplained_parts(solution: FullSolution, partial_solutions: list[PS]) -> FullSolution:
-    explained_values = [False for value in solution.values]
+    explained_values = [False for _ in solution.values]
     for ps in partial_solutions:
         for index, value in enumerate(ps.values):
             if value != STAR:
@@ -28,7 +27,7 @@ def get_unexplained_parts(solution: FullSolution, partial_solutions: list[PS]) -
 
 
 def show_off_problem(problem: BenchmarkProblem,
-                     pRef_size: int = 20000,
+                     pRef_size: int = 30000,
                      amount_of_pss_to_find: int = 4):
     print(f"The problem is {problem}")
 
@@ -41,10 +40,10 @@ def show_off_problem(problem: BenchmarkProblem,
     optima = best_solutions[0]
 
     explanation_generator = PairExplanationTester(optimisation_problem=problem,
-                                                  ps_search_budget=5000,
+                                                  ps_search_budget = 5000,
                                                   ps_search_population=50,
                                                   pRef=pRef,
-                                                  verbose=True)
+                                                  verbose=False)
 
     def find_explanation(solution, previously_found_patterns) -> PS:
         background: FullSolution = get_unexplained_parts(solution, previously_found_patterns)
@@ -66,6 +65,7 @@ def show_off_problem(problem: BenchmarkProblem,
     print("The pss are ")
     for ps in explanations:
         print(problem.repr_ps(ps))
+        print(ps)
         print("\n\n")
 
 
@@ -79,6 +79,15 @@ def show_off_graph_colouring():
 
 def show_off_checkerboard():
     problem = CheckerBoard(5, 5)
+    show_off_problem(problem)
+
+
+def show_off_TSP():
+    #original_problem = TSP(cities=[(-1, 2), (0, 2), (2, 2), (-1, 1), (0, 0), (1, -1), (-1, -1)],
+     #                      starting_ending_city=(0, 1))
+    original_problem = TSP(cities=[(1, 5),(2, 5),(2, 4),(5, 2),(6, 2),(6, 3),(7, 2),(6, 7),(6, 8),(7, 8),(7, 9)],
+                           starting_ending_city=(5, 5))
+    problem = BooleanSearchSpaceTSP(original_problem)
     show_off_problem(problem)
 
 
@@ -96,4 +105,4 @@ def show_off_knapsack():
     show_off_problem(problem)
 
 
-show_off_knapsack()
+show_off_TSP()
