@@ -47,7 +47,11 @@ class LocalRestrictedPymooProblem(Problem):
         return PS(sol_value if x_value else -1 for (sol_value, x_value) in zip(self.solution_to_explain.values, x))
 
     def get_which_rows_satisfy_mask_constraint(self, X: np.ndarray) -> np.ndarray:
-        return np.any(X[:, self.difference_variables], axis=1)
+        amount_of_fixed_vars = np.sum(X, axis=1)
+        amount_of_fixed_vars_that_are_different = np.sum(X[:, self.difference_variables], axis=1)
+        novelty_treshold = 0.7
+        return amount_of_fixed_vars_that_are_different >= (amount_of_fixed_vars * novelty_treshold)
+        # return np.any(X[:, self.difference_variables], axis=1) TODO undo
 
     def get_metrics_for_ps(self, ps: PS) -> list[float]:
         atomicity = self.objectives_evaluator.traditional_linkage.get_atomicity(ps)

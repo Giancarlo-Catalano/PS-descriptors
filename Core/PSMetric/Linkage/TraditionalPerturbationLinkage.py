@@ -126,7 +126,7 @@ class TraditionalPerturbationLinkage(Metric):
                     for var_a in range(self.n)
                     for var_b in range(self.n)
                     if ps[var_a] != STAR
-                    if ps[var_b != STAR]]
+                    if ps[var_b] != STAR]
 
         return np.average(linkages)
     def get_table_for_ps(self, ps: PS) -> np.ndarray:

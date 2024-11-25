@@ -43,16 +43,12 @@ class KnapSackProblem(BenchmarkProblem):
         definite_no = [item for item, ps_value in zip(self.items, ps.values)
                         if ps_value == 0]
 
-
-
-
-
         result = ""
-        if len(definite_yes):
+        if len(definite_yes) > 0:
             result += "YES:\n"
             result += utils.indent("\n".join(map(self.repr_item, definite_yes)))
 
-        if len(definite_yes):
+        if len(definite_no) > 0:
             result += "\nNO:\n"
             result += utils.indent("\n".join(map(self.repr_item, definite_no)))
 
