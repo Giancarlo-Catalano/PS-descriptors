@@ -13,7 +13,7 @@ from Core.PSMetric.Linkage.TraditionalPerturbationLinkage import TraditionalPert
 from PairwiseExplanation.PRefManager import PRefManager
 from PairExplanation.BTProblemPrettyPrinter import BTProblemPrettyPrinter
 from PairExplanation.PairwiseExplanation import PairwiseExplanation
-from PairExplanation.PairExplanationTester import PairExplanationTester
+from PairExplanation.ExplanationMiner import ExplanationMiner
 from PairExplanation.WeightedGraphVisualiser import WeightedGraphVisualiser
 from utils import announce
 
@@ -74,11 +74,11 @@ def generate_pRef():
 
 
 def generate_explanations(pRef: PRef):
-    tester = PairExplanationTester(optimisation_problem=problem,
-                                   ps_search_budget=2000,
-                                   ps_search_population=100,
-                                   pRef=pRef,
-                                   verbose=False)
+    tester = ExplanationMiner(optimisation_problem=problem,
+                              ps_search_budget=2000,
+                              ps_search_population=100,
+                              pRef=pRef,
+                              verbose=False)
 
     descriptor = tester.get_temporary_descriptors_manager(control_samples_per_size_category=1000)
 
@@ -189,11 +189,11 @@ def store_explanation(expl: PairwiseExplanation,
 def load_from_json():
     pRef = PRef.load(pRef_file)
 
-    tester = PairExplanationTester(optimisation_problem=problem,
-                                   ps_search_budget=2000,
-                                   ps_search_population=100,
-                                   pRef=pRef,
-                                   verbose=False)
+    tester = ExplanationMiner(optimisation_problem=problem,
+                              ps_search_budget=2000,
+                              ps_search_population=100,
+                              pRef=pRef,
+                              verbose=False)
 
     descriptor = tester.get_temporary_descriptors_manager(control_samples_per_size_category=1000)
     pretty_printer = BTProblemPrettyPrinter(problem,

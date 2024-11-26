@@ -20,7 +20,7 @@ from Explanation.PRefManager import PRefManager
 from LCS.DifferenceExplainer.DescriptorsManager import DescriptorsManager
 from PairExplanation.BTProblemPrettyPrinter import BTProblemPrettyPrinter
 from PairExplanation.PairwiseExplanation import PairwiseExplanation
-from PairExplanation.PairExplanationTester import PairExplanationTester
+from PairExplanation.ExplanationMiner import ExplanationMiner
 from PairExplanation.WeightedGraphVisualiser import WeightedGraphVisualiser
 from resources.explanations.manage_explanations import ExplanationStorer
 from utils import open_and_make_directories

@@ -540,3 +540,11 @@ def get_p_value_significance(p_value: float) -> str:
         return "VERY SIGNIFICANT"
     else:
         return "HIGHLY SIGNIFICANT"
+
+
+def top_with_safe_ties(items: list, key: Callable, lowest: bool = False, highest: bool = False) -> list:
+    items_with_keys = [(item, key(item)) for item in items]
+    if not (lowest or highest):
+        highest = True
+    best_key = (max if highest else min)(key for item, key in items_with_keys)
+    return [item for item, key in items_with_keys if key == best_key]

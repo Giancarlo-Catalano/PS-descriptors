@@ -1,13 +1,11 @@
 import itertools
 import random
+from typing import Optional
 
 import numpy as np
 from tqdm import tqdm
 
 import utils
-from BenchmarkProblems.BT.BTProblem import BTProblem
-from BenchmarkProblems.BT.RotaPattern import RotaPattern
-from BenchmarkProblems.BT.Worker import Worker
 from BenchmarkProblems.BenchmarkProblem import BenchmarkProblem
 from BenchmarkProblems.EfficientBTProblem.EfficientBTProblem import EfficientBTProblem
 from Core.EvaluatedFS import EvaluatedFS
@@ -17,15 +15,14 @@ from Core.PRef import PRef
 from Core.PS import PS, STAR
 from Core.PSMetric.FitnessQuality.SignificantlyHighAverage import WilcoxonTest, WilcoxonNearOptima, effect_string
 from Explanation.PRefManager import PRefManager
-from LCS import PSEvaluator
-from LCS.ConstrainedPSSearch.SolutionDifferencePSSearch import local_constrained_ps_search
+from ThirdPaper.SolutionDifferencePSSearch import find_ps_in_solution
 from LCS.DifferenceExplainer.DescriptorsManager import DescriptorsManager
 from LCS.PSEvaluator import GeneralPSEvaluator
 from PairExplanation.PairwiseExplanation import PairwiseExplanation
-from utils import announce, execution_timer
+from utils import execution_timer
 
 
-class PairExplanationTester:
+class ExplanationMiner:
     optimisation_problem: BenchmarkProblem
     ps_search_budget: int
     ps_search_population_size: int
@@ -57,14 +54,21 @@ class PairExplanationTester:
         self.ps_evaluator = GeneralPSEvaluator(optimisation_problem=self.optimisation_problem, pRef=self.pRef)
         self.fs_evaluator = FSEvaluator(fitness_function=optimisation_problem.fitness_function)
 
-    def find_pss(self, main_solution: FullSolution, background_solution: FullSolution, culling_method: str) -> list[PS]:
-        return local_constrained_ps_search(to_explain=main_solution,
-                                           background_solution=background_solution,
-                                           population_size=self.ps_search_population_size,
-                                           ps_evaluator=self.ps_evaluator,
-                                           ps_budget=self.ps_search_budget,
-                                           culling_method=culling_method,
-                                           verbose=self.verbose)
+    def find_pss(self,
+                 main_solution: FullSolution,
+                 unexplained_mask: np.ndarray,
+                 culling_method: str,
+                 proportion_unexplained_that_needs_used: Optional[float] = None,
+                 proportion_used_that_should_be_unexplained: Optional[float] = None,) -> list[PS]:
+        return find_ps_in_solution(to_explain=main_solution,
+                                   unexplained_mask=unexplained_mask,
+                                   population_size=self.ps_search_population_size,
+                                   ps_evaluator=self.ps_evaluator,
+                                   ps_budget=self.ps_search_budget,
+                                   culling_method=culling_method,
+                                   proportion_unexplained_that_needs_used=proportion_unexplained_that_needs_used,
+                                   proportion_used_that_should_be_unexplained=proportion_used_that_should_be_unexplained,
+                                   verbose=self.verbose)
 
     def get_consistency_of_pss(self, pss: list[PS]) -> dict:
 

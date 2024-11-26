@@ -54,6 +54,7 @@ def filter_pss(pss: list[PS],
     def maybe_filter_by_atomicity(input_pss: list[PS]):
         if verbose:
             print(f"The linkage atomicity threshold is {atomicity_threshold}")
+
         def get_atomicity(ps):
             return ps.metric_scores[2]
 
@@ -75,7 +76,6 @@ def filter_pss(pss: list[PS],
                                          verbose_name="dependency")
             return new_pss if len(new_pss) > 0 else input_pss
 
-
     def maybe_filter_by_delta_fitness(input_pss: list[PS]):
         def get_delta_fitness(ps):
             return ps_evaluator.delta_fitness_metric.get_mean_fitness_delta(ps)
@@ -90,27 +90,33 @@ def filter_pss(pss: list[PS],
     current_pss = pss.copy()
 
     # current_pss = maybe_filter_by_delta_fitness(current_pss)
-    #current_pss = maybe_filter_by_dependency(current_pss)
+    # current_pss = maybe_filter_by_dependency(current_pss)
     current_pss = maybe_filter_by_consistency(current_pss)
     current_pss = maybe_filter_by_atomicity(current_pss)
-
 
     return current_pss
 
 
-
-def keep_biggest(pss: list[PS]) -> PS:
+def keep_biggest(pss: list[PS]) -> [PS]:
     """returns a singleton list containing the pss with the most variables being fixed, (i know it's counterintuitive"""
     """assumes simplicity is the first metric"""
-    sizes = [ps.fixed_count() for ps in pss]
-    # print(f"Of the sizes present ({sizes}), we'll return {max(sizes)}")
-    # print("\n".join("\t".join(f"{m:.2f}" for m in ps.metric_scores) for ps in pss))
-    return min(pss, key=lambda x:x.metric_scores[0])
+    return utils.top_with_safe_ties(pss, key=lambda x: x.metric_scores[0], lowest=True)
 
 
-def keep_with_lowest_dependence(pss: list[PS], local_linkage_metric: TraditionalPerturbationLinkage) -> PS:
-    pss_and_dependence = [(ps, local_linkage_metric.get_dependence(ps)) for ps in pss]
-    return min(pss_and_dependence, key=utils.second)[0]
+def keep_with_lowest_dependence(pss: list[PS], local_linkage_metric: TraditionalPerturbationLinkage) -> [PS]:
+    return utils.top_with_safe_ties(pss, key=lambda x: local_linkage_metric.get_dependence(x), lowest=True)
+
+
+def keep_with_best_atomicity(pss: list[PS]) -> [PS]:
+    return utils.top_with_safe_ties(pss, key=lambda x: x.metric_scores[2])
+
+
+def keep_middle(pss: list[PS]) -> [PS]:
+    # assuming that they are ordered in a sensible way?
+    sorted_pss = utils.sort_by_combination_of(pss, key_functions=[lambda x: x.metric_scores[1],
+                                                                  lambda x: x.metric_scores[2]])
+    middle_index = len(pss) // 2
+    return [sorted_pss[middle_index]]
 
 
 def merge_pss_into_one(pss: list[PS]) -> PS:

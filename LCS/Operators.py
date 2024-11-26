@@ -85,7 +85,7 @@ class ForceDifferenceMaskByActivatingOne(Repair):
             to_activate  = random.choice(difference_variables)
             row[to_activate] = True
 
-        which_rows_satisfy = problem.get_which_rows_satisfy_mask_constraint(Z)
+        which_rows_satisfy = problem.get_which_rows_satisfy_constraint(Z)
 
 
         for row, satisfied in zip(Z, which_rows_satisfy):
@@ -100,7 +100,7 @@ class ForceDifferenceMaskByActivatingOne(Repair):
         # The issue is that it is not guaranteed to make the solutions satisfy the constraint...
         # the second value in the tuple indicates whether Z was modified or not)
 
-        which_rows_dont_satisfy = ~problem.get_which_rows_satisfy_mask_constraint(Z)
+        which_rows_dont_satisfy = ~problem.get_which_rows_satisfy_constraint(Z)
 
 
         quantity_that_need_fixing = np.sum(which_rows_dont_satisfy)
@@ -139,5 +139,11 @@ class ForceDifferenceMaskByActivatingAll(Repair):
 
         Z[:, problem.difference_variables] = True
         return Z
+
+
+class ForceDifferenceMarkByActivatingTheRightAmount(Repair):
+    alpha: float
+    beta: float
+
 
 
