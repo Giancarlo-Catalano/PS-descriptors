@@ -26,9 +26,9 @@ class LocalRestrictedPymooProblem(Problem):
 
     def __init__(self,
                  solution_to_explain: FullSolution,
-                 must_include_mask: np.ndarray,
+                 unexplained_mask: np.ndarray,
                  objectives_evaluator: GeneralPSEvaluator):
-        self.difference_variables = np.arange(len(must_include_mask))[must_include_mask]
+        self.difference_variables = np.arange(len(unexplained_mask))[unexplained_mask] # gets the indexes
         self.solution_to_explain = solution_to_explain
         self.objectives_evaluator = objectives_evaluator
         self.objectives_evaluator.set_solution(solution_to_explain)
@@ -92,7 +92,7 @@ def local_constrained_ps_search(to_explain: FullSolution,
 
     problem = LocalRestrictedPymooProblem(solution_to_explain=to_explain,
                                           objectives_evaluator=ps_evaluator,
-                                          must_include_mask=must_include_mask)
+                                          unexplained_mask=must_include_mask)
 
     algorithm = NSGA2(pop_size=population_size,
                       sampling=LocalPSGeometricSampling(),
