@@ -142,6 +142,18 @@ class PRef:
 
         return remaining_fitnesses
 
+    def get_indexes_matching_ps(self, ps: PS) -> np.ndarray:
+
+        remaining_indexes = np.arange(self.sample_size)
+
+        for var, val in enumerate(ps.values):
+            if val != STAR:
+                subset_that_matches = self.full_solution_matrix[remaining_indexes][:, var] == val
+                remaining_indexes = remaining_indexes[subset_that_matches]
+
+        return remaining_indexes
+
+
     def fitnesses_of_observations_experimental(self, ps: PS) -> np.ndarray:
         return get_relevant_rows_in_matrix_shortcircuit(self.full_solution_matrix, self.fitness_array, ps.values)
 

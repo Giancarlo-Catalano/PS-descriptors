@@ -111,4 +111,4 @@ def show_off_knapsack():
     show_off_problem(problem)
 
 
-show_off_graph_colouring()
+#show_off_graph_colouring()

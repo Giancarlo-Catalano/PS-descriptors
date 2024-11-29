@@ -3,7 +3,7 @@ from typing import Optional, Callable
 import numpy as np
 
 import utils
-from Core.PS import PS
+from Core.PS import PS, STAR
 from Core.PSMetric.Linkage import LocalPerturbation
 from Core.PSMetric.Linkage.LocalPerturbation import PerturbationOfSolution
 from Core.PSMetric.Linkage.TraditionalPerturbationLinkage import TraditionalPerturbationLinkage
@@ -100,7 +100,7 @@ def filter_pss(pss: list[PS],
 def keep_biggest(pss: list[PS]) -> [PS]:
     """returns a singleton list containing the pss with the most variables being fixed, (i know it's counterintuitive"""
     """assumes simplicity is the first metric"""
-    return utils.top_with_safe_ties(pss, key=lambda x: x.metric_scores[0], lowest=True)
+    return utils.top_with_safe_ties(pss, key=lambda x: np.sum(x.values != STAR), lowest=True)
 
 
 def keep_with_lowest_dependence(pss: list[PS], local_linkage_metric: TraditionalPerturbationLinkage) -> [PS]:
