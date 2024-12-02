@@ -7,8 +7,8 @@ import utils
 from Core.FullSolution import FullSolution
 from Core.PRef import PRef
 from Core.PS import PS, STAR
+from Core.PSMetric.Linkage.BivariateLinkage import BivariateLinkage
 from Core.PSMetric.Metric import Metric
-from LinkageExperiments.LocalVarianceLinkage import BivariateLinkage
 
 
 class ValueSpecificMutualInformation(Metric):

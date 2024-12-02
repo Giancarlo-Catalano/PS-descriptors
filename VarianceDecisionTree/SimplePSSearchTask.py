@@ -17,6 +17,7 @@ from Core.PRef import PRef
 from Core.PS import PS, STAR
 from Core.PSMetric.FitnessQuality.SignificantlyHighAverage import MannWhitneyU
 from Core.PSMetric.Linkage.TraditionalPerturbationLinkage import TraditionalPerturbationLinkage
+from Core.PSMetric.Linkage.ValueSpecificMutualInformation import FasterSolutionSpecificMutualInformation
 from Core.PSMetric.Simplicity import Simplicity
 from LCS.Operators import LocalPSGeometricSampling, ObjectiveSpaceAvoidance, ForceDifferenceMaskByActivatingOne, \
     ForceDifferenceMaskByActivatingAll
@@ -121,18 +122,24 @@ def find_ps_in_solution(to_explain: FullSolution,
                         reattempts_when_fail: int = 1,
                         unexplained_mask: Optional[np.ndarray] = None,
                         verbose=True) -> list[PS]:
-    atomicity_metric = TraditionalPerturbationLinkage(problem)
-    atomicity_metric.set_solution(to_explain)
+    ground_truth_atomicity_metric = TraditionalPerturbationLinkage(problem)
+    ground_truth_atomicity_metric.set_solution(to_explain)
+    estimated_atomicity_metric = FasterSolutionSpecificMutualInformation()
+    estimated_atomicity_metric.set_pRef(pRef)
+    estimated_atomicity_metric.set_solution(to_explain)
     simplicity_metric = Simplicity()
     variance_metric = SplitVariance(pRef)
     fitness_consistency = MannWhitneyU()
     fitness_consistency.set_pRef(pRef)
 
-    def atomicity(ps: PS) -> float:
-        return -atomicity_metric.get_atomicity(ps)
+    def perturbation_atomicity(ps: PS) -> float:
+        return -ground_truth_atomicity_metric.get_atomicity(ps)
+
+    def statical_atomicity(ps: PS) -> float:
+        return estimated_atomicity_metric.get_atomicity(ps)
 
     def dependency(ps: PS) -> float:
-        return atomicity_metric.get_dependence(ps)
+        return ground_truth_atomicity_metric.get_dependence(ps)
 
     def simplicity(ps: PS) -> float:
         return -float(np.sum(ps.values == STAR))
@@ -145,7 +152,7 @@ def find_ps_in_solution(to_explain: FullSolution,
         return fitness_consistency.get_single_score(ps)
 
     # objectives = [simplicity, consistency, atomicity]
-    objectives = [variance]
+    objectives = [variance, perturbation_atomicity]
 
     # construct the optimisation problem instance
     problem = SimplePSSearchTask(solution_to_explain=to_explain,

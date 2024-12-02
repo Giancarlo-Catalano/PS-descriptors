@@ -37,7 +37,7 @@ def test_recursive_splitting():
                                      sample_size=10000,
                                      which_algorithm="uniform GA",
                                      verbose=True)
-    recursively_split_pRef(pRef, problem)
+    recursively_split_pRef(pRef, problem, [])
 
 
 test_recursive_splitting()

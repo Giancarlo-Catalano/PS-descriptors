@@ -26,7 +26,7 @@ def split_pRef(pRef: PRef, problem: BenchmarkProblem, accumulated_patterns: list
     best_solution = pRef.get_best_solution()
     unexplained_vars = get_unexplained_parts(best_solution, accumulated_patterns)
     print(f"Splitting the pRef where the best solution is {problem.repr_fs(best_solution)}, "
-          f"with fitness {best_solution.fitness}")
+          f"with fitness {best_solution.fitness}, (size = {pRef.sample_size})")
     print(f"The unexplained mask is {''.join('U' if v else '-' for v in unexplained_vars)}")
 
     pss = find_ps_in_solution(pRef=pRef,
@@ -42,25 +42,29 @@ def split_pRef(pRef: PRef, problem: BenchmarkProblem, accumulated_patterns: list
 
     print(f"The winning ps is ")
     split_ps = pss[0]
-    print(problem.repr_ps(split_ps))
+    print("\t"*len(accumulated_patterns) + problem.repr_ps(split_ps))
     matches, unmatches = split_pRef_using_ps(pRef, split_ps)
     return split_ps, matches, unmatches
 
 
 
-def recursively_split_pRef(starting_pRef: PRef, problem: BenchmarkProblem, accumulated_winners: list[PS] = None):
+def recursively_split_pRef(starting_pRef: PRef, problem: BenchmarkProblem,
+                           accumulated_winners: list[PS]):
+    print(f"Splitting a pRef of size {starting_pRef.sample_size}, where the accumulated winners are")
+    print("\n".join(f"\t{w}" for w in accumulated_winners))
     accumulated_patterns = [] if accumulated_winners is None else list(accumulated_winners)
     def should_split_pRef(pRef: PRef) -> bool:
-        return pRef.sample_size >= 100
+        best_solution = pRef.fitness_array.max()
+        return best_solution > 0 and pRef.sample_size > 10
 
     if should_split_pRef(starting_pRef):
         ps, matches, unmatches = split_pRef(starting_pRef, problem, accumulated_patterns)
-        recursively_split_pRef(matches, problem, accumulated_patterns+[ps])
-        recursively_split_pRef(unmatches, problem)
+        winning_pRef = matches if matches.fitness_array.max() > unmatches.fitness_array.max() else unmatches
+        recursively_split_pRef(winning_pRef, problem, accumulated_patterns+[ps])
     else:
         if starting_pRef.sample_size < 1:
             print("Actually, this PRef is Empty!")
         else:
             best_solution = starting_pRef.get_best_solution()
             print(f"Could not split the pRef were the best solution is {problem.repr_fs(best_solution)}, "
-                  f"with fitness {best_solution.fitness}")
+                  f"with fitness {best_solution.fitness}, (size = {starting_pRef.sample_size})")
