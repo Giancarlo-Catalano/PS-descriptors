@@ -16,6 +16,7 @@ from Core.FullSolution import FullSolution
 from Core.PRef import PRef
 from Core.PS import PS, STAR
 from Core.PSMetric.FitnessQuality.SignificantlyHighAverage import MannWhitneyU
+from Core.PSMetric.Linkage.SobolLinkage import SobolLinkage
 from Core.PSMetric.Linkage.TraditionalPerturbationLinkage import TraditionalPerturbationLinkage
 from Core.PSMetric.Linkage.ValueSpecificMutualInformation import FasterSolutionSpecificMutualInformation
 from Core.PSMetric.Simplicity import Simplicity
@@ -123,7 +124,7 @@ def find_ps_in_solution(to_explain: FullSolution,
                         unexplained_mask: Optional[np.ndarray] = None,
                         verbose=True) -> list[PS]:
     ground_truth_atomicity_metric = TraditionalPerturbationLinkage(problem)
-    ground_truth_atomicity_metric.set_solution(to_explain)
+    #ground_truth_atomicity_metric.set_solution(to_explain)
     estimated_atomicity_metric = FasterSolutionSpecificMutualInformation()
     estimated_atomicity_metric.set_pRef(pRef)
     estimated_atomicity_metric.set_solution(to_explain)
@@ -131,6 +132,9 @@ def find_ps_in_solution(to_explain: FullSolution,
     variance_metric = SplitVariance(pRef)
     fitness_consistency = MannWhitneyU()
     fitness_consistency.set_pRef(pRef)
+    sobol_linkage = SobolLinkage()
+    #sobol_linkage.set_pRef(pRef)
+    #sobol_linkage.set_solution(to_explain)
 
     def perturbation_atomicity(ps: PS) -> float:
         return -ground_truth_atomicity_metric.get_atomicity(ps)
@@ -151,8 +155,12 @@ def find_ps_in_solution(to_explain: FullSolution,
     def consistency(ps: PS) -> float:
         return fitness_consistency.get_single_score(ps)
 
+
+    def sobol_atomicity(ps: PS) -> float:
+        return -sobol_linkage.get_atomicity(ps)
+
     # objectives = [simplicity, consistency, atomicity]
-    objectives = [variance, perturbation_atomicity]
+    objectives = [variance]
 
     # construct the optimisation problem instance
     problem = SimplePSSearchTask(solution_to_explain=to_explain,

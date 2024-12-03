@@ -4,6 +4,7 @@ import numpy as np
 
 from BenchmarkProblems.BenchmarkProblem import BenchmarkProblem
 from Core.FullSolution import FullSolution
+from Core.PRef import PRef
 from Core.PS import PS
 from Core.SearchSpace import SearchSpace
 
@@ -30,6 +31,13 @@ class ProblemRepresentation:
 
     def repr_representation(self, representation: Representation) -> str:
         return f"{representation}"
+
+    def make_representation_pRef(self, original_pRef: PRef) -> PRef:
+        original_solutions = original_pRef.get_evaluated_FSs()
+        representation_fsm = np.array([self.get_representation(solution).values for solution in original_solutions])
+        return PRef(fitness_array=original_pRef.fitness_array,
+                    full_solution_matrix=representation_fsm,
+                    search_space=self.representation_search_space)
 
 
 class TrivialRepresentation(ProblemRepresentation):
@@ -79,7 +87,7 @@ class CombinedProblemRepresentations(ProblemRepresentation):
                                                      for representation in self.representations)
 
     def get_representation(self, solution: FullSolution) -> Representation:
-        values_to_join = [representation.get_representation(solution) for representation in self.representations]
+        values_to_join = [representation.get_representation(solution).values for representation in self.representations]
         values = np.hstack(values_to_join)
         return FullSolution(values)
 

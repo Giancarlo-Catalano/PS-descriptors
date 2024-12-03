@@ -53,15 +53,15 @@ class TSPPrecedenceRepresentation(ProblemRepresentation):
         return "\n".join(map(repr_item, precedence_pairs))
 
 
-class TSPVicinityRepresentations(ProblemRepresentation):
+class TSPVicinityRepresentation(ProblemRepresentation):
     original_problem: TSP
     vicinity_threshold: int
 
     def __init__(self,
                  original_problem: TSP,
-                 vicinity_threshold: Optional[int]):
-        self.vicinity_threshold = vicinity_threshold if vicinity_threshold is not None else self.n // 5
+                 vicinity_threshold: Optional[int] = None):
         super().__init__(original_problem)
+        self.vicinity_threshold = vicinity_threshold if vicinity_threshold is not None else self.n // 5
 
     @property
     def n(self) -> int:
@@ -78,6 +78,7 @@ class TSPVicinityRepresentations(ProblemRepresentation):
         def register_for_threshold_equal_to(v: int):
             for city_a, city_b in zip(indexes, indexes[v:]):
                 result_as_matrix[city_a, city_b] = True
+                result_as_matrix[city_b, city_a] = True  # just in case
 
         for v in range(1, self.vicinity_threshold):
             register_for_threshold_equal_to(v)
