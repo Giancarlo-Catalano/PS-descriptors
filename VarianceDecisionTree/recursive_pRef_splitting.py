@@ -41,43 +41,38 @@ def split_pRef(pRef: PRef, problem: BenchmarkProblem, accumulated_patterns: list
                               proportion_used_that_should_be_unexplained=0.5,
                               verbose=False)
 
-    print(f"The winning ps is ")
     split_ps = pss[0]
-    print("\t" * len(accumulated_patterns) + problem.repr_ps(split_ps))
     matches, unmatches = split_pRef_using_ps(pRef, split_ps)
     return split_ps, matches, unmatches
 
-
 def recursively_split_pRef(starting_pRef: PRef,
                            problem: BenchmarkProblem,
-                           accumulated_winners: list[PS],
                            repr_ps: Callable,
                            repr_fs: Callable,
-                           current_branch: list
+                           max_depth: int,
+                           fitness_threshold: float
                            ):
-    print(f"Splitting a pRef of size {starting_pRef.sample_size}, where the accumulated winners are")
-    print("\n".join(f"\t{w}" for w in accumulated_winners))
-    accumulated_patterns = [] if accumulated_winners is None else list(accumulated_winners)
 
-    def should_split_pRef(pRef: PRef) -> bool:
-        best_solution = pRef.get_best_solution()
-        #print(f"The best solution here is {repr_fs(best_solution)}")
-        return pRef.sample_size > 1000
+    def recursive_step(pRef_to_split, current_depth, current_branch, ancestors):
+        best_solution = pRef_to_split.get_best_solution()
 
-    if should_split_pRef(starting_pRef):
-        ps, matches, unmatches = split_pRef(starting_pRef, problem, accumulated_patterns)
-        print(repr_ps(ps))
-        # winning_pRef = matches if matches.fitness_array.max() > unmatches.fitness_array.max() else unmatches
-        matching_branch = []
-        unmatching_branch = []
-        new_branch_entry = (ps, matching_branch, unmatching_branch)
-        current_branch.append(new_branch_entry)
-        recursively_split_pRef(matches, problem, accumulated_patterns + [ps], repr_ps, repr_fs, matching_branch)
-        recursively_split_pRef(unmatches, problem, accumulated_patterns, repr_ps, repr_fs, unmatching_branch)
-    else:
-        if starting_pRef.sample_size < 1:
-            print("Actually, this PRef is Empty!")
-        else:
-            best_solution = starting_pRef.get_best_solution()
-            print(f"Could not split the pRef were the best solution is {best_solution}, "
-                  f"with fitness {best_solution.fitness}, (size = {starting_pRef.sample_size})")
+
+        if pRef_to_split.sample_size > 20 and current_depth < max_depth and best_solution.fitness > fitness_threshold:
+            ps, matches, unmatches = split_pRef(starting_pRef, problem, ancestors)
+            matching_branch = []
+            unmatching_branch = []
+            new_branch_entry = (ps, matching_branch, unmatching_branch)
+            current_branch.append(new_branch_entry)
+            print(f"Splitting a pRef of size {starting_pRef.sample_size}, best_fitness = {best_solution.fitness} where the ancestors are")
+            print("\n".join(f"\t{w}" for w in ancestors))
+            print("The splitting ps is \n")
+            print(repr_ps(ps))
+            recursive_step(matches, current_depth+1,
+                           matching_branch, ancestors + [ps])
+            recursive_step(unmatches, current_depth+1,
+                           unmatching_branch, ancestors)
+
+
+    tree = []
+    recursive_step(starting_pRef, ancestors=[], current_branch=tree, current_depth=0)
+    return tree

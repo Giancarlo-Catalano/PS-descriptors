@@ -160,7 +160,7 @@ def find_ps_in_solution(to_explain: FullSolution,
         return -sobol_linkage.get_atomicity(ps)
 
     # objectives = [simplicity, consistency, atomicity]
-    objectives = [variance]
+    objectives = [variance, consistency]
 
     # construct the optimisation problem instance
     problem = SimplePSSearchTask(solution_to_explain=to_explain,
