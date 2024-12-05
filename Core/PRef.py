@@ -262,8 +262,8 @@ class PRef:
         best_index: int = np.argmax(self.fitness_array)
         return self.get_nth_solution(best_index)
 
-    def get_sorted(self) -> Any:  # returns a pRef
-        enumerated_fitnesses = sorted(enumerate(self.fitness_array), key=utils.second, reverse=True)
+    def get_sorted(self, reverse = True) -> Any:  # returns a pRef
+        enumerated_fitnesses = sorted(enumerate(self.fitness_array), key=utils.second, reverse=reverse)
         new_indexes, new_fitnesses = zip(*enumerated_fitnesses)
         new_indexes = np.array(new_indexes) ## otherwise the indexing doesn't work??
         new_fitnesses = np.array(new_fitnesses)

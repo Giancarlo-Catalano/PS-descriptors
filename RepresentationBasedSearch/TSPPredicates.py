@@ -86,21 +86,16 @@ class TSPVicinityRepresentation(ProblemRepresentation):
         return FullSolution(result_as_matrix[np.triu_indices(self.n, k=1)])
 
     def repr_partial_representation(self, ps: PS) -> str:
-        precedence = np.zeros(shape=(self.n, self.n), dtype=int)
-        precedence[np.triu_indices(n=self.n, k=1)] = ps.values
+        vicinities = np.zeros(shape=(self.n, self.n), dtype=int)-1
+        vicinities[np.triu_indices(n=self.n, k=1)] = ps.values
 
-        precedence_pairs = []
+        vicinity_pairs = []
         for (city_before, city_after) in itertools.combinations(range(self.n), r=2):
-            cell_value = precedence[city_before, city_after]
-            match cell_value:
-                case 1:
-                    precedence_pairs.append((city_after, city_before))
-                case 0:
-                    precedence_pairs.append((city_before, city_after))
-                case _:  # a star
-                    pass
+            cell_value = vicinities[city_before, city_after]
+            if cell_value > -1:
+                vicinity_pairs.append((city_before, city_after, cell_value))
 
         def repr_item(item) -> str:
-            return f"{self.original_problem.repr_city_index(item[0])} near {self.original_problem.repr_city_index(item[1])}"
+            return f"{self.original_problem.repr_city_index(item[0])} {'NOT' if item[2] == 0 else ''} near {self.original_problem.repr_city_index(item[1])}"
 
-        return "\n".join(map(repr_item, precedence_pairs))
+        return "\n".join(map(repr_item, vicinity_pairs))

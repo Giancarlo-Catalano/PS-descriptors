@@ -140,7 +140,7 @@ def find_ps_in_solution(to_explain: FullSolution,
         return -ground_truth_atomicity_metric.get_atomicity(ps)
 
     def statical_atomicity(ps: PS) -> float:
-        return estimated_atomicity_metric.get_atomicity(ps)
+        return -estimated_atomicity_metric.get_atomicity(ps)
 
     def dependency(ps: PS) -> float:
         return ground_truth_atomicity_metric.get_dependence(ps)

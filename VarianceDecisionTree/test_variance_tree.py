@@ -1,3 +1,6 @@
+from typing import Callable
+
+import utils
 from BenchmarkProblems.RoyalRoad import RoyalRoad
 from BenchmarkProblems.TSP import TSP
 from Explanation.PRefManager import PRefManager
@@ -33,25 +36,42 @@ def test_variance_tree():
         print(f"\t{problem.repr_ps(ps)}, fitness = {ps.metric_scores}")
 
 
+def repr_tree(node: list,
+               repr_ps: Callable):
+    if len(node) == 0:
+        return "leaf"
+
+    head, left_branch, right_branch = node[0]
+    return (f"{repr_ps(head)}\n"+
+            utils.indent(repr_tree(left_branch, repr_ps)+
+                         "\n"+
+             utils.indent(repr_tree(right_branch, repr_ps))))
+
 def test_recursive_splitting():
     problem = RoyalRoad(5)
     print(f"The problem is {problem}")
     pRef = PRefManager.generate_pRef(problem=problem,
-                                     sample_size=10000,
+                                     sample_size=4000,
                                      which_algorithm="uniform GA",
                                      verbose=True)
 
+    tree = []
 
-    recursively_split_pRef(pRef, problem, [], repr_fs=problem.repr_fs, repr_ps=problem.repr_ps)
+    recursively_split_pRef(pRef, problem, [], repr_fs=problem.repr_fs, repr_ps=problem.repr_ps, current_branch=tree)
+
+    print("The tree is")
+    print(repr_tree(tree, problem.repr_ps))
+
+    print(tree)
 
 
 def test_recursive_splitting_with_representation():
     problem = TSP(
-        cities=[(1, 5), (2, 5), (2, 4), (5, 2), (6, 2), (6, 3), (7, 2), (6, 7), (6, 8), (7, 8), (7, 9)],
+        cities=[(1, 5), (2, 5), (2, 4), (5, 2), (6, 2), (6, 3), (7, 2), (6, 7), (6, 8), (7, 8)],
         starting_ending_city=(5, 5))
 
 
-    trivial_representation = TrivialRepresentation(problem)
+    #trivial_representation = TrivialRepresentation(problem)
     #precedence_representation = TSPPrecedenceRepresentation(problem)
     vicinity_representation = TSPVicinityRepresentation(problem, vicinity_threshold=3)
 
@@ -59,7 +79,7 @@ def test_recursive_splitting_with_representation():
     print(f"The problem is {problem}")
     pRef = PRefManager.generate_pRef(problem=problem,
                                      sample_size=10000,
-                                     which_algorithm="GA",
+                                     which_algorithm="uniform GA",
                                      verbose=True)
 
 
@@ -68,9 +88,16 @@ def test_recursive_splitting_with_representation():
 
     extended_pRef = representation.make_representation_pRef(pRef)
 
+    tree = []
     recursively_split_pRef(extended_pRef, problem, [],
-                           repr_fs=representation.repr_representation, repr_ps = representation.repr_partial_representation)
+                           repr_fs=representation.repr_representation, repr_ps = representation.repr_partial_representation,
+                           current_branch=tree)
+
+    print("The tree is")
+    print(repr_tree(tree, problem.repr_ps))
+
+    print(tree)
 
 
-#test_recursive_splitting()
-test_recursive_splitting_with_representation()
+test_recursive_splitting()
+#test_recursive_splitting_with_representation()
