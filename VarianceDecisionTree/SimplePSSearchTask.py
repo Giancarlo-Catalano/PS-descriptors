@@ -25,7 +25,8 @@ from LCS.Operators import LocalPSGeometricSampling, ObjectiveSpaceAvoidance, For
 from LCS.PSEvaluator import GeneralPSEvaluator
 from LCS.PSFilter import keep_with_lowest_dependence, keep_biggest, merge_pss_into_one, keep_middle, \
     keep_with_best_atomicity
-from VarianceDecisionTree.VarianceMetric import SplitVariance
+from VarianceDecisionTree.SplitVariance import SplitVariance
+from VarianceDecisionTree.VarianceSplitLinkage import VarianceSplitLinkage
 
 PSObjective: TypeAlias = Callable[[PS], float]
 
@@ -132,9 +133,9 @@ def find_ps_in_solution(to_explain: FullSolution,
     variance_metric = SplitVariance(pRef)
     fitness_consistency = MannWhitneyU()
     fitness_consistency.set_pRef(pRef)
-    sobol_linkage = SobolLinkage()
-    #sobol_linkage.set_pRef(pRef)
-    #sobol_linkage.set_solution(to_explain)
+    split_variance_linkage = VarianceSplitLinkage()
+    split_variance_linkage.set_pRef(pRef)
+    split_variance_linkage.set_solution(to_explain)
 
     def perturbation_atomicity(ps: PS) -> float:
         return -ground_truth_atomicity_metric.get_atomicity(ps)
@@ -156,11 +157,11 @@ def find_ps_in_solution(to_explain: FullSolution,
         return fitness_consistency.get_single_score(ps)
 
 
-    def sobol_atomicity(ps: PS) -> float:
-        return -sobol_linkage.get_atomicity(ps)
+    def split_variance_atomicity(ps: PS) -> float:
+        return split_variance_linkage.get_atomicity(ps)
 
     # objectives = [simplicity, consistency, atomicity]
-    objectives = [variance, consistency]
+    objectives = [variance, split_variance_atomicity]
 
     # construct the optimisation problem instance
     problem = SimplePSSearchTask(solution_to_explain=to_explain,

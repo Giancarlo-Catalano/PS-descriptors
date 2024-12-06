@@ -10,50 +10,60 @@ from Core.PSMetric.Metric import Metric
 from VarianceDecisionTree.SplitVariance import SplitVariance
 
 
-class SobolLinkage(BivariateLinkage, Metric):
-    pRef: Optional[PRef]
+class VarianceSplitLinkage(BivariateLinkage, Metric):
     current_solution: FullSolution
+    split_variance_metric: Optional[SplitVariance]
     linkage_dict: dict
     linkage_table: np.ndarray
 
     def __init__(self):
+        self.split_variance_metric = None
+        self.linkage_dict = None
+        self.linkage_table = None
         super().__init__()
 
     def set_pRef(self, pRef: PRef) -> None:
         self.pRef = pRef
-        variance_dict = self.get_variance_dict()
-        self.linkage_dict = self.get_linkage_dict(variance_dict)
+        self.split_variance_metric = SplitVariance(pRef)
 
-    def get_variance_dict(self) -> dict:
+        split_variance_dict = self.get_split_variance_dict()
+        self.linkage_dict = self.get_linkage_dict(split_variance_dict)
+
+    def get_split_variance_dict(self) -> dict:
         assert (self.pRef is not None)
 
-        variance_dict = dict()
+        split_variance_dict = dict()
         # univariate_modifications
         for var, cardinality in enumerate(self.search_space.cardinalities):
             for val in range(cardinality):
                 hyperplane = ((var, val),)
-                variance = self.get_variance_of_hyperplane(hyperplane)
-                variance_dict[hyperplane] = variance
+                variance = self.get_split_variance_of_hyperplane(hyperplane)
+                split_variance_dict[hyperplane] = variance
 
         # bivariate modifications
         for var_a, val_a, var_b, val_b in self.every_var_val_pair_combination():
             hyperplane = ((var_a, val_a), (var_b, val_b))
-            variance = self.get_variance_of_hyperplane(hyperplane)
-            variance_dict[hyperplane] = variance
+            variance = self.get_split_variance_of_hyperplane(hyperplane)
+            split_variance_dict[hyperplane] = variance
 
-        return variance_dict
+        return split_variance_dict
 
     def set_solution(self, new_solution: FullSolution) -> None:
         self.current_solution = new_solution
         self.linkage_table = self.get_linkage_table()
 
-    def get_variance_of_hyperplane(self, hyperplane: Iterable) -> float:
+    def get_split_variance_of_hyperplane(self, hyperplane: Iterable) -> float:
         hyperplane_ps = PS.empty(self.search_space)
         for var, val in hyperplane:
             hyperplane_ps = hyperplane_ps.with_fixed_value(var, val)
 
-        matching_fitnesses = self.pRef.fitnesses_of_observations(hyperplane_ps)
-        return float(np.var(matching_fitnesses))
+        return self.split_variance_metric.get_single_score(hyperplane_ps)
+
+
+    def every_var_val_combination(self) -> Iterable:
+        return ((var, val)
+                    for var, cardinality in enumerate(self.search_space.cardinalities)
+                    for val in range(cardinality))
 
     def every_var_val_pair_combination(self) -> Iterable:
         return ((var_a, val_a, var_b, val_b)
@@ -66,10 +76,18 @@ class SobolLinkage(BivariateLinkage, Metric):
             just_a = variance_dict[((var_a, val_a),)]
             just_b = variance_dict[((var_b, val_b),)]
             both = variance_dict[((var_a, val_a), (var_b, val_b))]
-            return both - just_a - just_b
+            return abs(both - just_a - just_b)  # although this could just be both
 
-        return {((var_a, val_a), (var_b, val_b)): get_linkage(var_a, val_a, var_b, val_b)
+        def get_univariate_importance(var, val) -> float:
+            return variance_dict[((var, val),)]
+
+        bivariate_linkages = {((var_a, val_a), (var_b, val_b)): get_linkage(var_a, val_a, var_b, val_b)
                 for var_a, val_a, var_b, val_b in self.every_var_val_pair_combination()}
+
+        univariate_linkages = {((var, val),) : get_univariate_importance(var, val)
+                               for var, val in self.every_var_val_combination()}
+
+        return bivariate_linkages | univariate_linkages
 
     def get_linkage_table(self) -> np.ndarray:
         n = self.search_space.amount_of_parameters
@@ -84,15 +102,15 @@ class SobolLinkage(BivariateLinkage, Metric):
 
         result += result.T
 
-        univariate_importances = np.sum(result, axis=0)/((self.n_vars-1))
+        #univariate_importances = np.sum(result, axis=0) / ((self.n_vars - 1))
+        univariate_importances = np.array([self.linkage_dict[((var, val),)]
+                                           for var, val in enumerate(self.current_solution.values)])
         np.fill_diagonal(result, univariate_importances)
 
         return result
-
 
     def get_univariate_linkage_of_var(self, var: int) -> float:
         return self.linkage_table[var, var]
 
     def get_bivariate_linkage_between_vars(self, var_a: int, var_b: int) -> float:
         return self.linkage_table[var_a, var_b]
-

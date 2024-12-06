@@ -7,7 +7,7 @@ from Core.PRef import PRef
 from Core.PS import PS
 from GuestLecture.show_off_problems import get_unexplained_parts
 from VarianceDecisionTree.SimplePSSearchTask import find_ps_in_solution
-from VarianceDecisionTree.VarianceMetric import SplitVariance
+from VarianceDecisionTree.SplitVariance import SplitVariance
 
 
 def split_pRef_using_ps(pRef: PRef, ps: PS) -> (PRef, PRef):
