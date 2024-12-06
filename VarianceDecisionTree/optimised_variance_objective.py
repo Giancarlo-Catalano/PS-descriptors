@@ -25,7 +25,10 @@ class SplitVarianceAndConsistency(Metric):
     def evaluate(self, ps: PS) -> None:
         matching_fitnesses, not_matching_fitnesses = self.selected_pRef.fitnesses_of_observations_and_complement(ps)
         split_variance = self.split_variance_metric.get_weighted_variance(matching_fitnesses, not_matching_fitnesses)
-        consistency = self.consistency_metric.get_p_value(matching_fitnesses, not_matching_fitnesses)
+        if ps.is_empty():
+            consistency = 1
+        else:
+            consistency = self.consistency_metric.get_p_value(matching_fitnesses, not_matching_fitnesses)
         self.last_results = split_variance, consistency
 
     def get_split_variance(self, ps: PS) -> float:

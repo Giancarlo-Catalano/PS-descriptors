@@ -1,6 +1,7 @@
 from typing import Callable
 
 import utils
+from BenchmarkProblems.GraphColouring import GraphColouring
 from BenchmarkProblems.RoyalRoad import RoyalRoad
 from BenchmarkProblems.TSP import TSP
 from Core.PRef import PRef
@@ -53,10 +54,11 @@ def repr_tree(node: list,
 
 
 def test_recursive_splitting():
-    problem = RoyalRoad(5)
+    # problem = RoyalRoad(5)
+    problem = GraphColouring.make_insular_instance(6)
     print(f"The problem is {problem}")
     pRef = PRefManager.generate_pRef(problem=problem,
-                                     sample_size=4000,
+                                     sample_size=10000,
                                      which_algorithm="uniform GA",
                                      verbose=True)
     pRef = PRef.unique(pRef)

@@ -32,14 +32,14 @@ def split_pRef(pRef: PRef, problem: BenchmarkProblem, accumulated_patterns: list
 
     pss = find_ps_in_solution(pRef=pRef,
                               problem=problem,
-                              ps_budget=1000,
+                              ps_budget=5000,
                               culling_method="biggest",
                               population_size=100,
                               to_explain=best_solution,
                               unexplained_mask=unexplained_vars,
                               proportion_unexplained_that_needs_used=0.01,
                               proportion_used_that_should_be_unexplained=0.5,
-                              verbose=False)
+                              verbose=True)
 
     split_ps = pss[0]
     matches, unmatches = split_pRef_using_ps(pRef, split_ps)
