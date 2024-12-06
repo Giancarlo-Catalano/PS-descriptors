@@ -27,6 +27,7 @@ from LCS.PSFilter import keep_with_lowest_dependence, keep_biggest, merge_pss_in
     keep_with_best_atomicity
 from VarianceDecisionTree.SplitVariance import SplitVariance
 from VarianceDecisionTree.VarianceSplitLinkage import VarianceSplitLinkage
+from VarianceDecisionTree.optimised_variance_objective import SplitVarianceAndConsistency
 
 PSObjective: TypeAlias = Callable[[PS], float]
 
@@ -124,44 +125,50 @@ def find_ps_in_solution(to_explain: FullSolution,
                         reattempts_when_fail: int = 1,
                         unexplained_mask: Optional[np.ndarray] = None,
                         verbose=True) -> list[PS]:
-    ground_truth_atomicity_metric = TraditionalPerturbationLinkage(problem)
+    #ground_truth_atomicity_metric = TraditionalPerturbationLinkage(problem)
     #ground_truth_atomicity_metric.set_solution(to_explain)
-    estimated_atomicity_metric = FasterSolutionSpecificMutualInformation()
-    estimated_atomicity_metric.set_pRef(pRef)
-    estimated_atomicity_metric.set_solution(to_explain)
-    simplicity_metric = Simplicity()
+    # estimated_atomicity_metric = FasterSolutionSpecificMutualInformation()
+    # estimated_atomicity_metric.set_pRef(pRef)
+    # estimated_atomicity_metric.set_solution(to_explain)
+    # simplicity_metric = Simplicity()
     variance_metric = SplitVariance(pRef)
     fitness_consistency = MannWhitneyU()
     fitness_consistency.set_pRef(pRef)
-    split_variance_linkage = VarianceSplitLinkage()
-    split_variance_linkage.set_pRef(pRef)
-    split_variance_linkage.set_solution(to_explain)
+    # split_variance_linkage = VarianceSplitLinkage()
+    # split_variance_linkage.set_pRef(pRef)
+    # split_variance_linkage.set_solution(to_explain)
 
-    def perturbation_atomicity(ps: PS) -> float:
-        return -ground_truth_atomicity_metric.get_atomicity(ps)
+    # def perturbation_atomicity(ps: PS) -> float:
+    #     return -ground_truth_atomicity_metric.get_atomicity(ps)
+    #
+    # def statical_atomicity(ps: PS) -> float:
+    #     return -estimated_atomicity_metric.get_atomicity(ps)
+    #
+    # def dependency(ps: PS) -> float:
+    #     return ground_truth_atomicity_metric.get_dependence(ps)
 
-    def statical_atomicity(ps: PS) -> float:
-        return -estimated_atomicity_metric.get_atomicity(ps)
+    # def simplicity(ps: PS) -> float:
+    #     return -float(np.sum(ps.values == STAR))
+    #     #return -simplicity_metric.get_single_score(ps)
 
-    def dependency(ps: PS) -> float:
-        return ground_truth_atomicity_metric.get_dependence(ps)
 
-    def simplicity(ps: PS) -> float:
-        return -float(np.sum(ps.values == STAR))
-        #return -simplicity_metric.get_single_score(ps)
+    metric = SplitVarianceAndConsistency(pRef)
 
     def variance(ps: PS) -> float:
-        return variance_metric.get_single_score(ps)
+        metric.evaluate(ps)
+        return metric.get_split_variance(ps)
+        #return variance_metric.get_single_score(ps)
 
     def consistency(ps: PS) -> float:
-        return fitness_consistency.get_single_score(ps)
+        return metric.get_consistency(ps)
+        #return fitness_consistency.get_single_score(ps)
 
 
-    def split_variance_atomicity(ps: PS) -> float:
-        return split_variance_linkage.get_atomicity(ps)
+    # def split_variance_atomicity(ps: PS) -> float:
+    #     return split_variance_linkage.get_atomicity(ps)
 
     # objectives = [simplicity, consistency, atomicity]
-    objectives = [variance, split_variance_atomicity]
+    objectives = [variance, consistency]
 
     # construct the optimisation problem instance
     problem = SimplePSSearchTask(solution_to_explain=to_explain,
