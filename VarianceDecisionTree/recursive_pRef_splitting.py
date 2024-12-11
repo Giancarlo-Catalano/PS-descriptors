@@ -11,16 +11,8 @@ from VarianceDecisionTree.SplitVariance import SplitVariance
 
 
 def split_pRef_using_ps(pRef: PRef, ps: PS) -> (PRef, PRef):
-    matching, not_matching = SplitVariance.get_split_indexes_of_ps(pRef, ps)
-
-    matching_pRef = PRef(fitness_array=pRef.fitness_array[matching],
-                         full_solution_matrix=pRef.full_solution_matrix[matching],
-                         search_space=pRef.search_space)
-
-    not_matching_pRef = PRef(fitness_array=pRef.fitness_array[not_matching],
-                             full_solution_matrix=pRef.full_solution_matrix[not_matching],
-                             search_space=pRef.search_space)
-    return matching_pRef, not_matching_pRef
+    matching_indexes = pRef.get_indexes_matching_ps(ps)
+    return pRef.split_by_indexes(matching_indexes)
 
 
 def split_pRef(pRef: PRef, problem: BenchmarkProblem, accumulated_patterns: list[PS]) -> (PS, PRef, PRef):

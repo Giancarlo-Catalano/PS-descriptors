@@ -273,6 +273,28 @@ class PRef:
                     search_space=self.search_space)
 
 
+    def split_by_indexes(self, indexes_in_match: Iterable[int]) -> (Any, Any):
+        not_matches = np.ones(shape=self.fitness_array.shape, dtype=bool)
+        not_matches[indexes_in_match] = False
+        not_matching_indexes = np.arange(self.sample_size)[not_matches]
+
+        matching_pRef = PRef(fitness_array=self.fitness_array[indexes_in_match],
+                             full_solution_matrix=self.full_solution_matrix[indexes_in_match],
+                             search_space=self.search_space)
+
+        not_matching_pRef = PRef(fitness_array=self.fitness_array[not_matching_indexes],
+                                 full_solution_matrix=self.full_solution_matrix[not_matching_indexes],
+                                 search_space=self.search_space)
+        return matching_pRef, not_matching_pRef
+
+
+    def train_test_split(self, test_size: float, random_state: int) -> (Any, Any):
+        random.seed(random_state)
+        test_indexes = set(random.sample(range(self.sample_size), int(self.sample_size * test_size)))
+        test, train = self.split_by_indexes(test_indexes)
+        return train, test  #  had to do this to flip them
+
+
 def plot_solutions_in_pRef(pRef: PRef, filename: str):
     x_points, y_points = utils.unzip(list(enumerate(pRef.fitness_array)))
     fig = plt.figure()
