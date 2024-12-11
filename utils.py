@@ -548,3 +548,45 @@ def top_with_safe_ties(items: list, key: Callable, lowest: bool = False, highest
         highest = True
     best_key = (max if highest else min)(key for item, key in items_with_keys)
     return [item for item, key in items_with_keys if key == best_key]
+
+
+def plot_ground_truth_vs_predictions(x_axis_label, x_axis_values, y_axis_label, y_axis_values, title):
+    # thanks to Mr GPT
+    """
+    Plots a scatterplot comparing ground truth and predicted values,
+    and visualizes variance with a line of best fit and a 45-degree reference line.
+
+    Parameters:
+    ground_truth (numpy.ndarray): Array of ground truth values.
+    predictions (numpy.ndarray): Array of predicted values.
+    """
+    if x_axis_values.shape != y_axis_values.shape:
+        raise ValueError(f"ground_truth and predictions must have the same shape. (shapes are {x_axis_values.shape}, {y_axis_values.shape})")
+
+    # Calculate the variance of the residuals
+    residuals = x_axis_values - y_axis_values
+    variance = np.var(residuals)
+
+    # Create the scatterplot
+    plt.figure(figsize=(8, 8))
+    plt.scatter(x_axis_values, y_axis_values, alpha=0.6, label=f'Variance: {variance:.2f}')
+
+    # Plot the 45-degree line for reference
+    max_val = max(max(x_axis_values), max(y_axis_values))
+    min_val = min(min(x_axis_values), min(y_axis_values))
+    plt.plot([min_val, max_val], [min_val, max_val], '--', color='red', label='45-degree line')
+
+    # Fit a line to the data for visualization
+    m, b = np.polyfit(x_axis_values, y_axis_values, 1)
+    plt.plot(x_axis_values, m * x_axis_values + b, color='blue', label=f'Best Fit: y={m:.2f}x+{b:.2f}')
+
+    # Add labels and legend
+    plt.xlabel(x_axis_label)
+    plt.ylabel(y_axis_label)
+    plt.title(title)
+    plt.legend()
+    plt.grid(True, alpha=0.3)
+
+    # Show the plot
+    plt.tight_layout()
+    return plt
