@@ -115,7 +115,6 @@ class SimplePSSearchTask(Problem):
 
 
 def find_ps_in_solution(to_explain: FullSolution,
-                        problem: BenchmarkProblem,
                         pRef: PRef,
                         ps_budget: int,
                         population_size: int = 100,

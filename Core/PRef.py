@@ -290,7 +290,7 @@ class PRef:
 
     def train_test_split(self, test_size: float, random_state: int) -> (Any, Any):
         random.seed(random_state)
-        test_indexes = set(random.sample(range(self.sample_size), int(self.sample_size * test_size)))
+        test_indexes = random.sample(range(self.sample_size), int(self.sample_size * test_size))
         test, train = self.split_by_indexes(test_indexes)
         return train, test  #  had to do this to flip them
 
