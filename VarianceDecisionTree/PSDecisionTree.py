@@ -43,10 +43,10 @@ class PSDecisionTree(AbstractDecisionTreeRegressor):
         super().__init__(maximum_depth)
 
     def train_from_pRef(self, pRef: PRef, random_state: int = 42) -> None:
-        print(f"Making a branch with max depth = {self.maximum_depth}, splitting a pref of size {pRef.sample_size}")
+        #print(f"Making a branch with max depth = {self.maximum_depth}, splitting a pref of size {pRef.sample_size}")
         pRef_variance = float(np.var(pRef.fitness_array))
         if (self.maximum_depth < 1) or (pRef.sample_size < 20) or (pRef_variance < 1e-05):
-            print(f"Making a leaf node with variance = {pRef_variance}")
+            #print(f"Making a leaf node with variance = {pRef_variance}")
             self.own_variance = pRef_variance
             self.own_average = np.average(pRef.fitness_array)
             return

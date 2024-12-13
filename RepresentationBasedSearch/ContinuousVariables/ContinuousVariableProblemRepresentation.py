@@ -55,5 +55,11 @@ class RangeRepresentationForProblem:
             accumulated = []
             for _ in range(self.split_depth):
                 accumulated.append(remaining % 2)
+                remaining //=2
 
-            return np.array(accumulated).T
+            result_matrix = np.array(accumulated)
+            result_matrix = np.flip(result_matrix, 0)
+            return result_matrix.T.ravel()
+
+        return np.array([convert_row(row) for row in integer_data])
+

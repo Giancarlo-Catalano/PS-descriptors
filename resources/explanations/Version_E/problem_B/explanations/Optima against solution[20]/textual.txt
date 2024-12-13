@@ -1,0 +1,16 @@
+label: Optima against solution[20]
+
+
+
+
+
+Isla	A = ROTA 7	A = ROTA 7
+Sofia	D = ROTA 32	D = ROTA 32
+Ada	B = ROTA 10	B = ROTA 10
+Dylan	B = ROTA 19	B = ROTA 19
+Eden	C = ROTA 23	C = ROTA 23
+Anna	A = ROTA 12	A = ROTA 12
+
+FEW workers got their preferred rota, (rank = 9%)
+
+The pattern was found to be beneficial (HIGHLY SIGNIFICANT), with p_value 2.769953630220669e-165

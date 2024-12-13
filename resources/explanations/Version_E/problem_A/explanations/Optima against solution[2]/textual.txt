@@ -1,0 +1,16 @@
+label: Optima against solution[2]
+
+Innes	A = ROTA 7	D = ROTA 20
+
+⚡	Tuesday	21~25	20~25
+⚡	Friday	19~19	18~19
+
+Finley	C = ROTA 23	C = ROTA 23
+Innes	A = ROTA 7	D = ROTA 20
+Amelia	D = ROTA 32	D = ROTA 32
+Niamh	A = ROTA 7	A = ROTA 7
+
+On wednesday, the coverage is LOW, (rank = 2%)
+On saturday, the coverage is LOW, (rank = 2%)
+
+The pattern was found to be beneficial (HIGHLY SIGNIFICANT), with p_value 2.471447979202602e-165

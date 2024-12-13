@@ -1,0 +1,17 @@
+label: Optima against solution[15]
+
+Murray	C = ROTA 32	B = ROTA 17
+
+⚡	Monday	12~18	13~18
+⚡	Tuesday	21~25	22~25
+⚡	Thursday	22~23	23~23
+⚡	Saturday	7~14	6~13
+
+Murray	C = ROTA 32	B = ROTA 17
+Finley	C = ROTA 23	C = ROTA 23
+Logan	C = ROTA 5	C = ROTA 5
+Amelia	D = ROTA 32	D = ROTA 32
+
+FEW workers got their preferred rota, (rank = 1%)
+
+The pattern was found to be beneficial (HIGHLY SIGNIFICANT), with p_value 7.702345739680794e-165

@@ -1,0 +1,14 @@
+label: Optima against solution[1]
+
+Innes	A = ROTA 24	C = ROTA 20
+
+⚡	Tuesday	21~25	20~25
+⚡	Friday	19~19	18~19
+
+Finley	C = ROTA 19	C = ROTA 19
+Innes	A = ROTA 24	C = ROTA 20
+Lyla	C = ROTA 22	C = ROTA 22
+Amelia	D = ROTA 25	D = ROTA 25
+
+On saturday, the coverage is LOW, (rank = 3%)
+FEW workers got their preferred rota, (rank = 8%)

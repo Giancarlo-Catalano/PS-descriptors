@@ -1,0 +1,28 @@
+Innes	A = ROTA 24	C = ROTA 20
+Angus	B = ROTA 11	C = ROTA 21
+
+⚡	Tuesday	21~25	19~25
+⚡	Thursday	22~23	21~23
+⚡	Friday	19~19	18~19
+📞	Tuesday	16~19	15~19
+📞	Thursday	16~18	15~18
+📞	Friday	13~15	12~15
+
+Finley	C = ROTA 19	C = ROTA 19
+Innes	A = ROTA 24	C = ROTA 20
+Lyla	C = ROTA 22	C = ROTA 22
+Niamh	A = ROTA 24	A = ROTA 24
+Angus	B = ROTA 11	C = ROTA 21
+
+The delta fitness = 7.33, which has percentile (rank = 99%)
+On saturday, the coverage is LOW, (rank = 1%)
+The workers have FEW skills, (rank = 15%)
+On wednesday, the coverage is LOW, (rank = 17%)
+FEW workers got their preferred rota, (rank = 19%)
+On thursday, the coverage is HIGH, (rank = 77%)
+On monday, the coverage is HIGH, (rank = 76%)
+On sunday, the coverage is HIGH, (rank = 76%)
+The skills cover a NARROW range, (rank = 23%)
+The selected rotas are SIMILAR (avg diff = 13.80), (rank = 29%))
+On friday, the coverage is LOW, (rank = 30%)
+On tuesday, the coverage is LOW, (rank = 32%)

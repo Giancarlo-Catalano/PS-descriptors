@@ -1,0 +1,22 @@
+label: Optima against solution[1]
+
+Freddie	C = ROTA 30	B = ROTA 16
+Noah	A = ROTA 11	B = ROTA 7
+
+⚡	Monday	10~16	9~15
+⚡	Friday	10~11	11~12
+📞	Monday	13~17	13~16
+💻	Monday	12~17	11~17
+🔨	Monday	11~15	10~14
+
+Isaac	B = ROTA 35	B = ROTA 35
+Lottie	A = ROTA 6	A = ROTA 6
+Aaron	B = ROTA 35	B = ROTA 35
+Amelia	D = ROTA 37	D = ROTA 37
+Struan	A = ROTA 22	A = ROTA 22
+Freddie	C = ROTA 30	B = ROTA 16
+Noah	A = ROTA 11	B = ROTA 7
+
+
+
+The pattern was found to be beneficial (HIGHLY SIGNIFICANT), with p_value 4.853528022443059e-165

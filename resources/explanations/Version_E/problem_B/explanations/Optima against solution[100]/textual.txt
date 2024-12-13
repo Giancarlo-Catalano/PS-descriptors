@@ -1,0 +1,17 @@
+label: Optima against solution[100]
+
+
+
+
+
+Isla	A = ROTA 7	A = ROTA 7
+Emily	C = ROTA 32	C = ROTA 32
+Sofia	D = ROTA 32	D = ROTA 32
+Dylan	B = ROTA 19	B = ROTA 19
+Alba	A = ROTA 24	A = ROTA 24
+Eden	C = ROTA 23	C = ROTA 23
+
+The workers have MANY skills, (rank = 92%)
+FEW workers got their preferred rota, (rank = 9%)
+
+The pattern was found to be beneficial (HIGHLY SIGNIFICANT), with p_value 2.729967693694893e-165

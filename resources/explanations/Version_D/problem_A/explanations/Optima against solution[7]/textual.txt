@@ -1,0 +1,20 @@
+label: Optima against solution[7]
+
+Adam	B = ROTA 29	A = ROTA 4
+Innes	A = ROTA 24	C = ROTA 20
+
+⚡	Monday	12~18	11~17
+⚡	Tuesday	21~25	20~25
+⚡	Friday	19~19	19~20
+📞	Monday	10~16	9~15
+📞	Friday	13~15	14~16
+💻	Monday	3~5	2~4
+
+Adam	B = ROTA 29	A = ROTA 4
+Frankie	A = ROTA 2	A = ROTA 2
+Finley	C = ROTA 19	C = ROTA 19
+Innes	A = ROTA 24	C = ROTA 20
+Amelia	D = ROTA 25	D = ROTA 25
+Niamh	A = ROTA 24	A = ROTA 24
+
+The workers have MANY skills, (rank = 93%)

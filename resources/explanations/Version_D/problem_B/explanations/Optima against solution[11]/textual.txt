@@ -1,0 +1,12 @@
+label: Optima against solution[11]
+
+
+
+
+
+Eden	A = ROTA 30	A = ROTA 30
+Fraser	A = ROTA 17	A = ROTA 17
+Ava	B = ROTA 11	B = ROTA 11
+Michael	D = ROTA 25	D = ROTA 25
+Max	C = ROTA 19	C = ROTA 19
+

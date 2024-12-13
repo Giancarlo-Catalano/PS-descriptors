@@ -59,7 +59,7 @@ class TSP(BenchmarkProblem):
         return -total_distance
 
     def __repr__(self):
-        return f"TSP(cities = {self.cities})"
+        return f"TSP(cities = {len(self.cities)})"
 
     def repr_city_index(self, city_index: int) -> str:
         return utils.alphabet[city_index]

@@ -1,0 +1,13 @@
+label: Optima against solution[5]
+
+
+
+
+
+Myla	A = ROTA 24	A = ROTA 24
+Cooper	A = ROTA 24	A = ROTA 24
+Ava	B = ROTA 11	B = ROTA 11
+Michael	D = ROTA 25	D = ROTA 25
+Carson	C = ROTA 22	C = ROTA 22
+
+On saturday, the coverage is LOW, (rank = 1%)

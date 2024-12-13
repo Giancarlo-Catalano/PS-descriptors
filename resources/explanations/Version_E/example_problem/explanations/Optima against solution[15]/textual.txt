@@ -1,0 +1,19 @@
+label: Optima against solution[15]
+
+Elsie	B = ROTA 30	A = ROTA 6
+Oliver	D = ROTA 30	A = ROTA 5
+
+💻	Saturday	5~11	5~12
+
+Isaac	B = ROTA 35	B = ROTA 35
+Anna	A = ROTA 22	A = ROTA 22
+Lottie	A = ROTA 6	A = ROTA 6
+Aaron	B = ROTA 35	B = ROTA 35
+Struan	A = ROTA 22	A = ROTA 22
+Elsie	B = ROTA 30	A = ROTA 6
+Oliver	D = ROTA 30	A = ROTA 5
+
+The workers have FEW skills, (rank = 1%)
+The selected rotas are SIMILAR (avg diff = 9.14), (rank = 1%))
+
+The pattern was found to be beneficial (HIGHLY SIGNIFICANT), with p_value 3.795661981951515e-161

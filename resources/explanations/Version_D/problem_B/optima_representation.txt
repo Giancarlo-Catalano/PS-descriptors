@@ -1,0 +1,42 @@
+Harris	A	ROTA 18		📞			_	W	W	W	W	W	_	_	W	W	W	W	W	_	_	W	W	W	W	W	_	_	W	W	W	W	W	_	_	W	W	W	W	W	_	_	W	W	W	W	W	_	_	W	W	W	W	W	_	_	W	W	W	W	W	_
+Eden	A	ROTA 30	⚡	📞			W	W	W	W	W	_	_	W	W	W	W	W	_	_	W	W	W	W	W	_	_	W	W	W	W	W	_	_	W	W	W	W	W	_	_	W	W	W	W	W	_	_	W	W	W	W	W	_	_	W	W	W	W	W	_	_
+Ayla	A	ROTA 17	⚡				W	W	W	W	_	_	W	W	W	W	W	_	_	W	W	W	W	W	_	_	W	W	W	W	W	_	_	W	W	W	W	W	_	_	W	W	W	W	W	_	_	W	W	W	W	W	_	_	W	W	W	W	W	_	_	W
+Ivy	A	ROTA 24	⚡	📞			W	W	W	W	W	_	_	W	W	W	W	W	_	_	_	W	W	W	W	W	_	W	W	W	W	W	_	_	W	W	W	W	W	_	_	_	W	W	W	W	W	_	W	W	W	W	W	_	_	W	W	W	W	W	_	_
+Kai	A	ROTA 30	⚡	📞	💻		W	W	W	W	W	_	_	W	W	W	W	W	_	_	W	W	W	W	W	_	_	W	W	W	W	W	_	_	W	W	W	W	W	_	_	W	W	W	W	W	_	_	W	W	W	W	W	_	_	W	W	W	W	W	_	_
+Cameron	B	ROTA 31		📞			W	W	W	W	W	W	_	_	W	W	W	W	_	_	_	W	W	W	W	W	_	W	W	W	W	W	W	_	_	W	W	W	W	_	_	_	W	W	W	W	W	_	W	W	W	W	W	W	_	_	W	W	W	W	_	_
+Holly	B	ROTA 30			💻		W	W	W	W	W	_	_	W	W	W	W	W	_	_	W	W	W	W	W	_	_	W	W	W	W	W	_	_	W	W	W	W	W	_	_	W	W	W	W	W	_	_	W	W	W	W	W	_	_	W	W	W	W	W	_	_
+Samuel	C	ROTA 25		📞			_	W	W	W	W	_	_	W	W	W	_	W	W	_	_	_	W	W	W	W	_	_	W	W	W	W	_	_	W	W	W	_	W	W	_	_	_	W	W	W	W	_	_	W	W	W	W	_	_	W	W	W	_	W	W	_
+Fraser	A	ROTA 17		📞			W	W	W	W	_	_	W	W	W	W	W	_	_	W	W	W	W	W	_	_	W	W	W	W	W	_	_	W	W	W	W	W	_	_	W	W	W	W	W	_	_	W	W	W	W	W	_	_	W	W	W	W	W	_	_	W
+Layla	A	ROTA 31	⚡	📞			W	W	W	W	W	W	_	_	W	W	W	W	_	_	_	W	W	W	W	W	_	W	W	W	W	W	W	_	_	W	W	W	W	_	_	_	W	W	W	W	W	_	W	W	W	W	W	W	_	_	W	W	W	W	_	_
+Myla	A	ROTA 24	⚡			🔨	W	W	W	W	W	_	_	W	W	W	W	W	_	_	_	W	W	W	W	W	_	W	W	W	W	W	_	_	W	W	W	W	W	_	_	_	W	W	W	W	W	_	W	W	W	W	W	_	_	W	W	W	W	W	_	_
+Joseph	A	ROTA 2	⚡	📞		🔨	_	W	W	W	_	_	W	_	W	W	W	_	_	W	_	W	W	W	_	_	W	_	W	W	W	_	_	W	_	W	W	W	_	_	W	_	W	W	W	_	_	W	_	W	W	W	_	_	W	_	W	W	W	_	_	W
+Blake	A	ROTA 8	⚡	📞			_	W	W	W	W	_	_	W	W	_	W	W	_	_	_	_	W	W	W	W	_	_	W	W	W	W	_	_	W	W	_	W	W	_	_	_	_	W	W	W	W	_	_	W	W	W	W	_	_	W	W	_	W	W	_	_
+Mila	B	ROTA 6		📞			_	W	W	W	W	_	_	W	W	W	W	W	_	_	W	W	W	_	_	W	_	_	W	W	W	W	_	_	W	W	W	W	W	_	_	W	W	W	_	_	W	_	_	W	W	W	W	_	_	W	W	W	W	W	_	_
+Imogen	B	ROTA 29	⚡	📞	💻	🔨	W	W	W	W	_	_	_	W	W	W	W	_	_	_	W	W	W	W	_	_	_	W	W	W	W	_	_	_	W	W	W	W	_	_	_	W	W	W	W	_	_	_	W	W	W	W	_	_	_	W	W	W	W	_	_	_
+Oliver	A	ROTA 30	⚡	📞	💻		W	W	W	W	W	_	_	W	W	W	W	W	_	_	W	W	W	W	W	_	_	W	W	W	W	W	_	_	W	W	W	W	W	_	_	W	W	W	W	W	_	_	W	W	W	W	W	_	_	W	W	W	W	W	_	_
+Maeva	A	ROTA 2		📞	💻		_	W	W	W	_	_	W	_	W	W	W	_	_	W	_	W	W	W	_	_	W	_	W	W	W	_	_	W	_	W	W	W	_	_	W	_	W	W	W	_	_	W	_	W	W	W	_	_	W	_	W	W	W	_	_	W
+Gracie	A	ROTA 2	⚡	📞	💻		_	W	W	W	_	_	W	_	W	W	W	_	_	W	_	W	W	W	_	_	W	_	W	W	W	_	_	W	_	W	W	W	_	_	W	_	W	W	W	_	_	W	_	W	W	W	_	_	W	_	W	W	W	_	_	W
+Carter	A	ROTA 30		📞	💻		W	W	W	W	W	_	_	W	W	W	W	W	_	_	W	W	W	W	W	_	_	W	W	W	W	W	_	_	W	W	W	W	W	_	_	W	W	W	W	W	_	_	W	W	W	W	W	_	_	W	W	W	W	W	_	_
+Cooper	A	ROTA 24		📞			W	W	W	W	W	_	_	W	W	W	W	W	_	_	_	W	W	W	W	W	_	W	W	W	W	W	_	_	W	W	W	W	W	_	_	_	W	W	W	W	W	_	W	W	W	W	W	_	_	W	W	W	W	W	_	_
+Evie	C	ROTA 23	⚡	📞			W	W	W	_	W	W	_	W	W	W	_	W	W	_	W	W	W	_	W	W	_	W	W	W	_	W	W	_	W	W	W	_	W	W	_	W	W	W	_	W	W	_	W	W	W	_	W	W	_	W	W	W	_	W	W	_
+Bonnie	A	ROTA 23	⚡	📞		🔨	W	W	W	_	W	W	_	W	W	W	_	W	W	_	W	W	W	_	W	W	_	W	W	W	_	W	W	_	W	W	W	_	W	W	_	W	W	W	_	W	W	_	W	W	W	_	W	W	_	W	W	W	_	W	W	_
+Ava	B	ROTA 11	⚡	📞			W	W	W	W	_	_	W	W	W	W	W	W	W	_	_	W	W	W	W	W	_	W	W	W	W	_	_	W	W	W	W	W	W	W	_	_	W	W	W	W	W	_	W	W	W	W	_	_	W	W	W	W	W	W	W	_
+Erin	B	ROTA 18		📞			_	W	W	W	W	W	_	_	W	W	W	W	W	_	_	W	W	W	W	W	_	_	W	W	W	W	W	_	_	W	W	W	W	W	_	_	W	W	W	W	W	_	_	W	W	W	W	W	_	_	W	W	W	W	W	_
+Benjamin	A	ROTA 5	⚡	📞	💻	🔨	W	_	W	W	_	_	W	W	_	W	W	_	_	W	W	_	W	W	_	_	W	W	_	W	W	_	_	W	W	_	W	W	_	_	W	W	_	W	W	_	_	W	W	_	W	W	_	_	W	W	_	W	W	_	_	W
+Zara	A	ROTA 30	⚡	📞			W	W	W	W	W	_	_	W	W	W	W	W	_	_	W	W	W	W	W	_	_	W	W	W	W	W	_	_	W	W	W	W	W	_	_	W	W	W	W	W	_	_	W	W	W	W	W	_	_	W	W	W	W	W	_	_
+Michael	D	ROTA 25	⚡	📞		🔨	_	W	W	W	W	_	_	W	W	W	_	W	W	_	_	_	W	W	W	W	_	_	W	W	W	W	_	_	W	W	W	_	W	W	_	_	_	W	W	W	W	_	_	W	W	W	W	_	_	W	W	W	_	W	W	_
+Max	C	ROTA 19	⚡	📞			W	W	W	_	W	W	_	_	W	W	W	_	_	_	_	_	W	W	W	W	_	W	W	W	_	W	W	_	_	W	W	W	_	_	_	_	_	W	W	W	W	_	W	W	W	_	W	W	_	_	W	W	W	_	_	_
+Carson	C	ROTA 22	⚡				W	W	W	_	W	W	_	_	W	W	W	_	W	_	W	W	W	_	W	W	_	_	W	W	W	_	W	_	W	W	W	_	W	W	_	_	W	W	W	_	W	_	W	W	W	_	W	W	_	_	W	W	W	_	W	_
+Ruaridh	A	ROTA 30	⚡	📞			W	W	W	W	W	_	_	W	W	W	W	W	_	_	W	W	W	W	W	_	_	W	W	W	W	W	_	_	W	W	W	W	W	_	_	W	W	W	W	W	_	_	W	W	W	W	W	_	_	W	W	W	W	W	_	_
+
+⚡	16	19	20	16	14	5	5	15	19	19	17	13	5	4	11	16	20	17	15	10	4	15	19	20	17	13	5	5	16	19	19	16	14	5	4	10	16	20	18	14	10	4	16	19	20	16	14	5	5	15	19	19	17	13	5	4
+📞	17	25	26	23	19	7	6	18	25	25	22	19	7	5	12	21	26	23	19	14	5	17	25	26	23	19	7	6	18	25	25	22	19	7	5	12	21	26	23	19	14	5	17	25	26	23	19	7	6	18	25	25	22	19	7	5
+💻	6	7	8	8	4	0	3	6	7	8	8	4	0	3	6	7	8	8	4	0	3	6	7	8	8	4	0	3	6	7	8	8	4	0	3	6	7	8	8	4	0	3	6	7	8	8	4	0	3	6	7	8	8	4	0	3
+🔨	4	5	6	5	3	1	2	5	5	6	4	3	2	2	3	4	6	5	3	3	2	4	5	6	5	3	1	2	5	5	6	4	3	2	2	3	4	6	5	3	3	2	4	5	6	5	3	1	2	5	5	6	4	3	2	2
+
+⚡	max = 16, min = 10, p = 0.14	max = 19, min = 16, p = 0.02	max = 20, min = 19, p = 0.00	max = 18, min = 16, p = 0.01	max = 15, min = 13, p = 0.02	max = 10, min = 5, p = 0.25	max = 5, min = 4, p = 0.04
+📞	max = 18, min = 12, p = 0.11	max = 25, min = 21, p = 0.03	max = 26, min = 25, p = 0.00	max = 23, min = 22, p = 0.00	max = 19, min = 19, p = 0.00	max = 14, min = 7, p = 0.25	max = 6, min = 5, p = 0.03
+💻	max = 6, min = 6, p = 0.00	max = 7, min = 7, p = 0.00	max = 8, min = 8, p = 0.00	max = 8, min = 8, p = 0.00	max = 4, min = 4, p = 0.00	max = 0, min = 0, p = 1.00	max = 3, min = 3, p = 0.00
+🔨	max = 5, min = 3, p = 0.16	max = 5, min = 4, p = 0.04	max = 6, min = 6, p = 0.00	max = 5, min = 4, p = 0.04	max = 3, min = 3, p = 0.00	max = 3, min = 1, p = 0.44	max = 2, min = 2, p = 0.00
+
+The optima is -20.711

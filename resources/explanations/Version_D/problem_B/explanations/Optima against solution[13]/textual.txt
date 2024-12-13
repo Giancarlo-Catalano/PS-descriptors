@@ -1,0 +1,14 @@
+label: Optima against solution[13]
+
+
+
+
+
+Kai	A = ROTA 30	A = ROTA 30
+Fraser	A = ROTA 17	A = ROTA 17
+Myla	A = ROTA 24	A = ROTA 24
+Joseph	A = ROTA 2	A = ROTA 2
+Ava	B = ROTA 11	B = ROTA 11
+Zara	A = ROTA 30	A = ROTA 30
+Carson	C = ROTA 22	C = ROTA 22
+

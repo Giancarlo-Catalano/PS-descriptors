@@ -1,0 +1,38 @@
+label: Optima against solution[1000]
+
+Quinn	A = ROTA 17	C = ROTA 7
+Cora	B = ROTA 1	A = ROTA 15
+Murray	C = ROTA 32	D = ROTA 31
+Innes	A = ROTA 7	D = ROTA 20
+Thomas	A = ROTA 12	C = ROTA 19
+Amelia	D = ROTA 32	A = ROTA 18
+Alice	B = ROTA 21	A = ROTA 10
+Thea	A = ROTA 17	C = ROTA 27
+
+⚡	Monday	12~18	9~19
+⚡	Tuesday	21~25	20~25
+⚡	Thursday	22~23	22~24
+⚡	Friday	19~19	17~19
+⚡	Saturday	7~14	6~16
+📞	Monday	10~16	8~17
+📞	Friday	13~15	13~14
+📞	Saturday	5~10	4~12
+💻	Wednesday	6~6	5~6
+🔨	Monday	6~6	5~6
+🔨	Saturday	0~0	0~1
+
+Quinn	A = ROTA 17	C = ROTA 7
+Cora	B = ROTA 1	A = ROTA 15
+Murray	C = ROTA 32	D = ROTA 31
+Finley	C = ROTA 23	C = ROTA 23
+Innes	A = ROTA 7	D = ROTA 20
+Thomas	A = ROTA 12	C = ROTA 19
+Amelia	D = ROTA 32	A = ROTA 18
+William	A = ROTA 17	A = ROTA 17
+Alice	B = ROTA 21	A = ROTA 10
+Thea	A = ROTA 17	C = ROTA 27
+Angus	B = ROTA 10	B = ROTA 10
+
+
+
+The pattern was found to be beneficial (HIGHLY SIGNIFICANT), with p_value 1.6629295594672565e-165

@@ -1,0 +1,23 @@
+label: Optima against solution[50]
+
+Adam	B = ROTA 19	A = ROTA 2
+Poppy	B = ROTA 6	A = ROTA 12
+Thomas	A = ROTA 12	B = ROTA 2
+
+⚡	Monday	12~18	11~17
+⚡	Saturday	7~14	6~13
+📞	Monday	10~16	9~15
+📞	Friday	13~15	14~16
+💻	Monday	3~5	2~4
+
+Adam	B = ROTA 19	A = ROTA 2
+Frankie	A = ROTA 24	A = ROTA 24
+Poppy	B = ROTA 6	A = ROTA 12
+Finley	C = ROTA 23	C = ROTA 23
+Thomas	A = ROTA 12	B = ROTA 2
+Amelia	D = ROTA 32	D = ROTA 32
+Niamh	A = ROTA 7	A = ROTA 7
+
+The selected rotas are DIFFERENT (avg diff = 19.43), (rank = 92%))
+
+The pattern was found to be beneficial (HIGHLY SIGNIFICANT), with p_value 1.6629295594672565e-165
