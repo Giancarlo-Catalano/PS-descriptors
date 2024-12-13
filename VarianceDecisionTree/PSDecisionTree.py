@@ -1,4 +1,4 @@
-from typing import Optional, Any
+from typing import Optional, Any, Callable
 
 import numpy as np
 
@@ -25,6 +25,9 @@ class PSDecisionTree(AbstractDecisionTreeRegressor):
 
     ancestor_splits: list[PS]
 
+
+    repr_ps: Callable
+
     def __init__(self,
                  maximum_depth: int,
                  ps_budget: int,
@@ -42,13 +45,19 @@ class PSDecisionTree(AbstractDecisionTreeRegressor):
         self.own_average = None
         super().__init__(maximum_depth)
 
+
+        self.repr_ps = repr
+
+
+    def set_repr_ps(self, repr_ps):
+        self.repr_ps = repr_ps
+
     def train_from_pRef(self, pRef: PRef, random_state: int = 42) -> None:
-        #print(f"Making a branch with max depth = {self.maximum_depth}, splitting a pref of size {pRef.sample_size}")
+        print(f"Making a branch with max depth = {self.maximum_depth}, splitting a pref of size {pRef.sample_size}")
         pRef_variance = float(np.var(pRef.fitness_array))
+        self.own_variance = pRef_variance
+        self.own_average = np.average(pRef.fitness_array)
         if (self.maximum_depth < 1) or (pRef.sample_size < 20) or (pRef_variance < 1e-05):
-            #print(f"Making a leaf node with variance = {pRef_variance}")
-            self.own_variance = pRef_variance
-            self.own_average = np.average(pRef.fitness_array)
             return
 
         best_solution = pRef.get_best_solution()
@@ -59,8 +68,8 @@ class PSDecisionTree(AbstractDecisionTreeRegressor):
                                   population_size=self.ps_search_population_size,
                                   to_explain=best_solution,
                                   unexplained_mask=unexplained_vars,
-                                  proportion_unexplained_that_needs_used=0.01,
-                                  proportion_used_that_should_be_unexplained=0.5,
+                                  proportion_unexplained_that_needs_used=0,
+                                  proportion_used_that_should_be_unexplained=0,
                                   verbose=False)
 
         self.split_ps = pss[0]
@@ -89,13 +98,38 @@ class PSDecisionTree(AbstractDecisionTreeRegressor):
             else:
                 return self.unmatching_branch.get_prediction(solution)
 
+
+    def get_prediction_with_restricted_depth(self, solution: FullSolution, allowed_depth: int) -> float:
+        if allowed_depth == 0 or (self.split_ps is None):
+            return self.own_average
+        else:
+            branch_to_navigate = self.matching_branch if contains(solution, self.split_ps) else self.unmatching_branch
+            return branch_to_navigate.get_prediction_with_restricted_depth(solution, allowed_depth-1)
+
     def __repr__(self):
         if self.split_ps is None:
             return f"Leaf(Average = {self.own_average}"
         else:
-            head_repr = f"Split by {self.split_ps}"
+            head_repr = f"Split by {self.repr_ps(self.split_ps)}"
             matches_repr = "(matches)" + repr(self.matching_branch)
             unmatches_repr = "(UNmatches)" + repr(self.unmatching_branch)
             return (f"{head_repr}"
                     f"\n{utils.indent(matches_repr)}"
                     f"\n{utils.indent(unmatches_repr)}")
+
+
+
+class PSDecisionTreeRestrictedDepth(AbstractDecisionTreeRegressor):
+    original_dt: PSDecisionTree
+    depth: int
+
+    def __init__(self, original_dt: PSDecisionTree,
+                 depth: int):
+        self.original_dt = original_dt
+        self.depth = depth
+
+        super().__init__(maximum_depth=depth)
+
+    def get_prediction(self, solution: FullSolution) -> float:
+        return self.original_dt.get_prediction_with_restricted_depth(solution, self.depth)
+
