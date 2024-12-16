@@ -1,0 +1,29 @@
+Thomas	A = ROTA 17	C = ROTA 29
+Angus	B = ROTA 11	C = ROTA 21
+
+⚡	Tuesday	21~25	20~25
+⚡	Thursday	22~23	21~23
+⚡	Friday	19~19	18~19
+⚡	Sunday	5~6	4~5
+📞	Tuesday	16~19	15~19
+📞	Thursday	16~18	15~18
+📞	Friday	13~15	12~15
+
+Finley	C = ROTA 19	C = ROTA 19
+Lyla	C = ROTA 22	C = ROTA 22
+Thomas	A = ROTA 17	C = ROTA 29
+Amelia	D = ROTA 25	D = ROTA 25
+Angus	B = ROTA 11	C = ROTA 21
+
+The delta fitness = 7.57, which has percentile (rank = 99%)
+FEW workers got their preferred rota, (rank = 4%)
+The selected rotas are DIFFERENT (avg diff = 21.40), (rank = 95%))
+On tuesday, the coverage is HIGH, (rank = 79%)
+On friday, the coverage is HIGH, (rank = 77%)
+On thursday, the coverage is HIGH, (rank = 77%)
+On monday, the coverage is HIGH, (rank = 77%)
+On sunday, the coverage is HIGH, (rank = 77%)
+The skills cover a NARROW range, (rank = 23%)
+The workers have FEW skills, (rank = 30%)
+On saturday, the coverage is HIGH, (rank = 69%)
+On wednesday, the coverage is HIGH, (rank = 65%)

@@ -1,0 +1,14 @@
+label: Optima against solution1
+
+Innes	A = ROTA 24	C = ROTA 20
+
+⚡	Tuesday	21~25	20~25
+⚡	Friday	19~19	18~19
+
+Finley	C = ROTA 19	C = ROTA 19
+Innes	A = ROTA 24	C = ROTA 20
+Amelia	D = ROTA 25	D = ROTA 25
+Niamh	A = ROTA 24	A = ROTA 24
+
+On wednesday, the coverage is LOW, (rank = 2%)
+On saturday, the coverage is LOW, (rank = 3%)

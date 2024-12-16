@@ -1,0 +1,23 @@
+Cora	B = ROTA 6	A = ROTA 32
+
+⚡	Monday	12~18	11~18
+⚡	Thursday	22~23	22~24
+⚡	Friday	19~19	18~20
+
+Cora	B = ROTA 6	A = ROTA 32
+Finley	C = ROTA 19	C = ROTA 19
+Amelia	D = ROTA 25	D = ROTA 25
+William	A = ROTA 30	A = ROTA 30
+
+The delta fitness = 9.00, which has percentile (rank = 100%)
+FEW workers got their preferred rota, (rank = 9%)
+On wednesday, the coverage is LOW, (rank = 25%)
+On saturday, the coverage is LOW, (rank = 28%)
+The skills cover a NARROW range, (rank = 33%)
+On monday, the coverage is LOW, (rank = 34%)
+On sunday, the coverage is LOW, (rank = 34%)
+On thursday, the coverage is LOW, (rank = 36%)
+On friday, the coverage is LOW, (rank = 39%)
+On tuesday, the coverage is LOW, (rank = 42%)
+The selected rotas are DIFFERENT (avg diff = 16.67), (rank = 57%))
+The workers have MANY skills, (rank = 51%)

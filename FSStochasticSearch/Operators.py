@@ -1,6 +1,8 @@
 import heapq
 import random
 
+import numpy as np
+
 from Core.FullSolution import FullSolution
 from Core.SearchSpace import SearchSpace
 
@@ -78,6 +80,23 @@ class TwoPointFSCrossover(FSCrossoverOperator):
 
     def __repr__(self):
         return "TwoPointFSCrossover"
+
+
+class UniformFSCrossover(FSCrossoverOperator):
+    def __init__(self):
+        super().__init__()
+
+
+    def crossed(self, mother: FullSolution, father: FullSolution) -> FullSolution:
+        result_values = mother.values.copy()
+        n = len(result_values)
+        values_to_borrow = np.random.randint(2, size=n, dtype=bool)
+        result_values[values_to_borrow] = father.values[values_to_borrow]
+        return FullSolution(result_values)
+
+
+    def __repr__(self):
+        return "UniformFSCrossover"
 
 
 

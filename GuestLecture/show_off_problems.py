@@ -1,3 +1,4 @@
+import numpy as np
 from tqdm import tqdm
 
 from BenchmarkProblems.BenchmarkProblem import BenchmarkProblem
@@ -8,22 +9,15 @@ from BenchmarkProblems.TSP import TSP, BooleanSearchSpaceTSP
 from Core.FullSolution import FullSolution
 from Core.PS import PS, STAR
 from Explanation.PRefManager import PRefManager
-from PairExplanation.PairExplanationTester import PairExplanationTester
+from PairExplanation.ExplanationMiner import ExplanationMiner
 from utils import announce
 
 
-def get_unexplained_parts(solution: FullSolution, partial_solutions: list[PS]) -> FullSolution:
-    explained_values = [False for _ in solution.values]
-    for ps in partial_solutions:
-        for index, value in enumerate(ps.values):
-            if value != STAR:
-                explained_values[index] = True
-
-    result = solution.copy()
-    for index, has_been_explained in enumerate(explained_values):
-        if not has_been_explained:
-            result = result.with_different_value(index, -1)
-    return result
+def get_unexplained_parts(solution: FullSolution, partial_solutions: list[PS]) -> np.ndarray:
+    if len(partial_solutions) == 0:
+        return np.ones(shape=len(solution), dtype=bool)
+    ps_matrix = np.array([ps.values for ps in partial_solutions])
+    return np.all(ps_matrix == STAR, axis=0)
 
 
 def show_off_problem(problem: BenchmarkProblem,
@@ -39,18 +33,19 @@ def show_off_problem(problem: BenchmarkProblem,
     best_solutions = pRef.get_top_n_solutions(10)
     optima = best_solutions[0]
 
-    explanation_generator = PairExplanationTester(optimisation_problem=problem,
-                                                  ps_search_budget=5000,
-                                                  ps_search_population=50,
-                                                  pRef=pRef,
-                                                  verbose=False)
+    explanation_generator = ExplanationMiner(optimisation_problem=problem,
+                                             ps_search_budget=5000,
+                                             ps_search_population=50,
+                                             pRef=pRef,
+                                             verbose=True)
 
     def find_explanation(solution, previously_found_patterns) -> PS:
-        background: FullSolution = get_unexplained_parts(solution, previously_found_patterns)
-        print(f"Attempting to find the explanation for {solution}, with the background being {background}")
+        unexplained_vars: np.ndarray = get_unexplained_parts(solution, previously_found_patterns)
+        print(f"Attempting to find the explanation for {solution}, with the unexplained being {unexplained_vars}")
         return explanation_generator.find_pss(solution,
-                                              background_solution=background,
-                                              culling_method="biggest")[0]
+                                              unexplained_mask=unexplained_vars,
+                                              culling_method="biggest",
+                                              proportion_used_that_should_be_unexplained=0.7)[0]
 
     # generate the explanations
     explanations: list[PS] = []
@@ -116,4 +111,4 @@ def show_off_knapsack():
     show_off_problem(problem)
 
 
-show_off_graph_colouring()
+#show_off_graph_colouring()

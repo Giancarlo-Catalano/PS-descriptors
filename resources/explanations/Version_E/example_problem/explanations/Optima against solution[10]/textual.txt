@@ -1,0 +1,28 @@
+label: Optima against solution[10]
+
+Maeve	A = ROTA 20	B = ROTA 21
+Tommy	A = ROTA 28	B = ROTA 9
+
+⚡	Monday	10~16	10~15
+⚡	Tuesday	13~17	12~17
+📞	Monday	13~17	12~18
+📞	Tuesday	15~19	13~19
+📞	Thursday	15~18	14~18
+📞	Friday	12~14	12~15
+💻	Monday	12~17	12~16
+💻	Tuesday	15~19	14~19
+💻	Thursday	15~16	14~16
+🔨	Tuesday	13~16	12~16
+🔨	Thursday	13~14	12~14
+
+Isaac	B = ROTA 35	B = ROTA 35
+Lottie	A = ROTA 6	A = ROTA 6
+Aaron	B = ROTA 35	B = ROTA 35
+Amelia	D = ROTA 37	D = ROTA 37
+Struan	A = ROTA 22	A = ROTA 22
+Maeve	A = ROTA 20	B = ROTA 21
+Tommy	A = ROTA 28	B = ROTA 9
+
+
+
+The pattern was found to be beneficial (HIGHLY SIGNIFICANT), with p_value 2.2111174323952996e-163

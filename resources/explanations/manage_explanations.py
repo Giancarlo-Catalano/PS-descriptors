@@ -12,7 +12,7 @@ from Core.PSMetric.Linkage.TraditionalPerturbationLinkage import TraditionalPert
 from LCS.DifferenceExplainer.DescriptorsManager import DescriptorsManager
 from PairExplanation.BTProblemPrettyPrinter import BTProblemPrettyPrinter
 from PairExplanation.PairwiseExplanation import PairwiseExplanation
-from PairExplanation.PairExplanationTester import PairExplanationTester
+from PairExplanation.ExplanationMiner import ExplanationMiner
 from PairExplanation.WeightedGraphVisualiser import WeightedGraphVisualiser
 from utils import open_and_make_directories
 
@@ -23,7 +23,7 @@ class ExplanationStorer:
     pretty_printer: BTProblemPrettyPrinter
     pRef: PRef
     explanation_directory: str
-    tester: PairExplanationTester
+    tester: ExplanationMiner
     linkage_learner: TraditionalPerturbationLinkage
     hypothesis_tester: Optional[WilcoxonTest]
 
@@ -45,11 +45,11 @@ class ExplanationStorer:
         self.hypothesis_tester = hypothesis_tester
 
     def get_tester(self):
-        return PairExplanationTester(optimisation_problem=self.problem,
-                                     ps_search_budget=10000,
-                                     ps_search_population=100,
-                                     pRef=self.pRef,
-                                     verbose=False)
+        return ExplanationMiner(optimisation_problem=self.problem,
+                                ps_search_budget=10000,
+                                ps_search_population=100,
+                                pRef=self.pRef,
+                                verbose=False)
 
     def get_linkage_learner(self) -> TraditionalPerturbationLinkage:
         return TraditionalPerturbationLinkage(self.problem)

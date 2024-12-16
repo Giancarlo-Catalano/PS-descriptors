@@ -1,0 +1,10 @@
+{
+    "control_samples_per_size_category": 1000,
+    "speciality_threshold": 0.1,
+    "control_size_categories": [
+        4,
+        5,
+        6,
+        7
+    ]
+}

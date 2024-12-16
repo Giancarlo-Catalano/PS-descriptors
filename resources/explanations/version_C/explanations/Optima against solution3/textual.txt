@@ -1,0 +1,17 @@
+label: Optima against solution3
+
+Cora	B = ROTA 6	A = ROTA 32
+Innes	A = ROTA 24	C = ROTA 20
+
+⚡	Monday	12~18	11~18
+⚡	Tuesday	21~25	20~25
+⚡	Thursday	22~23	22~24
+⚡	Friday	19~19	18~20
+
+Cora	B = ROTA 6	A = ROTA 32
+Finley	C = ROTA 19	C = ROTA 19
+Innes	A = ROTA 24	C = ROTA 20
+Amelia	D = ROTA 25	D = ROTA 25
+Angus	B = ROTA 11	B = ROTA 11
+
+FEW workers got their preferred rota, (rank = 4%)

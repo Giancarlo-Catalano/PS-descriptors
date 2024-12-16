@@ -1,0 +1,610 @@
+{
+    "calendar_length": 56,
+    "weights": [
+        1,
+        1,
+        1,
+        1,
+        1,
+        10,
+        10
+    ],
+    "workers": [
+        {
+            "available_skills": [
+                "electricity",
+                "woodworking",
+                "fibre"
+            ],
+            "available_rotas": [
+                {
+                    "week_size": 7,
+                    "days": "WWW-WW--WWW-----WWWW-"
+                }
+            ],
+            "worker_id": "Employee_20",
+            "name": "Harper"
+        },
+        {
+            "available_skills": [
+                "fibre",
+                "tech support"
+            ],
+            "available_rotas": [
+                {
+                    "week_size": 7,
+                    "days": "WWWW--W"
+                },
+                {
+                    "week_size": 7,
+                    "days": "-WWWW--"
+                }
+            ],
+            "worker_id": "Employee_124",
+            "name": "Muhammad"
+        },
+        {
+            "available_skills": [
+                "electricity"
+            ],
+            "available_rotas": [
+                {
+                    "week_size": 7,
+                    "days": "WWWW--WWWWWW--"
+                },
+                {
+                    "week_size": 7,
+                    "days": "WWWWW--WWWW--W"
+                },
+                {
+                    "week_size": 7,
+                    "days": "-WWWW--WWWWW--"
+                },
+                {
+                    "week_size": 7,
+                    "days": "WWWWW--WWWWW--"
+                }
+            ],
+            "worker_id": "Employee_66",
+            "name": "Isaac"
+        },
+        {
+            "available_skills": [
+                "woodworking"
+            ],
+            "available_rotas": [
+                {
+                    "week_size": 7,
+                    "days": "WWWW--WWWWWW--"
+                },
+                {
+                    "week_size": 7,
+                    "days": "WWWWW--WWWWW--"
+                }
+            ],
+            "worker_id": "Employee_9",
+            "name": "Anna"
+        },
+        {
+            "available_skills": [
+                "woodworking",
+                "fibre",
+                "tech support"
+            ],
+            "available_rotas": [
+                {
+                    "week_size": 7,
+                    "days": "WWW-WW-"
+                },
+                {
+                    "week_size": 7,
+                    "days": "WWWWW--"
+                }
+            ],
+            "worker_id": "Employee_0",
+            "name": "Lewis"
+        },
+        {
+            "available_skills": [
+                "electricity",
+                "woodworking",
+                "fibre"
+            ],
+            "available_rotas": [
+                {
+                    "week_size": 7,
+                    "days": "WWWW--W"
+                },
+                {
+                    "week_size": 7,
+                    "days": "WWWWW--"
+                }
+            ],
+            "worker_id": "Employee_37",
+            "name": "Lottie"
+        },
+        {
+            "available_skills": [
+                "woodworking",
+                "fibre",
+                "tech support"
+            ],
+            "available_rotas": [
+                {
+                    "week_size": 7,
+                    "days": "WWWW--W"
+                },
+                {
+                    "week_size": 7,
+                    "days": "-WWWW--"
+                },
+                {
+                    "week_size": 7,
+                    "days": "WWWWW--"
+                }
+            ],
+            "worker_id": "Employee_120",
+            "name": "Mila"
+        },
+        {
+            "available_skills": [
+                "fibre"
+            ],
+            "available_rotas": [
+                {
+                    "week_size": 7,
+                    "days": "-WWWWW---WWW--WWW-W--"
+                },
+                {
+                    "week_size": 7,
+                    "days": "WWWWW--WWWWW---WWWWW-"
+                },
+                {
+                    "week_size": 7,
+                    "days": "WW-WW--WWW-W----WWWW-"
+                },
+                {
+                    "week_size": 7,
+                    "days": "-WWWW--WWW-W----WWWW-"
+                }
+            ],
+            "worker_id": "Employee_95",
+            "name": "Albie"
+        },
+        {
+            "available_skills": [
+                "electricity",
+                "fibre"
+            ],
+            "available_rotas": [
+                {
+                    "week_size": 7,
+                    "days": "WWWW---WWW-W----WWWW-"
+                }
+            ],
+            "worker_id": "Employee_81",
+            "name": "Charlotte"
+        },
+        {
+            "available_skills": [
+                "woodworking",
+                "fibre",
+                "tech support"
+            ],
+            "available_rotas": [
+                {
+                    "week_size": 7,
+                    "days": "WWWW--WWWWWW--"
+                },
+                {
+                    "week_size": 7,
+                    "days": "WWWWW--WWWW--W"
+                }
+            ],
+            "worker_id": "Employee_5",
+            "name": "Aaron"
+        },
+        {
+            "available_skills": [
+                "woodworking",
+                "fibre",
+                "tech support"
+            ],
+            "available_rotas": [
+                {
+                    "week_size": 7,
+                    "days": "WW-WW--WWW-W----WWWW-"
+                },
+                {
+                    "week_size": 7,
+                    "days": "-WWW--WWWW-W---W-WWW-"
+                },
+                {
+                    "week_size": 7,
+                    "days": "WWWW--WWWWWW---WWWWW-"
+                },
+                {
+                    "week_size": 7,
+                    "days": "-WWWW--WWW-WW---WWWW-"
+                }
+            ],
+            "worker_id": "Employee_69",
+            "name": "Amelia"
+        },
+        {
+            "available_skills": [
+                "electricity",
+                "fibre"
+            ],
+            "available_rotas": [
+                {
+                    "week_size": 7,
+                    "days": "WWWW--WWWWWW--"
+                },
+                {
+                    "week_size": 7,
+                    "days": "WWWWW--WWWW--W"
+                }
+            ],
+            "worker_id": "Employee_125",
+            "name": "Struan"
+        },
+        {
+            "available_skills": [
+                "electricity",
+                "fibre",
+                "tech support"
+            ],
+            "available_rotas": [
+                {
+                    "week_size": 7,
+                    "days": "WWW-WW--WWW-W-"
+                },
+                {
+                    "week_size": 7,
+                    "days": "W-WWW--WWWW---"
+                }
+            ],
+            "worker_id": "Employee_50",
+            "name": "Millie"
+        },
+        {
+            "available_skills": [
+                "woodworking"
+            ],
+            "available_rotas": [
+                {
+                    "week_size": 7,
+                    "days": "WWWW--W"
+                },
+                {
+                    "week_size": 7,
+                    "days": "WWWWW--"
+                }
+            ],
+            "worker_id": "Employee_105",
+            "name": "Elsie"
+        },
+        {
+            "available_skills": [
+                "fibre",
+                "tech support"
+            ],
+            "available_rotas": [
+                {
+                    "week_size": 7,
+                    "days": "-WWWW--WWWW--W"
+                },
+                {
+                    "week_size": 7,
+                    "days": "-WWWW--WWWWW--"
+                },
+                {
+                    "week_size": 7,
+                    "days": "WWWWW--WWWWW--"
+                }
+            ],
+            "worker_id": "Employee_116",
+            "name": "Freddie"
+        },
+        {
+            "available_skills": [
+                "electricity",
+                "woodworking",
+                "tech support"
+            ],
+            "available_rotas": [
+                {
+                    "week_size": 7,
+                    "days": "-WWWW--WWW-W--"
+                }
+            ],
+            "worker_id": "Employee_68",
+            "name": "Henry"
+        },
+        {
+            "available_skills": [
+                "electricity",
+                "woodworking"
+            ],
+            "available_rotas": [
+                {
+                    "week_size": 7,
+                    "days": "WWWW-W-"
+                },
+                {
+                    "week_size": 7,
+                    "days": "-WWWWW-"
+                }
+            ],
+            "worker_id": "Employee_130",
+            "name": "Noah"
+        },
+        {
+            "available_skills": [
+                "electricity",
+                "tech support"
+            ],
+            "available_rotas": [
+                {
+                    "week_size": 7,
+                    "days": "W-WWW--WWWWW--WWW--W-"
+                },
+                {
+                    "week_size": 7,
+                    "days": "WWWW---WWW-W----WWWW-"
+                },
+                {
+                    "week_size": 7,
+                    "days": "WWWW-W--WW---W--WWWW-"
+                },
+                {
+                    "week_size": 7,
+                    "days": "WWW-WW--WWW--W--WW-WW"
+                }
+            ],
+            "worker_id": "Employee_87",
+            "name": "Luna"
+        },
+        {
+            "available_skills": [
+                "tech support"
+            ],
+            "available_rotas": [
+                {
+                    "week_size": 7,
+                    "days": "WWWWW--WWWWWW-"
+                },
+                {
+                    "week_size": 7,
+                    "days": "-WWWW--WWWW--W"
+                },
+                {
+                    "week_size": 7,
+                    "days": "WWWWWW--WWWW--"
+                },
+                {
+                    "week_size": 7,
+                    "days": "WWWWW--WWWWW--"
+                }
+            ],
+            "worker_id": "Employee_12",
+            "name": "Oliver"
+        },
+        {
+            "available_skills": [
+                "electricity",
+                "woodworking",
+                "fibre"
+            ],
+            "available_rotas": [
+                {
+                    "week_size": 7,
+                    "days": "WWWWW--WWWWW--WWWWW--"
+                },
+                {
+                    "week_size": 7,
+                    "days": "-WWWW--WWW-W----WWWW-"
+                },
+                {
+                    "week_size": 7,
+                    "days": "WWWW-W--WW-W----WWWW-"
+                }
+            ],
+            "worker_id": "Employee_24",
+            "name": "Hope"
+        },
+        {
+            "available_skills": [
+                "electricity",
+                "woodworking",
+                "fibre",
+                "tech support"
+            ],
+            "available_rotas": [
+                {
+                    "week_size": 7,
+                    "days": "WWWWWW--WWWW---WWWWW-"
+                },
+                {
+                    "week_size": 7,
+                    "days": "-WWWW--WWW-W----WWWW-"
+                }
+            ],
+            "worker_id": "Employee_72",
+            "name": "Maeve"
+        },
+        {
+            "available_skills": [
+                "electricity",
+                "woodworking",
+                "fibre",
+                "tech support"
+            ],
+            "available_rotas": [
+                {
+                    "week_size": 7,
+                    "days": "-WWWW--WWWW--WWWW--W-"
+                },
+                {
+                    "week_size": 7,
+                    "days": "WWWW---WWWWW----WWWW-"
+                }
+            ],
+            "worker_id": "Employee_70",
+            "name": "Adam"
+        },
+        {
+            "available_skills": [
+                "electricity",
+                "woodworking",
+                "fibre",
+                "tech support"
+            ],
+            "available_rotas": [
+                {
+                    "week_size": 7,
+                    "days": "WWWWWW-"
+                }
+            ],
+            "worker_id": "Employee_89",
+            "name": "Lucy"
+        },
+        {
+            "available_skills": [
+                "electricity",
+                "tech support"
+            ],
+            "available_rotas": [
+                {
+                    "week_size": 7,
+                    "days": "WWWW--W"
+                },
+                {
+                    "week_size": 7,
+                    "days": "WWWWW--"
+                }
+            ],
+            "worker_id": "Employee_103",
+            "name": "Niamh"
+        },
+        {
+            "available_skills": [
+                "electricity",
+                "woodworking",
+                "tech support"
+            ],
+            "available_rotas": [
+                {
+                    "week_size": 7,
+                    "days": "WWWWW--WWWWW---WWWWW-"
+                },
+                {
+                    "week_size": 7,
+                    "days": "W-WWW--WWWWW--WWW--W-"
+                },
+                {
+                    "week_size": 7,
+                    "days": "-WWWW--WWW-W----WWWW-"
+                }
+            ],
+            "worker_id": "Employee_93",
+            "name": "Esme"
+        },
+        {
+            "available_skills": [
+                "fibre",
+                "tech support"
+            ],
+            "available_rotas": [
+                {
+                    "week_size": 7,
+                    "days": "W-WWW--WWWWW--WWW--W-"
+                },
+                {
+                    "week_size": 7,
+                    "days": "-WWWW--WWW-W----WWWW-"
+                },
+                {
+                    "week_size": 7,
+                    "days": "WWWW---WWW---W--WWWW-"
+                }
+            ],
+            "worker_id": "Employee_33",
+            "name": "Sienna"
+        },
+        {
+            "available_skills": [
+                "fibre",
+                "tech support"
+            ],
+            "available_rotas": [
+                {
+                    "week_size": 7,
+                    "days": "-WWWW--WWWWW--WW--WW-"
+                },
+                {
+                    "week_size": 7,
+                    "days": "WWWW---WWW-W----WWWW-"
+                },
+                {
+                    "week_size": 7,
+                    "days": "WWWW--WWWWWW--WWWW-WW"
+                },
+                {
+                    "week_size": 7,
+                    "days": "WWWW--WWWW-WW---WWWW-"
+                }
+            ],
+            "worker_id": "Employee_84",
+            "name": "Aurora"
+        },
+        {
+            "available_skills": [
+                "fibre"
+            ],
+            "available_rotas": [
+                {
+                    "week_size": 7,
+                    "days": "-WWWW--WWWW--WWWW--W-"
+                },
+                {
+                    "week_size": 7,
+                    "days": "-WWWW--WWWW--W--WWWW-"
+                }
+            ],
+            "worker_id": "Employee_102",
+            "name": "Tommy"
+        },
+        {
+            "available_skills": [
+                "electricity",
+                "woodworking",
+                "fibre",
+                "tech support"
+            ],
+            "available_rotas": [
+                {
+                    "week_size": 7,
+                    "days": "WWWWW--WWWWW--"
+                }
+            ],
+            "worker_id": "Employee_78",
+            "name": "Theodore"
+        },
+        {
+            "available_skills": [
+                "electricity",
+                "tech support"
+            ],
+            "available_rotas": [
+                {
+                    "week_size": 7,
+                    "days": "WWWWWW--WWWW---WWWWW-"
+                }
+            ],
+            "worker_id": "Employee_123",
+            "name": "Ayla"
+        }
+    ]
+}

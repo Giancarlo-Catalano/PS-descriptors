@@ -7,8 +7,8 @@ import utils
 from Core.FullSolution import FullSolution
 from Core.PRef import PRef
 from Core.PS import PS, STAR
+from Core.PSMetric.Linkage.BivariateLinkage import BivariateLinkage
 from Core.PSMetric.Metric import Metric
-from LinkageExperiments.LocalVarianceLinkage import BivariateLinkage
 
 
 class ValueSpecificMutualInformation(Metric):
@@ -189,7 +189,7 @@ class SolutionSpecificMutualInformation(Metric):
         indexes = np.random.randint(self.pRef.sample_size, size=amount_of_samples)
         fitnesses = self.pRef.fitness_array[indexes]
         who_won = fitnesses > np.roll(fitnesses,
-                                      1)  # self.solution.fitness  # note > and not >=. This is preferred because some latest_material have heavy fitness collisions
+                                      1)  # self.solution.fitness  # note > and not >=. This is preferred because some toy problems have heavy fitness collisions
         winning_indexes = indexes[who_won]
         winning_solutions = self.pRef.full_solution_matrix[winning_indexes, :]
         # wins_for_main_solution = np.sum(~who_won)
@@ -334,12 +334,9 @@ class FasterSolutionSpecificMutualInformation(SolutionSpecificMutualInformation,
         self.pRef = pRef
         self.univariate_probability_table, self.bivariate_probability_table = self.calculate_probability_tables()
 
-    def calculate_probability_tables(self) -> (list, list):
+    def calculate_probability_tables_old(self) -> (list, list):
 
-        full_solutions = self.pRef.get_evaluated_FSs()
-        full_solutions.sort()
-
-        solution_matrix = np.array([solution.values for solution in full_solutions])
+        solution_matrix = self.pRef.get_sorted(reverse=False).full_solution_matrix
 
         ss = self.pRef.search_space
         cs = ss.cardinalities
@@ -350,6 +347,8 @@ class FasterSolutionSpecificMutualInformation(SolutionSpecificMutualInformation,
 
         # from here on, rank is a high value when the solution is good, a low value when it's bad
         # ie global optima = size_of_pRef, global minima = 0 for a maximisation problem
+        sample_size = self.pRef.sample_size
+
         def register_solution_for_univariate(solution: np.ndarray, rank: int):
             for var, value in enumerate(solution):
                 univariate_counts[var][value] += rank
@@ -361,6 +360,58 @@ class FasterSolutionSpecificMutualInformation(SolutionSpecificMutualInformation,
                     bivariate_count_table[var_a][var_b][value_a, value_b] += rank
 
         for rank, sample in enumerate(solution_matrix):
+            register_solution_for_univariate(sample, rank)
+            register_solution_for_bivariate(sample, rank)
+
+        def counts_to_probabilities(counts: np.ndarray):
+            """ used for both arrays and matrices"""
+            return (counts / np.sum(counts))
+
+        univariate_probabilities = [counts_to_probabilities(var_counts) for var_counts in univariate_counts]
+        bivariate_probabilities = [[counts_to_probabilities(bivariate_count_table[var_a][var_b])
+                                    if var_b > var_a else None
+                                    for var_b in range(len(cs))]
+                                   for var_a in range(len(cs))]
+        return univariate_probabilities, bivariate_probabilities
+
+
+    def calculate_probability_tables(self) -> (list, list):
+
+        solution_matrix = self.pRef.full_solution_matrix
+        fitness_array = self.pRef.fitness_array
+
+        ss = self.pRef.search_space
+        cs = ss.cardinalities
+        univariate_counts = [np.zeros(card, dtype=float) for card in cs]
+        bivariate_count_table = [[np.zeros((c2, c1), dtype=float)
+                                  for c1 in cs]
+                                 for c2 in cs]
+
+        # from here on, rank is a high value when the solution is good, a low value when it's bad
+        # ie global optima = size_of_pRef, global minima = 0 for a maximisation problem
+        sample_size = self.pRef.sample_size
+
+
+        def get_rank_of_fitness(fitness: float) -> float:
+            # count the amount of times a fitness like this would win in a binary tournament, if there were (n*n-1) total tournaments
+            normal_wins = np.sum(fitness_array < fitness)
+            tie_break_wins = np.sum(fitness == fitness) / 2
+            all_wins = float(normal_wins + tie_break_wins)
+
+            return all_wins ** 2
+
+        def register_solution_for_univariate(solution: np.ndarray, rank: float):
+            for var, value in enumerate(solution):
+                univariate_counts[var][value] += rank
+
+        def register_solution_for_bivariate(solution: np.ndarray, rank: float):
+            for var_a, value_a in enumerate(solution):
+                for var_b in range(var_a + 1, len(solution)):
+                    value_b = solution[var_b]
+                    bivariate_count_table[var_a][var_b][value_a, value_b] += rank
+
+        for sample, fitness in zip(solution_matrix, fitness_array):
+            rank = get_rank_of_fitness(fitness)
             register_solution_for_univariate(sample, rank)
             register_solution_for_bivariate(sample, rank)
 

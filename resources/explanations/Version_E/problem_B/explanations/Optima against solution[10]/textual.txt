@@ -1,0 +1,16 @@
+label: Optima against solution[10]
+
+
+
+
+
+Sofia	D = ROTA 32	D = ROTA 32
+Ada	B = ROTA 10	B = ROTA 10
+Benjamin	C = ROTA 11	C = ROTA 11
+Eden	C = ROTA 23	C = ROTA 23
+Anna	A = ROTA 12	A = ROTA 12
+
+FEW workers got their preferred rota, (rank = 4%)
+The selected rotas are DIFFERENT (avg diff = 21.40), (rank = 94%))
+
+The pattern was found to be beneficial (HIGHLY SIGNIFICANT), with p_value 2.0212520871624743e-165

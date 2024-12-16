@@ -142,6 +142,18 @@ class PRef:
 
         return remaining_fitnesses
 
+    def get_indexes_matching_ps(self, ps: PS) -> np.ndarray:
+
+        remaining_indexes = np.arange(self.sample_size)
+
+        for var, val in enumerate(ps.values):
+            if val != STAR:
+                subset_that_matches = self.full_solution_matrix[remaining_indexes][:, var] == val
+                remaining_indexes = remaining_indexes[subset_that_matches]
+
+        return remaining_indexes
+
+
     def fitnesses_of_observations_experimental(self, ps: PS) -> np.ndarray:
         return get_relevant_rows_in_matrix_shortcircuit(self.full_solution_matrix, self.fitness_array, ps.values)
 
@@ -250,8 +262,8 @@ class PRef:
         best_index: int = np.argmax(self.fitness_array)
         return self.get_nth_solution(best_index)
 
-    def get_sorted(self) -> Any:  # returns a pRef
-        enumerated_fitnesses = sorted(enumerate(self.fitness_array), key=utils.second, reverse=True)
+    def get_sorted(self, reverse = True) -> Any:  # returns a pRef
+        enumerated_fitnesses = sorted(enumerate(self.fitness_array), key=utils.second, reverse=reverse)
         new_indexes, new_fitnesses = zip(*enumerated_fitnesses)
         new_indexes = np.array(new_indexes) ## otherwise the indexing doesn't work??
         new_fitnesses = np.array(new_fitnesses)
@@ -259,6 +271,28 @@ class PRef:
         return PRef(fitness_array=new_fitnesses,
                     full_solution_matrix=new_full_solution_matrix,
                     search_space=self.search_space)
+
+
+    def split_by_indexes(self, indexes_in_match: Iterable[int]) -> (Any, Any):
+        not_matches = np.ones(shape=self.fitness_array.shape, dtype=bool)
+        not_matches[indexes_in_match] = False
+        not_matching_indexes = np.arange(self.sample_size)[not_matches]
+
+        matching_pRef = PRef(fitness_array=self.fitness_array[indexes_in_match],
+                             full_solution_matrix=self.full_solution_matrix[indexes_in_match],
+                             search_space=self.search_space)
+
+        not_matching_pRef = PRef(fitness_array=self.fitness_array[not_matching_indexes],
+                                 full_solution_matrix=self.full_solution_matrix[not_matching_indexes],
+                                 search_space=self.search_space)
+        return matching_pRef, not_matching_pRef
+
+
+    def train_test_split(self, test_size: float, random_state: int) -> (Any, Any):
+        random.seed(random_state)
+        test_indexes = random.sample(range(self.sample_size), int(self.sample_size * test_size))
+        test, train = self.split_by_indexes(test_indexes)
+        return train, test  #  had to do this to flip them
 
 
 def plot_solutions_in_pRef(pRef: PRef, filename: str):

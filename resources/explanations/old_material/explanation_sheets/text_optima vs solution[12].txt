@@ -1,0 +1,36 @@
+Frankie	A = ROTA 2	C = ROTA 30
+Thea	A = ROTA 30	C = ROTA 27
+Angus	B = ROTA 11	C = ROTA 21
+
+⚡	Monday	12~18	12~19
+⚡	Tuesday	21~25	20~25
+⚡	Thursday	22~23	21~23
+⚡	Friday	19~19	19~20
+⚡	Saturday	7~14	7~15
+⚡	Sunday	5~6	5~5
+📞	Monday	10~16	10~17
+📞	Tuesday	16~19	15~19
+📞	Thursday	16~18	15~18
+📞	Saturday	5~10	5~11
+📞	Sunday	4~5	4~4
+💻	Monday	3~5	4~6
+
+Frankie	A = ROTA 2	C = ROTA 30
+Finley	C = ROTA 19	C = ROTA 19
+Lyla	C = ROTA 22	C = ROTA 22
+Thea	A = ROTA 30	C = ROTA 27
+Niamh	A = ROTA 24	A = ROTA 24
+Angus	B = ROTA 11	C = ROTA 21
+
+The delta fitness = 8.50, which has percentile (rank = 99%)
+The skills cover a NARROW range, (rank = 17%)
+The selected rotas are DIFFERENT (avg diff = 18.33), (rank = 79%))
+On tuesday, the coverage is HIGH, (rank = 73%)
+On thursday, the coverage is HIGH, (rank = 72%)
+On friday, the coverage is HIGH, (rank = 72%)
+On monday, the coverage is HIGH, (rank = 72%)
+On sunday, the coverage is HIGH, (rank = 72%)
+FEW workers got their preferred rota, (rank = 30%)
+On saturday, the coverage is HIGH, (rank = 65%)
+On wednesday, the coverage is HIGH, (rank = 62%)
+The workers have MANY skills, (rank = 51%)

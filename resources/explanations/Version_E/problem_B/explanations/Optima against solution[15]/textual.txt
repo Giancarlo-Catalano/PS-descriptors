@@ -1,0 +1,14 @@
+label: Optima against solution[15]
+
+
+
+
+
+Emily	C = ROTA 32	C = ROTA 32
+Sofia	D = ROTA 32	D = ROTA 32
+Eden	C = ROTA 23	C = ROTA 23
+Blake	C = ROTA 5	C = ROTA 5
+
+FEW workers got their preferred rota, (rank = 1%)
+
+The pattern was found to be beneficial (HIGHLY SIGNIFICANT), with p_value 8.87267918537553e-165

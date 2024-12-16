@@ -1,0 +1,13 @@
+label: Optima against solution[1]
+
+
+
+
+
+Cooper	A = ROTA 24	A = ROTA 24
+Michael	D = ROTA 25	D = ROTA 25
+Max	C = ROTA 19	C = ROTA 19
+Carson	C = ROTA 22	C = ROTA 22
+
+On saturday, the coverage is LOW, (rank = 3%)
+FEW workers got their preferred rota, (rank = 8%)

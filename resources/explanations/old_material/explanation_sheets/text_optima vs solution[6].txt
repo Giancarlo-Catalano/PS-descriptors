@@ -1,0 +1,24 @@
+Adam	B = ROTA 29	A = ROTA 4
+
+⚡	Monday	12~18	11~17
+📞	Monday	10~16	9~15
+📞	Friday	13~15	14~16
+💻	Monday	3~5	2~4
+
+Adam	B = ROTA 29	A = ROTA 4
+Finley	C = ROTA 19	C = ROTA 19
+Amelia	D = ROTA 25	D = ROTA 25
+William	A = ROTA 30	A = ROTA 30
+
+The delta fitness = 7.97, which has percentile (rank = 99%)
+The workers have MANY skills, (rank = 95%)
+FEW workers got their preferred rota, (rank = 9%)
+The skills cover a WIDE range, (rank = 77%)
+On wednesday, the coverage is LOW, (rank = 25%)
+On saturday, the coverage is LOW, (rank = 28%)
+The selected rotas are DIFFERENT (avg diff = 17.50), (rank = 65%))
+On monday, the coverage is LOW, (rank = 34%)
+On sunday, the coverage is LOW, (rank = 34%)
+On thursday, the coverage is LOW, (rank = 36%)
+On friday, the coverage is LOW, (rank = 39%)
+On tuesday, the coverage is LOW, (rank = 42%)

@@ -1,17 +1,14 @@
 import random
 
-import numpy as np
 import xcs
 from xcs import scenarios
 
 import utils
 from Core.EvaluatedFS import EvaluatedFS
 from Core.PS import PS
-from Core.PSMetric.Linkage.TraditionalPerturbationLinkage import TraditionalPerturbationLinkage
 from LCS.Conversions import condition_to_ps
-from LCS.PSFilter import filter_pss, keep_biggest, keep_with_lowest_dependence
 from LCS.XCSComponents.SolutionDifferenceModel import SolutionDifferenceModel
-from LCS.ConstrainedPSSearch.SolutionDifferencePSSearch import local_constrained_ps_search
+from ThirdPaper.SolutionDifferencePSSearch import find_ps_in_solution
 from LCS.XCSComponents.SolutionDifferenceScenario import GenericSolutionDifferenceScenario
 from LCS.PSEvaluator import GeneralPSEvaluator
 from LCS.XCSComponents.CombinatorialRules import CombinatorialCondition
@@ -67,13 +64,13 @@ class SolutionDifferenceAlgorithm(xcs.XCSAlgorithm):
             # debug
 
             # end of debug
-            pss = local_constrained_ps_search(to_explain=loser if self.search_for_negative_traits else winner,
-                                              background_solution=loser,
-                                              population_size=self.covering_population_size,
-                                              ps_evaluator=self.ps_evaluator,
-                                              ps_budget=self.covering_search_budget,
-                                              culling_method="least_dependent",
-                                              verbose=self.verbose_search)
+            pss = find_ps_in_solution(to_explain=loser if self.search_for_negative_traits else winner,
+                                      unexplained_mask=loser,
+                                      population_size=self.covering_population_size,
+                                      ps_evaluator=self.ps_evaluator,
+                                      ps_budget=self.covering_search_budget,
+                                      culling_method="least_dependent",
+                                      verbose=self.verbose_search)
 
             assert (len(pss) > 0)
             return pss

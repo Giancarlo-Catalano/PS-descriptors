@@ -79,6 +79,8 @@ class MannWhitneyU(Metric):
         self.pRef = pRef
 
     def get_p_value(self, first_group: np.ndarray, second_group: np.ndarray) -> float:
+        if min(len(first_group), len(second_group)) < 3:
+            return 1.0
         test = mannwhitneyu(first_group, second_group, alternative="two-sided", method=self.test_method)
         return test.pvalue
 

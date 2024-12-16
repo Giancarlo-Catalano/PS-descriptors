@@ -7,7 +7,7 @@ from Core.PSMetric.FitnessQuality.SignificantlyHighAverage import WilcoxonTest, 
 from PairwiseExplanation.PRefManager import PRefManager
 from PairExplanation.BTProblemPrettyPrinter import BTProblemPrettyPrinter
 from PairExplanation.PairwiseExplanation import PairwiseExplanation
-from PairExplanation.PairExplanationTester import PairExplanationTester
+from PairExplanation.ExplanationMiner import ExplanationMiner
 
 
 def consistency_test():
@@ -16,12 +16,12 @@ def consistency_test():
                                                   random_state=42)
     # problem = RoyalRoad(5)
 
-    tester = PairExplanationTester(optimisation_problem=problem,
-                                   ps_search_budget=1000,
-                                   ps_search_population=50,
-                                   pRef_size=10000,
-                                   pRef_creation_method="uniform GA",
-                                   verbose=False)
+    tester = ExplanationMiner(optimisation_problem=problem,
+                              ps_search_budget=1000,
+                              ps_search_population=50,
+                              pRef_size=10000,
+                              pRef_creation_method="uniform GA",
+                              verbose=False)
 
     all_results = dict()
 
@@ -53,11 +53,11 @@ def run_tester():
                                          sample_size=10000)
     # problem = RoyalRoad(5)
 
-    tester = PairExplanationTester(optimisation_problem=problem,
-                                   ps_search_budget=2000,
-                                   ps_search_population=100,
-                                   pRef = pRef,
-                                   verbose=False)
+    tester = ExplanationMiner(optimisation_problem=problem,
+                              ps_search_budget=2000,
+                              ps_search_population=100,
+                              pRef = pRef,
+                              verbose=False)
 
     # tester.get_random_explanation()
     # results = tester.consistency_test_on_optima(runs=100, culling_method=tester.preferred_culling_method)
@@ -155,11 +155,11 @@ def run_tester_on_RR():
     pRef = PRefManager.generate_pRef(problem=problem,
                                      which_algorithm="uniform GA",
                                      sample_size=10000)
-    tester = PairExplanationTester(optimisation_problem=problem,
-                                   ps_search_budget=2000,
-                                   ps_search_population=100,
-                                   pRef=pRef,
-                                   verbose=False)
+    tester = ExplanationMiner(optimisation_problem=problem,
+                              ps_search_budget=2000,
+                              ps_search_population=100,
+                              pRef=pRef,
+                              verbose=False)
 
     descriptor = tester.get_temporary_descriptors_manager(control_samples_per_size_category=1)
 

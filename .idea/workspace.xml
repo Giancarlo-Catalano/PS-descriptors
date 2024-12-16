@@ -4,7 +4,13 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="3f27671c-56d4-4592-a294-490f7f277789" name="Changes" comment="Big changes in how the constraint for the PS search works, and little changes in how the knapsack problem solutions are displayed" />
+    <list default="true" id="a05e8814-504e-4333-8593-ec6366f9f3e6" name="Changes" comment="Implemented code which compares decision trees for many problems and depths.">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/BenchmarkProblems/TSP.py" beforeDir="false" afterPath="$PROJECT_DIR$/BenchmarkProblems/TSP.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/VarianceDecisionTree/PSDecisionTree.py" beforeDir="false" afterPath="$PROJECT_DIR$/VarianceDecisionTree/PSDecisionTree.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/VarianceDecisionTree/SimplePSSearchTask.py" beforeDir="false" afterPath="$PROJECT_DIR$/VarianceDecisionTree/SimplePSSearchTask.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/VarianceDecisionTree/compare_prediction_powers.py" beforeDir="false" afterPath="$PROJECT_DIR$/VarianceDecisionTree/compare_prediction_powers.py" afterDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -13,67 +19,64 @@
   <component name="Git.Settings">
     <option name="RECENT_BRANCH_BY_REPOSITORY">
       <map>
-        <entry key="$PROJECT_DIR$" value="LightweightLocalMiner" />
+        <entry key="$PROJECT_DIR$" value="9fd278318b52f973d9103ab4df6990775026bddc" />
       </map>
     </option>
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
   </component>
-  <component name="GitHubPullRequestSearchHistory">{
-  &quot;lastFilter&quot;: {
-    &quot;state&quot;: &quot;OPEN&quot;,
-    &quot;assignee&quot;: &quot;Giancarlo-Catalano&quot;
-  }
-}</component>
-  <component name="GithubPullRequestsUISettings">{
-  &quot;selectedUrlAndAccountId&quot;: {
-    &quot;url&quot;: &quot;https://github.com/Giancarlo-Catalano/PS-descriptors.git&quot;,
-    &quot;accountId&quot;: &quot;fcb01860-54d6-4b1d-a397-35a9a8ca5630&quot;
-  }
-}</component>
   <component name="ProjectColorInfo">{
-  &quot;associatedIndex&quot;: 2
+  &quot;associatedIndex&quot;: 0
 }</component>
-  <component name="ProjectId" id="2kqBnvjYzu8vkLyx2ddmEPHpCoH" />
+  <component name="ProjectId" id="2mbRO2gQuodDtpwuXJVDXCKpRAJ" />
   <component name="ProjectViewState">
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent"><![CDATA[{
-  "keyToString": {
-    "Python.HotEncoding.executor": "Run",
-    "Python.Sol2Sol.executor": "Debug",
-    "Python.SolutionDifference.executor": "Run",
-    "Python.SolutionDifferencePSSearch.executor": "Run",
-    "Python.execute.executor": "Debug",
-    "Python.nnTests.executor": "Run",
-    "Python.show_off_problems.executor": "Run",
-    "RunOnceActivity.ShowReadmeOnStart": "true",
-    "git-widget-placeholder": "LCS",
-    "node.js.detected.package.eslint": "true",
-    "node.js.detected.package.tslint": "true",
-    "node.js.selected.package.eslint": "(autodetect)",
-    "node.js.selected.package.tslint": "(autodetect)",
-    "nodejs_package_manager_path": "npm",
-    "settings.editor.selected.configurable": "com.jetbrains.python.configuration.PyActiveSdkModuleConfigurable",
-    "vue.rearranger.settings.migration": "true"
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;SHARE_PROJECT_CONFIGURATION_FILES&quot;: &quot;true&quot;,
+    &quot;WebServerToolWindowFactoryState&quot;: &quot;false&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;FastExplainer&quot;,
+    &quot;ignore.virus.scanning.warn.message&quot;: &quot;true&quot;,
+    &quot;last_opened_file_path&quot;: &quot;C:/Users/gac8/PycharmProjects/PS-descriptors-LCS/resources/variance_tree_materials&quot;,
+    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
+    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
+    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
+    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
+    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
+    &quot;settings.editor.selected.configurable&quot;: &quot;preferences.keymap&quot;,
+    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
   }
-}]]></component>
-  <component name="RunManager">
-    <configuration name="SolutionDifference" type="PythonConfigurationType" factoryName="Python">
-      <module name="PS-descriptors" />
-      <option name="ENV_FILES" value="" />
+}</component>
+  <component name="RecentsManager">
+    <key name="CopyFile.RECENT_KEYS">
+      <recent name="C:\Users\gac8\PycharmProjects\PS-descriptors-LCS\resources\explanations\messing_around" />
+    </key>
+    <key name="MoveFile.RECENT_KEYS">
+      <recent name="C:\Users\gac8\PycharmProjects\PS-descriptors-LCS\RepresentationBasedSearch\ContinuousVariables" />
+      <recent name="C:\Users\gac8\PycharmProjects\PS-descriptors-LCS\ThirdPaper" />
+      <recent name="C:\Users\gac8\PycharmProjects\PS-descriptors-LCS\resources\explanations\old_material" />
+      <recent name="C:\Users\gac8\PycharmProjects\PS-descriptors-LCS\LCS\DifferenceExplainer" />
+    </key>
+  </component>
+  <component name="RunManager" selected="Python.compare_prediction_powers">
+    <configuration name="DiffExplanation" type="PythonConfigurationType" factoryName="Python">
+      <module name="PS-descriptors-LCS" />
       <option name="INTERPRETER_OPTIONS" value="" />
       <option name="PARENT_ENVS" value="true" />
       <envs>
         <env name="PYTHONUNBUFFERED" value="1" />
       </envs>
       <option name="SDK_HOME" value="" />
+      <option name="SDK_NAME" value="Python 3.10 (PS-descriptors-LCS)" />
       <option name="WORKING_DIRECTORY" value="" />
-      <option name="IS_MODULE_SDK" value="true" />
+      <option name="IS_MODULE_SDK" value="false" />
       <option name="ADD_CONTENT_ROOTS" value="true" />
       <option name="ADD_SOURCE_ROOTS" value="true" />
       <EXTENSION ID="PythonCoverageRunConfigurationExtension" runner="coverage.py" />
-      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/LCS/SolutionDifference/SolutionDifferenceTests.py" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/LCS/test_difference_explainer.py" />
       <option name="PARAMETERS" value="" />
       <option name="SHOW_COMMAND_LINE" value="false" />
       <option name="EMULATE_TERMINAL" value="false" />
@@ -82,144 +85,583 @@
       <option name="INPUT_FILE" value="" />
       <method v="2" />
     </configuration>
-  </component>
-  <component name="SharedIndexes">
-    <attachedChunks>
-      <set>
-        <option value="bundled-js-predefined-1d06a55b98c1-0b3e54e931b4-JavaScript-PY-241.17890.14" />
-        <option value="bundled-python-sdk-5b207ade9991-7e9c3bbb6e34-com.jetbrains.pycharm.pro.sharedIndexes.bundled-PY-241.17890.14" />
-      </set>
-    </attachedChunks>
+    <configuration name="PairExplanationTester" type="PythonConfigurationType" factoryName="Python">
+      <module name="PS-descriptors-LCS" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="" />
+      <option name="SDK_NAME" value="Python 3.10 (PS-descriptors-LCS)" />
+      <option name="WORKING_DIRECTORY" value="" />
+      <option name="IS_MODULE_SDK" value="false" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <EXTENSION ID="PythonCoverageRunConfigurationExtension" runner="coverage.py" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/PairExplanation/run_tester.py" />
+      <option name="PARAMETERS" value="" />
+      <option name="SHOW_COMMAND_LINE" value="false" />
+      <option name="EMULATE_TERMINAL" value="false" />
+      <option name="MODULE_MODE" value="false" />
+      <option name="REDIRECT_INPUT" value="false" />
+      <option name="INPUT_FILE" value="" />
+      <method v="2" />
+    </configuration>
+    <configuration name="cached_explanations" type="PythonConfigurationType" factoryName="Python">
+      <module name="PS-descriptors-LCS" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="" />
+      <option name="SDK_NAME" value="Python 3.10 (PS-descriptors-LCS)" />
+      <option name="WORKING_DIRECTORY" value="" />
+      <option name="IS_MODULE_SDK" value="false" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <EXTENSION ID="PythonCoverageRunConfigurationExtension" runner="coverage.py" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/PairExplanation/load_data.py" />
+      <option name="PARAMETERS" value="" />
+      <option name="SHOW_COMMAND_LINE" value="false" />
+      <option name="EMULATE_TERMINAL" value="false" />
+      <option name="MODULE_MODE" value="false" />
+      <option name="REDIRECT_INPUT" value="false" />
+      <option name="INPUT_FILE" value="" />
+      <method v="2" />
+    </configuration>
+    <configuration name="compare_prediction_powers" type="PythonConfigurationType" factoryName="Python" nameIsGenerated="true">
+      <module name="PS-descriptors-LCS" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="" />
+      <option name="SDK_NAME" value="Python 3.10 (PS-descriptors-LCS)" />
+      <option name="WORKING_DIRECTORY" value="" />
+      <option name="IS_MODULE_SDK" value="false" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <EXTENSION ID="PythonCoverageRunConfigurationExtension" runner="coverage.py" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/VarianceDecisionTree/compare_prediction_powers.py" />
+      <option name="PARAMETERS" value="" />
+      <option name="SHOW_COMMAND_LINE" value="false" />
+      <option name="EMULATE_TERMINAL" value="false" />
+      <option name="MODULE_MODE" value="false" />
+      <option name="REDIRECT_INPUT" value="false" />
+      <option name="INPUT_FILE" value="" />
+      <method v="2" />
+    </configuration>
+    <configuration name="show_off_problems" type="PythonConfigurationType" factoryName="Python">
+      <module name="PS-descriptors-LCS" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="" />
+      <option name="SDK_NAME" value="Python 3.10 (PS-descriptors-LCS)" />
+      <option name="WORKING_DIRECTORY" value="" />
+      <option name="IS_MODULE_SDK" value="false" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <EXTENSION ID="PythonCoverageRunConfigurationExtension" runner="coverage.py" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/GuestLecture/show_off_problems.py" />
+      <option name="PARAMETERS" value="" />
+      <option name="SHOW_COMMAND_LINE" value="false" />
+      <option name="EMULATE_TERMINAL" value="false" />
+      <option name="MODULE_MODE" value="false" />
+      <option name="REDIRECT_INPUT" value="false" />
+      <option name="INPUT_FILE" value="" />
+      <method v="2" />
+    </configuration>
+    <configuration name="variance_tree" type="PythonConfigurationType" factoryName="Python">
+      <module name="PS-descriptors-LCS" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="" />
+      <option name="SDK_NAME" value="Python 3.10 (PS-descriptors-LCS)" />
+      <option name="WORKING_DIRECTORY" value="" />
+      <option name="IS_MODULE_SDK" value="false" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <EXTENSION ID="PythonCoverageRunConfigurationExtension" runner="coverage.py" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/VarianceDecisionTree/test_variance_tree.py" />
+      <option name="PARAMETERS" value="" />
+      <option name="SHOW_COMMAND_LINE" value="false" />
+      <option name="EMULATE_TERMINAL" value="false" />
+      <option name="MODULE_MODE" value="false" />
+      <option name="REDIRECT_INPUT" value="false" />
+      <option name="INPUT_FILE" value="" />
+      <method v="2" />
+    </configuration>
+    <list>
+      <item itemvalue="Python.compare_prediction_powers" />
+      <item itemvalue="Python.DiffExplanation" />
+      <item itemvalue="Python.PairExplanationTester" />
+      <item itemvalue="Python.cached_explanations" />
+      <item itemvalue="Python.show_off_problems" />
+      <item itemvalue="Python.variance_tree" />
+    </list>
   </component>
   <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
   <component name="TaskManager">
     <task active="true" id="Default" summary="Default task">
-      <changelist id="3f27671c-56d4-4592-a294-490f7f277789" name="Changes" comment="" />
-      <created>1724001397062</created>
+      <changelist id="a05e8814-504e-4333-8593-ec6366f9f3e6" name="Changes" comment="" />
+      <created>1727343255102</created>
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
-      <updated>1724001397062</updated>
-      <workItem from="1724001398148" duration="1680000" />
-      <workItem from="1724003093701" duration="9269000" />
-      <workItem from="1725704506245" duration="6049000" />
-      <workItem from="1725824421693" duration="8119000" />
-      <workItem from="1725892441299" duration="28054000" />
-      <workItem from="1726214066666" duration="21234000" />
-      <workItem from="1732278308794" duration="10136000" />
+      <updated>1727343255102</updated>
+      <workItem from="1727343256365" duration="11844000" />
+      <workItem from="1727425197920" duration="11446000" />
+      <workItem from="1727685228093" duration="10893000" />
+      <workItem from="1727769541669" duration="2185000" />
+      <workItem from="1727776264315" duration="16521000" />
+      <workItem from="1727857695560" duration="13276000" />
+      <workItem from="1727884112229" duration="1272000" />
+      <workItem from="1727944542904" duration="10184000" />
+      <workItem from="1728032384390" duration="8162000" />
+      <workItem from="1728291261349" duration="12928000" />
+      <workItem from="1728381898881" duration="11853000" />
+      <workItem from="1728462104786" duration="18117000" />
+      <workItem from="1728550853191" duration="12973000" />
+      <workItem from="1728634573512" duration="19565000" />
+      <workItem from="1728981095953" duration="24380000" />
+      <workItem from="1729153077471" duration="12667000" />
+      <workItem from="1729240521757" duration="7909000" />
+      <workItem from="1729511647572" duration="10877000" />
+      <workItem from="1729588036507" duration="13152000" />
+      <workItem from="1729672429542" duration="8887000" />
+      <workItem from="1729763667943" duration="1827000" />
+      <workItem from="1729846601252" duration="10493000" />
+      <workItem from="1730110146816" duration="10710000" />
+      <workItem from="1730193163392" duration="15101000" />
+      <workItem from="1730279753336" duration="6513000" />
+      <workItem from="1730366729421" duration="7031000" />
+      <workItem from="1730455766813" duration="11137000" />
+      <workItem from="1730713153453" duration="9359000" />
+      <workItem from="1730799128861" duration="10274000" />
+      <workItem from="1730886889941" duration="10336000" />
+      <workItem from="1730972122295" duration="1592000" />
+      <workItem from="1731076575871" duration="3195000" />
+      <workItem from="1731316840194" duration="5933000" />
+      <workItem from="1731423407432" duration="7368000" />
+      <workItem from="1731503194509" duration="3580000" />
+      <workItem from="1731576491212" duration="607000" />
+      <workItem from="1731596324308" duration="5597000" />
+      <workItem from="1731663029576" duration="9915000" />
+      <workItem from="1732550963932" duration="2790000" />
+      <workItem from="1732617527227" duration="10047000" />
+      <workItem from="1732785524834" duration="2404000" />
+      <workItem from="1732874237989" duration="13180000" />
+      <workItem from="1733143710960" duration="10158000" />
+      <workItem from="1733228013411" duration="13080000" />
+      <workItem from="1733320766050" duration="7351000" />
+      <workItem from="1733392859196" duration="7592000" />
+      <workItem from="1733482738532" duration="4497000" />
+      <workItem from="1733749577837" duration="2335000" />
+      <workItem from="1733913563815" duration="9872000" />
+      <workItem from="1733999437613" duration="7535000" />
+      <workItem from="1734088024874" duration="13936000" />
     </task>
-    <task id="LOCAL-00001" summary="Implemented the hotencoder again... So that PSs can be passed nicely to a NN">
+    <task id="LOCAL-00043" summary="The random subset of the original bt problem is now stochastic but replicable (the main issue is that the order in which sets are iterated is not consistent).">
       <option name="closed" value="true" />
-      <created>1724003075910</created>
-      <option name="number" value="00001" />
-      <option name="presentableId" value="LOCAL-00001" />
+      <created>1729170397214</created>
+      <option name="number" value="00043" />
+      <option name="presentableId" value="LOCAL-00043" />
       <option name="project" value="LOCAL" />
-      <updated>1724003075910</updated>
+      <updated>1729170397214</updated>
     </task>
-    <task id="LOCAL-00002" summary="Fixed a bug where the winner and loser pair index in the SolutionDifferenceScenario was not getting incremented.">
+    <task id="LOCAL-00044" summary="Implemented some light functionality towards visualisations.">
       <option name="closed" value="true" />
-      <created>1725111822242</created>
-      <option name="number" value="00002" />
-      <option name="presentableId" value="LOCAL-00002" />
+      <created>1729177850783</created>
+      <option name="number" value="00044" />
+      <option name="presentableId" value="LOCAL-00044" />
       <option name="project" value="LOCAL" />
-      <updated>1725111822242</updated>
+      <updated>1729177850783</updated>
     </task>
-    <task id="LOCAL-00003" summary="Corrected small but in the calculation of the constraints for the TMLocalRestrictedPymooProblem.">
+    <task id="LOCAL-00045" summary="Improved the information presented for the pretty printing, but the explanations themselves are still to be improved. The next step is to make a ForcefulMannWhitneyU which tests on the best solutions of a Pref so that we can really check when a ps is good or bad on near-optimal solutions.">
       <option name="closed" value="true" />
-      <created>1725112035483</created>
-      <option name="number" value="00003" />
-      <option name="presentableId" value="LOCAL-00003" />
+      <created>1729526250306</created>
+      <option name="number" value="00045" />
+      <option name="presentableId" value="LOCAL-00045" />
       <option name="project" value="LOCAL" />
-      <updated>1725112035483</updated>
+      <updated>1729526250306</updated>
     </task>
-    <task id="LOCAL-00004" summary="Reimplemented the functions which apply the &quot;backpropagation&quot; of rule payoff, because my match set is strange. It still doesn't work, because there are already deleted rules which are deleted again? To be resolved.">
+    <task id="LOCAL-00046" summary="Implemented the forcefulMannWhitneyU test on near_optimal solutions, still to be tested.">
       <option name="closed" value="true" />
-      <created>1725892522349</created>
-      <option name="number" value="00004" />
-      <option name="presentableId" value="LOCAL-00004" />
+      <created>1729526888536</created>
+      <option name="number" value="00046" />
+      <option name="presentableId" value="LOCAL-00046" />
       <option name="project" value="LOCAL" />
-      <updated>1725892522349</updated>
+      <updated>1729526888536</updated>
     </task>
-    <task id="LOCAL-00005" summary="The constraint in the restricted pymoo problem was wrong (wrong sign), and many little fixes. When a rule is deleted as a result to others being added, the program crashes because it says that the rule is not in the model.">
+    <task id="LOCAL-00047" summary="Quality of life changes.">
       <option name="closed" value="true" />
-      <created>1725967213267</created>
-      <option name="number" value="00005" />
-      <option name="presentableId" value="LOCAL-00005" />
+      <created>1729613254996</created>
+      <option name="number" value="00047" />
+      <option name="presentableId" value="LOCAL-00047" />
       <option name="project" value="LOCAL" />
-      <updated>1725967213267</updated>
+      <updated>1729613254996</updated>
     </task>
-    <task id="LOCAL-00006" summary="Fixed the most deceptive bug I've ever encountered. The symptom was that (rule in model) was False, even though the rule's condition was in the model's population dictionary. This issue is caused when the keys to a dictionary are mutated from an outside source, and they cause the keys in the dict to be associated with outdated hash values. In this particular case the mutation was literally caused by the mutation operator in the GA component of the LCS. The fix is to copy conditions before mutating them.">
+    <task id="LOCAL-00048" summary="Added some checks to see if the explanations are actually correct or not.">
       <option name="closed" value="true" />
-      <created>1726010212498</created>
-      <option name="number" value="00006" />
-      <option name="presentableId" value="LOCAL-00006" />
+      <created>1729697434704</created>
+      <option name="number" value="00048" />
+      <option name="presentableId" value="LOCAL-00048" />
       <option name="project" value="LOCAL" />
-      <updated>1726010212498</updated>
+      <updated>1729697434704</updated>
     </task>
-    <task id="LOCAL-00007" summary="Fixed subsumption, which before ignored whether rules were subsets of each other or not.">
+    <task id="LOCAL-00049" summary="Added functionality for the explanations to be stored individually into json files, and loaded from them.">
       <option name="closed" value="true" />
-      <created>1726077693390</created>
-      <option name="number" value="00007" />
-      <option name="presentableId" value="LOCAL-00007" />
+      <created>1729858985047</created>
+      <option name="number" value="00049" />
+      <option name="presentableId" value="LOCAL-00049" />
       <option name="project" value="LOCAL" />
-      <updated>1726077693390</updated>
+      <updated>1729858985047</updated>
     </task>
-    <task id="LOCAL-00008" summary="Temporarly using mean fitness as the second metric, it doesn't seem to be that slow after all. Less arbitrary changes.">
+    <task id="LOCAL-00050" summary="Fixed various bugs.">
       <option name="closed" value="true" />
-      <created>1726081972353</created>
-      <option name="number" value="00008" />
-      <option name="presentableId" value="LOCAL-00008" />
+      <created>1729860321599</created>
+      <option name="number" value="00050" />
+      <option name="presentableId" value="LOCAL-00050" />
       <option name="project" value="LOCAL" />
-      <updated>1726081972353</updated>
+      <updated>1729860321599</updated>
     </task>
-    <task id="LOCAL-00009" summary="Reintroduced the filtering by delta fitness and consistency, made more modular but possibly overengineered.">
+    <task id="LOCAL-00051" summary="Implemented the calendar change table for pss.">
       <option name="closed" value="true" />
-      <created>1726156341461</created>
-      <option name="number" value="00009" />
-      <option name="presentableId" value="LOCAL-00009" />
+      <created>1729863711895</created>
+      <option name="number" value="00051" />
+      <option name="presentableId" value="LOCAL-00051" />
       <option name="project" value="LOCAL" />
-      <updated>1726156341461</updated>
+      <updated>1729863711895</updated>
     </task>
-    <task id="LOCAL-00010" summary="Set the accuracy of a rule as its fitness, and used it for pruning. When reverting, please check the function update_attributes_of_rule, update_action_set_fitnesses, prune (which can be removed alltogether otherwise). Rules which are available for removal must have sufficient experience and accuracy not perfect. Appears to run but to not work well, with the target rules having bad fitness (I observed a target rule getting removed for having accuracy 0.6... that shouldn't be possible?)">
+    <task id="LOCAL-00052" summary="Implemented the range changes for a difference pattern, and now thinking about how to visualise a PS.">
       <option name="closed" value="true" />
-      <created>1726222888089</created>
-      <option name="number" value="00010" />
-      <option name="presentableId" value="LOCAL-00010" />
+      <created>1730132789672</created>
+      <option name="number" value="00052" />
+      <option name="presentableId" value="LOCAL-00052" />
       <option name="project" value="LOCAL" />
-      <updated>1726222888089</updated>
+      <updated>1730132789672</updated>
     </task>
-    <task id="LOCAL-00011" summary="GA introduction of rules in the model is now controlled by a custom flag (allow_ga_reproduction) of the algorithm (note that the flag is not in the model, that might be confusing!!!">
+    <task id="LOCAL-00053" summary="Implemented the linkage visualiser.">
       <option name="closed" value="true" />
-      <created>1726325628777</created>
-      <option name="number" value="00011" />
-      <option name="presentableId" value="LOCAL-00011" />
+      <created>1730201137891</created>
+      <option name="number" value="00053" />
+      <option name="presentableId" value="LOCAL-00053" />
       <option name="project" value="LOCAL" />
-      <updated>1726325628777</updated>
+      <updated>1730201137892</updated>
     </task>
-    <task id="LOCAL-00012" summary="Made the PS objectives evaluator more flexible by allowing an arbitrary amount of objectives to be used. Including simplicity as a metric appears to improve the results, agreeing with paper # 1">
+    <task id="LOCAL-00054" summary="Fixed some bugs, isolated edges are a problem because they should be shown, but the layout doesn't know where to put them. Also, this causes stray edges?">
       <option name="closed" value="true" />
-      <created>1726326472879</created>
-      <option name="number" value="00012" />
-      <option name="presentableId" value="LOCAL-00012" />
+      <created>1730208167609</created>
+      <option name="number" value="00054" />
+      <option name="presentableId" value="LOCAL-00054" />
       <option name="project" value="LOCAL" />
-      <updated>1726326472879</updated>
+      <updated>1730208167609</updated>
     </task>
-    <task id="LOCAL-00013" summary="Final submit before switching to the office computer again">
+    <task id="LOCAL-00055" summary="Fixed a bug in how the labels were being placed in the plot, leaving some nodes without labels.">
       <option name="closed" value="true" />
-      <created>1726735489366</created>
-      <option name="number" value="00013" />
-      <option name="presentableId" value="LOCAL-00013" />
+      <created>1730208865044</created>
+      <option name="number" value="00055" />
+      <option name="presentableId" value="LOCAL-00055" />
       <option name="project" value="LOCAL" />
-      <updated>1726735489366</updated>
+      <updated>1730208865044</updated>
     </task>
-    <task id="LOCAL-00014" summary="Big changes in how the constraint for the PS search works, and little changes in how the knapsack problem solutions are displayed">
+    <task id="LOCAL-00056" summary="Last fixes of the day.">
       <option name="closed" value="true" />
-      <created>1732536361949</created>
-      <option name="number" value="00014" />
-      <option name="presentableId" value="LOCAL-00014" />
+      <created>1730220020888</created>
+      <option name="number" value="00056" />
+      <option name="presentableId" value="LOCAL-00056" />
       <option name="project" value="LOCAL" />
-      <updated>1732536361949</updated>
+      <updated>1730220020888</updated>
     </task>
-    <option name="localTasksCounter" value="15" />
+    <task id="LOCAL-00057" summary="Small fixes">
+      <option name="closed" value="true" />
+      <created>1730306292089</created>
+      <option name="number" value="00057" />
+      <option name="presentableId" value="LOCAL-00057" />
+      <option name="project" value="LOCAL" />
+      <updated>1730306292089</updated>
+    </task>
+    <task id="LOCAL-00058" summary="Quickly implemented the BTProblem.from_json so that it's replicable.">
+      <option name="closed" value="true" />
+      <created>1730385568403</created>
+      <option name="number" value="00058" />
+      <option name="presentableId" value="LOCAL-00058" />
+      <option name="project" value="LOCAL" />
+      <updated>1730385568403</updated>
+    </task>
+    <task id="LOCAL-00059" summary="Made a clean script to generate the problem files.">
+      <option name="closed" value="true" />
+      <created>1730388886539</created>
+      <option name="number" value="00059" />
+      <option name="presentableId" value="LOCAL-00059" />
+      <option name="project" value="LOCAL" />
+      <updated>1730388886540</updated>
+    </task>
+    <task id="LOCAL-00060" summary="Added to the script that the pRef is generated and then altered to match problem B.">
+      <option name="closed" value="true" />
+      <created>1730390000303</created>
+      <option name="number" value="00060" />
+      <option name="presentableId" value="LOCAL-00060" />
+      <option name="project" value="LOCAL" />
+      <updated>1730390000303</updated>
+    </task>
+    <task id="LOCAL-00061" summary="Last fixes of the day.">
+      <option name="closed" value="true" />
+      <created>1730392240053</created>
+      <option name="number" value="00061" />
+      <option name="presentableId" value="LOCAL-00061" />
+      <option name="project" value="LOCAL" />
+      <updated>1730392240053</updated>
+    </task>
+    <task id="LOCAL-00062" summary="Optima representation also includes the extra information now.">
+      <option name="closed" value="true" />
+      <created>1730470776739</created>
+      <option name="number" value="00062" />
+      <option name="presentableId" value="LOCAL-00062" />
+      <option name="project" value="LOCAL" />
+      <updated>1730470776739</updated>
+    </task>
+    <task id="LOCAL-00063" summary="Implementing explanation storage by completely redoing the descriptors manager, oops. Still not completed and not tested.">
+      <option name="closed" value="true" />
+      <created>1730479026967</created>
+      <option name="number" value="00063" />
+      <option name="presentableId" value="LOCAL-00063" />
+      <option name="project" value="LOCAL" />
+      <updated>1730479026967</updated>
+    </task>
+    <task id="LOCAL-00064" summary="the file generate_data_for_problem.py is close to being the final version of what will generate the data.">
+      <option name="closed" value="true" />
+      <created>1730738911397</created>
+      <option name="number" value="00064" />
+      <option name="presentableId" value="LOCAL-00064" />
+      <option name="project" value="LOCAL" />
+      <updated>1730738911397</updated>
+    </task>
+    <task id="LOCAL-00065" summary="The final generate_data_for_problem.py file is complete and generates data that appears to be correct.">
+      <option name="closed" value="true" />
+      <created>1730813552412</created>
+      <option name="number" value="00065" />
+      <option name="presentableId" value="LOCAL-00065" />
+      <option name="project" value="LOCAL" />
+      <updated>1730813552412</updated>
+    </task>
+    <task id="LOCAL-00066" summary="Added the hypothesis string to the explanations.">
+      <option name="closed" value="true" />
+      <created>1730890613346</created>
+      <option name="number" value="00066" />
+      <option name="presentableId" value="LOCAL-00066" />
+      <option name="project" value="LOCAL" />
+      <updated>1730890613346</updated>
+    </task>
+    <task id="LOCAL-00067" summary="Added the explanation files to the repository, just in case.">
+      <option name="closed" value="true" />
+      <created>1730892362822</created>
+      <option name="number" value="00067" />
+      <option name="presentableId" value="LOCAL-00067" />
+      <option name="project" value="LOCAL" />
+      <updated>1730892362822</updated>
+    </task>
+    <task id="LOCAL-00068" summary="Fixed a bug where the positive and negative p values were swapped around.">
+      <option name="closed" value="true" />
+      <created>1730893071170</created>
+      <option name="number" value="00068" />
+      <option name="presentableId" value="LOCAL-00068" />
+      <option name="project" value="LOCAL" />
+      <updated>1730893071170</updated>
+    </task>
+    <task id="LOCAL-00069" summary="Workers are now listed in alphabetical order in the problem visualisation, solutions and pss.">
+      <option name="closed" value="true" />
+      <created>1730903122681</created>
+      <option name="number" value="00069" />
+      <option name="presentableId" value="LOCAL-00069" />
+      <option name="project" value="LOCAL" />
+      <updated>1730903122681</updated>
+    </task>
+    <task id="LOCAL-00070" summary="Removed the name Penelope from the workers names because it's just too long">
+      <option name="closed" value="true" />
+      <created>1730904090382</created>
+      <option name="number" value="00070" />
+      <option name="presentableId" value="LOCAL-00070" />
+      <option name="project" value="LOCAL" />
+      <updated>1730904090383</updated>
+    </task>
+    <task id="LOCAL-00071" summary="Penalty table for the optimal solution is now formatted in a way which makes it work immediately in the spreadsheets, although it it much less readable now...">
+      <option name="closed" value="true" />
+      <created>1730904831219</created>
+      <option name="number" value="00071" />
+      <option name="presentableId" value="LOCAL-00071" />
+      <option name="project" value="LOCAL" />
+      <updated>1730904831219</updated>
+    </task>
+    <task id="LOCAL-00072" summary="Added a little additional call to generate an example problem which I can use to explain the  problem">
+      <option name="closed" value="true" />
+      <created>1730993204498</created>
+      <option name="number" value="00072" />
+      <option name="presentableId" value="LOCAL-00072" />
+      <option name="project" value="LOCAL" />
+      <updated>1730993204498</updated>
+    </task>
+    <task id="LOCAL-00073" summary="Rota numbers are also scrambled, but I'm not sure if they are being displayed correctly...">
+      <option name="closed" value="true" />
+      <created>1731084038010</created>
+      <option name="number" value="00073" />
+      <option name="presentableId" value="LOCAL-00073" />
+      <option name="project" value="LOCAL" />
+      <updated>1731084038010</updated>
+    </task>
+    <task id="LOCAL-00074" summary="Fixed a quite serious bug, in which the rotas are not deterministic to how the pretty printer is created. Now, the rotas are first sorted by hash (instead of being converted from a set to a list) and then shuffled after setting a seed. The seed is calculated from the worker names.">
+      <option name="closed" value="true" />
+      <created>1731339679457</created>
+      <option name="number" value="00074" />
+      <option name="presentableId" value="LOCAL-00074" />
+      <option name="project" value="LOCAL" />
+      <updated>1731339679457</updated>
+    </task>
+    <task id="LOCAL-00075" summary="End of day submit">
+      <option name="closed" value="true" />
+      <created>1731437124239</created>
+      <option name="number" value="00075" />
+      <option name="presentableId" value="LOCAL-00075" />
+      <option name="project" value="LOCAL" />
+      <updated>1731437124239</updated>
+    </task>
+    <task id="LOCAL-00076" summary="The answers to the questions in the questionnaire are now generated.">
+      <option name="closed" value="true" />
+      <created>1731506207765</created>
+      <option name="number" value="00076" />
+      <option name="presentableId" value="LOCAL-00076" />
+      <option name="project" value="LOCAL" />
+      <updated>1731506207781</updated>
+    </task>
+    <task id="LOCAL-00077" summary="Preparing for fairly big changes, clearing up code that was used for the LCS">
+      <option name="closed" value="true" />
+      <created>1732617790896</created>
+      <option name="number" value="00077" />
+      <option name="presentableId" value="LOCAL-00077" />
+      <option name="project" value="LOCAL" />
+      <updated>1732617790896</updated>
+    </task>
+    <task id="LOCAL-00078" summary="In a frenzy, I implemented the variance based decision tree">
+      <option name="closed" value="true" />
+      <created>1732893939281</created>
+      <option name="number" value="00078" />
+      <option name="presentableId" value="LOCAL-00078" />
+      <option name="project" value="LOCAL" />
+      <updated>1732893939282</updated>
+    </task>
+    <task id="LOCAL-00079" summary="Implemented some functionality for representation based search.">
+      <option name="closed" value="true" />
+      <created>1733150884509</created>
+      <option name="number" value="00079" />
+      <option name="presentableId" value="LOCAL-00079" />
+      <option name="project" value="LOCAL" />
+      <updated>1733150884509</updated>
+    </task>
+    <task id="LOCAL-00080" summary="Played around with the variance decision tree again, seems to work nicely when paired with the perturbation metric.">
+      <option name="closed" value="true" />
+      <created>1733158820490</created>
+      <option name="number" value="00080" />
+      <option name="presentableId" value="LOCAL-00080" />
+      <option name="project" value="LOCAL" />
+      <updated>1733158820490</updated>
+    </task>
+    <task id="LOCAL-00081" summary="Another manic episode, where i tried to implement many things that did not end up working. I think the safest approach is to have a representation of the solutions and search using variance but not perturbation linkage....">
+      <option name="closed" value="true" />
+      <created>1733245101432</created>
+      <option name="number" value="00081" />
+      <option name="presentableId" value="LOCAL-00081" />
+      <option name="project" value="LOCAL" />
+      <updated>1733245101433</updated>
+    </task>
+    <task id="LOCAL-00082" summary="Fixing some issues in linkage methods, seeing that they are not that good....">
+      <option name="closed" value="true" />
+      <created>1733417116671</created>
+      <option name="number" value="00082" />
+      <option name="presentableId" value="LOCAL-00082" />
+      <option name="project" value="LOCAL" />
+      <updated>1733417116671</updated>
+    </task>
+    <task id="LOCAL-00083" summary="Finally the tree looks right">
+      <option name="closed" value="true" />
+      <created>1733420820841</created>
+      <option name="number" value="00083" />
+      <option name="presentableId" value="LOCAL-00083" />
+      <option name="project" value="LOCAL" />
+      <updated>1733420820841</updated>
+    </task>
+    <task id="LOCAL-00084" summary="Implemented the variance split linkage, and while it does kinda work, it's also not that good.">
+      <option name="closed" value="true" />
+      <created>1733484452647</created>
+      <option name="number" value="00084" />
+      <option name="presentableId" value="LOCAL-00084" />
+      <option name="project" value="LOCAL" />
+      <updated>1733484452647</updated>
+    </task>
+    <task id="LOCAL-00085" summary="Implemented an objective which takes advatange that both mannwhitneyU and split variance are splitting the pRef.">
+      <option name="closed" value="true" />
+      <created>1733485130234</created>
+      <option name="number" value="00085" />
+      <option name="presentableId" value="LOCAL-00085" />
+      <option name="project" value="LOCAL" />
+      <updated>1733485130234</updated>
+    </task>
+    <task id="LOCAL-00086" summary="More efficient metric evaluation">
+      <option name="closed" value="true" />
+      <created>1733503311977</created>
+      <option name="number" value="00086" />
+      <option name="presentableId" value="LOCAL-00086" />
+      <option name="project" value="LOCAL" />
+      <updated>1733503311977</updated>
+    </task>
+    <task id="LOCAL-00087" summary="Cleaned up some code to split pRefs">
+      <option name="closed" value="true" />
+      <created>1733914501456</created>
+      <option name="number" value="00087" />
+      <option name="presentableId" value="LOCAL-00087" />
+      <option name="project" value="LOCAL" />
+      <updated>1733914501457</updated>
+    </task>
+    <task id="LOCAL-00088" summary="Implemented an interface to make decision trees, and some simple functions to test them. For RR and a horrible ps budget given, the mse appears to be lower for my approach.">
+      <option name="closed" value="true" />
+      <created>1733922289298</created>
+      <option name="number" value="00088" />
+      <option name="presentableId" value="LOCAL-00088" />
+      <option name="project" value="LOCAL" />
+      <updated>1733922289298</updated>
+    </task>
+    <task id="LOCAL-00089" summary="Final commit of the day">
+      <option name="closed" value="true" />
+      <created>1733937753925</created>
+      <option name="number" value="00089" />
+      <option name="presentableId" value="LOCAL-00089" />
+      <option name="project" value="LOCAL" />
+      <updated>1733937753925</updated>
+    </task>
+    <task id="LOCAL-00090" summary="Implementing continuous problems">
+      <option name="closed" value="true" />
+      <created>1734023566416</created>
+      <option name="number" value="00090" />
+      <option name="presentableId" value="LOCAL-00090" />
+      <option name="project" value="LOCAL" />
+      <updated>1734023566417</updated>
+    </task>
+    <task id="LOCAL-00091" summary="Implemented code which compares decision trees for many problems and depths.">
+      <option name="closed" value="true" />
+      <created>1734101166499</created>
+      <option name="number" value="00091" />
+      <option name="presentableId" value="LOCAL-00091" />
+      <option name="project" value="LOCAL" />
+      <updated>1734101166500</updated>
+    </task>
+    <option name="localTasksCounter" value="92" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -230,53 +672,179 @@
       <map>
         <entry key="MAIN">
           <value>
-            <State />
+            <State>
+              <option name="FILTERS">
+                <map>
+                  <entry key="branch">
+                    <value>
+                      <list>
+                        <option value="origin/LCS" />
+                      </list>
+                    </value>
+                  </entry>
+                </map>
+              </option>
+            </State>
           </value>
         </entry>
       </map>
     </option>
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="Implemented the hotencoder again... So that PSs can be passed nicely to a NN" />
-    <MESSAGE value="Fixed a bug where the winner and loser pair index in the SolutionDifferenceScenario was not getting incremented." />
-    <MESSAGE value="Corrected small but in the calculation of the constraints for the TMLocalRestrictedPymooProblem." />
-    <MESSAGE value="Reimplemented the functions which apply the &quot;backpropagation&quot; of rule payoff, because my match set is strange. It still doesn't work, because there are already deleted rules which are deleted again? To be resolved." />
-    <MESSAGE value="The constraint in the restricted pymoo problem was wrong (wrong sign), and many little fixes. When a rule is deleted as a result to others being added, the program crashes because it says that the rule is not in the model." />
-    <MESSAGE value="Fixed the most deceptive bug I've ever encountered. The symptom was that (rule in model) was False, even though the rule's condition was in the model's population dictionary. This issue is caused when the keys to a dictionary are mutated from an outside source, and they cause the keys in the dict to be associated with outdated hash values. In this particular case the mutation was literally caused by the mutation operator in the GA component of the LCS. The fix is to copy conditions before mutating them." />
-    <MESSAGE value="Fixed subsumption, which before ignored whether rules were subsets of each other or not." />
-    <MESSAGE value="Temporarly using mean fitness as the second metric, it doesn't seem to be that slow after all. Less arbitrary changes." />
-    <MESSAGE value="Reintroduced the filtering by delta fitness and consistency, made more modular but possibly overengineered." />
-    <MESSAGE value="Set the accuracy of a rule as its fitness, and used it for pruning. When reverting, please check the function update_attributes_of_rule, update_action_set_fitnesses, prune (which can be removed alltogether otherwise). Rules which are available for removal must have sufficient experience and accuracy not perfect. Appears to run but to not work well, with the target rules having bad fitness (I observed a target rule getting removed for having accuracy 0.6... that shouldn't be possible?)" />
-    <MESSAGE value="GA introduction of rules in the model is now controlled by a custom flag (allow_ga_reproduction) of the algorithm (note that the flag is not in the model, that might be confusing!!!" />
-    <MESSAGE value="Made the PS objectives evaluator more flexible by allowing an arbitrary amount of objectives to be used. Including simplicity as a metric appears to improve the results, agreeing with paper # 1" />
-    <MESSAGE value="Final submit before switching to the office computer again" />
-    <MESSAGE value="Big changes in how the constraint for the PS search works, and little changes in how the knapsack problem solutions are displayed" />
-    <option name="LAST_COMMIT_MESSAGE" value="Big changes in how the constraint for the PS search works, and little changes in how the knapsack problem solutions are displayed" />
+    <MESSAGE value="Added the explanation files to the repository, just in case." />
+    <MESSAGE value="Fixed a bug where the positive and negative p values were swapped around." />
+    <MESSAGE value="Workers are now listed in alphabetical order in the problem visualisation, solutions and pss." />
+    <MESSAGE value="Removed the name Penelope from the workers names because it's just too long" />
+    <MESSAGE value="Penalty table for the optimal solution is now formatted in a way which makes it work immediately in the spreadsheets, although it it much less readable now..." />
+    <MESSAGE value="Added a little additional call to generate an example problem which I can use to explain the  problem" />
+    <MESSAGE value="Rota numbers are also scrambled, but I'm not sure if they are being displayed correctly..." />
+    <MESSAGE value="Fixed a quite serious bug, in which the rotas are not deterministic to how the pretty printer is created. Now, the rotas are first sorted by hash (instead of being converted from a set to a list) and then shuffled after setting a seed. The seed is calculated from the worker names." />
+    <MESSAGE value="End of day submit" />
+    <MESSAGE value="The answers to the questions in the questionnaire are now generated." />
+    <MESSAGE value="Preparing for fairly big changes, clearing up code that was used for the LCS" />
+    <MESSAGE value="In a frenzy, I implemented the variance based decision tree" />
+    <MESSAGE value="Implemented some functionality for representation based search." />
+    <MESSAGE value="Played around with the variance decision tree again, seems to work nicely when paired with the perturbation metric." />
+    <MESSAGE value="Another manic episode, where i tried to implement many things that did not end up working. I think the safest approach is to have a representation of the solutions and search using variance but not perturbation linkage...." />
+    <MESSAGE value="Fixing some issues in linkage methods, seeing that they are not that good...." />
+    <MESSAGE value="Finally the tree looks right" />
+    <MESSAGE value="Implemented the variance split linkage, and while it does kinda work, it's also not that good." />
+    <MESSAGE value="Implemented an objective which takes advatange that both mannwhitneyU and split variance are splitting the pRef." />
+    <MESSAGE value="More efficient metric evaluation" />
+    <MESSAGE value="Cleaned up some code to split pRefs" />
+    <MESSAGE value="Implemented an interface to make decision trees, and some simple functions to test them. For RR and a horrible ps budget given, the mse appears to be lower for my approach." />
+    <MESSAGE value="Final commit of the day" />
+    <MESSAGE value="Implementing continuous problems" />
+    <MESSAGE value="Implemented code which compares decision trees for many problems and depths." />
+    <option name="LAST_COMMIT_MESSAGE" value="Implemented code which compares decision trees for many problems and depths." />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
       <breakpoints>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <condition expression="len(set(self._population.keys())) != len(self._population)" language="Python" />
-          <url>file://$PROJECT_DIR$/../PS-PDF/.venv/lib/python3.12/site-packages/xcs/__init__.py</url>
-          <line>1167</line>
-          <option name="timeStamp" value="23" />
+          <url>file://$PROJECT_DIR$/LCS/DifferenceExplainer/DifferenceExplainer.py</url>
+          <line>493</line>
+          <option name="timeStamp" value="18" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/../PS-PDF/.venv/lib/python3.12/site-packages/xcs/__init__.py</url>
-          <line>2050</line>
-          <option name="timeStamp" value="36" />
+          <url>file://$PROJECT_DIR$/LCS/DifferenceExplainer/DifferenceExplainer.py</url>
+          <line>479</line>
+          <option name="timeStamp" value="42" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/LCS/DifferenceExplainer/DifferenceExplainer.py</url>
+          <line>470</line>
+          <option name="timeStamp" value="45" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/Core/PSMetric/Linkage/LocalPerturbation.py</url>
+          <line>35</line>
+          <option name="timeStamp" value="50" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/LCS/DifferenceExplainer/DifferenceExplainer.py</url>
+          <line>381</line>
+          <option name="timeStamp" value="51" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/LCS/Operators.py</url>
+          <line>112</line>
+          <option name="timeStamp" value="56" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/LCS/Operators.py</url>
+          <line>102</line>
+          <option name="timeStamp" value="57" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/PairExplanation/PairExplanationTester.py</url>
+          <line>298</line>
+          <option name="timeStamp" value="66" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/PairExplanation/BTProblemPrettyPrinter.py</url>
+          <line>207</line>
+          <option name="timeStamp" value="86" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <condition expression="rcount == 0" language="Python" />
+          <url>file://$PROJECT_DIR$/venv/Lib/site-packages/numpy/core/_methods.py</url>
+          <line>128</line>
+          <option name="timeStamp" value="87" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/PairExplanation/run_tester.py</url>
+          <line>178</line>
+          <option name="timeStamp" value="97" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/PairExplanation/PairwiseExplanation.py</url>
+          <line>188</line>
+          <option name="timeStamp" value="101" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/resources/explanations/generate_all_data.py</url>
+          <line>134</line>
+          <option name="timeStamp" value="123" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/resources/generate_data_for_problem.py</url>
+          <line>124</line>
+          <option name="timeStamp" value="131" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/PairExplanation/BTProblemPrettyPrinter.py</url>
+          <line>130</line>
+          <option name="timeStamp" value="132" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/GuestLecture/show_off_problems.py</url>
+          <line>66</line>
+          <option name="timeStamp" value="138" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/VarianceDecisionTree/SimplePSSearchTask.py</url>
+          <line>169</line>
+          <option name="timeStamp" value="191" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/VarianceDecisionTree/compare_prediction_powers.py</url>
+          <line>161</line>
+          <option name="timeStamp" value="192" />
         </line-breakpoint>
       </breakpoints>
     </breakpoint-manager>
   </component>
   <component name="com.intellij.coverage.CoverageDataManagerImpl">
-    <SUITE FILE_PATH="coverage/PS_descriptors$SolutionDifference.coverage" NAME="SolutionDifference Coverage Results" MODIFIED="1732278615618" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="" />
-    <SUITE FILE_PATH="coverage/PS_descriptors$nnTests.coverage" NAME="nnTests Coverage Results" MODIFIED="1724003673574" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/NeuralNetworkExperiments" />
-    <SUITE FILE_PATH="coverage/PS_descriptors$execute.coverage" NAME="execute Coverage Results" MODIFIED="1724006696674" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="/Library/Frameworks/Python.framework/Versions/3.12/lib/python3.12/site-packages/tensorflow/python/eager" />
-    <SUITE FILE_PATH="coverage/PS_descriptors$Sol2Sol.coverage" NAME="Sol2Sol Coverage Results" MODIFIED="1724059213106" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/NeuralNetworkExperiments" />
-    <SUITE FILE_PATH="coverage/PS_descriptors$show_off_problems.coverage" NAME="show_off_problems Coverage Results" MODIFIED="1732285245876" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/GuestLecture" />
-    <SUITE FILE_PATH="coverage/PS_descriptors$SolutionDifferencePSSearch.coverage" NAME="SolutionDifferencePSSearch Coverage Results" MODIFIED="1732284809406" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/LCS/ConstrainedPSSearch" />
-    <SUITE FILE_PATH="coverage/PS_descriptors$HotEncoding.coverage" NAME="HotEncoding Coverage Results" MODIFIED="1724003027337" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/NeuralNetworkExperiments" />
+    <SUITE FILE_PATH="coverage/PS_descriptors_LCS$EfficientBTProblem.coverage" NAME="EfficientBTProblem Coverage Results" MODIFIED="1730888916093" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/BenchmarkProblems/EfficientBTProblem" />
+    <SUITE FILE_PATH="coverage/PS_descriptors_LCS$test_representation_linkage.coverage" NAME="test_representation_linkage Coverage Results" MODIFIED="1733234360534" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/RepresentationBasedSearch" />
+    <SUITE FILE_PATH="coverage/PS_descriptors_LCS$PairwiseExplanation.coverage" NAME="PairwiseExplanation Coverage Results" MODIFIED="1730888593528" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/PairExplanation" />
+    <SUITE FILE_PATH="coverage/PS_descriptors_LCS$SolutionDifferencePSSearch.coverage" NAME="SolutionDifferencePSSearch Coverage Results" MODIFIED="1731599938287" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/LCS/ConstrainedPSSearch" />
+    <SUITE FILE_PATH="coverage/PS_descriptors_LCS$test_variance_tree.coverage" NAME="test_variance_tree Coverage Results" MODIFIED="1732884886305" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/VarianceDecisionTree" />
+    <SUITE FILE_PATH="coverage/PS_descriptors_LCS$BTProblem.coverage" NAME="BTProblem Coverage Results" MODIFIED="1730810801795" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/BenchmarkProblems/BT" />
+    <SUITE FILE_PATH="coverage/PS_descriptors_LCS$SimplePSSearchTask.coverage" NAME="SimplePSSearchTask Coverage Results" MODIFIED="1732884926578" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/VarianceDecisionTree" />
+    <SUITE FILE_PATH="coverage/PS_descriptors_LCS$TSPPredicates.coverage" NAME="TSPPredicates Coverage Results" MODIFIED="1733232626802" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/RepresentationBasedSearch" />
+    <SUITE FILE_PATH="coverage/PS_descriptors_LCS$BTProblemPrettyPrinter.coverage" NAME="BTProblemPrettyPrinter Coverage Results" MODIFIED="1731322336537" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/PairExplanation" />
+    <SUITE FILE_PATH="coverage/PS_descriptors_LCS$TSP.coverage" NAME="TSP Coverage Results" MODIFIED="1731685829542" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/BenchmarkProblems" />
+    <SUITE FILE_PATH="coverage/PS_descriptors_LCS$variance_tree.coverage" NAME="variance_tree Coverage Results" MODIFIED="1733921416409" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="" />
+    <SUITE FILE_PATH="coverage/PS_descriptors_LCS$cached_explanations.coverage" NAME="cached_explanations Coverage Results" MODIFIED="1730387794178" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="" />
+    <SUITE FILE_PATH="coverage/PS_descriptors_LCS$PairExplanationTester.coverage" NAME="PairExplanationTester Coverage Results" MODIFIED="1731598536958" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/PairExplanation" />
+    <SUITE FILE_PATH="coverage/PS_descriptors_LCS$ContinuousVariableRepresentation.coverage" NAME="ContinuousVariableRepresentation Coverage Results" MODIFIED="1734015702902" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/RepresentationBasedSearch" />
+    <SUITE FILE_PATH="coverage/PS_descriptors_LCS$compare_prediction_powers.coverage" NAME="compare_prediction_powers Coverage Results" MODIFIED="1734108497694" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="" />
+    <SUITE FILE_PATH="coverage/PS_descriptors_LCS$show_off_problems.coverage" NAME="show_off_problems Coverage Results" MODIFIED="1732641094708" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="" />
+    <SUITE FILE_PATH="coverage/PS_descriptors_LCS$generate_all_data.coverage" NAME="generate_all_data Coverage Results" MODIFIED="1730458114958" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/resources/explanations" />
+    <SUITE FILE_PATH="coverage/PS_descriptors_LCS$PSDecisionTree.coverage" NAME="PSDecisionTree Coverage Results" MODIFIED="1733921779017" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/VarianceDecisionTree" />
+    <SUITE FILE_PATH="coverage/PS_descriptors_LCS$PRef.coverage" NAME="PRef Coverage Results" MODIFIED="1733921522563" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Core" />
+    <SUITE FILE_PATH="coverage/PS_descriptors_LCS$test_continuous_problem.coverage" NAME="test_continuous_problem Coverage Results" MODIFIED="1734016124645" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/RepresentationBasedSearch" />
+    <SUITE FILE_PATH="coverage/PS_descriptors_LCS$DiffExplanation.coverage" NAME="DiffExplanation Coverage Results" MODIFIED="1731685086513" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="" />
+    <SUITE FILE_PATH="coverage/PS_descriptors_LCS$RepresentationLinkage.coverage" NAME="RepresentationLinkage Coverage Results" MODIFIED="1733234149399" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/RepresentationBasedSearch" />
+    <SUITE FILE_PATH="coverage/PS_descriptors_LCS$Mining.coverage" NAME="Mining Coverage Results" MODIFIED="1730738417293" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/PSMiners" />
+    <SUITE FILE_PATH="coverage/PS_descriptors_LCS$utils.coverage" NAME="utils Coverage Results" MODIFIED="1730195736328" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
+    <SUITE FILE_PATH="coverage/PS_descriptors_LCS$generate_data_for_problem.coverage" NAME="generate_data_for_problem Coverage Results" MODIFIED="1731685130089" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/resources" />
+    <SUITE FILE_PATH="coverage/PS_descriptors_LCS$SignificantlyHighAverage.coverage" NAME="SignificantlyHighAverage Coverage Results" MODIFIED="1733921961378" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Core/PSMetric/FitnessQuality" />
+    <SUITE FILE_PATH="coverage/PS_descriptors_LCS$manage_explanations.coverage" NAME="manage_explanations Coverage Results" MODIFIED="1730896903291" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/resources/explanations" />
+    <SUITE FILE_PATH="coverage/PS_descriptors_LCS$WeightedGraphVisualiser.coverage" NAME="WeightedGraphVisualiser Coverage Results" MODIFIED="1730206638189" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/PairExplanation" />
+    <SUITE FILE_PATH="coverage/PS_descriptors_LCS$DescriptorsManager.coverage" NAME="DescriptorsManager Coverage Results" MODIFIED="1730738533278" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/LCS/DifferenceExplainer" />
+    <SUITE FILE_PATH="coverage/PS_descriptors_LCS$load_data.coverage" NAME="load_data Coverage Results" MODIFIED="1730206695810" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/PairExplanation" />
   </component>
 </project>

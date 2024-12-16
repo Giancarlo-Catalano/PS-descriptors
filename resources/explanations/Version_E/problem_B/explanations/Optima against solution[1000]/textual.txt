@@ -1,0 +1,21 @@
+label: Optima against solution[1000]
+
+
+
+
+
+Emily	C = ROTA 32	C = ROTA 32
+Sofia	D = ROTA 32	D = ROTA 32
+Ada	B = ROTA 10	B = ROTA 10
+Louis	B = ROTA 21	B = ROTA 21
+Emma	A = ROTA 17	A = ROTA 17
+Parker	A = ROTA 17	A = ROTA 17
+Lara	A = ROTA 17	A = ROTA 17
+Leo	A = ROTA 7	A = ROTA 7
+Eden	C = ROTA 23	C = ROTA 23
+Joseph	B = ROTA 1	B = ROTA 1
+Anna	A = ROTA 12	A = ROTA 12
+
+
+
+The pattern was found to be beneficial (HIGHLY SIGNIFICANT), with p_value 1.6629295594672565e-165

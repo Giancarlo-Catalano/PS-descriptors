@@ -33,14 +33,14 @@ class TSP(BenchmarkProblem):
         remaining_indexes = list(range(self.n))
         for value in fs.values:
             path.append(remaining_indexes.pop(value))
+        path.extend(remaining_indexes)  # the forced choice at the end
         return path
-
 
     def city_indexes_to_solution(self, path: list[int]) -> FullSolution:
         remaining_indexes = list(range(self.n))
 
         combinatorial_indexes = []
-        for city_index in path[:self.n]: # this [:self.n] is to exclude the retuning trip if it's present
+        for city_index in path[:(self.n + 1)]:  # this [:self.n] is to exclude the retuning trip if it's present
             index_in_stack = remaining_indexes.index(city_index)
             remaining_indexes.pop(index_in_stack)
             combinatorial_indexes.append(index_in_stack)
@@ -48,7 +48,7 @@ class TSP(BenchmarkProblem):
 
     @classmethod
     def distance_between_cities(cls, city_a, city_b) -> float:
-        return sum((coord_a - coord_b) ** 2 for coord_a, coord_b in zip(city_a, city_b))
+        return np.sqrt(sum((coord_a - coord_b) ** 2 for coord_a, coord_b in zip(city_a, city_b)))
 
     def fitness_function(self, fs: FullSolution) -> float:
         city_indexes = self.convert_solution_to_city_indexes(fs)
@@ -58,13 +58,14 @@ class TSP(BenchmarkProblem):
         return -total_distance
 
     def __repr__(self):
-        return f"TSP(cities = {self.cities})"
+        return f"TSP(cities = {len(self.cities)})"
 
     def repr_city_index(self, city_index: int) -> str:
         return utils.alphabet[city_index]
 
     def repr_fs(self, fs: FullSolution) -> str:
-        return "->".join(map(self.repr_city_index, self.convert_solution_to_city_indexes(fs)))
+        path_str = "->".join(map(self.repr_city_index, self.convert_solution_to_city_indexes(fs)))
+        return "O->" + path_str + "->O"
 
     def get_boolean_search_space(self) -> SearchSpace:
         amount_of_cells = (self.n ** 2 - self.n) / 2
@@ -106,6 +107,21 @@ class TSP(BenchmarkProblem):
             return f"{self.repr_city_index(item[0])} -> {self.repr_city_index(item[1])}"
 
         return "\n".join(map(repr_item, precedence_pairs))
+
+    @classmethod
+    def get_berlin52_instance(cls):
+        return cls(cities=
+                   [(25, 185), (345, 750), (945, 685), (845, 655), (880, 660),
+                    (25, 230), (525, 1000), (580, 1175), (650, 1130), (1605, 620),
+                    (1220, 580), (1465, 200), (1530, 5), (845, 680), (725, 370), (145, 665), (415, 635), (510, 875),
+                    (560, 365), (300, 465), (520, 585), (480, 415), (835, 625), (975, 580), (1215, 245), (1320, 315),
+                    (1250, 400), (
+                        660, 180), (410, 250), (420, 555), (575, 665), (1150, 1160), (700, 580), (685, 595), (685, 610),
+                    (770, 610), (
+                        795, 645), (720, 635), (760, 650), (475, 960), (95, 260), (875, 920), (700, 500), (555, 815),
+                    (830, 485), (
+                        1170, 65), (830, 610), (605, 625), (595, 360), (1340, 725), (1740, 245)],
+                   starting_ending_city=(565, 575))
 
 
 class BooleanSearchSpaceTSP(BenchmarkProblem):
@@ -158,7 +174,7 @@ class BooleanSearchSpaceTSP(BenchmarkProblem):
                     precedence_pairs.append((city_after, city_before))
                 case 0:
                     precedence_pairs.append((city_before, city_after))
-                case _: # a star
+                case _:  # a star
                     pass
 
         def repr_item(item) -> str:
@@ -169,7 +185,6 @@ class BooleanSearchSpaceTSP(BenchmarkProblem):
     def fitness_function(self, fs: FullSolution) -> float:
         combinatorial_fs = self.boolean_fs_to_permutation_fs(fs)
         return self.original_problem.fitness_function(combinatorial_fs)
-
 
     def repr_fs(self, full_solution: FullSolution) -> str:
         converted = self.boolean_fs_to_permutation_fs(full_solution)

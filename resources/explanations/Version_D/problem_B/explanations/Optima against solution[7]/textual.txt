@@ -1,0 +1,14 @@
+label: Optima against solution[7]
+
+
+
+
+
+Myla	A = ROTA 24	A = ROTA 24
+Joseph	A = ROTA 2	A = ROTA 2
+Imogen	B = ROTA 29	B = ROTA 29
+Cooper	A = ROTA 24	A = ROTA 24
+Michael	D = ROTA 25	D = ROTA 25
+Max	C = ROTA 19	C = ROTA 19
+
+The workers have MANY skills, (rank = 93%)

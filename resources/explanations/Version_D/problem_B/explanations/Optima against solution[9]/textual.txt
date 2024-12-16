@@ -1,0 +1,14 @@
+label: Optima against solution[9]
+
+
+
+
+
+Myla	A = ROTA 24	A = ROTA 24
+Joseph	A = ROTA 2	A = ROTA 2
+Mila	B = ROTA 6	B = ROTA 6
+Imogen	B = ROTA 29	B = ROTA 29
+Cooper	A = ROTA 24	A = ROTA 24
+Michael	D = ROTA 25	D = ROTA 25
+Max	C = ROTA 19	C = ROTA 19
+
