@@ -1,0 +1,282 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="AutoImportSettings">
+    <option name="autoReloadType" value="SELECTIVE" />
+  </component>
+  <component name="ChangeListManager">
+    <list default="true" id="3f27671c-56d4-4592-a294-490f7f277789" name="Changes" comment="Big changes in how the constraint for the PS search works, and little changes in how the knapsack problem solutions are displayed" />
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_BRANCH_BY_REPOSITORY">
+      <map>
+        <entry key="$PROJECT_DIR$" value="LightweightLocalMiner" />
+      </map>
+    </option>
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+  </component>
+  <component name="GitHubPullRequestSearchHistory">{
+  &quot;lastFilter&quot;: {
+    &quot;state&quot;: &quot;OPEN&quot;,
+    &quot;assignee&quot;: &quot;Giancarlo-Catalano&quot;
+  }
+}</component>
+  <component name="GithubPullRequestsUISettings">{
+  &quot;selectedUrlAndAccountId&quot;: {
+    &quot;url&quot;: &quot;https://github.com/Giancarlo-Catalano/PS-descriptors.git&quot;,
+    &quot;accountId&quot;: &quot;fcb01860-54d6-4b1d-a397-35a9a8ca5630&quot;
+  }
+}</component>
+  <component name="ProjectColorInfo">{
+  &quot;associatedIndex&quot;: 2
+}</component>
+  <component name="ProjectId" id="2kqBnvjYzu8vkLyx2ddmEPHpCoH" />
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showLibraryContents" value="true" />
+  </component>
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "Python.HotEncoding.executor": "Run",
+    "Python.Sol2Sol.executor": "Debug",
+    "Python.SolutionDifference.executor": "Run",
+    "Python.SolutionDifferencePSSearch.executor": "Run",
+    "Python.execute.executor": "Debug",
+    "Python.nnTests.executor": "Run",
+    "Python.show_off_problems.executor": "Run",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "git-widget-placeholder": "LCS",
+    "node.js.detected.package.eslint": "true",
+    "node.js.detected.package.tslint": "true",
+    "node.js.selected.package.eslint": "(autodetect)",
+    "node.js.selected.package.tslint": "(autodetect)",
+    "nodejs_package_manager_path": "npm",
+    "settings.editor.selected.configurable": "com.jetbrains.python.configuration.PyActiveSdkModuleConfigurable",
+    "vue.rearranger.settings.migration": "true"
+  }
+}]]></component>
+  <component name="RunManager">
+    <configuration name="SolutionDifference" type="PythonConfigurationType" factoryName="Python">
+      <module name="PS-descriptors" />
+      <option name="ENV_FILES" value="" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="" />
+      <option name="IS_MODULE_SDK" value="true" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <EXTENSION ID="PythonCoverageRunConfigurationExtension" runner="coverage.py" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/LCS/SolutionDifference/SolutionDifferenceTests.py" />
+      <option name="PARAMETERS" value="" />
+      <option name="SHOW_COMMAND_LINE" value="false" />
+      <option name="EMULATE_TERMINAL" value="false" />
+      <option name="MODULE_MODE" value="false" />
+      <option name="REDIRECT_INPUT" value="false" />
+      <option name="INPUT_FILE" value="" />
+      <method v="2" />
+    </configuration>
+  </component>
+  <component name="SharedIndexes">
+    <attachedChunks>
+      <set>
+        <option value="bundled-js-predefined-1d06a55b98c1-0b3e54e931b4-JavaScript-PY-241.17890.14" />
+        <option value="bundled-python-sdk-5b207ade9991-7e9c3bbb6e34-com.jetbrains.pycharm.pro.sharedIndexes.bundled-PY-241.17890.14" />
+      </set>
+    </attachedChunks>
+  </component>
+  <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="3f27671c-56d4-4592-a294-490f7f277789" name="Changes" comment="" />
+      <created>1724001397062</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1724001397062</updated>
+      <workItem from="1724001398148" duration="1680000" />
+      <workItem from="1724003093701" duration="9269000" />
+      <workItem from="1725704506245" duration="6049000" />
+      <workItem from="1725824421693" duration="8119000" />
+      <workItem from="1725892441299" duration="28054000" />
+      <workItem from="1726214066666" duration="21234000" />
+      <workItem from="1732278308794" duration="10136000" />
+    </task>
+    <task id="LOCAL-00001" summary="Implemented the hotencoder again... So that PSs can be passed nicely to a NN">
+      <option name="closed" value="true" />
+      <created>1724003075910</created>
+      <option name="number" value="00001" />
+      <option name="presentableId" value="LOCAL-00001" />
+      <option name="project" value="LOCAL" />
+      <updated>1724003075910</updated>
+    </task>
+    <task id="LOCAL-00002" summary="Fixed a bug where the winner and loser pair index in the SolutionDifferenceScenario was not getting incremented.">
+      <option name="closed" value="true" />
+      <created>1725111822242</created>
+      <option name="number" value="00002" />
+      <option name="presentableId" value="LOCAL-00002" />
+      <option name="project" value="LOCAL" />
+      <updated>1725111822242</updated>
+    </task>
+    <task id="LOCAL-00003" summary="Corrected small but in the calculation of the constraints for the TMLocalRestrictedPymooProblem.">
+      <option name="closed" value="true" />
+      <created>1725112035483</created>
+      <option name="number" value="00003" />
+      <option name="presentableId" value="LOCAL-00003" />
+      <option name="project" value="LOCAL" />
+      <updated>1725112035483</updated>
+    </task>
+    <task id="LOCAL-00004" summary="Reimplemented the functions which apply the &quot;backpropagation&quot; of rule payoff, because my match set is strange. It still doesn't work, because there are already deleted rules which are deleted again? To be resolved.">
+      <option name="closed" value="true" />
+      <created>1725892522349</created>
+      <option name="number" value="00004" />
+      <option name="presentableId" value="LOCAL-00004" />
+      <option name="project" value="LOCAL" />
+      <updated>1725892522349</updated>
+    </task>
+    <task id="LOCAL-00005" summary="The constraint in the restricted pymoo problem was wrong (wrong sign), and many little fixes. When a rule is deleted as a result to others being added, the program crashes because it says that the rule is not in the model.">
+      <option name="closed" value="true" />
+      <created>1725967213267</created>
+      <option name="number" value="00005" />
+      <option name="presentableId" value="LOCAL-00005" />
+      <option name="project" value="LOCAL" />
+      <updated>1725967213267</updated>
+    </task>
+    <task id="LOCAL-00006" summary="Fixed the most deceptive bug I've ever encountered. The symptom was that (rule in model) was False, even though the rule's condition was in the model's population dictionary. This issue is caused when the keys to a dictionary are mutated from an outside source, and they cause the keys in the dict to be associated with outdated hash values. In this particular case the mutation was literally caused by the mutation operator in the GA component of the LCS. The fix is to copy conditions before mutating them.">
+      <option name="closed" value="true" />
+      <created>1726010212498</created>
+      <option name="number" value="00006" />
+      <option name="presentableId" value="LOCAL-00006" />
+      <option name="project" value="LOCAL" />
+      <updated>1726010212498</updated>
+    </task>
+    <task id="LOCAL-00007" summary="Fixed subsumption, which before ignored whether rules were subsets of each other or not.">
+      <option name="closed" value="true" />
+      <created>1726077693390</created>
+      <option name="number" value="00007" />
+      <option name="presentableId" value="LOCAL-00007" />
+      <option name="project" value="LOCAL" />
+      <updated>1726077693390</updated>
+    </task>
+    <task id="LOCAL-00008" summary="Temporarly using mean fitness as the second metric, it doesn't seem to be that slow after all. Less arbitrary changes.">
+      <option name="closed" value="true" />
+      <created>1726081972353</created>
+      <option name="number" value="00008" />
+      <option name="presentableId" value="LOCAL-00008" />
+      <option name="project" value="LOCAL" />
+      <updated>1726081972353</updated>
+    </task>
+    <task id="LOCAL-00009" summary="Reintroduced the filtering by delta fitness and consistency, made more modular but possibly overengineered.">
+      <option name="closed" value="true" />
+      <created>1726156341461</created>
+      <option name="number" value="00009" />
+      <option name="presentableId" value="LOCAL-00009" />
+      <option name="project" value="LOCAL" />
+      <updated>1726156341461</updated>
+    </task>
+    <task id="LOCAL-00010" summary="Set the accuracy of a rule as its fitness, and used it for pruning. When reverting, please check the function update_attributes_of_rule, update_action_set_fitnesses, prune (which can be removed alltogether otherwise). Rules which are available for removal must have sufficient experience and accuracy not perfect. Appears to run but to not work well, with the target rules having bad fitness (I observed a target rule getting removed for having accuracy 0.6... that shouldn't be possible?)">
+      <option name="closed" value="true" />
+      <created>1726222888089</created>
+      <option name="number" value="00010" />
+      <option name="presentableId" value="LOCAL-00010" />
+      <option name="project" value="LOCAL" />
+      <updated>1726222888089</updated>
+    </task>
+    <task id="LOCAL-00011" summary="GA introduction of rules in the model is now controlled by a custom flag (allow_ga_reproduction) of the algorithm (note that the flag is not in the model, that might be confusing!!!">
+      <option name="closed" value="true" />
+      <created>1726325628777</created>
+      <option name="number" value="00011" />
+      <option name="presentableId" value="LOCAL-00011" />
+      <option name="project" value="LOCAL" />
+      <updated>1726325628777</updated>
+    </task>
+    <task id="LOCAL-00012" summary="Made the PS objectives evaluator more flexible by allowing an arbitrary amount of objectives to be used. Including simplicity as a metric appears to improve the results, agreeing with paper # 1">
+      <option name="closed" value="true" />
+      <created>1726326472879</created>
+      <option name="number" value="00012" />
+      <option name="presentableId" value="LOCAL-00012" />
+      <option name="project" value="LOCAL" />
+      <updated>1726326472879</updated>
+    </task>
+    <task id="LOCAL-00013" summary="Final submit before switching to the office computer again">
+      <option name="closed" value="true" />
+      <created>1726735489366</created>
+      <option name="number" value="00013" />
+      <option name="presentableId" value="LOCAL-00013" />
+      <option name="project" value="LOCAL" />
+      <updated>1726735489366</updated>
+    </task>
+    <task id="LOCAL-00014" summary="Big changes in how the constraint for the PS search works, and little changes in how the knapsack problem solutions are displayed">
+      <option name="closed" value="true" />
+      <created>1732536361949</created>
+      <option name="number" value="00014" />
+      <option name="presentableId" value="LOCAL-00014" />
+      <option name="project" value="LOCAL" />
+      <updated>1732536361949</updated>
+    </task>
+    <option name="localTasksCounter" value="15" />
+    <servers />
+  </component>
+  <component name="TypeScriptGeneratedFilesManager">
+    <option name="version" value="3" />
+  </component>
+  <component name="Vcs.Log.Tabs.Properties">
+    <option name="TAB_STATES">
+      <map>
+        <entry key="MAIN">
+          <value>
+            <State />
+          </value>
+        </entry>
+      </map>
+    </option>
+  </component>
+  <component name="VcsManagerConfiguration">
+    <MESSAGE value="Implemented the hotencoder again... So that PSs can be passed nicely to a NN" />
+    <MESSAGE value="Fixed a bug where the winner and loser pair index in the SolutionDifferenceScenario was not getting incremented." />
+    <MESSAGE value="Corrected small but in the calculation of the constraints for the TMLocalRestrictedPymooProblem." />
+    <MESSAGE value="Reimplemented the functions which apply the &quot;backpropagation&quot; of rule payoff, because my match set is strange. It still doesn't work, because there are already deleted rules which are deleted again? To be resolved." />
+    <MESSAGE value="The constraint in the restricted pymoo problem was wrong (wrong sign), and many little fixes. When a rule is deleted as a result to others being added, the program crashes because it says that the rule is not in the model." />
+    <MESSAGE value="Fixed the most deceptive bug I've ever encountered. The symptom was that (rule in model) was False, even though the rule's condition was in the model's population dictionary. This issue is caused when the keys to a dictionary are mutated from an outside source, and they cause the keys in the dict to be associated with outdated hash values. In this particular case the mutation was literally caused by the mutation operator in the GA component of the LCS. The fix is to copy conditions before mutating them." />
+    <MESSAGE value="Fixed subsumption, which before ignored whether rules were subsets of each other or not." />
+    <MESSAGE value="Temporarly using mean fitness as the second metric, it doesn't seem to be that slow after all. Less arbitrary changes." />
+    <MESSAGE value="Reintroduced the filtering by delta fitness and consistency, made more modular but possibly overengineered." />
+    <MESSAGE value="Set the accuracy of a rule as its fitness, and used it for pruning. When reverting, please check the function update_attributes_of_rule, update_action_set_fitnesses, prune (which can be removed alltogether otherwise). Rules which are available for removal must have sufficient experience and accuracy not perfect. Appears to run but to not work well, with the target rules having bad fitness (I observed a target rule getting removed for having accuracy 0.6... that shouldn't be possible?)" />
+    <MESSAGE value="GA introduction of rules in the model is now controlled by a custom flag (allow_ga_reproduction) of the algorithm (note that the flag is not in the model, that might be confusing!!!" />
+    <MESSAGE value="Made the PS objectives evaluator more flexible by allowing an arbitrary amount of objectives to be used. Including simplicity as a metric appears to improve the results, agreeing with paper # 1" />
+    <MESSAGE value="Final submit before switching to the office computer again" />
+    <MESSAGE value="Big changes in how the constraint for the PS search works, and little changes in how the knapsack problem solutions are displayed" />
+    <option name="LAST_COMMIT_MESSAGE" value="Big changes in how the constraint for the PS search works, and little changes in how the knapsack problem solutions are displayed" />
+  </component>
+  <component name="XDebuggerManager">
+    <breakpoint-manager>
+      <breakpoints>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <condition expression="len(set(self._population.keys())) != len(self._population)" language="Python" />
+          <url>file://$PROJECT_DIR$/../PS-PDF/.venv/lib/python3.12/site-packages/xcs/__init__.py</url>
+          <line>1167</line>
+          <option name="timeStamp" value="23" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/../PS-PDF/.venv/lib/python3.12/site-packages/xcs/__init__.py</url>
+          <line>2050</line>
+          <option name="timeStamp" value="36" />
+        </line-breakpoint>
+      </breakpoints>
+    </breakpoint-manager>
+  </component>
+  <component name="com.intellij.coverage.CoverageDataManagerImpl">
+    <SUITE FILE_PATH="coverage/PS_descriptors$SolutionDifference.coverage" NAME="SolutionDifference Coverage Results" MODIFIED="1732278615618" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="" />
+    <SUITE FILE_PATH="coverage/PS_descriptors$nnTests.coverage" NAME="nnTests Coverage Results" MODIFIED="1724003673574" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/NeuralNetworkExperiments" />
+    <SUITE FILE_PATH="coverage/PS_descriptors$execute.coverage" NAME="execute Coverage Results" MODIFIED="1724006696674" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="/Library/Frameworks/Python.framework/Versions/3.12/lib/python3.12/site-packages/tensorflow/python/eager" />
+    <SUITE FILE_PATH="coverage/PS_descriptors$Sol2Sol.coverage" NAME="Sol2Sol Coverage Results" MODIFIED="1724059213106" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/NeuralNetworkExperiments" />
+    <SUITE FILE_PATH="coverage/PS_descriptors$show_off_problems.coverage" NAME="show_off_problems Coverage Results" MODIFIED="1732285245876" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/GuestLecture" />
+    <SUITE FILE_PATH="coverage/PS_descriptors$SolutionDifferencePSSearch.coverage" NAME="SolutionDifferencePSSearch Coverage Results" MODIFIED="1732284809406" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/LCS/ConstrainedPSSearch" />
+    <SUITE FILE_PATH="coverage/PS_descriptors$HotEncoding.coverage" NAME="HotEncoding Coverage Results" MODIFIED="1724003027337" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/NeuralNetworkExperiments" />
+  </component>
+</project>
