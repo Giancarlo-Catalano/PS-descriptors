@@ -19,9 +19,15 @@ class AbstractDecisionTreeRegressor:
     def get_prediction(self, solution: FullSolution) -> float:
         raise NotImplemented
 
+
+    def get_predictions(self, solution_matrix: np.ndarray) -> np.ndarray:
+        print(f"get_predictions({solution_matrix.shape = })")
+        # this is the fallback if there isn't a more efficient way to do it
+        return np.array([self.get_prediction(FullSolution(row)) for row in solution_matrix])
+
     def get_mse_on_test_data(self, test_pRef: PRef) -> float:
-        evaluated_solutions = test_pRef.get_evaluated_FSs()
-        predictions = np.array([self.get_prediction(solution) for solution in evaluated_solutions])
+        print(f"get_mse_on_test_data({test_pRef.full_solution_matrix.shape = })")
+        predictions = self.get_predictions(test_pRef.full_solution_matrix)
         actual_values = test_pRef.fitness_array
 
         return mean_squared_error(actual_values, predictions)

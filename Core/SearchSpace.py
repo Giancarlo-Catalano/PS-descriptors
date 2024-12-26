@@ -42,3 +42,9 @@ class SearchSpace(Sized):
 
     def random_digit(self, position: int) -> int:
         return random.randrange(self.cardinalities[position])
+
+    @classmethod
+    def from_permuation_of(cls, qty_nodes: int):
+        # I don't include the last choice having cardinality 1 just to avoid
+        # annoying edge cases in code
+        return cls([i for i in range(qty_nodes, 1, -1)])

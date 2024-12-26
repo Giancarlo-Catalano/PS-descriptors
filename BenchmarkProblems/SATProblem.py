@@ -69,6 +69,7 @@ class SATProblem(BenchmarkProblem):
 
     @classmethod
     def from_cnf_file(cls, cnf_file_location: str):
+        # get them from https://www.cs.ubc.ca/~hoos/SATLIB/benchm.html
         filename = cnf_file_location.split("\\")[-1]
         solvable = filename[:2] == "uf"
 
@@ -96,11 +97,11 @@ class SATProblem(BenchmarkProblem):
 
             for line in file.readlines():
                 if len(line) == 0:
-                    print("Found an empty line, skipping")
+                    #print("Found an empty line, skipping")
                     continue
 
                 if line[:1] == "c":
-                    print("Found a comment line, skipping")
+                    #print("Found a comment line, skipping")
                     continue
 
                 if clause_reading_mode:
@@ -112,11 +113,11 @@ class SATProblem(BenchmarkProblem):
                     current_clause_buffer.extend(numbers_in_line)
                     current_clause_buffer = consume_from_buffer(current_clause_buffer)
                     if len(clauses) == amount_of_clauses:
-                        print("Read all of the specified clauses, file interpret will terminate")
+                        # print("Read all of the specified clauses, file interpret will terminate")
                         break
 
                 elif line[:1] == "p":
-                    print("Found the problem line")
+                    #print("Found the problem line")
                     p_char, problem_kind, var_str, clause_str = line.split()
                     if problem_kind != "cnf":
                         print(f"Error! The problem kind is not cnf, but {problem_kind}! Terminating")
@@ -174,3 +175,5 @@ class SATProblem(BenchmarkProblem):
             return self.amount_of_clauses
         else:
             return np.nan
+
+# convert_problem_files_from_cnf()

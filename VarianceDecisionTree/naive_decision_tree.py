@@ -23,3 +23,9 @@ class NaiveRegressorWrapper(AbstractDecisionTreeRegressor):
 
     def __repr__(self):
         return repr(self.regressor)
+
+    def get_mse_on_test_data(self, test_pRef: PRef) -> float:
+        predictions = self.regressor.predict(test_pRef.full_solution_matrix)
+        actual_values = test_pRef.fitness_array
+
+        return mean_squared_error(actual_values, predictions)

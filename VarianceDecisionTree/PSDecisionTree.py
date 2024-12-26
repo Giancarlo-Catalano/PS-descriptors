@@ -6,6 +6,7 @@ import utils
 from Core.FullSolution import FullSolution
 from Core.PRef import PRef
 from Core.PS import PS, contains
+from FSStochasticSearch.Operators import FSMutationOperator, FSCrossoverOperator
 from GuestLecture.show_off_problems import get_unexplained_parts
 from VarianceDecisionTree.AbstractDecisionTreeRegressor import AbstractDecisionTreeRegressor
 from VarianceDecisionTree.SimplePSSearchTask import find_ps_in_solution
@@ -53,7 +54,7 @@ class PSDecisionTree(AbstractDecisionTreeRegressor):
         self.repr_ps = repr_ps
 
     def train_from_pRef(self, pRef: PRef, random_state: int = 42) -> None:
-        print(f"Making a branch with max depth = {self.maximum_depth}, splitting a pref of size {pRef.sample_size}")
+        # print(f"Making a branch with max depth = {self.maximum_depth}, splitting a pref of size {pRef.sample_size}")
         pRef_variance = float(np.var(pRef.fitness_array))
         self.own_variance = pRef_variance
         self.own_average = np.average(pRef.fitness_array)
@@ -132,4 +133,12 @@ class PSDecisionTreeRestrictedDepth(AbstractDecisionTreeRegressor):
 
     def get_prediction(self, solution: FullSolution) -> float:
         return self.original_dt.get_prediction_with_restricted_depth(solution, self.depth)
+
+
+
+
+
+class PSDTCrossoverOperator(FSCrossoverOperator):
+    fallback_crossover: FSCrossoverOperator
+    #TODO
 

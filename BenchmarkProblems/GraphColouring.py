@@ -1,5 +1,6 @@
 import itertools
 import json
+import os
 import random
 from typing import TypeAlias, Iterable, Optional
 
@@ -38,9 +39,6 @@ def visualize_undirected_graph(edges):
     plt.show()
 
     return graph  # Return the NetworkX graph object for further operations
-
-
-
 
 
 class GraphColouring(BenchmarkProblem):
@@ -99,7 +97,6 @@ class GraphColouring(BenchmarkProblem):
                           for node, colour in enumerate(ps.values)
                           if colour != STAR])
 
-
     def view(self):
         visualize_undirected_graph(self.connections)
 
@@ -113,14 +110,17 @@ class GraphColouring(BenchmarkProblem):
             json.dump(data, file, indent=4)
 
     @classmethod
-    def from_file(cls, problem_file: str):
+    def from_json(cls, problem_file: str):
         with open(problem_file, "r") as file:
             data = json.load(file)
 
         return cls(amount_of_colours=data["amount_of_colours"],
                    amount_of_nodes=data["amount_of_nodes"],
-                   connections = data["connections"])
+                   connections=data["connections"])
 
+    @classmethod
+    def from_file(cls, problem_file: str):
+        return cls.from_json(problem_file)
 
     def get_descriptors_of_ps(self, ps: PS) -> dict:
         def is_internal_edge(pair):
@@ -138,11 +138,10 @@ class GraphColouring(BenchmarkProblem):
         return {"internal_edge_count": internal_edge_count,
                 "external_edge_count": external_edge_count}
 
-
-    def repr_property_new(self, property_name:str, property_value:float, rank:(float, float), ps: PS):
+    def repr_property_new(self, property_name: str, property_value: float, rank: (float, float), ps: PS):
         #lower_rank, upper_rank = property_rank_range
         is_low = rank < 0.5
-        rank_str = f"(rank = {int(rank * 100)}%)" # "~ {int(property_rank_range[1]*100)}%)"
+        rank_str = f"(rank = {int(rank * 100)}%)"  # "~ {int(property_rank_range[1]*100)}%)"
 
         if property_name == "internal_edge_count":
             return f"The PS is {'NOT ' if is_low else ''}densely connected {rank_str}"
@@ -151,29 +150,31 @@ class GraphColouring(BenchmarkProblem):
         else:
             raise ValueError(f"Did not recognise the property {property_name} in GC")
 
-
     @classmethod
     def make_insular_instance(cls, amount_of_islands: int):
         colour_count = 3
         amount_of_nodes = colour_count * amount_of_islands
+
         def make_connections_for_island(island_index: int) -> list[Connection]:
             a = island_index * 3 + 0
             b = island_index * 3 + 1
             c = island_index * 3 + 2
             return [(a, b), (b, c), (c, a)]
 
-
         connections = [connection
                        for island_index in range(amount_of_islands)
                        for connection in make_connections_for_island(island_index)]
 
         search_space = SearchSpace([colour_count for node in range(amount_of_nodes)])
+
         def make_targets_for_island(island_index: int) -> Iterable[PS]:
             colour_combinations = itertools.permutations(list(range(colour_count)))
+
             def make_ps_for_colour_combination(colour_combo) -> PS:
                 result = PS.empty(search_space)
-                result.values[(island_index*colour_count):((island_index+1)*colour_count)] = colour_combo
+                result.values[(island_index * colour_count):((island_index + 1) * colour_count)] = colour_combo
                 return result
+
             colour_combinations = itertools.permutations(list(range(colour_count)))
             return map(make_ps_for_colour_combination, colour_combinations)
 
@@ -182,10 +183,8 @@ class GraphColouring(BenchmarkProblem):
 
         return cls(amount_of_colours=colour_count,
                    amount_of_nodes=amount_of_nodes,
-                   connections = connections,
+                   connections=connections,
                    target_pss=target_pss)
-
-
 
     def get_targets(self) -> set[PS]:
         if self.target_pss is None:
@@ -195,3 +194,52 @@ class GraphColouring(BenchmarkProblem):
 
     def get_short_code(self) -> str:
         return "GC"
+
+    @classmethod
+    def load_from_cnf_file(cls, cnf_file_location: str, qty_colours: int = 3):
+        qty_nodes = None
+        qty_edges = None
+        edge_pairs = []
+
+        with open(cnf_file_location, "r") as file:
+
+            for line in file.readlines():
+                if len(line) == 0 or line[0] == "c":
+                    continue
+
+                if line[0] == "p":
+                    print("Found the problem line")
+                    p_char, problem_kind, var_str, clause_str = line.split()
+                    qty_nodes = int(var_str)
+                    qty_edges = int(clause_str)
+
+                if line[0] == "e":
+                    line_contents = line[2:]
+                    # the values in the line are 1-indexed
+                    a, b = [int(value_str) for value_str in line_contents.split()]
+                    edge_pairs.append((a-1, b-1))
+
+            return cls(amount_of_nodes=qty_nodes,
+                       amount_of_colours=qty_colours,
+                       connections=edge_pairs)
+
+    def to_json(self, path: str):
+        with utils.open_and_make_directories(path) as file:
+            data = {"amount_of_colours": self.amount_of_colours,
+                    "amount_of_nodes": self.amount_of_nodes,
+                    "connections": self.connections}
+            json.dump(data, file, indent=4)
+
+
+
+def convert_problem_files_from_cnf():
+    file_names = ["anna.col", "jean.col"]
+    root_directory = r"/Users/gian/PycharmProjects/PS-descriptors/resources/problem_definitions/GC"
+
+    for file_name in file_names:
+        full_path = os.path.join(root_directory, file_name)
+        problem = GraphColouring.load_from_cnf_file(full_path)
+        new_file_name = full_path+".json"
+        problem.to_json(new_file_name)
+
+# convert_problem_files_from_cnf()
