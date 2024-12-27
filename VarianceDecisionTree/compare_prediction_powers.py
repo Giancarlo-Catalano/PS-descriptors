@@ -208,13 +208,13 @@ def get_problems_with_names():
 
 
 def get_error_datapoint(problem_name: str,
-                               own_method_settings: dict,
-                               sample_size: int,
-                               pRef_method: str,
-                               max_depth: int,
-                               exception: Exception
-                               ) -> dict:
-    error_message = str(exception) # exception.message if hasattr(exception, "message") else "no_error_message"
+                        own_method_settings: dict,
+                        sample_size: int,
+                        pRef_method: str,
+                        max_depth: int,
+                        exception: Exception
+                        ) -> dict:
+    error_message = str(exception)  # exception.message if hasattr(exception, "message") else "no_error_message"
     return {"problem_name": problem_name,
             "own_method_settings": own_method_settings,
             "sample_size": sample_size,
@@ -222,28 +222,29 @@ def get_error_datapoint(problem_name: str,
             "max_depth": max_depth,
             "error": error_message}
 
+
 def get_datapoint_for_instance(problem_name: str,
                                problem: BenchmarkProblem,
                                own_method_settings: dict,
                                sample_size: int,
                                pRef_method: str,
-                               max_depth: int
+                               max_depth: int,
+                               crash_on_error: bool = False,
                                ) -> dict:
-
-    try:
+    def generate_datapoint():
         pRef = PRefManager.generate_pRef(problem, sample_size, pRef_method)
         pRef = PRef.unique(pRef)
 
         train_pRef, test_pRef = pRef.train_test_split(0.2, 42)
 
-        tested_depths = list(range(2, max_depth+1))
+        tested_depths = list(range(2, max_depth + 1))
         iai_dts = [IAIDecisionTree(depth) for depth in tested_depths]
         traditional_dts = [NaiveRegressorWrapper(depth) for depth in tested_depths]
         own_dt = PSDecisionTree(max_depth, ps_budget=own_method_settings["ps_budget"],
                                 ps_search_population_size=own_method_settings["ps_population"])
         own_dt_views = [PSDecisionTreeRestrictedDepth(own_dt, depth) for depth in tested_depths]
 
-        for tree in [own_dt]+iai_dts+traditional_dts:
+        for tree in [own_dt] + iai_dts + traditional_dts:
             tree.train_from_pRef(train_pRef)
 
         def get_mses_at_different_depths(trees: Iterable[AbstractDecisionTreeRegressor]):
@@ -254,24 +255,27 @@ def get_datapoint_for_instance(problem_name: str,
                 "own_method_settings": own_method_settings,
                 "sample_size": sample_size,
                 "pRef_method": pRef_method,
-                "iai":get_mses_at_different_depths(iai_dts),
+                "iai": get_mses_at_different_depths(iai_dts),
                 "naive": get_mses_at_different_depths(traditional_dts),
                 "ps": get_mses_at_different_depths(own_dt_views)}
-    except Exception as e:
-        return get_error_datapoint(problem_name = problem_name,
-                                   own_method_settings=own_method_settings,
-                                   sample_size=sample_size,
-                                   pRef_method=pRef_method,
-                                   max_depth=max_depth,
-                                   exception = e)
 
-
-
+    if crash_on_error:
+        return generate_datapoint()
+    else:
+        try:
+            return generate_datapoint()
+        except Exception as e:
+            return get_error_datapoint(problem_name=problem_name,
+                                       own_method_settings=own_method_settings,
+                                       sample_size=sample_size,
+                                       pRef_method=pRef_method,
+                                       max_depth=max_depth,
+                                       exception=e)
 
 
 def sanity_check():
     problems = get_problems_with_names()
-    problems = dict(list(problems.items())[:2]) # TODO restore this
+    problems = dict(list(problems.items())[:2])  # TODO restore this
     pRef_methods = ["GA", "uniform"]
     sample_size = 1000
     own_method_settings = {"ps_budget": 20,
@@ -281,13 +285,13 @@ def sanity_check():
 
     for problem_name, problem in problems.items():
         for pRef_method in pRef_methods:
-
-            datapoint = get_datapoint_for_instance(problem_name = problem_name,
-                                                   problem = problem,
+            datapoint = get_datapoint_for_instance(problem_name=problem_name,
+                                                   problem=problem,
                                                    own_method_settings=own_method_settings,
                                                    sample_size=sample_size,
-                                                   pRef_method = pRef_method,
-                                                   max_depth=3)
+                                                   pRef_method=pRef_method,
+                                                   max_depth=3,
+                                                   crash_on_error=False)
             results.append(datapoint)
 
     print(json.dumps(results, indent=4))

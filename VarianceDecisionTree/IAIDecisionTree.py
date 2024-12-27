@@ -27,24 +27,23 @@ def convert_numpy_array_to_df(array: np.ndarray) -> pd.DataFrame:
 class IAIDecisionTree(AbstractDecisionTreeRegressor):
     # just a simple wrapper over iai.OptimalTreeRegressor
     regressor: Optional[iai.Learner]
+
+    prescription_factor: float
     use_hyperplanes: bool
+    use_linear_regression_in_leaves: bool
 
     def __init__(self, maximum_depth: int,
-                 use_hyperplanes: bool = False):
+                  prescription_factor: float = 0.5,
+                 use_hyperplanes: bool = False,
+                 use_linear_regression_in_leaves: bool = False):
         self.regressor = None
+        self.prescription_factor = prescription_factor
         self.use_hyperplanes = use_hyperplanes
+        self.use_linear_regression_in_leaves = use_linear_regression_in_leaves
         super().__init__(maximum_depth)
 
     def train_from_pRef(self, pRef: PRef, random_state: int = 42) -> None:
-        if self.use_hyperplanes:
-            self.regressor = iai.GridSearch(
-                iai.OptimalTreeRegressor(
-                    random_seed=random_state, # does the hyperplane config go here?
-                ),
-                max_depth=range(1, self.maximum_depth),
-            )
-        else:
-            self.regressor = iai.GridSearch(
+        self.regressor = iai.GridSearch(
                 iai.OptimalTreeRegressor(
                     random_seed=random_state,
                 ),
