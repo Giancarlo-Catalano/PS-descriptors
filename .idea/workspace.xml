@@ -4,24 +4,11 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="a05e8814-504e-4333-8593-ec6366f9f3e6" name="Changes" comment="Implemented code which compares decision trees for many problems and depths.">
-      <change afterPath="$PROJECT_DIR$/BenchmarkProblems/QAP.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/MessingAround/opt2vec.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/MessingAround/testing_IAI.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/VarianceDecisionTree/IAIDecisionTree.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/VarianceDecisionTree/gather_data.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/PS-descriptors-LCS.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/PS-descriptors-LCS.iml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
+    <list default="true" id="a05e8814-504e-4333-8593-ec6366f9f3e6" name="Changes" comment="Implemented the IAI trees, which are to be tuned so that nobody can complain">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/BenchmarkProblems/BT/BTProblem.py" beforeDir="false" afterPath="$PROJECT_DIR$/BenchmarkProblems/BT/BTProblem.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/BenchmarkProblems/GraphColouring.py" beforeDir="false" afterPath="$PROJECT_DIR$/BenchmarkProblems/GraphColouring.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/BenchmarkProblems/SATProblem.py" beforeDir="false" afterPath="$PROJECT_DIR$/BenchmarkProblems/SATProblem.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Core/SearchSpace.py" beforeDir="false" afterPath="$PROJECT_DIR$/Core/SearchSpace.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/VarianceDecisionTree/AbstractDecisionTreeRegressor.py" beforeDir="false" afterPath="$PROJECT_DIR$/VarianceDecisionTree/AbstractDecisionTreeRegressor.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/VarianceDecisionTree/PSDecisionTree.py" beforeDir="false" afterPath="$PROJECT_DIR$/VarianceDecisionTree/PSDecisionTree.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/VarianceDecisionTree/IAIDecisionTree.py" beforeDir="false" afterPath="$PROJECT_DIR$/VarianceDecisionTree/IAIDecisionTree.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/VarianceDecisionTree/compare_prediction_powers.py" beforeDir="false" afterPath="$PROJECT_DIR$/VarianceDecisionTree/compare_prediction_powers.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/VarianceDecisionTree/naive_decision_tree.py" beforeDir="false" afterPath="$PROJECT_DIR$/VarianceDecisionTree/naive_decision_tree.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/utils.py" beforeDir="false" afterPath="$PROJECT_DIR$/utils.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/VarianceDecisionTree/process_data.py" beforeDir="false" afterPath="$PROJECT_DIR$/VarianceDecisionTree/process_data.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -64,6 +51,7 @@
     "Python.QAP.executor": "Run",
     "Python.compare_prediction_powers.executor": "Run",
     "Python.gather_data.executor": "Run",
+    "Python.process_data.executor": "Run",
     "Python.testing_IAI.executor": "Run",
     "Python.utils.executor": "Run",
     "RunOnceActivity.OpenProjectViewOnStart": "true",
@@ -310,15 +298,7 @@
       <workItem from="1734088024874" duration="13936000" />
       <workItem from="1734785503008" duration="6924000" />
       <workItem from="1735040034906" duration="3441000" />
-      <workItem from="1735043529174" duration="8354000" />
-    </task>
-    <task id="LOCAL-00043" summary="The random subset of the original bt problem is now stochastic but replicable (the main issue is that the order in which sets are iterated is not consistent).">
-      <option name="closed" value="true" />
-      <created>1729170397214</created>
-      <option name="number" value="00043" />
-      <option name="presentableId" value="LOCAL-00043" />
-      <option name="project" value="LOCAL" />
-      <updated>1729170397214</updated>
+      <workItem from="1735043529174" duration="12705000" />
     </task>
     <task id="LOCAL-00044" summary="Implemented some light functionality towards visualisations.">
       <option name="closed" value="true" />
@@ -704,7 +684,15 @@
       <option name="project" value="LOCAL" />
       <updated>1734101166500</updated>
     </task>
-    <option name="localTasksCounter" value="92" />
+    <task id="LOCAL-00092" summary="Implemented the IAI trees, which are to be tuned so that nobody can complain">
+      <option name="closed" value="true" />
+      <created>1735211965725</created>
+      <option name="number" value="00092" />
+      <option name="presentableId" value="LOCAL-00092" />
+      <option name="project" value="LOCAL" />
+      <updated>1735211965725</updated>
+    </task>
+    <option name="localTasksCounter" value="93" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -734,7 +722,6 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="Fixed a bug where the positive and negative p values were swapped around." />
     <MESSAGE value="Workers are now listed in alphabetical order in the problem visualisation, solutions and pss." />
     <MESSAGE value="Removed the name Penelope from the workers names because it's just too long" />
     <MESSAGE value="Penalty table for the optimal solution is now formatted in a way which makes it work immediately in the spreadsheets, although it it much less readable now..." />
@@ -759,7 +746,8 @@
     <MESSAGE value="Implementing continuous problems" />
     <MESSAGE value="Implemented code which compares decision trees for many problems and depths." />
     <MESSAGE value="Submitting some files so that I can work on the branch" />
-    <option name="LAST_COMMIT_MESSAGE" value="Submitting some files so that I can work on the branch" />
+    <MESSAGE value="Implemented the IAI trees, which are to be tuned so that nobody can complain" />
+    <option name="LAST_COMMIT_MESSAGE" value="Implemented the IAI trees, which are to be tuned so that nobody can complain" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
@@ -878,6 +866,7 @@
     <SUITE FILE_PATH="coverage/PS_descriptors$BTProblem.coverage" NAME="BTProblem Coverage Results" MODIFIED="1734787454612" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/BenchmarkProblems/BT" />
     <SUITE FILE_PATH="coverage/PS_descriptors_LCS$utils.coverage" NAME="utils Coverage Results" MODIFIED="1730195736328" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
     <SUITE FILE_PATH="coverage/PS_descriptors_LCS$ContinuousVariableRepresentation.coverage" NAME="ContinuousVariableRepresentation Coverage Results" MODIFIED="1734015702902" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/RepresentationBasedSearch" />
+    <SUITE FILE_PATH="coverage/PS_descriptors$process_data.coverage" NAME="process_data Coverage Results" MODIFIED="1735213231819" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/VarianceDecisionTree" />
     <SUITE FILE_PATH="coverage/PS_descriptors_LCS$BTProblemPrettyPrinter.coverage" NAME="BTProblemPrettyPrinter Coverage Results" MODIFIED="1731322336537" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/PairExplanation" />
     <SUITE FILE_PATH="coverage/PS_descriptors_LCS$generate_data_for_problem.coverage" NAME="generate_data_for_problem Coverage Results" MODIFIED="1731685130089" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/resources" />
     <SUITE FILE_PATH="coverage/PS_descriptors_LCS$load_data.coverage" NAME="load_data Coverage Results" MODIFIED="1730206695810" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/PairExplanation" />
@@ -895,7 +884,7 @@
     <SUITE FILE_PATH="coverage/PS_descriptors_LCS$SimplePSSearchTask.coverage" NAME="SimplePSSearchTask Coverage Results" MODIFIED="1732884926578" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/VarianceDecisionTree" />
     <SUITE FILE_PATH="coverage/PS_descriptors_LCS$TSPPredicates.coverage" NAME="TSPPredicates Coverage Results" MODIFIED="1733232626802" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/RepresentationBasedSearch" />
     <SUITE FILE_PATH="coverage/PS_descriptors_LCS$BTProblem.coverage" NAME="BTProblem Coverage Results" MODIFIED="1730810801795" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/BenchmarkProblems/BT" />
-    <SUITE FILE_PATH="coverage/PS_descriptors$compare_prediction_powers.coverage" NAME="compare_prediction_powers Coverage Results" MODIFIED="1735065752091" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/VarianceDecisionTree" />
+    <SUITE FILE_PATH="coverage/PS_descriptors$compare_prediction_powers.coverage" NAME="compare_prediction_powers Coverage Results" MODIFIED="1735298065178" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/VarianceDecisionTree" />
     <SUITE FILE_PATH="coverage/PS_descriptors_LCS$PSDecisionTree.coverage" NAME="PSDecisionTree Coverage Results" MODIFIED="1733921779017" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/VarianceDecisionTree" />
     <SUITE FILE_PATH="coverage/PS_descriptors_LCS$test_variance_tree.coverage" NAME="test_variance_tree Coverage Results" MODIFIED="1732884886305" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/VarianceDecisionTree" />
     <SUITE FILE_PATH="coverage/PS_descriptors$QAP.coverage" NAME="QAP Coverage Results" MODIFIED="1734367424493" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/BenchmarkProblems" />

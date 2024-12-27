@@ -211,14 +211,16 @@ def get_error_datapoint(problem_name: str,
                                own_method_settings: dict,
                                sample_size: int,
                                pRef_method: str,
-                               max_depth: int
+                               max_depth: int,
+                               exception: Exception
                                ) -> dict:
+    error_message = str(exception) # exception.message if hasattr(exception, "message") else "no_error_message"
     return {"problem_name": problem_name,
             "own_method_settings": own_method_settings,
             "sample_size": sample_size,
             "pRef_method": pRef_method,
             "max_depth": max_depth,
-            "error": "error"}
+            "error": error_message}
 
 def get_datapoint_for_instance(problem_name: str,
                                problem: BenchmarkProblem,
@@ -255,12 +257,13 @@ def get_datapoint_for_instance(problem_name: str,
                 "iai":get_mses_at_different_depths(iai_dts),
                 "naive": get_mses_at_different_depths(traditional_dts),
                 "ps": get_mses_at_different_depths(own_dt_views)}
-    except:
+    except Exception as e:
         return get_error_datapoint(problem_name = problem_name,
                                    own_method_settings=own_method_settings,
                                    sample_size=sample_size,
                                    pRef_method=pRef_method,
-                                   max_depth=max_depth)
+                                   max_depth=max_depth,
+                                   exception = e)
 
 
 
@@ -268,9 +271,10 @@ def get_datapoint_for_instance(problem_name: str,
 
 def sanity_check():
     problems = get_problems_with_names()
+    problems = dict(list(problems.items())[:2]) # TODO restore this
     pRef_methods = ["GA", "uniform"]
-    sample_size = 10000
-    own_method_settings = {"ps_budget": 2000,
+    sample_size = 1000
+    own_method_settings = {"ps_budget": 20,
                            "ps_population": 50}
 
     results = []
@@ -283,7 +287,7 @@ def sanity_check():
                                                    own_method_settings=own_method_settings,
                                                    sample_size=sample_size,
                                                    pRef_method = pRef_method,
-                                                   max_depth=4)
+                                                   max_depth=3)
             results.append(datapoint)
 
     print(json.dumps(results, indent=4))
