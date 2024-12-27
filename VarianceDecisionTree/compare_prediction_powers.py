@@ -291,7 +291,7 @@ def sanity_check():
                                                    sample_size=sample_size,
                                                    pRef_method=pRef_method,
                                                    max_depth=3,
-                                                   crash_on_error=False)
+                                                   crash_on_error=True)
             results.append(datapoint)
 
     print(json.dumps(results, indent=4))

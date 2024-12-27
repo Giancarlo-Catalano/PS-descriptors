@@ -9,6 +9,7 @@ from VarianceDecisionTree.AbstractDecisionTreeRegressor import AbstractDecisionT
 from interpretableai import iai
 
 
+
 #todo
 # decide the cp paramter for the tree
 #  let it autodecide, set it to some special values etc
@@ -46,6 +47,8 @@ class IAIDecisionTree(AbstractDecisionTreeRegressor):
         self.regressor = iai.GridSearch(
                 iai.OptimalTreeRegressor(
                     random_seed=random_state,
+                    cp = self.prescription_factor,
+                    hyperplane_config ={"sparsity": "all"},
                 ),
                 max_depth=range(1, self.maximum_depth),
             )
