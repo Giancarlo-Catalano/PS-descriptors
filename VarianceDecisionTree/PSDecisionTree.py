@@ -122,6 +122,13 @@ class PSDecisionTree(AbstractDecisionTreeRegressor):
                     f"\n{utils.indent(matches_repr)}"
                     f"\n{utils.indent(unmatches_repr)}")
 
+    def get_orders(self):
+        if self.split_ps is None:
+            return dict()
+        else:
+            return {"own": self.split_ps.fixed_count(),
+                    "maching": self.matching_branch.get_orders(),
+                    "unmatching": self.unmatching_branch.get_orders()}
 
 
 class PSDecisionTreeRestrictedDepth(AbstractDecisionTreeRegressor):
@@ -140,4 +147,8 @@ class PSDecisionTreeRestrictedDepth(AbstractDecisionTreeRegressor):
 
     def __repr__(self):
         return "PSDecisionTreeRestrictedDepth"
+
+
+    def get_orders(self) -> dict:
+        return self.original_dt.get_orders()
 
