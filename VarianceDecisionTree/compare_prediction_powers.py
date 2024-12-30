@@ -3,7 +3,6 @@ import json
 import os
 from typing import Iterable
 
-from tqdm import tqdm
 
 import utils
 from BenchmarkProblems.BenchmarkProblem import BenchmarkProblem
@@ -13,7 +12,11 @@ from BenchmarkProblems.SATProblem import SATProblem
 from Core.PRef import PRef
 from Explanation.PRefManager import PRefManager
 from VarianceDecisionTree.AbstractDecisionTreeRegressor import AbstractDecisionTreeRegressor
-from VarianceDecisionTree.IAIDecisionTree import IAIDecisionTree
+
+import platform
+if platform.system() in {"Darwin", "Windows"}:
+    from VarianceDecisionTree.IAIDecisionTree import IAIDecisionTree
+
 from VarianceDecisionTree.PSDecisionTree import PSDecisionTree, PSDecisionTreeRestrictedDepth
 from VarianceDecisionTree.naive_decision_tree import NaiveRegressorWrapper
 
@@ -55,17 +58,16 @@ def get_error_datapoint(problem_name: str,
             "error": error_message}
 
 
-
 def get_trees_from_dict(tree_dict: dict,
-                       train_pRef: PRef) -> list[AbstractDecisionTreeRegressor]:
+                        train_pRef: PRef) -> list[AbstractDecisionTreeRegressor]:
     kind = tree_dict["kind"]
     depths = tree_dict["depths"]
 
     if kind == "ps":
         max_depth = max(depths)
         tree = PSDecisionTree(max_depth,
-                       ps_budget=tree_dict["ps_budget"],
-                       ps_search_population_size=tree_dict["ps_population"])
+                              ps_budget=tree_dict["ps_budget"],
+                              ps_search_population_size=tree_dict["ps_population"])
         tree.train_from_pRef(train_pRef)
         views = [PSDecisionTreeRestrictedDepth(tree, depth) for depth in depths]
         return views
@@ -74,10 +76,11 @@ def get_trees_from_dict(tree_dict: dict,
             trees = [NaiveRegressorWrapper(depth) for depth in depths]
         elif kind == "iai":
             cp = tree_dict["cp"]
-            trees = [IAIDecisionTree(depth, cp) for depth in depths]
+            trees = eval("[IAIDecisionTree(depth, cp) for depth in depths]")
         else:
             raise NotImplemented
         for tree in trees:
+            print(f"Training a tree {tree}")
             tree.train_from_pRef(train_pRef)
         return trees
 
@@ -85,23 +88,23 @@ def get_trees_from_dict(tree_dict: dict,
 def get_datapoint_for_tree(tree: AbstractDecisionTreeRegressor, test_pRef):
     error_metrics = tree.get_error_metrics(test_pRef)
     if isinstance(tree, PSDecisionTreeRestrictedDepth):
-        return {"kind":"ps",
+        output =  {"kind": "ps",
                 "depth": tree.depth,
-                "ps_budget":tree.original_dt.ps_budget,
-                "ps_population":tree.original_dt.ps_search_population_size,
-                "order_tree": tree.get_orders(),
-                "results":error_metrics}
+                "ps_budget": tree.original_dt.ps_budget,
+                "ps_population": tree.original_dt.ps_search_population_size,
+                "results": error_metrics}
+        if tree.depth == tree.original_dt.maximum_depth:
+            output["order_tree"] = tree.get_orders()
+        return output
     elif isinstance(tree, NaiveRegressorWrapper):
         return {"kind": "naive",
                 "depth": tree.maximum_depth,
                 "results": error_metrics}
-    elif isinstance(tree, IAIDecisionTree):
+    else: # isinstance(tree, IAIDecisionTree): # we can't call the class directly because that would require for the IAI libraries to be imported even when we're using the Condor cluserte
         return {"kind": "iai",
                 "depth": tree.maximum_depth,
                 "cp": tree.prescription_factor,
                 "results": error_metrics}
-    else:
-        raise NotImplemented
 
 
 
@@ -121,6 +124,7 @@ def get_datapoint_for_instance(problem_name: str,
         trees = [tree
                  for tree_dict in tree_settings_list
                  for tree in get_trees_from_dict(tree_dict, train_pRef)]
+        print(f"{problem_name = }, {pRef_method = }")
 
         return {"problem_name": problem_name,
                 "sample_size": sample_size,
@@ -135,10 +139,11 @@ def get_datapoint_for_instance(problem_name: str,
             return generate_datapoint()
         except Exception as e:
             return get_error_datapoint(problem_name=problem_name,
-                                       tree_settings_list = tree_settings_list,
+                                       tree_settings_list=tree_settings_list,
                                        sample_size=sample_size,
                                        pRef_method=pRef_method,
                                        exception=e)
+
 
 def gather_data_compare_dts():
     problems = get_problems_with_names()
@@ -150,9 +155,9 @@ def gather_data_compare_dts():
 
     depths = [2, 3, 4]
     tree_dicts = []
-    tree_dicts.extend([{"kind":"ps",
-                   "ps_budget": 20,
-                   "ps_population": 50,
+    tree_dicts.extend([{"kind": "ps",
+                        "ps_budget": 20,
+                        "ps_population": 50,
                         "depths": depths}])
 
     tree_dicts.extend([{"kind": "iai",
@@ -160,8 +165,8 @@ def gather_data_compare_dts():
                         "depths": depths}
                        for cp in [0.25, 0.5]])
 
-    tree_dicts.extend([{"kind":"naive",
-                        "depths":depths}])
+    tree_dicts.extend([{"kind": "naive",
+                        "depths": depths}])
 
     repeats = 5
 
@@ -170,10 +175,9 @@ def gather_data_compare_dts():
     print(f"Storing the results in {destination_folder}")
 
     def make_file_with_json_contents(json_dict):
-        json_file_name = os.path.join(destination_folder, "output_"+utils.get_formatted_timestamp()+".json")
+        json_file_name = os.path.join(destination_folder, "output_" + utils.get_formatted_timestamp() + ".json")
         with open(json_file_name, "w") as file:
             json.dump(json_dict, file, indent=4)
-
 
     def single_run():
         results = []
@@ -190,36 +194,30 @@ def gather_data_compare_dts():
 
         make_file_with_json_contents(results)
 
-
-    for iteration in tqdm(range(repeats)):
+    for iteration in range(repeats):
         single_run()
+
 
 def gather_data_compare_own():
     problems = get_problems_with_names()
-    problems = dict(list(problems.items())[:1])
+    problems = dict(list(problems.items()))
     pRef_methods = ["GA", "uniform"]
-    sample_size = 1000
+    sample_size = 10000
 
-
-    depths = [2, 3] # 4, 5, 6]
+    depths = [2, 3, 4, 5, 6]
     tree_dicts = []
-    tree_dicts.extend([{"kind":"ps",
-                   "ps_budget": ps_budget,
-                   "ps_population": 100,
+    tree_dicts.extend([{"kind": "ps",
+                        "ps_budget": ps_budget,
+                        "ps_population": 100,
                         "depths": depths}
-                       for ps_budget in [100, 2000, 5000][:1]])
+                       for ps_budget in [1000, 2000, 5000]])
 
-    repeats = 1
-
-    destination_folder = r"/Users/gian/PycharmProjects/PS-descriptors/resources/variance_tree_materials/compare_own_data" + utils.get_formatted_timestamp()
-    utils.make_directory(destination_folder)
-    print(f"Storing the results in {destination_folder}")
+    mode = "local"
 
     def make_file_with_json_contents(json_dict):
-        json_file_name = os.path.join(destination_folder, "output_"+utils.get_formatted_timestamp()+".json")
+        json_file_name = os.path.join(destination_folder, "output_" + utils.get_formatted_timestamp() + ".json")
         with open(json_file_name, "w") as file:
             json.dump(json_dict, file, indent=4)
-
 
     def single_run():
         results = []
@@ -234,10 +232,20 @@ def gather_data_compare_own():
                                                        crash_on_error=False)
                 results.append(datapoint)
 
-        make_file_with_json_contents(results)
+        if mode == "local":
+            make_file_with_json_contents(results)
+        else:
+            print(json.dumps(results, indent=4))
+
+    if mode == "local":
+
+        repeats = 10
+        destination_folder = r"/Users/gian/PycharmProjects/PS-descriptors/resources/variance_tree_materials/compare_own_data" + utils.get_formatted_timestamp()
+        utils.make_directory(destination_folder)
+        print(f"Storing the results in {destination_folder}")
+
+        for iteration in range(repeats):
+            single_run()
 
 
-    for iteration in tqdm(range(repeats)):
-        single_run()
-
-gather_data_compare_own()
+# gather_data_compare_own()
