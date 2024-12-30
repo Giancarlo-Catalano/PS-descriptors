@@ -22,7 +22,7 @@ class NaiveRegressorWrapper(AbstractDecisionTreeRegressor):
         return self.regressor.predict(X=solution.values.reshape((1, -1)))[0]
 
     def __repr__(self):
-        return repr(self.regressor)
+        return "NaiveRegressorWrapper"
 
     def get_mse_on_test_data(self, test_pRef: PRef) -> float:
         predictions = self.regressor.predict(test_pRef.full_solution_matrix)

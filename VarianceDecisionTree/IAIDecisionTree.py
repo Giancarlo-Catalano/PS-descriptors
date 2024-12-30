@@ -6,6 +6,7 @@ import pandas as pd
 from Core.FullSolution import FullSolution
 from Core.PRef import PRef
 from VarianceDecisionTree.AbstractDecisionTreeRegressor import AbstractDecisionTreeRegressor
+
 from interpretableai import iai
 
 
@@ -43,15 +44,31 @@ class IAIDecisionTree(AbstractDecisionTreeRegressor):
         self.use_linear_regression_in_leaves = use_linear_regression_in_leaves
         super().__init__(maximum_depth)
 
-    def train_from_pRef(self, pRef: PRef, random_state: int = 42) -> None:
-        self.regressor = iai.GridSearch(
+
+    def generate_untrained_regressor(self, random_state: int):
+        if self.use_hyperplanes:
+            return iai.GridSearch(
+                    iai.OptimalTreeRegressor(
+                        random_seed=random_state,
+                        cp = self.prescription_factor,
+                        hyperplane_config ={"sparsity": "all"},
+                    ),
+                    max_depth=range(1, self.maximum_depth),
+                )
+        else:
+            return iai.GridSearch(
                 iai.OptimalTreeRegressor(
                     random_seed=random_state,
-                    cp = self.prescription_factor,
-                    hyperplane_config ={"sparsity": "all"},
+                    cp=self.prescription_factor,
                 ),
                 max_depth=range(1, self.maximum_depth),
             )
+
+    def __repr__(self):
+        return "IAIDecisionTree"
+
+    def train_from_pRef(self, pRef: PRef, random_state: int = 42) -> None:
+        self.regressor = self.generate_untrained_regressor(random_state)
         # print(f"The pRef has {pRef}, {pRef.full_solution_matrix.shape = }, {pRef.fitness_array.shape =}")
         categorical_df = convert_numpy_array_to_df(pRef.full_solution_matrix)
         self.regressor.fit(categorical_df, pRef.fitness_array)
@@ -68,6 +85,3 @@ class IAIDecisionTree(AbstractDecisionTreeRegressor):
         # print(f"iaidt.get_predictions({solution_matrix.shape = })")
         solution_df = convert_numpy_array_to_df(solution_matrix)
         return self.regressor.predict(solution_df)
-
-    def __repr__(self):
-        return repr(self.regressor)

@@ -6,6 +6,7 @@ from typing import Optional, Any, Iterable
 
 import matplotlib.pyplot as plt
 import numpy as np
+from tqdm import tqdm
 
 import utils
 from BenchmarkProblems.BenchmarkProblem import BenchmarkProblem
@@ -232,19 +233,23 @@ def get_datapoint_for_instance(problem_name: str,
                                crash_on_error: bool = False,
                                ) -> dict:
     def generate_datapoint():
+        cps_for_iai = [0.2] # [0.25, 0.5, 0.75]
         pRef = PRefManager.generate_pRef(problem, sample_size, pRef_method)
         pRef = PRef.unique(pRef)
 
         train_pRef, test_pRef = pRef.train_test_split(0.2, 42)
 
         tested_depths = list(range(2, max_depth + 1))
-        iai_dts = [IAIDecisionTree(depth) for depth in tested_depths]
+        iai_dts: dict[float, list[IAIDecisionTree]] = {cp: [IAIDecisionTree(depth, cp)
+                   for depth in tested_depths]
+                   for cp in cps_for_iai}
+
         traditional_dts = [NaiveRegressorWrapper(depth) for depth in tested_depths]
         own_dt = PSDecisionTree(max_depth, ps_budget=own_method_settings["ps_budget"],
                                 ps_search_population_size=own_method_settings["ps_population"])
         own_dt_views = [PSDecisionTreeRestrictedDepth(own_dt, depth) for depth in tested_depths]
 
-        for tree in [own_dt] + iai_dts + traditional_dts:
+        for tree in itertools.chain([own_dt], traditional_dts, *(iai_dts.values())):
             tree.train_from_pRef(train_pRef)
 
         def get_mses_at_different_depths(trees: Iterable[AbstractDecisionTreeRegressor]):
@@ -255,7 +260,8 @@ def get_datapoint_for_instance(problem_name: str,
                 "own_method_settings": own_method_settings,
                 "sample_size": sample_size,
                 "pRef_method": pRef_method,
-                "iai": get_mses_at_different_depths(iai_dts),
+                "iai": {cp: get_mses_at_different_depths(iai_dts[cp])
+                        for cp in cps_for_iai},
                 "naive": get_mses_at_different_depths(traditional_dts),
                 "ps": get_mses_at_different_depths(own_dt_views)}
 
@@ -273,28 +279,44 @@ def get_datapoint_for_instance(problem_name: str,
                                        exception=e)
 
 
-def sanity_check():
+def many_dt_gather_data():
     problems = get_problems_with_names()
-    problems = dict(list(problems.items())[:2])  # TODO restore this
+    problems = dict(list(problems.items())[:1])
     pRef_methods = ["GA", "uniform"]
     sample_size = 1000
     own_method_settings = {"ps_budget": 20,
                            "ps_population": 50}
 
-    results = []
 
-    for problem_name, problem in problems.items():
-        for pRef_method in pRef_methods:
-            datapoint = get_datapoint_for_instance(problem_name=problem_name,
-                                                   problem=problem,
-                                                   own_method_settings=own_method_settings,
-                                                   sample_size=sample_size,
-                                                   pRef_method=pRef_method,
-                                                   max_depth=3,
-                                                   crash_on_error=True)
-            results.append(datapoint)
+    repeats = 3
+    destination_folder = r"/Users/gian/PycharmProjects/PS-descriptors/resources/variance_tree_materials/dt_data" + utils.get_formatted_timestamp()
+    utils.make_directory(destination_folder)
+    print(f"Storing the results in {destination_folder}")
 
-    print(json.dumps(results, indent=4))
+    def make_file_with_json_contents(json_dict):
+        json_file_name = os.path.join(destination_folder, "output_"+utils.get_formatted_timestamp()+".json")
+        with open(json_file_name, "w") as file:
+            json.dump(json_dict, file, indent=4)
 
 
-sanity_check()
+    def single_run():
+        results = []
+
+        for problem_name, problem in problems.items():
+            for pRef_method in pRef_methods:
+                datapoint = get_datapoint_for_instance(problem_name=problem_name,
+                                                       problem=problem,
+                                                       own_method_settings=own_method_settings,
+                                                       sample_size=sample_size,
+                                                       pRef_method=pRef_method,
+                                                       max_depth=6,
+                                                       crash_on_error=False)
+                results.append(datapoint)
+
+        make_file_with_json_contents(results)
+
+
+    for iteration in tqdm(range(repeats)):
+        single_run()
+
+many_dt_gather_data()

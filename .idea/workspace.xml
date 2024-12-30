@@ -4,10 +4,12 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="a05e8814-504e-4333-8593-ec6366f9f3e6" name="Changes" comment="Added a &quot;crash on error&quot; flag.">
+    <list default="true" id="a05e8814-504e-4333-8593-ec6366f9f3e6" name="Changes" comment="Implementing some additional arguments for the IAI trees.">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/VarianceDecisionTree/IAIDecisionTree.py" beforeDir="false" afterPath="$PROJECT_DIR$/VarianceDecisionTree/IAIDecisionTree.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/VarianceDecisionTree/PSDecisionTree.py" beforeDir="false" afterPath="$PROJECT_DIR$/VarianceDecisionTree/PSDecisionTree.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/VarianceDecisionTree/compare_prediction_powers.py" beforeDir="false" afterPath="$PROJECT_DIR$/VarianceDecisionTree/compare_prediction_powers.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/VarianceDecisionTree/naive_decision_tree.py" beforeDir="false" afterPath="$PROJECT_DIR$/VarianceDecisionTree/naive_decision_tree.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -42,33 +44,34 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent"><![CDATA[{
-  "keyToString": {
-    "Python.BTProblem.executor": "Run",
-    "Python.GraphColouring.executor": "Run",
-    "Python.IAIDecisionTree.executor": "Run",
-    "Python.QAP.executor": "Run",
-    "Python.compare_prediction_powers.executor": "Run",
-    "Python.gather_data.executor": "Run",
-    "Python.process_data.executor": "Run",
-    "Python.testing_IAI.executor": "Run",
-    "Python.utils.executor": "Run",
-    "RunOnceActivity.OpenProjectViewOnStart": "true",
-    "RunOnceActivity.ShowReadmeOnStart": "true",
-    "SHARE_PROJECT_CONFIGURATION_FILES": "true",
-    "WebServerToolWindowFactoryState": "false",
-    "git-widget-placeholder": "LCS",
-    "ignore.virus.scanning.warn.message": "true",
-    "last_opened_file_path": "C:/Users/gac8/PycharmProjects/PS-descriptors-LCS/resources/variance_tree_materials",
-    "node.js.detected.package.eslint": "true",
-    "node.js.detected.package.tslint": "true",
-    "node.js.selected.package.eslint": "(autodetect)",
-    "node.js.selected.package.tslint": "(autodetect)",
-    "nodejs_package_manager_path": "npm",
-    "settings.editor.selected.configurable": "com.jetbrains.python.configuration.PyActiveSdkModuleConfigurable",
-    "vue.rearranger.settings.migration": "true"
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;Python.BTProblem.executor&quot;: &quot;Run&quot;,
+    &quot;Python.Compare_prediction_powers.executor&quot;: &quot;Run&quot;,
+    &quot;Python.GraphColouring.executor&quot;: &quot;Run&quot;,
+    &quot;Python.IAIDecisionTree.executor&quot;: &quot;Run&quot;,
+    &quot;Python.QAP.executor&quot;: &quot;Run&quot;,
+    &quot;Python.compare_prediction_powers.executor&quot;: &quot;Run&quot;,
+    &quot;Python.gather_data.executor&quot;: &quot;Run&quot;,
+    &quot;Python.process_data.executor&quot;: &quot;Run&quot;,
+    &quot;Python.testing_IAI.executor&quot;: &quot;Run&quot;,
+    &quot;Python.utils.executor&quot;: &quot;Run&quot;,
+    &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;SHARE_PROJECT_CONFIGURATION_FILES&quot;: &quot;true&quot;,
+    &quot;WebServerToolWindowFactoryState&quot;: &quot;false&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;LCS&quot;,
+    &quot;ignore.virus.scanning.warn.message&quot;: &quot;true&quot;,
+    &quot;last_opened_file_path&quot;: &quot;C:/Users/gac8/PycharmProjects/PS-descriptors-LCS/resources/variance_tree_materials&quot;,
+    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
+    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
+    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
+    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
+    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
+    &quot;settings.editor.selected.configurable&quot;: &quot;com.jetbrains.python.configuration.PyActiveSdkModuleConfigurable&quot;,
+    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
   }
-}]]></component>
+}</component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
       <recent name="C:\Users\gac8\PycharmProjects\PS-descriptors-LCS\resources\explanations\messing_around" />
@@ -322,15 +325,8 @@
       <workItem from="1734088024874" duration="13936000" />
       <workItem from="1734785503008" duration="6924000" />
       <workItem from="1735040034906" duration="3441000" />
-      <workItem from="1735043529174" duration="16313000" />
-    </task>
-    <task id="LOCAL-00046" summary="Implemented the forcefulMannWhitneyU test on near_optimal solutions, still to be tested.">
-      <option name="closed" value="true" />
-      <created>1729526888536</created>
-      <option name="number" value="00046" />
-      <option name="presentableId" value="LOCAL-00046" />
-      <option name="project" value="LOCAL" />
-      <updated>1729526888536</updated>
+      <workItem from="1735043529174" duration="19693000" />
+      <workItem from="1735555415695" duration="1662000" />
     </task>
     <task id="LOCAL-00047" summary="Quality of life changes.">
       <option name="closed" value="true" />
@@ -716,7 +712,15 @@
       <option name="project" value="LOCAL" />
       <updated>1735299810676</updated>
     </task>
-    <option name="localTasksCounter" value="95" />
+    <task id="LOCAL-00095" summary="Implementing some additional arguments for the IAI trees.">
+      <option name="closed" value="true" />
+      <created>1735302507864</created>
+      <option name="number" value="00095" />
+      <option name="presentableId" value="LOCAL-00095" />
+      <option name="project" value="LOCAL" />
+      <updated>1735302507865</updated>
+    </task>
+    <option name="localTasksCounter" value="96" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -746,7 +750,6 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="Penalty table for the optimal solution is now formatted in a way which makes it work immediately in the spreadsheets, although it it much less readable now..." />
     <MESSAGE value="Added a little additional call to generate an example problem which I can use to explain the  problem" />
     <MESSAGE value="Rota numbers are also scrambled, but I'm not sure if they are being displayed correctly..." />
     <MESSAGE value="Fixed a quite serious bug, in which the rotas are not deterministic to how the pretty printer is created. Now, the rotas are first sorted by hash (instead of being converted from a set to a list) and then shuffled after setting a seed. The seed is calculated from the worker names." />
@@ -771,7 +774,8 @@
     <MESSAGE value="Implemented the IAI trees, which are to be tuned so that nobody can complain" />
     <MESSAGE value="The training data and the to_predict data passed to iai trees is now pd.DataFrames with categorical columns, as suggested by the IAI website." />
     <MESSAGE value="Added a &quot;crash on error&quot; flag." />
-    <option name="LAST_COMMIT_MESSAGE" value="Added a &quot;crash on error&quot; flag." />
+    <MESSAGE value="Implementing some additional arguments for the IAI trees." />
+    <option name="LAST_COMMIT_MESSAGE" value="Implementing some additional arguments for the IAI trees." />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
@@ -874,15 +878,21 @@
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/VarianceDecisionTree/compare_prediction_powers.py</url>
-          <line>186</line>
+          <line>187</line>
           <option name="timeStamp" value="200" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/VarianceDecisionTree/compare_prediction_powers.py</url>
+          <line>253</line>
+          <option name="timeStamp" value="202" />
         </line-breakpoint>
       </breakpoints>
     </breakpoint-manager>
   </component>
   <component name="com.intellij.coverage.CoverageDataManagerImpl">
-    <SUITE FILE_PATH="coverage/PS_descriptors_LCS$WeightedGraphVisualiser.coverage" NAME="WeightedGraphVisualiser Coverage Results" MODIFIED="1730206638189" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/PairExplanation" />
     <SUITE FILE_PATH="coverage/PS_descriptors_LCS$compare_prediction_powers.coverage" NAME="compare_prediction_powers Coverage Results" MODIFIED="1734108497694" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="" />
+    <SUITE FILE_PATH="coverage/PS_descriptors_LCS$WeightedGraphVisualiser.coverage" NAME="WeightedGraphVisualiser Coverage Results" MODIFIED="1730206638189" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/PairExplanation" />
+    <SUITE FILE_PATH="coverage/PS_descriptors$Compare_prediction_powers.coverage" NAME="Compare_prediction_powers Coverage Results" MODIFIED="1735556951084" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="" />
     <SUITE FILE_PATH="coverage/PS_descriptors_LCS$PairExplanationTester.coverage" NAME="PairExplanationTester Coverage Results" MODIFIED="1731598536958" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/PairExplanation" />
     <SUITE FILE_PATH="coverage/PS_descriptors_LCS$PairwiseExplanation.coverage" NAME="PairwiseExplanation Coverage Results" MODIFIED="1730888593528" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/PairExplanation" />
     <SUITE FILE_PATH="coverage/PS_descriptors_LCS$cached_explanations.coverage" NAME="cached_explanations Coverage Results" MODIFIED="1730387794178" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="" />

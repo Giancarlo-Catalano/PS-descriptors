@@ -50,6 +50,10 @@ class PSDecisionTree(AbstractDecisionTreeRegressor):
         self.repr_ps = repr
 
 
+    def __repr__(self):
+        return "PSDecisionTree"
+
+
     def set_repr_ps(self, repr_ps):
         self.repr_ps = repr_ps
 
@@ -107,7 +111,7 @@ class PSDecisionTree(AbstractDecisionTreeRegressor):
             branch_to_navigate = self.matching_branch if contains(solution, self.split_ps) else self.unmatching_branch
             return branch_to_navigate.get_prediction_with_restricted_depth(solution, allowed_depth-1)
 
-    def __repr__(self):
+    def repr_long(self):
         if self.split_ps is None:
             return f"Leaf(Average = {self.own_average}"
         else:
@@ -134,11 +138,6 @@ class PSDecisionTreeRestrictedDepth(AbstractDecisionTreeRegressor):
     def get_prediction(self, solution: FullSolution) -> float:
         return self.original_dt.get_prediction_with_restricted_depth(solution, self.depth)
 
-
-
-
-
-class PSDTCrossoverOperator(FSCrossoverOperator):
-    fallback_crossover: FSCrossoverOperator
-    #TODO
+    def __repr__(self):
+        return "PSDecisionTreeRestrictedDepth"
 
