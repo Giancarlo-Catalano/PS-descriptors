@@ -21,7 +21,7 @@ def gather_data_compare_own():
     mode = "server"
     repeats = 1
 
-    debug = True
+    debug = False
     if debug:
         print("NOTE: using debug mode")
         problems = dict(list(problems.items())[:1])

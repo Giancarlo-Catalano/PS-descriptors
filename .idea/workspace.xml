@@ -4,11 +4,7 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="a05e8814-504e-4333-8593-ec6366f9f3e6" name="Changes" comment="results now also include the orders of the split pss.">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/VarianceDecisionTree/compare_prediction_powers.py" beforeDir="false" afterPath="$PROJECT_DIR$/VarianceDecisionTree/compare_prediction_powers.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/VarianceDecisionTree/gather_data.py" beforeDir="false" afterPath="$PROJECT_DIR$/VarianceDecisionTree/gather_data.py" afterDir="false" />
-    </list>
+    <list default="true" id="a05e8814-504e-4333-8593-ec6366f9f3e6" name="Changes" comment="The code now avoids importing the IAI libraries if it's running on Linux (ie the university condor cluster)" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -324,15 +320,7 @@
       <workItem from="1734785503008" duration="6924000" />
       <workItem from="1735040034906" duration="3441000" />
       <workItem from="1735043529174" duration="19693000" />
-      <workItem from="1735555415695" duration="8420000" />
-    </task>
-    <task id="LOCAL-00051" summary="Implemented the calendar change table for pss.">
-      <option name="closed" value="true" />
-      <created>1729863711895</created>
-      <option name="number" value="00051" />
-      <option name="presentableId" value="LOCAL-00051" />
-      <option name="project" value="LOCAL" />
-      <updated>1729863711895</updated>
+      <workItem from="1735555415695" duration="9024000" />
     </task>
     <task id="LOCAL-00052" summary="Implemented the range changes for a difference pattern, and now thinking about how to visualise a PS.">
       <option name="closed" value="true" />
@@ -718,7 +706,15 @@
       <option name="project" value="LOCAL" />
       <updated>1735564151508</updated>
     </task>
-    <option name="localTasksCounter" value="100" />
+    <task id="LOCAL-00100" summary="The code now avoids importing the IAI libraries if it's running on Linux (ie the university condor cluster)">
+      <option name="closed" value="true" />
+      <created>1735581023563</created>
+      <option name="number" value="00100" />
+      <option name="presentableId" value="LOCAL-00100" />
+      <option name="project" value="LOCAL" />
+      <updated>1735581023563</updated>
+    </task>
+    <option name="localTasksCounter" value="101" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -748,7 +744,6 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="The answers to the questions in the questionnaire are now generated." />
     <MESSAGE value="Preparing for fairly big changes, clearing up code that was used for the LCS" />
     <MESSAGE value="In a frenzy, I implemented the variance based decision tree" />
     <MESSAGE value="Implemented some functionality for representation based search." />
@@ -773,7 +768,8 @@
     <MESSAGE value="removed unused functions in compare_prediction_powers.py" />
     <MESSAGE value="Which trees are tested is now controlled by some dictionaries" />
     <MESSAGE value="results now also include the orders of the split pss." />
-    <option name="LAST_COMMIT_MESSAGE" value="results now also include the orders of the split pss." />
+    <MESSAGE value="The code now avoids importing the IAI libraries if it's running on Linux (ie the university condor cluster)" />
+    <option name="LAST_COMMIT_MESSAGE" value="The code now avoids importing the IAI libraries if it's running on Linux (ie the university condor cluster)" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
@@ -876,12 +872,12 @@
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/VarianceDecisionTree/compare_prediction_powers.py</url>
-          <line>24</line>
+          <line>23</line>
           <option name="timeStamp" value="200" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/VarianceDecisionTree/gather_data.py</url>
-          <line>66</line>
+          <line>70</line>
           <option name="timeStamp" value="203" />
         </line-breakpoint>
       </breakpoints>
@@ -905,7 +901,7 @@
     <SUITE FILE_PATH="coverage/PS_descriptors_LCS$SolutionDifferencePSSearch.coverage" NAME="SolutionDifferencePSSearch Coverage Results" MODIFIED="1731599938287" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/LCS/ConstrainedPSSearch" />
     <SUITE FILE_PATH="coverage/PS_descriptors_LCS$test_continuous_problem.coverage" NAME="test_continuous_problem Coverage Results" MODIFIED="1734016124645" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/RepresentationBasedSearch" />
     <SUITE FILE_PATH="coverage/PS_descriptors$IAIDecisionTree.coverage" NAME="IAIDecisionTree Coverage Results" MODIFIED="1735302189159" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/VarianceDecisionTree" />
-    <SUITE FILE_PATH="coverage/PS_descriptors$gather_data.coverage" NAME="gather_data Coverage Results" MODIFIED="1735580374357" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/VarianceDecisionTree" />
+    <SUITE FILE_PATH="coverage/PS_descriptors$gather_data.coverage" NAME="gather_data Coverage Results" MODIFIED="1735580934921" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/VarianceDecisionTree" />
     <SUITE FILE_PATH="coverage/PS_descriptors_LCS$variance_tree.coverage" NAME="variance_tree Coverage Results" MODIFIED="1733921416409" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="" />
     <SUITE FILE_PATH="coverage/PS_descriptors_LCS$generate_all_data.coverage" NAME="generate_all_data Coverage Results" MODIFIED="1730458114958" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/resources/explanations" />
     <SUITE FILE_PATH="coverage/PS_descriptors_LCS$manage_explanations.coverage" NAME="manage_explanations Coverage Results" MODIFIED="1730896903291" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/resources/explanations" />
