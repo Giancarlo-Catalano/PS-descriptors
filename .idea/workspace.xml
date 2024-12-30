@@ -4,13 +4,7 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="a05e8814-504e-4333-8593-ec6366f9f3e6" name="Changes" comment="Implementing some additional arguments for the IAI trees.">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/VarianceDecisionTree/IAIDecisionTree.py" beforeDir="false" afterPath="$PROJECT_DIR$/VarianceDecisionTree/IAIDecisionTree.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/VarianceDecisionTree/PSDecisionTree.py" beforeDir="false" afterPath="$PROJECT_DIR$/VarianceDecisionTree/PSDecisionTree.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/VarianceDecisionTree/compare_prediction_powers.py" beforeDir="false" afterPath="$PROJECT_DIR$/VarianceDecisionTree/compare_prediction_powers.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/VarianceDecisionTree/naive_decision_tree.py" beforeDir="false" afterPath="$PROJECT_DIR$/VarianceDecisionTree/naive_decision_tree.py" afterDir="false" />
-    </list>
+    <list default="true" id="a05e8814-504e-4333-8593-ec6366f9f3e6" name="Changes" comment="Made a proper data gathering function." />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -326,15 +320,7 @@
       <workItem from="1734785503008" duration="6924000" />
       <workItem from="1735040034906" duration="3441000" />
       <workItem from="1735043529174" duration="19693000" />
-      <workItem from="1735555415695" duration="1662000" />
-    </task>
-    <task id="LOCAL-00047" summary="Quality of life changes.">
-      <option name="closed" value="true" />
-      <created>1729613254996</created>
-      <option name="number" value="00047" />
-      <option name="presentableId" value="LOCAL-00047" />
-      <option name="project" value="LOCAL" />
-      <updated>1729613254996</updated>
+      <workItem from="1735555415695" duration="2107000" />
     </task>
     <task id="LOCAL-00048" summary="Added some checks to see if the explanations are actually correct or not.">
       <option name="closed" value="true" />
@@ -720,7 +706,15 @@
       <option name="project" value="LOCAL" />
       <updated>1735302507865</updated>
     </task>
-    <option name="localTasksCounter" value="96" />
+    <task id="LOCAL-00096" summary="Made a proper data gathering function.">
+      <option name="closed" value="true" />
+      <created>1735557489029</created>
+      <option name="number" value="00096" />
+      <option name="presentableId" value="LOCAL-00096" />
+      <option name="project" value="LOCAL" />
+      <updated>1735557489029</updated>
+    </task>
+    <option name="localTasksCounter" value="97" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -750,7 +744,6 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="Added a little additional call to generate an example problem which I can use to explain the  problem" />
     <MESSAGE value="Rota numbers are also scrambled, but I'm not sure if they are being displayed correctly..." />
     <MESSAGE value="Fixed a quite serious bug, in which the rotas are not deterministic to how the pretty printer is created. Now, the rotas are first sorted by hash (instead of being converted from a set to a list) and then shuffled after setting a seed. The seed is calculated from the worker names." />
     <MESSAGE value="End of day submit" />
@@ -775,7 +768,8 @@
     <MESSAGE value="The training data and the to_predict data passed to iai trees is now pd.DataFrames with categorical columns, as suggested by the IAI website." />
     <MESSAGE value="Added a &quot;crash on error&quot; flag." />
     <MESSAGE value="Implementing some additional arguments for the IAI trees." />
-    <option name="LAST_COMMIT_MESSAGE" value="Implementing some additional arguments for the IAI trees." />
+    <MESSAGE value="Made a proper data gathering function." />
+    <option name="LAST_COMMIT_MESSAGE" value="Made a proper data gathering function." />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
@@ -881,18 +875,13 @@
           <line>187</line>
           <option name="timeStamp" value="200" />
         </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/VarianceDecisionTree/compare_prediction_powers.py</url>
-          <line>253</line>
-          <option name="timeStamp" value="202" />
-        </line-breakpoint>
       </breakpoints>
     </breakpoint-manager>
   </component>
   <component name="com.intellij.coverage.CoverageDataManagerImpl">
     <SUITE FILE_PATH="coverage/PS_descriptors_LCS$compare_prediction_powers.coverage" NAME="compare_prediction_powers Coverage Results" MODIFIED="1734108497694" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="" />
     <SUITE FILE_PATH="coverage/PS_descriptors_LCS$WeightedGraphVisualiser.coverage" NAME="WeightedGraphVisualiser Coverage Results" MODIFIED="1730206638189" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/PairExplanation" />
-    <SUITE FILE_PATH="coverage/PS_descriptors$Compare_prediction_powers.coverage" NAME="Compare_prediction_powers Coverage Results" MODIFIED="1735556951084" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="" />
+    <SUITE FILE_PATH="coverage/PS_descriptors$Compare_prediction_powers.coverage" NAME="Compare_prediction_powers Coverage Results" MODIFIED="1735557403070" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="" />
     <SUITE FILE_PATH="coverage/PS_descriptors_LCS$PairExplanationTester.coverage" NAME="PairExplanationTester Coverage Results" MODIFIED="1731598536958" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/PairExplanation" />
     <SUITE FILE_PATH="coverage/PS_descriptors_LCS$PairwiseExplanation.coverage" NAME="PairwiseExplanation Coverage Results" MODIFIED="1730888593528" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/PairExplanation" />
     <SUITE FILE_PATH="coverage/PS_descriptors_LCS$cached_explanations.coverage" NAME="cached_explanations Coverage Results" MODIFIED="1730387794178" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="" />
