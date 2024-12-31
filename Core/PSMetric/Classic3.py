@@ -9,7 +9,7 @@ and by calculating the PRefs together we can save a lot of time.
 from typing import Optional
 
 import numpy as np
-from numba import njit
+#from numba import njit
 
 import utils
 from BenchmarkProblems.BenchmarkProblem import BenchmarkProblem
@@ -23,7 +23,7 @@ from Core.PSMetric.Simplicity import Simplicity
 from Core.custom_types import ArrayOfFloats
 from utils import announce
 
-@njit
+#@njit
 def filter_by_var_val(fsm: np.ndarray,
                       fitnesses,
                       normalised_fitnesses,

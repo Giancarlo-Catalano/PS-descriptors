@@ -4,10 +4,7 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="a05e8814-504e-4333-8593-ec6366f9f3e6" name="Changes" comment="moving the main code in main, having some issues.. (incorrect exec code?)">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/main.py" beforeDir="false" afterPath="$PROJECT_DIR$/main.py" afterDir="false" />
-    </list>
+    <list default="true" id="a05e8814-504e-4333-8593-ec6366f9f3e6" name="Changes" comment="I just want condor to work!!" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -324,23 +321,7 @@
       <workItem from="1734785503008" duration="6924000" />
       <workItem from="1735040034906" duration="3441000" />
       <workItem from="1735043529174" duration="19693000" />
-      <workItem from="1735555415695" duration="13372000" />
-    </task>
-    <task id="LOCAL-00054" summary="Fixed some bugs, isolated edges are a problem because they should be shown, but the layout doesn't know where to put them. Also, this causes stray edges?">
-      <option name="closed" value="true" />
-      <created>1730208167609</created>
-      <option name="number" value="00054" />
-      <option name="presentableId" value="LOCAL-00054" />
-      <option name="project" value="LOCAL" />
-      <updated>1730208167609</updated>
-    </task>
-    <task id="LOCAL-00055" summary="Fixed a bug in how the labels were being placed in the plot, leaving some nodes without labels.">
-      <option name="closed" value="true" />
-      <created>1730208865044</created>
-      <option name="number" value="00055" />
-      <option name="presentableId" value="LOCAL-00055" />
-      <option name="project" value="LOCAL" />
-      <updated>1730208865044</updated>
+      <workItem from="1735555415695" duration="14159000" />
     </task>
     <task id="LOCAL-00056" summary="Last fixes of the day.">
       <option name="closed" value="true" />
@@ -718,7 +699,23 @@
       <option name="project" value="LOCAL" />
       <updated>1735612665645</updated>
     </task>
-    <option name="localTasksCounter" value="103" />
+    <task id="LOCAL-00103" summary="Remove numba import so that it works on the condor cluster">
+      <option name="closed" value="true" />
+      <created>1735645331676</created>
+      <option name="number" value="00103" />
+      <option name="presentableId" value="LOCAL-00103" />
+      <option name="project" value="LOCAL" />
+      <updated>1735645331676</updated>
+    </task>
+    <task id="LOCAL-00104" summary="I just want condor to work!!">
+      <option name="closed" value="true" />
+      <created>1735645415524</created>
+      <option name="number" value="00104" />
+      <option name="presentableId" value="LOCAL-00104" />
+      <option name="project" value="LOCAL" />
+      <updated>1735645415524</updated>
+    </task>
+    <option name="localTasksCounter" value="105" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -748,8 +745,6 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="Implemented some functionality for representation based search." />
-    <MESSAGE value="Played around with the variance decision tree again, seems to work nicely when paired with the perturbation metric." />
     <MESSAGE value="Another manic episode, where i tried to implement many things that did not end up working. I think the safest approach is to have a representation of the solutions and search using variance but not perturbation linkage...." />
     <MESSAGE value="Fixing some issues in linkage methods, seeing that they are not that good...." />
     <MESSAGE value="Finally the tree looks right" />
@@ -773,7 +768,9 @@
     <MESSAGE value="The code now avoids importing the IAI libraries if it's running on Linux (ie the university condor cluster)" />
     <MESSAGE value="Submitting before trying it on the server" />
     <MESSAGE value="moving the main code in main, having some issues.. (incorrect exec code?)" />
-    <option name="LAST_COMMIT_MESSAGE" value="moving the main code in main, having some issues.. (incorrect exec code?)" />
+    <MESSAGE value="Remove numba import so that it works on the condor cluster" />
+    <MESSAGE value="I just want condor to work!!" />
+    <option name="LAST_COMMIT_MESSAGE" value="I just want condor to work!!" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
