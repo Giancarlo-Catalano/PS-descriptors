@@ -22,7 +22,7 @@ def gather_data_compare_own():
     mode = "local"
     repeats = 10
 
-    debug = False
+    debug = True
     if debug:
         print("NOTE: using debug mode")
         problems = dict(list(problems.items())[:1])
