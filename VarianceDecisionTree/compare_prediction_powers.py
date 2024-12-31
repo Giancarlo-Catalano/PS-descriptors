@@ -3,7 +3,6 @@ import json
 import os
 from typing import Iterable
 
-
 import utils
 from BenchmarkProblems.BenchmarkProblem import BenchmarkProblem
 from BenchmarkProblems.EfficientBTProblem.EfficientBTProblem import EfficientBTProblem
@@ -14,6 +13,7 @@ from Explanation.PRefManager import PRefManager
 from VarianceDecisionTree.AbstractDecisionTreeRegressor import AbstractDecisionTreeRegressor
 
 import platform
+
 if platform.system() in {"Darwin", "Windows"}:
     from VarianceDecisionTree.IAIDecisionTree import IAIDecisionTree
 
@@ -25,16 +25,22 @@ from VarianceDecisionTree.naive_decision_tree import NaiveRegressorWrapper
 
 
 def get_problems_with_names():
-    sat_directory = r"/Users/gian/PycharmProjects/PS-descriptors/resources/problem_definitions/SAT/"
+    problem_definition_directory = os.path.join("resources", "problem_definitions")
+    sat_directory = os.path.join(problem_definition_directory, "SAT")
     small_SAT = SATProblem.from_cnf_file(os.path.join(sat_directory, "uf20-01.cnf"))
     medium_SAT = SATProblem.from_cnf_file(os.path.join(sat_directory, "uf50-01.cnf"))
     large_SAT = SATProblem.from_cnf_file(os.path.join(sat_directory, "uf100-01.cnf"))
 
-    gc_directory = r"/Users/gian/PycharmProjects/PS-descriptors/resources/problem_definitions/GC"
+    gc_directory = os.path.join(problem_definition_directory, "GC")
     small_GC = GraphColouring.from_json(os.path.join(gc_directory, "anna.json"))
     big_GC = GraphColouring.from_json(os.path.join(gc_directory, "jean.json"))
 
-    bt_problem = EfficientBTProblem.from_default_files()
+    bt_problem_root = os.path.join("resources", "BT", "MartinsInstance")
+    bt_problem = EfficientBTProblem.from_csv_files(employee_data_file=os.path.join(bt_problem_root, "employeeData.csv"),
+                                                   employee_skills_file=os.path.join(bt_problem_root,
+                                                                                     "employeeSkillsData.csv"),
+                                                   rota_file=os.path.join(bt_problem_root, "rosterPatternDaysData.csv"),
+                                                   calendar_length=7 * 13)
 
     return {"SAT_S": small_SAT,
             "SAT_M": medium_SAT,
@@ -88,11 +94,11 @@ def get_trees_from_dict(tree_dict: dict,
 def get_datapoint_for_tree(tree: AbstractDecisionTreeRegressor, test_pRef):
     error_metrics = tree.get_error_metrics(test_pRef)
     if isinstance(tree, PSDecisionTreeRestrictedDepth):
-        output =  {"kind": "ps",
-                "depth": tree.depth,
-                "ps_budget": tree.original_dt.ps_budget,
-                "ps_population": tree.original_dt.ps_search_population_size,
-                "results": error_metrics}
+        output = {"kind": "ps",
+                  "depth": tree.depth,
+                  "ps_budget": tree.original_dt.ps_budget,
+                  "ps_population": tree.original_dt.ps_search_population_size,
+                  "results": error_metrics}
         if tree.depth == tree.original_dt.maximum_depth:
             output["order_tree"] = tree.get_orders()
         return output
@@ -100,12 +106,11 @@ def get_datapoint_for_tree(tree: AbstractDecisionTreeRegressor, test_pRef):
         return {"kind": "naive",
                 "depth": tree.maximum_depth,
                 "results": error_metrics}
-    else: # isinstance(tree, IAIDecisionTree): # we can't call the class directly because that would require for the IAI libraries to be imported even when we're using the Condor cluserte
+    else:  # isinstance(tree, IAIDecisionTree): # we can't call the class directly because that would require for the IAI libraries to be imported even when we're using the Condor cluserte
         return {"kind": "iai",
                 "depth": tree.maximum_depth,
                 "cp": tree.prescription_factor,
                 "results": error_metrics}
-
 
 
 def get_datapoint_for_instance(problem_name: str,
@@ -246,6 +251,5 @@ def gather_data_compare_own():
 
         for iteration in range(repeats):
             single_run()
-
 
 # gather_data_compare_own()
