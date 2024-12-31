@@ -4,7 +4,13 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="a05e8814-504e-4333-8593-ec6366f9f3e6" name="Changes" comment="The code now avoids importing the IAI libraries if it's running on Linux (ie the university condor cluster)" />
+    <list default="true" id="a05e8814-504e-4333-8593-ec6366f9f3e6" name="Changes" comment="Submitting before trying it on the server">
+      <change afterPath="$PROJECT_DIR$/main_old.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/VarianceDecisionTree/gather_data.py" beforeDir="false" afterPath="$PROJECT_DIR$/VarianceDecisionTree/gather_data.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/main.py" beforeDir="false" afterPath="$PROJECT_DIR$/main.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/old_main.py" beforeDir="false" afterPath="$PROJECT_DIR$/main_oldest.py" afterDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -320,15 +326,7 @@
       <workItem from="1734785503008" duration="6924000" />
       <workItem from="1735040034906" duration="3441000" />
       <workItem from="1735043529174" duration="19693000" />
-      <workItem from="1735555415695" duration="9024000" />
-    </task>
-    <task id="LOCAL-00052" summary="Implemented the range changes for a difference pattern, and now thinking about how to visualise a PS.">
-      <option name="closed" value="true" />
-      <created>1730132789672</created>
-      <option name="number" value="00052" />
-      <option name="presentableId" value="LOCAL-00052" />
-      <option name="project" value="LOCAL" />
-      <updated>1730132789672</updated>
+      <workItem from="1735555415695" duration="11148000" />
     </task>
     <task id="LOCAL-00053" summary="Implemented the linkage visualiser.">
       <option name="closed" value="true" />
@@ -714,7 +712,15 @@
       <option name="project" value="LOCAL" />
       <updated>1735581023563</updated>
     </task>
-    <option name="localTasksCounter" value="101" />
+    <task id="LOCAL-00101" summary="Submitting before trying it on the server">
+      <option name="closed" value="true" />
+      <created>1735581192714</created>
+      <option name="number" value="00101" />
+      <option name="presentableId" value="LOCAL-00101" />
+      <option name="project" value="LOCAL" />
+      <updated>1735581192714</updated>
+    </task>
+    <option name="localTasksCounter" value="102" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -744,7 +750,6 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="Preparing for fairly big changes, clearing up code that was used for the LCS" />
     <MESSAGE value="In a frenzy, I implemented the variance based decision tree" />
     <MESSAGE value="Implemented some functionality for representation based search." />
     <MESSAGE value="Played around with the variance decision tree again, seems to work nicely when paired with the perturbation metric." />
@@ -769,7 +774,8 @@
     <MESSAGE value="Which trees are tested is now controlled by some dictionaries" />
     <MESSAGE value="results now also include the orders of the split pss." />
     <MESSAGE value="The code now avoids importing the IAI libraries if it's running on Linux (ie the university condor cluster)" />
-    <option name="LAST_COMMIT_MESSAGE" value="The code now avoids importing the IAI libraries if it's running on Linux (ie the university condor cluster)" />
+    <MESSAGE value="Submitting before trying it on the server" />
+    <option name="LAST_COMMIT_MESSAGE" value="Submitting before trying it on the server" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
@@ -877,7 +883,7 @@
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/VarianceDecisionTree/gather_data.py</url>
-          <line>70</line>
+          <line>71</line>
           <option name="timeStamp" value="203" />
         </line-breakpoint>
       </breakpoints>

@@ -1,93 +1,72 @@
 #!/usr/bin/env python3
-import logging
+import json
 import os
-import warnings
 
 import utils
-from BenchmarkProblems.EfficientBTProblem.EfficientBTProblem import EfficientBTProblem
-from Core.Explainer import Explainer
-from Explanation.HyperparameterEvaluator import HyperparameterEvaluator
+from VarianceDecisionTree.compare_prediction_powers import get_problems_with_names, get_datapoint_for_instance
 
 
-def get_bt_explainer() -> Explainer:
-    """
-    Loads the BT Staff Rostering problem instance
-    @return:
-    """
-    # this defines the directory where the Partial Solution files will be stored.
-    use_dummy = False
-    ps_directory = os.path.join("ExplanatoryCachedData", "BT", "Dummy" if use_dummy else "StaffRosteringProblemCacheAGAIN")
+def gather_data_compare_own():
+    problems = get_problems_with_names()
+    pRef_methods = ["GA", "uniform"]
+    sample_size = 10000
 
-    # loads the problem as defined in some files, it should be resources/BT/MartinsInstance
-    problem = EfficientBTProblem.from_default_files()
+    depths = [2, 3, 4, 5, 6]
+    tree_dicts = []
+    tree_dicts.extend([{"kind": "ps",
+                        "ps_budget": ps_budget,
+                        "ps_population": 100,
+                        "depths": depths}
+                       for ps_budget in [1000, 2000, 5000]])
 
-    return Explainer.from_folder(problem=problem,
-                                 folder=ps_directory,
-                                 polarity_threshold=0.10,
-                                 # this is the threshold for polarity as discussed in the paper
-                                 verbose=True)
+    mode = "server"
+    repeats = 1
 
-# commented out so that you don't have to install extra things
-# def get_gc_explainer() -> Explainer:
-#     """
-#     Constructs a Graph Colouring problem and its explainer.
-#     The problem is the one used in the figure in the paper.
-#     @return: The Explainer instance
-#     """
-#     ps_directory = os.path.join("ExplanatoryCachedData", "BT", "Dummy")
-#     problem_file = os.path.join(ps_directory, "bert.json")
-#     problem = GraphColouring.from_file(problem_file)
-#     problem.view()
-#     return Explainer.from_folder(folder=ps_directory,
-#                                  problem=problem,
-#                                  speciality_threshold=0.50,
-#                                  verbose=True)
+    debug = False
+    if debug:
+        print("NOTE: using debug mode")
+        problems = dict(list(problems.items())[:1])
+        pRef_methods = pRef_methods[:1]
+        sample_size = 100
+        tree_dicts = tree_dicts[:1]
 
+    def make_file_with_json_contents(json_dict):
+        json_file_name = os.path.join(destination_folder, "output_" + utils.get_formatted_timestamp() + ".json")
+        with open(json_file_name, "w") as file:
+            json.dump(json_dict, file, indent=4)
 
-def explanation() -> None:
-    """
-    Loads the
-    @return: Nothing, it just prints things and manages files
-    """
-    # constructing the explainer object, which determines the problem and the working directory
-    explainer = get_bt_explainer()
+    def single_run():
+        results = []
 
-    # to generate the files containing PSs, properties etc..
-    # You should only run this once, since it is quite slow
-    # explainer.generate_files_with_default_settings(50000, 50000)
+        for problem_name, problem in problems.items():
+            for pRef_method in pRef_methods:
+                datapoint = get_datapoint_for_instance(problem_name=problem_name,
+                                                       problem=problem,
+                                                       tree_settings_list=tree_dicts,
+                                                       sample_size=sample_size,
+                                                       pRef_method=pRef_method,
+                                                       crash_on_error=False)
+                results.append(datapoint)
+                break
 
-    # this starts the main explanation function, and uses the files generated above
-    explainer.explanation_loop(amount_of_fs_to_propose=2, ps_show_limit=3, show_debug_info=True)
+        if mode == "local":
+            make_file_with_json_contents(results)
+        else:
+            print(json.dumps(results, indent=4))
 
-
-def grid_search() -> None:
-    """
-    This function gathers the data that is discussed in the Results section of the paper.
-    It's grid search, so it's very slow!
-
-    The result is just printed to the console as a json, because it works well with Condor Cluster Computing
-    """
-    # construct the set of parameters that will be used in the testing
-    hype = HyperparameterEvaluator(algorithms_to_test=["NSGAII", "NSGAIII", "MOEAD", "SMS-EMOA"],
-                                   problems_to_test=["collaboration_5", "insular_5", "RR_5"],
-                                   pRef_sizes_to_test=[10000],
-                                   population_sizes_to_test=[50, 100, 200],
-                                   pRef_origin_methods=["uniform", "SA", "uniform SA"],
-                                   ps_budget=50000,
-                                   custom_crowding_operators_to_test=[False, True],
-                                   ps_budgets_per_run_to_test=[1000, 2000, 3000, 5000, 10000])
-
-    hype.get_data(ignore_errors=True,
-                  verbose=True)
+    if mode == "local":
 
 
-if __name__ == '__main__':
-    # the 2 lines below are just to see more detailed errors and logs
-    logging.basicConfig(level=logging.INFO)
-    warnings.showwarning = utils.warn_with_traceback
+        destination_folder = r"/Users/gian/PycharmProjects/PS-descriptors/resources/variance_tree_materials/compare_own_data" + utils.get_formatted_timestamp()
+        utils.make_directory(destination_folder)
+        print(f"Storing the results in {destination_folder}")
 
-    # this line is to run the tests as discussed in the paper
-    # grid_search()
+        for iteration in range(repeats):
+            single_run()
 
-    # this line is to run the explainer
-    explanation()
+    else:
+        # just print out the results to the console at the end
+        single_run()
+
+
+gather_data_compare_own()
