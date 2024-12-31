@@ -1,7 +1,6 @@
 from typing import Any
 
 import numpy as np
-from pymoo.algorithms.moo.age import AGEMOEA
 from pymoo.algorithms.moo.moead import MOEAD
 from pymoo.algorithms.moo.nsga2 import NSGA2
 from pymoo.algorithms.moo.nsga3 import NSGA3
@@ -71,13 +70,6 @@ def get_pymoo_search_algorithm(which_algorithm: str,
         else:
             return MOEAD(ref_dirs = get_ref_dirs(), sampling=sampling, crossover=crossover,
                          mutation=mutation, n_neighbors=n_params)
-    elif which_algorithm == "AGE-MOEA":
-        if isinstance(crowding_operator, PyMooCustomCrowding):
-            return AGEMOEA(pop_size=pop_size, sampling=sampling, crossover=crossover,
-                           mutation=mutation, eliminate_duplicates=True, survival = crowding_operator)
-        else:
-            return AGEMOEA(pop_size=pop_size, sampling=sampling, crossover=crossover,
-                           mutation=mutation, eliminate_duplicates=True)
     elif which_algorithm == "RVEA":
         if isinstance(crowding_operator, PyMooCustomCrowding):
             return RVEA(pop_size=pop_size, sampling=sampling, crossover=crossover,

@@ -4,7 +4,9 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="a05e8814-504e-4333-8593-ec6366f9f3e6" name="Changes" comment="I just want condor to work!!" />
+    <list default="true" id="a05e8814-504e-4333-8593-ec6366f9f3e6" name="Changes" comment="Removed another numba dependency...">
+      <change beforePath="$PROJECT_DIR$/PSMiners/PyMoo/pymoo_utilities.py" beforeDir="false" afterPath="$PROJECT_DIR$/PSMiners/PyMoo/pymoo_utilities.py" afterDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -321,15 +323,7 @@
       <workItem from="1734785503008" duration="6924000" />
       <workItem from="1735040034906" duration="3441000" />
       <workItem from="1735043529174" duration="19693000" />
-      <workItem from="1735555415695" duration="14159000" />
-    </task>
-    <task id="LOCAL-00056" summary="Last fixes of the day.">
-      <option name="closed" value="true" />
-      <created>1730220020888</created>
-      <option name="number" value="00056" />
-      <option name="presentableId" value="LOCAL-00056" />
-      <option name="project" value="LOCAL" />
-      <updated>1730220020888</updated>
+      <workItem from="1735555415695" duration="14448000" />
     </task>
     <task id="LOCAL-00057" summary="Small fixes">
       <option name="closed" value="true" />
@@ -715,7 +709,15 @@
       <option name="project" value="LOCAL" />
       <updated>1735645415524</updated>
     </task>
-    <option name="localTasksCounter" value="105" />
+    <task id="LOCAL-00105" summary="Removed another numba dependency...">
+      <option name="closed" value="true" />
+      <created>1735646517127</created>
+      <option name="number" value="00105" />
+      <option name="presentableId" value="LOCAL-00105" />
+      <option name="project" value="LOCAL" />
+      <updated>1735646517127</updated>
+    </task>
+    <option name="localTasksCounter" value="106" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -745,7 +747,6 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="Another manic episode, where i tried to implement many things that did not end up working. I think the safest approach is to have a representation of the solutions and search using variance but not perturbation linkage...." />
     <MESSAGE value="Fixing some issues in linkage methods, seeing that they are not that good...." />
     <MESSAGE value="Finally the tree looks right" />
     <MESSAGE value="Implemented the variance split linkage, and while it does kinda work, it's also not that good." />
@@ -770,7 +771,8 @@
     <MESSAGE value="moving the main code in main, having some issues.. (incorrect exec code?)" />
     <MESSAGE value="Remove numba import so that it works on the condor cluster" />
     <MESSAGE value="I just want condor to work!!" />
-    <option name="LAST_COMMIT_MESSAGE" value="I just want condor to work!!" />
+    <MESSAGE value="Removed another numba dependency..." />
+    <option name="LAST_COMMIT_MESSAGE" value="Removed another numba dependency..." />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>

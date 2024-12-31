@@ -19,7 +19,7 @@ def gather_data_compare_own():
                         "depths": depths}
                        for ps_budget in [1000, 2000, 5000]])
 
-    mode = "local"
+    mode = "server"
     repeats = 10
 
     debug = True
