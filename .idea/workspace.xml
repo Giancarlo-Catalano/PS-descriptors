@@ -4,9 +4,7 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="a05e8814-504e-4333-8593-ec6366f9f3e6" name="Changes" comment="Removed another numba dependency...">
-      <change beforePath="$PROJECT_DIR$/PSMiners/PyMoo/pymoo_utilities.py" beforeDir="false" afterPath="$PROJECT_DIR$/PSMiners/PyMoo/pymoo_utilities.py" afterDir="false" />
-    </list>
+    <list default="true" id="a05e8814-504e-4333-8593-ec6366f9f3e6" name="Changes" comment="Problem definitions directories are now written in an os independent way (os.path.join everywhere)" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -323,39 +321,7 @@
       <workItem from="1734785503008" duration="6924000" />
       <workItem from="1735040034906" duration="3441000" />
       <workItem from="1735043529174" duration="19693000" />
-      <workItem from="1735555415695" duration="14448000" />
-    </task>
-    <task id="LOCAL-00057" summary="Small fixes">
-      <option name="closed" value="true" />
-      <created>1730306292089</created>
-      <option name="number" value="00057" />
-      <option name="presentableId" value="LOCAL-00057" />
-      <option name="project" value="LOCAL" />
-      <updated>1730306292089</updated>
-    </task>
-    <task id="LOCAL-00058" summary="Quickly implemented the BTProblem.from_json so that it's replicable.">
-      <option name="closed" value="true" />
-      <created>1730385568403</created>
-      <option name="number" value="00058" />
-      <option name="presentableId" value="LOCAL-00058" />
-      <option name="project" value="LOCAL" />
-      <updated>1730385568403</updated>
-    </task>
-    <task id="LOCAL-00059" summary="Made a clean script to generate the problem files.">
-      <option name="closed" value="true" />
-      <created>1730388886539</created>
-      <option name="number" value="00059" />
-      <option name="presentableId" value="LOCAL-00059" />
-      <option name="project" value="LOCAL" />
-      <updated>1730388886540</updated>
-    </task>
-    <task id="LOCAL-00060" summary="Added to the script that the pRef is generated and then altered to match problem B.">
-      <option name="closed" value="true" />
-      <created>1730390000303</created>
-      <option name="number" value="00060" />
-      <option name="presentableId" value="LOCAL-00060" />
-      <option name="project" value="LOCAL" />
-      <updated>1730390000303</updated>
+      <workItem from="1735555415695" duration="15186000" />
     </task>
     <task id="LOCAL-00061" summary="Last fixes of the day.">
       <option name="closed" value="true" />
@@ -717,7 +683,39 @@
       <option name="project" value="LOCAL" />
       <updated>1735646517127</updated>
     </task>
-    <option name="localTasksCounter" value="106" />
+    <task id="LOCAL-00106" summary="Removed pymoo.AGEMOA, which requires numba??">
+      <option name="closed" value="true" />
+      <created>1735646798790</created>
+      <option name="number" value="00106" />
+      <option name="presentableId" value="LOCAL-00106" />
+      <option name="project" value="LOCAL" />
+      <updated>1735646798791</updated>
+    </task>
+    <task id="LOCAL-00107" summary="added results to .gitignore once and for all!">
+      <option name="closed" value="true" />
+      <created>1735646890386</created>
+      <option name="number" value="00107" />
+      <option name="presentableId" value="LOCAL-00107" />
+      <option name="project" value="LOCAL" />
+      <updated>1735646890386</updated>
+    </task>
+    <task id="LOCAL-00108" summary="remove include to PermutationMethod from scipy.stats (condor doesn't like it?)">
+      <option name="closed" value="true" />
+      <created>1735647015715</created>
+      <option name="number" value="00108" />
+      <option name="presentableId" value="LOCAL-00108" />
+      <option name="project" value="LOCAL" />
+      <updated>1735647015715</updated>
+    </task>
+    <task id="LOCAL-00109" summary="Problem definitions directories are now written in an os independent way (os.path.join everywhere)">
+      <option name="closed" value="true" />
+      <created>1735647477219</created>
+      <option name="number" value="00109" />
+      <option name="presentableId" value="LOCAL-00109" />
+      <option name="project" value="LOCAL" />
+      <updated>1735647477219</updated>
+    </task>
+    <option name="localTasksCounter" value="110" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -747,10 +745,6 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="Fixing some issues in linkage methods, seeing that they are not that good...." />
-    <MESSAGE value="Finally the tree looks right" />
-    <MESSAGE value="Implemented the variance split linkage, and while it does kinda work, it's also not that good." />
-    <MESSAGE value="Implemented an objective which takes advatange that both mannwhitneyU and split variance are splitting the pRef." />
     <MESSAGE value="More efficient metric evaluation" />
     <MESSAGE value="Cleaned up some code to split pRefs" />
     <MESSAGE value="Implemented an interface to make decision trees, and some simple functions to test them. For RR and a horrible ps budget given, the mse appears to be lower for my approach." />
@@ -772,7 +766,11 @@
     <MESSAGE value="Remove numba import so that it works on the condor cluster" />
     <MESSAGE value="I just want condor to work!!" />
     <MESSAGE value="Removed another numba dependency..." />
-    <option name="LAST_COMMIT_MESSAGE" value="Removed another numba dependency..." />
+    <MESSAGE value="Removed pymoo.AGEMOA, which requires numba??" />
+    <MESSAGE value="added results to .gitignore once and for all!" />
+    <MESSAGE value="remove include to PermutationMethod from scipy.stats (condor doesn't like it?)" />
+    <MESSAGE value="Problem definitions directories are now written in an os independent way (os.path.join everywhere)" />
+    <option name="LAST_COMMIT_MESSAGE" value="Problem definitions directories are now written in an os independent way (os.path.join everywhere)" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
@@ -925,7 +923,7 @@
     <SUITE FILE_PATH="coverage/PS_descriptors$testing_IAI.coverage" NAME="testing_IAI Coverage Results" MODIFIED="1735056962987" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/MessingAround" />
     <SUITE FILE_PATH="coverage/PS_descriptors_LCS$EfficientBTProblem.coverage" NAME="EfficientBTProblem Coverage Results" MODIFIED="1730888916093" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/BenchmarkProblems/EfficientBTProblem" />
     <SUITE FILE_PATH="coverage/PS_descriptors_LCS$SignificantlyHighAverage.coverage" NAME="SignificantlyHighAverage Coverage Results" MODIFIED="1733921961378" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Core/PSMetric/FitnessQuality" />
-    <SUITE FILE_PATH="coverage/PS_descriptors$main.coverage" NAME="main Coverage Results" MODIFIED="1735613365104" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
+    <SUITE FILE_PATH="coverage/PS_descriptors$main.coverage" NAME="main Coverage Results" MODIFIED="1735647421145" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
     <SUITE FILE_PATH="coverage/PS_descriptors_LCS$DiffExplanation.coverage" NAME="DiffExplanation Coverage Results" MODIFIED="1731685086513" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="" />
     <SUITE FILE_PATH="coverage/PS_descriptors_LCS$show_off_problems.coverage" NAME="show_off_problems Coverage Results" MODIFIED="1732641094708" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="" />
   </component>
