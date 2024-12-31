@@ -11,7 +11,7 @@ def gather_data_compare_own():
     pRef_methods = ["GA", "uniform"]
     sample_size = 10000
 
-    depths = [2, 3, 4, 5, 6]
+    depths = [2, 3, 4, 5]
     tree_dicts = []
     tree_dicts.extend([{"kind": "ps",
                         "ps_budget": ps_budget,
@@ -19,8 +19,8 @@ def gather_data_compare_own():
                         "depths": depths}
                        for ps_budget in [1000, 2000, 5000]])
 
-    mode = "server"
-    repeats = 1
+    mode = "local"
+    repeats = 10
 
     debug = False
     if debug:

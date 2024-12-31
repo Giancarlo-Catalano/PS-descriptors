@@ -1,12 +1,9 @@
 import heapq
-import os
 import random
 from typing import Iterable, Callable, Any
 
-import numba
 import numpy as np
 from matplotlib import pyplot as plt
-from numba import jit
 
 import utils
 from Core.EvaluatedFS import EvaluatedFS
@@ -16,7 +13,7 @@ from Core.SearchSpace import SearchSpace
 from Core.custom_types import ArrayOfFloats, Fitness
 
 
-@jit
+#@jit
 def get_relevant_rows_in_matrix_old(fs_matrix, fs_fitnesses, ps_values) -> np.ndarray:
     only_relevant_rows = fs_matrix[:, ps_values != STAR]
     only_relevant_values = ps_values[ps_values != STAR]
@@ -31,7 +28,7 @@ def get_relevant_rows_in_matrix_old(fs_matrix, fs_fitnesses, ps_values) -> np.nd
     where_matching = np.array([alltrue(row == only_relevant_values) for row in only_relevant_rows])
     return fs_fitnesses[where_matching]
 
-@numba.njit
+#@numba.njit
 def get_relevant_rows_in_matrix_shortcircuit(full_solution_matrix, fitness_array, values):
     only_relevant_rows = full_solution_matrix[:, values != STAR]
     only_relevant_values = values[values != STAR]
@@ -39,7 +36,7 @@ def get_relevant_rows_in_matrix_shortcircuit(full_solution_matrix, fitness_array
                      if np.array_equal(fs, only_relevant_values)])
 
 
-@jit
+#@jit
 def get_relevant_rows_in_matrix(fs_matrix, fs_fitnesses, ps_values) -> np.ndarray:
     # Find the indices where ps_values is not equal to STAR
     relevant_indices = np.where(ps_values != STAR)[0]
