@@ -1,7 +1,7 @@
 from typing import Optional
 
 import numpy as np
-from scipy.stats import t, PermutationMethod, wilcoxon
+from scipy.stats import t, wilcoxon
 
 from Core.EvaluatedFS import EvaluatedFS
 from Core.FSEvaluator import FSEvaluator
@@ -67,7 +67,7 @@ class SignificantlyHighAverage(Metric):
 
 class MannWhitneyU(Metric):
     pRef: Optional[PRef]
-    test_method: [str | PermutationMethod]
+    test_method: str
 
     def __init__(self):
         self.pRef = None
