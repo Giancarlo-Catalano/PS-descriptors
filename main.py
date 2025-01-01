@@ -1,33 +1,12 @@
 #!/usr/bin/env python3
 import json
 import os
-import sys
 
 import utils
-from BenchmarkProblems.SATProblem import SATProblem
 from VarianceDecisionTree.compare_prediction_powers import get_problems_with_names, get_datapoint_for_instance
 
 
 def gather_data_compare_own():
-
-    # debug: try to get the location of the script
-    script_location = sys.argv[0]
-    script_folder = os.path.dirname(script_location)
-    print(f"The location of the script is {script_location}")
-
-    # construct the location of a resource
-    problem_definition_directory = os.path.join(script_folder, "resources", "problem_definitions")
-    sat_directory = os.path.join(problem_definition_directory, "SAT")
-    small_SAT_path = os.path.join(sat_directory, "uf20-01.cnf")
-
-
-    # read the resource
-    print(f"If I try to access a certain problem definition, I get {small_SAT_path}")
-    with open(small_SAT_path, "r") as file:
-        contents = file.read()
-
-    print(f"The length of the contents is {len(contents)}")
-    # end of debug
 
     problems = get_problems_with_names()
     pRef_methods = ["GA", "uniform"]

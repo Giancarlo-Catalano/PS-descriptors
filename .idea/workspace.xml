@@ -4,10 +4,7 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="a05e8814-504e-4333-8593-ec6366f9f3e6" name="Changes" comment="Readding the problem definitions to the repo so that they are imported into the condor computers.">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/main.py" beforeDir="false" afterPath="$PROJECT_DIR$/main.py" afterDir="false" />
-    </list>
+    <list default="true" id="a05e8814-504e-4333-8593-ec6366f9f3e6" name="Changes" comment="Testing if getting the location of the script would help in accessing resources." />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -324,15 +321,7 @@
       <workItem from="1734785503008" duration="6924000" />
       <workItem from="1735040034906" duration="3441000" />
       <workItem from="1735043529174" duration="19693000" />
-      <workItem from="1735555415695" duration="16776000" />
-    </task>
-    <task id="LOCAL-00063" summary="Implementing explanation storage by completely redoing the descriptors manager, oops. Still not completed and not tested.">
-      <option name="closed" value="true" />
-      <created>1730479026967</created>
-      <option name="number" value="00063" />
-      <option name="presentableId" value="LOCAL-00063" />
-      <option name="project" value="LOCAL" />
-      <updated>1730479026967</updated>
+      <workItem from="1735555415695" duration="17097000" />
     </task>
     <task id="LOCAL-00064" summary="the file generate_data_for_problem.py is close to being the final version of what will generate the data.">
       <option name="closed" value="true" />
@@ -718,7 +707,15 @@
       <option name="project" value="LOCAL" />
       <updated>1735647891130</updated>
     </task>
-    <option name="localTasksCounter" value="112" />
+    <task id="LOCAL-00112" summary="Testing if getting the location of the script would help in accessing resources.">
+      <option name="closed" value="true" />
+      <created>1735769458055</created>
+      <option name="number" value="00112" />
+      <option name="presentableId" value="LOCAL-00112" />
+      <option name="project" value="LOCAL" />
+      <updated>1735769458055</updated>
+    </task>
+    <option name="localTasksCounter" value="113" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -748,7 +745,6 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="Implemented an interface to make decision trees, and some simple functions to test them. For RR and a horrible ps budget given, the mse appears to be lower for my approach." />
     <MESSAGE value="Final commit of the day" />
     <MESSAGE value="Implementing continuous problems" />
     <MESSAGE value="Implemented code which compares decision trees for many problems and depths." />
@@ -773,7 +769,8 @@
     <MESSAGE value="Problem definitions directories are now written in an os independent way (os.path.join everywhere)" />
     <MESSAGE value="Readded the results folder onto the repo, removed useless result files." />
     <MESSAGE value="Readding the problem definitions to the repo so that they are imported into the condor computers." />
-    <option name="LAST_COMMIT_MESSAGE" value="Readding the problem definitions to the repo so that they are imported into the condor computers." />
+    <MESSAGE value="Testing if getting the location of the script would help in accessing resources." />
+    <option name="LAST_COMMIT_MESSAGE" value="Testing if getting the location of the script would help in accessing resources." />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
@@ -926,7 +923,7 @@
     <SUITE FILE_PATH="coverage/PS_descriptors$testing_IAI.coverage" NAME="testing_IAI Coverage Results" MODIFIED="1735056962987" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/MessingAround" />
     <SUITE FILE_PATH="coverage/PS_descriptors_LCS$EfficientBTProblem.coverage" NAME="EfficientBTProblem Coverage Results" MODIFIED="1730888916093" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/BenchmarkProblems/EfficientBTProblem" />
     <SUITE FILE_PATH="coverage/PS_descriptors_LCS$SignificantlyHighAverage.coverage" NAME="SignificantlyHighAverage Coverage Results" MODIFIED="1733921961378" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Core/PSMetric/FitnessQuality" />
-    <SUITE FILE_PATH="coverage/PS_descriptors$main.coverage" NAME="main Coverage Results" MODIFIED="1735769021693" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
+    <SUITE FILE_PATH="coverage/PS_descriptors$main.coverage" NAME="main Coverage Results" MODIFIED="1735769394419" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
     <SUITE FILE_PATH="coverage/PS_descriptors_LCS$DiffExplanation.coverage" NAME="DiffExplanation Coverage Results" MODIFIED="1731685086513" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="" />
     <SUITE FILE_PATH="coverage/PS_descriptors_LCS$show_off_problems.coverage" NAME="show_off_problems Coverage Results" MODIFIED="1732641094708" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="" />
   </component>

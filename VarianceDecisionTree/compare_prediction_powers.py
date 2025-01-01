@@ -14,7 +14,7 @@ from VarianceDecisionTree.AbstractDecisionTreeRegressor import AbstractDecisionT
 
 import platform
 
-if platform.system() in {"Darwin", "Windows"}: # I KNOW THAT THIS IS DODGY, BUT THE LIBRARY WON'T WORK ON CONDOR
+if platform.system() in {"DarwinNOT", "Windows"}: # I KNOW THAT THIS IS DODGY, BUT THE LIBRARY WON'T WORK ON CONDOR
     from VarianceDecisionTree.IAIDecisionTree import IAIDecisionTree
 
 from VarianceDecisionTree.PSDecisionTree import PSDecisionTree, PSDecisionTreeRestrictedDepth
@@ -25,7 +25,8 @@ from VarianceDecisionTree.naive_decision_tree import NaiveRegressorWrapper
 
 
 def get_problems_with_names():
-    problem_definition_directory = os.path.join("resources", "problem_definitions")
+    resources_directory = utils.get_resources_directory()
+    problem_definition_directory = os.path.join(resources_directory, "problem_definitions")
     sat_directory = os.path.join(problem_definition_directory, "SAT")
     small_SAT = SATProblem.from_cnf_file(os.path.join(sat_directory, "uf20-01.cnf"))
     medium_SAT = SATProblem.from_cnf_file(os.path.join(sat_directory, "uf50-01.cnf"))
@@ -35,7 +36,7 @@ def get_problems_with_names():
     small_GC = GraphColouring.from_json(os.path.join(gc_directory, "anna.json"))
     big_GC = GraphColouring.from_json(os.path.join(gc_directory, "jean.json"))
 
-    bt_problem_root = os.path.join("resources", "BT", "MartinsInstance")
+    bt_problem_root = os.path.join(resources_directory, "BT", "MartinsInstance")
     bt_problem = EfficientBTProblem.from_csv_files(employee_data_file=os.path.join(bt_problem_root, "employeeData.csv"),
                                                    employee_skills_file=os.path.join(bt_problem_root,
                                                                                      "employeeSkillsData.csv"),

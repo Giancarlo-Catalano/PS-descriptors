@@ -590,3 +590,12 @@ def plot_ground_truth_vs_predictions(x_axis_label, x_axis_values, y_axis_label, 
     # Show the plot
     plt.tight_layout()
     return plt
+
+
+def get_resources_directory():
+    script_location = sys.argv[0]
+    script_folder = os.path.dirname(script_location)
+
+    # construct the location of a resource
+    return os.path.join(script_folder, "resources")
+
