@@ -4,7 +4,10 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="a05e8814-504e-4333-8593-ec6366f9f3e6" name="Changes" comment="Problem definitions directories are now written in an os independent way (os.path.join everywhere)" />
+    <list default="true" id="a05e8814-504e-4333-8593-ec6366f9f3e6" name="Changes" comment="Readding the problem definitions to the repo so that they are imported into the condor computers.">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/main.py" beforeDir="false" afterPath="$PROJECT_DIR$/main.py" afterDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -321,23 +324,7 @@
       <workItem from="1734785503008" duration="6924000" />
       <workItem from="1735040034906" duration="3441000" />
       <workItem from="1735043529174" duration="19693000" />
-      <workItem from="1735555415695" duration="15186000" />
-    </task>
-    <task id="LOCAL-00061" summary="Last fixes of the day.">
-      <option name="closed" value="true" />
-      <created>1730392240053</created>
-      <option name="number" value="00061" />
-      <option name="presentableId" value="LOCAL-00061" />
-      <option name="project" value="LOCAL" />
-      <updated>1730392240053</updated>
-    </task>
-    <task id="LOCAL-00062" summary="Optima representation also includes the extra information now.">
-      <option name="closed" value="true" />
-      <created>1730470776739</created>
-      <option name="number" value="00062" />
-      <option name="presentableId" value="LOCAL-00062" />
-      <option name="project" value="LOCAL" />
-      <updated>1730470776739</updated>
+      <workItem from="1735555415695" duration="16776000" />
     </task>
     <task id="LOCAL-00063" summary="Implementing explanation storage by completely redoing the descriptors manager, oops. Still not completed and not tested.">
       <option name="closed" value="true" />
@@ -715,7 +702,23 @@
       <option name="project" value="LOCAL" />
       <updated>1735647477219</updated>
     </task>
-    <option name="localTasksCounter" value="110" />
+    <task id="LOCAL-00110" summary="Readded the results folder onto the repo, removed useless result files.">
+      <option name="closed" value="true" />
+      <created>1735647649142</created>
+      <option name="number" value="00110" />
+      <option name="presentableId" value="LOCAL-00110" />
+      <option name="project" value="LOCAL" />
+      <updated>1735647649142</updated>
+    </task>
+    <task id="LOCAL-00111" summary="Readding the problem definitions to the repo so that they are imported into the condor computers.">
+      <option name="closed" value="true" />
+      <created>1735647891130</created>
+      <option name="number" value="00111" />
+      <option name="presentableId" value="LOCAL-00111" />
+      <option name="project" value="LOCAL" />
+      <updated>1735647891130</updated>
+    </task>
+    <option name="localTasksCounter" value="112" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -745,8 +748,6 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="More efficient metric evaluation" />
-    <MESSAGE value="Cleaned up some code to split pRefs" />
     <MESSAGE value="Implemented an interface to make decision trees, and some simple functions to test them. For RR and a horrible ps budget given, the mse appears to be lower for my approach." />
     <MESSAGE value="Final commit of the day" />
     <MESSAGE value="Implementing continuous problems" />
@@ -770,7 +771,9 @@
     <MESSAGE value="added results to .gitignore once and for all!" />
     <MESSAGE value="remove include to PermutationMethod from scipy.stats (condor doesn't like it?)" />
     <MESSAGE value="Problem definitions directories are now written in an os independent way (os.path.join everywhere)" />
-    <option name="LAST_COMMIT_MESSAGE" value="Problem definitions directories are now written in an os independent way (os.path.join everywhere)" />
+    <MESSAGE value="Readded the results folder onto the repo, removed useless result files." />
+    <MESSAGE value="Readding the problem definitions to the repo so that they are imported into the condor computers." />
+    <option name="LAST_COMMIT_MESSAGE" value="Readding the problem definitions to the repo so that they are imported into the condor computers." />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
@@ -923,7 +926,7 @@
     <SUITE FILE_PATH="coverage/PS_descriptors$testing_IAI.coverage" NAME="testing_IAI Coverage Results" MODIFIED="1735056962987" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/MessingAround" />
     <SUITE FILE_PATH="coverage/PS_descriptors_LCS$EfficientBTProblem.coverage" NAME="EfficientBTProblem Coverage Results" MODIFIED="1730888916093" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/BenchmarkProblems/EfficientBTProblem" />
     <SUITE FILE_PATH="coverage/PS_descriptors_LCS$SignificantlyHighAverage.coverage" NAME="SignificantlyHighAverage Coverage Results" MODIFIED="1733921961378" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Core/PSMetric/FitnessQuality" />
-    <SUITE FILE_PATH="coverage/PS_descriptors$main.coverage" NAME="main Coverage Results" MODIFIED="1735647421145" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
+    <SUITE FILE_PATH="coverage/PS_descriptors$main.coverage" NAME="main Coverage Results" MODIFIED="1735769021693" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
     <SUITE FILE_PATH="coverage/PS_descriptors_LCS$DiffExplanation.coverage" NAME="DiffExplanation Coverage Results" MODIFIED="1731685086513" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="" />
     <SUITE FILE_PATH="coverage/PS_descriptors_LCS$show_off_problems.coverage" NAME="show_off_problems Coverage Results" MODIFIED="1732641094708" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="" />
   </component>
