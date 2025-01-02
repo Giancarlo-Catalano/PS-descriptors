@@ -130,7 +130,7 @@ def get_datapoint_for_instance(problem_name: str,
         trees = [tree
                  for tree_dict in tree_settings_list
                  for tree in get_trees_from_dict(tree_dict, train_pRef)]
-        print(f"{problem_name = }, {pRef_method = }")
+        # print(f"{problem_name = }, {pRef_method = }")
 
         return {"problem_name": problem_name,
                 "sample_size": sample_size,

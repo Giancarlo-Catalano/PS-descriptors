@@ -1,64 +1,61 @@
 import itertools
 import json
+import os
 
 import pandas as pd
 
+import utils
 
-# {
-#         "problem_name": "SAT_S",
-#         "own_method_settings": {
-#             "ps_budget": 2000,
-#             "ps_population": 50
-#         },
-#         "sample_size": 10000,
-#         "pRef_method": "GA",
-#         "iai": {
-#             "2": 10.048661805416899,
-#             "3": 8.750811010146373,
-#             "4": 7.603486883425121
-#         },
-#         "naive": {
-#             "2": 8.452766413913302,
-#             "3": 7.435766892645918,
-#             "4": 6.630736099736666
-#         },
-#         "ps": {
-#             "2": 6.8800212108979855,
-#             "3": 6.38874425352788,
-#             "4": 5.680608471756772
-#         }
-#     },
 
-def json_to_df(data: dict) -> pd.DataFrame:
+
+def json_to_entries(data: dict):
     def item_to_list_of_entries(item) -> list[dict]:
         problem_name = item["problem_name"]
         pRef_method = item["pRef_method"]
-        dt_methods = ["iai", "naive", "ps"]
-        return [{"problem_name": problem_name,
-                 "pRef_method": pRef_method,
-                 "dt_method": dt_method,
-                 "depth": depth,
-                 "mse": mse}
-                for dt_method in dt_methods
-                for depth, mse in item[dt_method].items()
-                ]
 
-    return pd.DataFrame(row
-                        for item in data
-                        for row in item_to_list_of_entries(item))
+        entries = item["results_by_tree"]
 
+        def get_modified_entry(entry):
+            entry["problem"] = problem_name
+            entry["pRef_method"] = pRef_method
 
-def read_file_and_make_table(filename: str) -> pd.DataFrame:
+            errors = entry["results"]
+            entry = entry | errors
+            del entry["results"]
 
-    with open(filename, "r") as file:
-        data = json.load(file)
+            if "order_tree" in entry:
+                del entry["order_tree"]
 
-    return json_to_df(data)
+            return entry
+
+        entries = list(map(get_modified_entry, entries))
+        return entries
+
+    return [entry for item in data for entry in item_to_list_of_entries(item)]
 
 def produce_to_console():
-    path = r"/Users/gian/PycharmProjects/PS-descriptors/resources/variance_tree_materials/peogram_output.json"
-    table = read_file_and_make_table(path)
-    output_path = r"/Users/gian/PycharmProjects/PS-descriptors/resources/variance_tree_materials/result_as_csv.csv"
-    table.to_csv(output_path)
+    input_directory = r"/Users/gian/Desktop/CondorResults/compareown_out/"
+    output_filename = r"/Users/gian/PycharmProjects/PS-descriptors/resources/variance_tree_materials/processed_condor"+utils.get_formatted_timestamp()+".csv"
+
+    all_dicts = []
+    # Iterate through all files in the input directory
+    for filename in os.listdir(input_directory):
+        # Construct full file path
+        file_path = os.path.join(input_directory, filename)
+
+        # Check if the file is a JSON file
+        if not os.path.isfile(file_path):
+            continue
+
+        with open(file_path, 'r') as file:
+            data = json.load(file)
+            entries = json_to_entries(data)
+            all_dicts.extend(entries)
+
+    # Convert list of dictionaries to DataFrame
+    df = pd.DataFrame(all_dicts)
+
+    # Write the DataFrame to a CSV file
+    df.to_csv(output_filename, index=False)
 
 produce_to_console()

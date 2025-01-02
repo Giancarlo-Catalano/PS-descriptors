@@ -9,7 +9,7 @@ from VarianceDecisionTree.compare_prediction_powers import get_problems_with_nam
 def gather_data_compare_own():
 
     problems = get_problems_with_names()
-    pRef_methods = ["GA", "uniform"]
+    pRef_methods = ["uniform", "GA"]
     sample_size = 10000
 
     depths = [2, 3, 4, 5]
@@ -18,7 +18,7 @@ def gather_data_compare_own():
                         "ps_budget": ps_budget,
                         "ps_population": 100,
                         "depths": depths}
-                       for ps_budget in [1000, 2000, 5000]])
+                       for ps_budget in [500, 1000, 2000, 5000]])
 
     mode = "server"
     repeats = 10
@@ -27,7 +27,7 @@ def gather_data_compare_own():
     if debug:
         print("NOTE: using debug mode")
         problems = dict(list(problems.items())[:1])
-        pRef_methods = pRef_methods[:1]
+        pRef_methods = pRef_methods
         sample_size = 100
         tree_dicts = tree_dicts[:1]
 
@@ -48,7 +48,6 @@ def gather_data_compare_own():
                                                        pRef_method=pRef_method,
                                                        crash_on_error=False)
                 results.append(datapoint)
-                break
 
         if mode == "local":
             make_file_with_json_contents(results)
