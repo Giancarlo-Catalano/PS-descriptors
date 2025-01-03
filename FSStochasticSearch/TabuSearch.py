@@ -47,29 +47,38 @@ class TabuSearch:
 
         s = evaluated(self.get_random_individual())
         #best = s
-        tabu_list = deque(maxlen=self.tabu_list_size)
+        tabu_list = deque()
+        tabu_set = set()   # it's faster to check if something is here...
 
-        tabu_list.append(s)
-        trace.append(s)
+        def add_to_tabu_list(solution):
+            tabu_list.append(s)
+            tabu_set.add(s)
+            trace.append(s)
+
+        def remove_oldest_item_from_tabu_list():
+            removed = tabu_list.popleft()
+            tabu_set.discard(removed)
+
+        add_to_tabu_list(s)
 
         while len(trace) < max_trace:
-            # the tabu list automatically remove items that are old
+            if len(tabu_list) > self.tabu_list_size:
+                remove_oldest_item_from_tabu_list()
 
             r = evaluated(tweak_copy(s))
 
             for _ in range(self.gradient_samples):
                 w = self.mutation_operator.mutated(s)
-                if w in tabu_list:
+                if w in tabu_set:
                     continue
                 w = evaluated(w)
-                r_in_tabu_list = r in tabu_list
+                r_in_tabu_list = r in tabu_set
                 if w > r or r_in_tabu_list:
                     r = w
 
                 if not r_in_tabu_list:
                     s = r
-                    tabu_list.append(r)
-                    trace.append(r)
+                    add_to_tabu_list(r)
 
                 # we don't need to update best...
         return trace
