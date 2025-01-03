@@ -11,7 +11,7 @@ from VarianceDecisionTree.compare_prediction_powers import get_problems_with_nam
 def gather_data_compare_own():
 
     problems = get_problems_with_names()
-    pRef_methods = ["uniform", "GA", "SA", "tabu"]
+    pRef_methods = ["uniform", "GA", "SA", "Tabu"]
     sample_size = 10000
 
     depths = [2, 3, 4, 5]
@@ -20,7 +20,7 @@ def gather_data_compare_own():
                         "ps_budget": ps_budget,
                         "ps_population": 100,
                         "depths": depths}
-                       for ps_budget in [1000]])
+                       for ps_budget in [100]])
 
     mode = "server"
     repeats = 10
@@ -30,9 +30,9 @@ def gather_data_compare_own():
     if debug:
         print("NOTE: using debug mode")
         # problems = dict(list(problems.items())[:1])
-        pRef_methods = ["GA"]
+        pRef_methods = ["Tabu"]
         # sample_size = 100
-        # tree_dicts = tree_dicts[:1]
+        tree_dicts = tree_dicts[:1]
 
     def make_file_with_json_contents(json_dict):
         json_file_name = os.path.join(destination_folder, "output_" + utils.get_formatted_timestamp() + ".json")
@@ -41,9 +41,12 @@ def gather_data_compare_own():
 
     def single_run():
         if len(sys.argv) < 2:
-            seed = random.randrange(1000)
+            seed = random.randrange(10000)
         else:
-            seed = int(sys.argv[1])
+            try:
+                seed = int(sys.argv[1])
+            except:
+                raise Exception(f"The second argument needs to be missing, or a number! {sys.argv[1]} was provided")
         results = []
 
         for problem_name, problem in problems.items():
