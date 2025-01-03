@@ -72,6 +72,7 @@ def get_trees_from_dict(tree_dict: dict,
                         problem: BenchmarkProblem) -> list[AbstractDecisionTreeRegressor]:
     kind = tree_dict["kind"]
     depths = tree_dict["depths"]
+    warnings.warn(f"Training {tree_dict}")
 
     if kind == "ps":
         max_depth = max(depths)
@@ -138,15 +139,13 @@ def get_datapoint_for_instance(problem_name: str,
 
         train_pRef, test_pRef = pRef.train_test_split(0.2, 42)
 
-        trees = [tree
-                 for tree_dict in tree_settings_list
-                 for tree in get_trees_from_dict(tree_dict, train_pRef, problem)]
-
         return {"problem_name": problem_name,
                 "sample_size": sample_size,
                 "pRef_method": pRef_method,
                 "results_by_tree": [get_datapoint_for_tree(tree, test_pRef)
-                                    for tree in trees]}
+                                    for tree_dict in tree_settings_list
+                                    for tree in get_trees_from_dict(tree_dict, train_pRef, problem)
+                                    ]}
 
     if crash_on_error:
         return generate_datapoint()

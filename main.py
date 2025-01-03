@@ -27,8 +27,8 @@ def gather_data_compare_own():
                         "avoid_ancestors": avoid_ancestors,
                         "metrics": metrics}
                        for ps_budget in [1000]
-                      for metrics in ["variance", "variance estimated_atomicity"]
-                      for avoid_ancestors in [False, True]])
+                      for metrics in ["variance", "variance estimated_atomicity", "variance consistency", "variance consistency estimated_atomicity", "variance simplicity", "variance simplicity estimated_atomicity"]
+                      for avoid_ancestors in [False]])
 
     mode = "server"
     repeats = 10
@@ -37,7 +37,7 @@ def gather_data_compare_own():
     print_progress = True
     if debug:
         print("NOTE: using debug mode")
-        # problems = dict(list(problems.items())[:1])
+        problems = dict(list(problems.items())[:1])
         pRef_methods = ["GA"]
         # sample_size = 100
         # tree_dicts = tree_dicts[:1]
