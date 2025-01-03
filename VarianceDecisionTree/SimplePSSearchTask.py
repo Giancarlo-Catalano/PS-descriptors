@@ -1,4 +1,4 @@
-from typing import Iterable, Optional, Literal, Callable, TypeAlias
+from typing import Optional, Literal, Callable, TypeAlias
 
 import numpy as np
 from pymoo.algorithms.moo.nsga2 import NSGA2
@@ -9,24 +9,16 @@ from pymoo.operators.mutation.bitflip import BitflipMutation
 from pymoo.optimize import minimize
 
 from BenchmarkProblems.BenchmarkProblem import BenchmarkProblem
-from BenchmarkProblems.Trapk import Trapk
 from Core.EvaluatedPS import EvaluatedPS
-from Core.FSEvaluator import FitnessFunction
 from Core.FullSolution import FullSolution
 from Core.PRef import PRef
 from Core.PS import PS, STAR
 from Core.PSMetric.FitnessQuality.SignificantlyHighAverage import MannWhitneyU
-from Core.PSMetric.Linkage.SobolLinkage import SobolLinkage
 from Core.PSMetric.Linkage.TraditionalPerturbationLinkage import TraditionalPerturbationLinkage
 from Core.PSMetric.Linkage.ValueSpecificMutualInformation import FasterSolutionSpecificMutualInformation
-from Core.PSMetric.Simplicity import Simplicity
-from LCS.Operators import LocalPSGeometricSampling, ObjectiveSpaceAvoidance, ForceDifferenceMaskByActivatingOne, \
-    ForceDifferenceMaskByActivatingAll
-from LCS.PSEvaluator import GeneralPSEvaluator
-from LCS.PSFilter import keep_with_lowest_dependence, keep_biggest, merge_pss_into_one, keep_middle, \
+from LCS.Operators import LocalPSGeometricSampling
+from LCS.PSFilter import keep_biggest, merge_pss_into_one, keep_middle, \
     keep_with_best_atomicity
-from VarianceDecisionTree.SplitVariance import SplitVariance
-from VarianceDecisionTree.VarianceSplitLinkage import VarianceSplitLinkage
 from VarianceDecisionTree.optimised_variance_objective import SplitVarianceAndConsistency
 
 PSObjective: TypeAlias = Callable[[PS], float]
@@ -114,6 +106,62 @@ class SimplePSSearchTask(Problem):
             X)  # if the constraint is satisfied, it is negative (which is counterintuitive)
 
 
+
+def construct_objectives_list(metrics_str: str,
+                              pRef: PRef,
+                              solution: FullSolution,
+                              problem: Optional[BenchmarkProblem] = None,
+                              ):
+    metrics_list_str = metrics_str.split()
+    objectives = []
+
+    if "ground_truth_atomicity" in metrics_list_str:
+        ground_truth_atomicity_metric = TraditionalPerturbationLinkage(problem)
+        ground_truth_atomicity_metric.set_solution(solution)
+
+        def ground_truth_atomicity(ps: PS) -> float:
+            return -ground_truth_atomicity_metric.get_atomicity(ps)
+
+        objectives.append(ground_truth_atomicity)
+
+    if "estimated_atomicity" in metrics_list_str:
+        estimated_atomicity_metric = FasterSolutionSpecificMutualInformation()
+        estimated_atomicity_metric.set_pRef(pRef)
+        estimated_atomicity_metric.set_solution(solution)
+
+        def estimated_atomicity(ps: PS) -> float:
+            return -estimated_atomicity_metric.get_atomicity(ps)
+
+        objectives.append(estimated_atomicity)
+
+    fitness_consistency = MannWhitneyU()
+    fitness_consistency.set_pRef(pRef)
+
+    def simplicity(ps: PS) -> float:
+        return -float(np.sum(ps.values == STAR))
+
+    if "simplicity" in metrics_list_str:
+        objectives.append(simplicity)
+
+    if "consistency" in metrics_list_str or "variance" in metrics_list_str:
+        variance_and_consistency_metric = SplitVarianceAndConsistency(pRef)
+
+        def variance(ps: PS) -> float:
+            variance_and_consistency_metric.evaluate(ps)
+            return variance_and_consistency_metric.get_split_variance(ps)
+            # return variance_metric.get_single_score(ps)
+
+        def consistency(ps: PS) -> float:
+            # always needs to be called AFTER variance.
+            return variance_and_consistency_metric.get_consistency(ps)
+
+        if "variance" in metrics_list_str:
+            objectives.append(variance)
+        if "consistency" in metrics_list_str:
+            objectives.append(consistency)
+
+    return objectives
+
 def find_ps_in_solution(to_explain: FullSolution,
                         pRef: PRef,
                         ps_budget: int,
@@ -124,52 +172,14 @@ def find_ps_in_solution(to_explain: FullSolution,
                         reattempts_when_fail: int = 1,
                         unexplained_mask: Optional[np.ndarray] = None,
                         problem: Optional[BenchmarkProblem] = None,
+                        metrics: str = "variance",
                         verbose=True) -> list[PS]:
-    # ground_truth_atomicity_metric = TraditionalPerturbationLinkage(problem)
-    # ground_truth_atomicity_metric.set_solution(to_explain)
-    # estimated_atomicity_metric = FasterSolutionSpecificMutualInformation()
-    # estimated_atomicity_metric.set_pRef(pRef)
-    # estimated_atomicity_metric.set_solution(to_explain)
-    # simplicity_metric = Simplicity()
-    # variance_metric = SplitVariance(pRef)
-    fitness_consistency = MannWhitneyU()
-    fitness_consistency.set_pRef(pRef)
-    # split_variance_linkage = VarianceSplitLinkage()
-    # split_variance_linkage.set_pRef(pRef)
-    # split_variance_linkage.set_solution(to_explain)
 
-    # def perturbation_atomicity(ps: PS) -> float:
-    #     return -ground_truth_atomicity_metric.get_atomicity(ps)
-    #
-    # def statical_atomicity(ps: PS) -> float:
-    #     return -estimated_atomicity_metric.get_atomicity(ps)
-    #
-    # def dependency(ps: PS) -> float:
-    #     return ground_truth_atomicity_metric.get_dependence(ps)
+    objectives = construct_objectives_list(metrics, pRef, to_explain, problem)
 
-    def simplicity(ps: PS) -> float:
-        return -float(np.sum(ps.values == STAR))
-        #return -simplicity_metric.get_single_score(ps)
+    if len(objectives) == 0:
+        raise Exception("Somehow there are no objectives")
 
-
-    metric = SplitVarianceAndConsistency(pRef)
-
-    def variance(ps: PS) -> float:
-        metric.evaluate(ps)
-        return metric.get_split_variance(ps)
-        #return variance_metric.get_single_score(ps)
-
-    def consistency(ps: PS) -> float:
-        # always needs to be called AFTER variance.
-        return metric.get_consistency(ps)
-        #return fitness_consistency.get_single_score(ps)
-
-
-    # def split_variance_atomicity(ps: PS) -> float:
-    #     return split_variance_linkage.get_atomicity(ps)
-
-    # objectives = [simplicity, consistency, atomicity]
-    objectives = [variance, consistency]
 
     # construct the optimisation problem instance
     problem = SimplePSSearchTask(solution_to_explain=to_explain,

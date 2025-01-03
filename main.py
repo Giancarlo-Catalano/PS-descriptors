@@ -10,7 +10,7 @@ from VarianceDecisionTree.compare_prediction_powers import get_problems_with_nam
 
 
 warnings.simplefilter("always", UserWarning)
-warnings.formatwarning = lambda message, category, gilename, lineno, line = None: f"{message}\n"
+warnings.formatwarning = lambda message, category, filename, lineno, line = None: f"{message}\n"
 
 def gather_data_compare_own():
 
@@ -23,20 +23,24 @@ def gather_data_compare_own():
     tree_dicts.extend([{"kind": "ps",
                         "ps_budget": ps_budget,
                         "ps_population": 100,
-                        "depths": depths}
-                       for ps_budget in [10, 50, 100]])
+                        "depths": depths,
+                        "avoid_ancestors": avoid_ancestors,
+                        "metrics": metrics}
+                       for ps_budget in [1000]
+                      for metrics in ["variance", "variance estimated_atomicity"]
+                      for avoid_ancestors in [False, True]])
 
     mode = "server"
     repeats = 10
 
-    debug = False
+    debug = True
     print_progress = True
     if debug:
         print("NOTE: using debug mode")
         # problems = dict(list(problems.items())[:1])
         pRef_methods = ["GA"]
         # sample_size = 100
-        tree_dicts = tree_dicts[:1]
+        # tree_dicts = tree_dicts[:1]
 
     def make_file_with_json_contents(json_dict):
         json_file_name = os.path.join(destination_folder, "output_" + utils.get_formatted_timestamp() + ".json")

@@ -32,12 +32,17 @@ class PSDecisionTree(AbstractDecisionTreeRegressor):
 
     repr_ps: Callable
 
+    avoid_ancestors: bool
+    metrics_to_use: str
+
     def __init__(self,
                  maximum_depth: int,
                  ps_budget: int,
                  ps_search_population_size: int,
                  problem: BenchmarkProblem,
+                 metrics_to_use: str,
                  ancestor_splits: Optional[list[PS]] = None,
+                 avoid_ancestors: bool = False
                  ):
         self.ps_budget = ps_budget
         self.ps_search_population_size = ps_search_population_size
@@ -51,6 +56,9 @@ class PSDecisionTree(AbstractDecisionTreeRegressor):
 
         self.own_variance = None
         self.own_average = None
+
+        self.avoid_ancestors = avoid_ancestors
+        self.metrics_to_use = metrics_to_use
         super().__init__(maximum_depth)
 
 
@@ -81,8 +89,9 @@ class PSDecisionTree(AbstractDecisionTreeRegressor):
                                   to_explain=best_solution,
                                   unexplained_mask=unexplained_vars,
                                   proportion_unexplained_that_needs_used=0,
-                                  proportion_used_that_should_be_unexplained=0,
+                                  proportion_used_that_should_be_unexplained=0.5 if self.avoid_ancestors else 0,
                                   problem = self.optimisation_problem,
+                                  metrics = self.metrics_to_use,
                                   verbose=False)
 
         self.split_ps = pss[0]
@@ -92,13 +101,15 @@ class PSDecisionTree(AbstractDecisionTreeRegressor):
                                               ps_budget=self.ps_budget,
                                               ps_search_population_size=self.ps_search_population_size,
                                               ancestor_splits=self.ancestor_splits + [self.split_ps],
-                                              problem = self.optimisation_problem)
+                                              problem = self.optimisation_problem,
+                                              metrics_to_use=self.metrics_to_use)
 
         self.unmatching_branch = PSDecisionTree(maximum_depth=self.maximum_depth - 1,
                                                 ps_budget=self.ps_budget,
                                                 ps_search_population_size=self.ps_search_population_size,
                                                 ancestor_splits=self.ancestor_splits,
-                                                problem = self.optimisation_problem)
+                                                problem = self.optimisation_problem,
+                                                metrics_to_use=self.metrics_to_use)
 
         # sue me
         self.matching_branch.train_from_pRef(match_pRef)

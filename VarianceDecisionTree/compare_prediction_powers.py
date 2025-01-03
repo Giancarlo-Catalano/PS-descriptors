@@ -2,6 +2,7 @@ import itertools
 import json
 import os
 import random
+import warnings
 from typing import Iterable
 
 import utils
@@ -77,6 +78,8 @@ def get_trees_from_dict(tree_dict: dict,
         tree = PSDecisionTree(max_depth,
                               ps_budget=tree_dict["ps_budget"],
                               ps_search_population_size=tree_dict["ps_population"],
+                              avoid_ancestors=tree_dict["avoid_ancestors"],
+                              metrics_to_use=tree_dict["metrics"],
                               problem=problem)
         tree.train_from_pRef(train_pRef)
         views = [PSDecisionTreeRestrictedDepth(tree, depth) for depth in depths]
@@ -102,19 +105,22 @@ def get_datapoint_for_tree(tree: AbstractDecisionTreeRegressor, test_pRef):
                   "depth": tree.depth,
                   "ps_budget": tree.original_dt.ps_budget,
                   "ps_population": tree.original_dt.ps_search_population_size,
-                  "results": error_metrics}
+                  "avoid_ancestors": tree.original_dt.avoid_ancestors,
+                  "metrics": tree.original_dt.metrics_to_use}
         if tree.depth == tree.original_dt.maximum_depth:
             output["order_tree"] = tree.get_orders()
-        return output
+
     elif isinstance(tree, NaiveRegressorWrapper):
-        return {"kind": "naive",
-                "depth": tree.maximum_depth,
-                "results": error_metrics}
+        output = {"kind": "naive",
+                "depth": tree.maximum_depth}
     else:  # isinstance(tree, IAIDecisionTree): # we can't call the class directly because that would require for the IAI libraries to be imported even when we're using the Condor cluserte
-        return {"kind": "iai",
+        output = {"kind": "iai",
                 "depth": tree.maximum_depth,
-                "cp": tree.prescription_factor,
-                "results": error_metrics}
+                "cp": tree.prescription_factor}
+
+    output["results"] = error_metrics
+    warnings.warn(json.dumps(output))
+    return output
 
 
 def get_datapoint_for_instance(problem_name: str,
@@ -135,7 +141,6 @@ def get_datapoint_for_instance(problem_name: str,
         trees = [tree
                  for tree_dict in tree_settings_list
                  for tree in get_trees_from_dict(tree_dict, train_pRef, problem)]
-        # print(f"{problem_name = }, {pRef_method = }")
 
         return {"problem_name": problem_name,
                 "sample_size": sample_size,
