@@ -3,10 +3,14 @@ import json
 import os
 import random
 import sys
+import warnings
 
 import utils
 from VarianceDecisionTree.compare_prediction_powers import get_problems_with_names, get_datapoint_for_instance
 
+
+warnings.simplefilter("always", UserWarning)
+warnings.formatwarning = lambda message, category, gilename, lineno, line = None: f"{message}\n"
 
 def gather_data_compare_own():
 
@@ -20,17 +24,17 @@ def gather_data_compare_own():
                         "ps_budget": ps_budget,
                         "ps_population": 100,
                         "depths": depths}
-                       for ps_budget in [100]])
+                       for ps_budget in [10, 50, 100]])
 
     mode = "server"
     repeats = 10
 
-    debug = True
+    debug = False
     print_progress = True
     if debug:
         print("NOTE: using debug mode")
         # problems = dict(list(problems.items())[:1])
-        pRef_methods = ["Tabu"]
+        pRef_methods = ["GA"]
         # sample_size = 100
         tree_dicts = tree_dicts[:1]
 
@@ -52,7 +56,7 @@ def gather_data_compare_own():
         for problem_name, problem in problems.items():
             for pRef_method in pRef_methods:
                 if print_progress:
-                    print(f"{problem_name = }, {pRef_method = }")
+                    warnings.warn(f"{problem_name = }, {pRef_method = }")
                 datapoint = get_datapoint_for_instance(problem_name=problem_name,
                                                        problem=problem,
                                                        tree_settings_list=tree_dicts,

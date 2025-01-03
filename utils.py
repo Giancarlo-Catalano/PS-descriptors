@@ -7,7 +7,7 @@ import time
 import traceback
 import warnings
 from collections import defaultdict
-from contextlib import ContextDecorator
+from contextlib import ContextDecorator, contextmanager
 from typing import Iterable, Any, Callable, Optional
 
 import numpy as np
@@ -598,4 +598,3 @@ def get_resources_directory():
 
     # construct the location of a resource
     return os.path.join(script_folder, "resources")
-
