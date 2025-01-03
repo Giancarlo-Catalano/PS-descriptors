@@ -4,8 +4,7 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="a05e8814-504e-4333-8593-ec6366f9f3e6" name="Changes" comment="The metrics for the search are now parametrised.">
-      <change beforePath="$PROJECT_DIR$/VarianceDecisionTree/compare_prediction_powers.py" beforeDir="false" afterPath="$PROJECT_DIR$/VarianceDecisionTree/compare_prediction_powers.py" afterDir="false" />
+    <list default="true" id="a05e8814-504e-4333-8593-ec6366f9f3e6" name="Changes" comment="Order of operations was changed slightly (train a tree, get output, next)">
       <change beforePath="$PROJECT_DIR$/main.py" beforeDir="false" afterPath="$PROJECT_DIR$/main.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -351,15 +350,7 @@
       <workItem from="1734785503008" duration="6924000" />
       <workItem from="1735040034906" duration="3441000" />
       <workItem from="1735043529174" duration="19693000" />
-      <workItem from="1735555415695" duration="43051000" />
-    </task>
-    <task id="LOCAL-00072" summary="Added a little additional call to generate an example problem which I can use to explain the  problem">
-      <option name="closed" value="true" />
-      <created>1730993204498</created>
-      <option name="number" value="00072" />
-      <option name="presentableId" value="LOCAL-00072" />
-      <option name="project" value="LOCAL" />
-      <updated>1730993204498</updated>
+      <workItem from="1735555415695" duration="43882000" />
     </task>
     <task id="LOCAL-00073" summary="Rota numbers are also scrambled, but I'm not sure if they are being displayed correctly...">
       <option name="closed" value="true" />
@@ -745,7 +736,15 @@
       <option name="project" value="LOCAL" />
       <updated>1735918624301</updated>
     </task>
-    <option name="localTasksCounter" value="121" />
+    <task id="LOCAL-00121" summary="Order of operations was changed slightly (train a tree, get output, next)">
+      <option name="closed" value="true" />
+      <created>1735919235502</created>
+      <option name="number" value="00121" />
+      <option name="presentableId" value="LOCAL-00121" />
+      <option name="project" value="LOCAL" />
+      <updated>1735919235502</updated>
+    </task>
+    <option name="localTasksCounter" value="122" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -775,7 +774,6 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="Made a proper data gathering function." />
     <MESSAGE value="removed unused functions in compare_prediction_powers.py" />
     <MESSAGE value="Which trees are tested is now controlled by some dictionaries" />
     <MESSAGE value="results now also include the orders of the split pss." />
@@ -800,7 +798,8 @@
     <MESSAGE value="Made tabu search more efficient." />
     <MESSAGE value="Added the ability to print how much progress is being made on the run, by printing on the err stream." />
     <MESSAGE value="The metrics for the search are now parametrised." />
-    <option name="LAST_COMMIT_MESSAGE" value="The metrics for the search are now parametrised." />
+    <MESSAGE value="Order of operations was changed slightly (train a tree, get output, next)" />
+    <option name="LAST_COMMIT_MESSAGE" value="Order of operations was changed slightly (train a tree, get output, next)" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
@@ -975,7 +974,7 @@
     <SUITE FILE_PATH="coverage/PS_descriptors_LCS$EfficientBTProblem.coverage" NAME="EfficientBTProblem Coverage Results" MODIFIED="1730888916093" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/BenchmarkProblems/EfficientBTProblem" />
     <SUITE FILE_PATH="coverage/PS_descriptors_LCS$SignificantlyHighAverage.coverage" NAME="SignificantlyHighAverage Coverage Results" MODIFIED="1733921961378" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Core/PSMetric/FitnessQuality" />
     <SUITE FILE_PATH="coverage/PS_descriptors$SimplePSSearchTask.coverage" NAME="SimplePSSearchTask Coverage Results" MODIFIED="1735911947478" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/VarianceDecisionTree" />
-    <SUITE FILE_PATH="coverage/PS_descriptors$main.coverage" NAME="main Coverage Results" MODIFIED="1735918885282" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="" />
+    <SUITE FILE_PATH="coverage/PS_descriptors$main.coverage" NAME="main Coverage Results" MODIFIED="1735919512590" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="" />
     <SUITE FILE_PATH="coverage/PS_descriptors_LCS$DiffExplanation.coverage" NAME="DiffExplanation Coverage Results" MODIFIED="1731685086513" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="" />
     <SUITE FILE_PATH="coverage/PS_descriptors$TabuSearch.coverage" NAME="TabuSearch Coverage Results" MODIFIED="1735908503677" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/FSStochasticSearch" />
     <SUITE FILE_PATH="coverage/PS_descriptors_LCS$show_off_problems.coverage" NAME="show_off_problems Coverage Results" MODIFIED="1732641094708" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="" />

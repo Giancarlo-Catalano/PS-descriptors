@@ -15,10 +15,10 @@ warnings.formatwarning = lambda message, category, filename, lineno, line = None
 def gather_data_compare_own():
 
     problems = get_problems_with_names()
-    pRef_methods = ["uniform", "GA", "SA", "Tabu"]
+    pRef_methods = ["uniform", "GA"] #, "SA", "Tabu"]
     sample_size = 10000
 
-    depths = [2, 3, 4, 5]
+    depths = [2, 3, 4, 5, 6]
     tree_dicts = []
     tree_dicts.extend([{"kind": "ps",
                         "ps_budget": ps_budget,
@@ -26,14 +26,14 @@ def gather_data_compare_own():
                         "depths": depths,
                         "avoid_ancestors": avoid_ancestors,
                         "metrics": metrics}
-                       for ps_budget in [1000]
-                      for metrics in ["variance", "variance estimated_atomicity", "variance consistency", "variance consistency estimated_atomicity", "variance simplicity", "variance simplicity estimated_atomicity"]
+                       for ps_budget in [5000]
+                      for metrics in ["variance", "variance estimated_atomicity"]
                       for avoid_ancestors in [False]])
 
     mode = "server"
     repeats = 10
 
-    debug = True
+    debug = False
     print_progress = True
     if debug:
         print("NOTE: using debug mode")
