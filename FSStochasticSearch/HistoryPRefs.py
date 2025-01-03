@@ -5,6 +5,7 @@ from Core.PRef import PRef
 from FSStochasticSearch.GA import GA
 from FSStochasticSearch.Operators import SinglePointFSMutation, TwoPointFSCrossover, TournamentSelection
 from FSStochasticSearch.SA import SA
+from FSStochasticSearch.TabuSearch import TabuSearch
 
 
 def uniformly_random_distribution_pRef(benchmark_problem: BenchmarkProblem,
@@ -54,6 +55,22 @@ def pRef_from_SA(benchmark_problem: BenchmarkProblem,
     # df = benchmark_problem.details_of_solution(best_solution.full_solution)   # Experimental
     return PRef.from_evaluated_full_solutions(solutions, benchmark_problem.search_space)
 
+def pRef_from_tabu_search(benchmark_problem: BenchmarkProblem,
+                          sample_size: int,
+                          max_trace: int) -> PRef:
+    algorithm = TabuSearch(fitness_function=benchmark_problem.fitness_function,
+                           mutation_operator=SinglePointFSMutation(benchmark_problem.search_space))
+
+    solutions: list[EvaluatedFS] = []
+
+    while len(solutions) < sample_size:
+        solutions.extend(algorithm.get_one_with_attempts(max_trace=max_trace))
+
+    solutions = solutions[:sample_size]
+
+    return PRef.from_evaluated_full_solutions(solutions, benchmark_problem.search_space)
+
+
 
 
 def pRef_from_GA_best(benchmark_problem: BenchmarkProblem,
@@ -90,3 +107,4 @@ def pRef_from_SA_best(benchmark_problem: BenchmarkProblem,
 
     solutions = [algorithm.get_one() for _ in range(sample_size)]
     return PRef.from_evaluated_full_solutions(solutions, benchmark_problem.search_space)
+

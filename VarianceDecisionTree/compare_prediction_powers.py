@@ -1,6 +1,7 @@
 import itertools
 import json
 import os
+import random
 from typing import Iterable
 
 import utils
@@ -14,7 +15,7 @@ from VarianceDecisionTree.AbstractDecisionTreeRegressor import AbstractDecisionT
 
 import platform
 
-if platform.system() in {"DarwinNOT", "Windows"}: # I KNOW THAT THIS IS DODGY, BUT THE LIBRARY WON'T WORK ON CONDOR
+if platform.system() in {"DarwinNOT", "Windows"}:  # I KNOW THAT THIS IS DODGY, BUT THE LIBRARY WON'T WORK ON CONDOR
     from VarianceDecisionTree.IAIDecisionTree import IAIDecisionTree
 
 from VarianceDecisionTree.PSDecisionTree import PSDecisionTree, PSDecisionTreeRestrictedDepth
@@ -66,7 +67,8 @@ def get_error_datapoint(problem_name: str,
 
 
 def get_trees_from_dict(tree_dict: dict,
-                        train_pRef: PRef) -> list[AbstractDecisionTreeRegressor]:
+                        train_pRef: PRef,
+                        problem: BenchmarkProblem) -> list[AbstractDecisionTreeRegressor]:
     kind = tree_dict["kind"]
     depths = tree_dict["depths"]
 
@@ -74,7 +76,8 @@ def get_trees_from_dict(tree_dict: dict,
         max_depth = max(depths)
         tree = PSDecisionTree(max_depth,
                               ps_budget=tree_dict["ps_budget"],
-                              ps_search_population_size=tree_dict["ps_population"])
+                              ps_search_population_size=tree_dict["ps_population"],
+                              problem=problem)
         tree.train_from_pRef(train_pRef)
         views = [PSDecisionTreeRestrictedDepth(tree, depth) for depth in depths]
         return views
@@ -119,9 +122,11 @@ def get_datapoint_for_instance(problem_name: str,
                                tree_settings_list: list[dict],
                                sample_size: int,
                                pRef_method: str,
+                               seed: int,
                                crash_on_error: bool = False,
                                ) -> dict:
     def generate_datapoint():
+        random.seed(seed)
         pRef = PRefManager.generate_pRef(problem, sample_size, pRef_method)
         pRef = PRef.unique(pRef)
 
@@ -129,7 +134,7 @@ def get_datapoint_for_instance(problem_name: str,
 
         trees = [tree
                  for tree_dict in tree_settings_list
-                 for tree in get_trees_from_dict(tree_dict, train_pRef)]
+                 for tree in get_trees_from_dict(tree_dict, train_pRef, problem)]
         # print(f"{problem_name = }, {pRef_method = }")
 
         return {"problem_name": problem_name,

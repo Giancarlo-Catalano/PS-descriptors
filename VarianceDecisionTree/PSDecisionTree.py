@@ -3,6 +3,7 @@ from typing import Optional, Any, Callable
 import numpy as np
 
 import utils
+from BenchmarkProblems.BenchmarkProblem import BenchmarkProblem
 from Core.FullSolution import FullSolution
 from Core.PRef import PRef
 from Core.PS import PS, contains
@@ -26,6 +27,8 @@ class PSDecisionTree(AbstractDecisionTreeRegressor):
 
     ancestor_splits: list[PS]
 
+    optimisation_problem: BenchmarkProblem
+
 
     repr_ps: Callable
 
@@ -33,12 +36,16 @@ class PSDecisionTree(AbstractDecisionTreeRegressor):
                  maximum_depth: int,
                  ps_budget: int,
                  ps_search_population_size: int,
-                 ancestor_splits: Optional[list[PS]] = None):
+                 problem: BenchmarkProblem,
+                 ancestor_splits: Optional[list[PS]] = None,
+                 ):
         self.ps_budget = ps_budget
         self.ps_search_population_size = ps_search_population_size
         self.split_ps = None
         self.unmatching_branch = None
         self.matching_branch = None
+
+        self.optimisation_problem = problem
 
         self.ancestor_splits = [] if ancestor_splits is None else ancestor_splits
 
@@ -75,6 +82,7 @@ class PSDecisionTree(AbstractDecisionTreeRegressor):
                                   unexplained_mask=unexplained_vars,
                                   proportion_unexplained_that_needs_used=0,
                                   proportion_used_that_should_be_unexplained=0,
+                                  problem = self.optimisation_problem,
                                   verbose=False)
 
         self.split_ps = pss[0]
@@ -83,12 +91,14 @@ class PSDecisionTree(AbstractDecisionTreeRegressor):
         self.matching_branch = PSDecisionTree(maximum_depth=self.maximum_depth - 1,
                                               ps_budget=self.ps_budget,
                                               ps_search_population_size=self.ps_search_population_size,
-                                              ancestor_splits=self.ancestor_splits + [self.split_ps])
+                                              ancestor_splits=self.ancestor_splits + [self.split_ps],
+                                              problem = self.optimisation_problem)
 
         self.unmatching_branch = PSDecisionTree(maximum_depth=self.maximum_depth - 1,
                                                 ps_budget=self.ps_budget,
                                                 ps_search_population_size=self.ps_search_population_size,
-                                                ancestor_splits=self.ancestor_splits)
+                                                ancestor_splits=self.ancestor_splits,
+                                                problem = self.optimisation_problem)
 
         # sue me
         self.matching_branch.train_from_pRef(match_pRef)
@@ -127,7 +137,7 @@ class PSDecisionTree(AbstractDecisionTreeRegressor):
             return dict()
         else:
             return {"own": self.split_ps.fixed_count(),
-                    "maching": self.matching_branch.get_orders(),
+                    "matching": self.matching_branch.get_orders(),
                     "unmatching": self.unmatching_branch.get_orders()}
 
 

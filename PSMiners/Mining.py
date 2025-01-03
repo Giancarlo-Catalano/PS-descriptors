@@ -12,7 +12,7 @@ from Core.PRef import PRef, plot_solutions_in_pRef
 from Core.PS import PS
 from Core.ArchivePSMiner import ArchivePSMiner
 from FSStochasticSearch.HistoryPRefs import uniformly_random_distribution_pRef, pRef_from_GA, pRef_from_SA, \
-    pRef_from_GA_best, pRef_from_SA_best
+    pRef_from_GA_best, pRef_from_SA_best, pRef_from_tabu_search
 from PSMiners.AbstractPSMiner import AbstractPSMiner
 from PSMiners.DEAP.DEAPPSMiner import DEAPPSMiner
 from PSMiners.DEAP.deap_utils import report_in_order_of_last_metric, plot_stats_for_run
@@ -35,6 +35,9 @@ def get_history_pRef(benchmark_problem: BenchmarkProblem,
             case "SA": return pRef_from_SA(benchmark_problem=benchmark_problem,
                                            sample_size=sample_size,
                                            max_trace = sample_size)
+            case "Tabu": return pRef_from_tabu_search(benchmark_problem = benchmark_problem,
+                                                      sample_size = sample_size,
+                                                      max_trace= sample_size)
             case "GA_best": return pRef_from_GA_best(benchmark_problem=benchmark_problem,
                                                      sample_size=sample_size,
                                                      fs_evaluation_budget=sample_size * 100, # TODO decide elsewhere

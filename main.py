@@ -1,6 +1,8 @@
 #!/usr/bin/env python3
 import json
 import os
+import random
+import sys
 
 import utils
 from VarianceDecisionTree.compare_prediction_powers import get_problems_with_names, get_datapoint_for_instance
@@ -9,7 +11,7 @@ from VarianceDecisionTree.compare_prediction_powers import get_problems_with_nam
 def gather_data_compare_own():
 
     problems = get_problems_with_names()
-    pRef_methods = ["uniform", "GA"]
+    pRef_methods = ["uniform", "GA", "SA", "tabu"]
     sample_size = 10000
 
     depths = [2, 3, 4, 5]
@@ -18,18 +20,19 @@ def gather_data_compare_own():
                         "ps_budget": ps_budget,
                         "ps_population": 100,
                         "depths": depths}
-                       for ps_budget in [500, 1000, 2000, 5000]])
+                       for ps_budget in [1000]])
 
     mode = "server"
     repeats = 10
 
-    debug = False
+    debug = True
+    print_progress = True
     if debug:
         print("NOTE: using debug mode")
-        problems = dict(list(problems.items())[:1])
-        pRef_methods = pRef_methods
-        sample_size = 100
-        tree_dicts = tree_dicts[:1]
+        # problems = dict(list(problems.items())[:1])
+        pRef_methods = ["GA"]
+        # sample_size = 100
+        # tree_dicts = tree_dicts[:1]
 
     def make_file_with_json_contents(json_dict):
         json_file_name = os.path.join(destination_folder, "output_" + utils.get_formatted_timestamp() + ".json")
@@ -37,16 +40,23 @@ def gather_data_compare_own():
             json.dump(json_dict, file, indent=4)
 
     def single_run():
+        if len(sys.argv) < 2:
+            seed = random.randrange(1000)
+        else:
+            seed = int(sys.argv[1])
         results = []
 
         for problem_name, problem in problems.items():
             for pRef_method in pRef_methods:
+                if print_progress:
+                    print(f"{problem_name = }, {pRef_method = }")
                 datapoint = get_datapoint_for_instance(problem_name=problem_name,
                                                        problem=problem,
                                                        tree_settings_list=tree_dicts,
                                                        sample_size=sample_size,
                                                        pRef_method=pRef_method,
-                                                       crash_on_error=False)
+                                                       crash_on_error=debug,
+                                                       seed = seed)
                 results.append(datapoint)
 
         if mode == "local":

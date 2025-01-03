@@ -123,22 +123,23 @@ def find_ps_in_solution(to_explain: FullSolution,
                         culling_method=Optional[Literal["biggest", "least_dependent", "overlap"]],
                         reattempts_when_fail: int = 1,
                         unexplained_mask: Optional[np.ndarray] = None,
+                        problem: Optional[BenchmarkProblem] = None,
                         verbose=True) -> list[PS]:
-    #ground_truth_atomicity_metric = TraditionalPerturbationLinkage(problem)
-    #ground_truth_atomicity_metric.set_solution(to_explain)
+    ground_truth_atomicity_metric = TraditionalPerturbationLinkage(problem)
+    ground_truth_atomicity_metric.set_solution(to_explain)
     # estimated_atomicity_metric = FasterSolutionSpecificMutualInformation()
     # estimated_atomicity_metric.set_pRef(pRef)
     # estimated_atomicity_metric.set_solution(to_explain)
     # simplicity_metric = Simplicity()
-    variance_metric = SplitVariance(pRef)
+    # variance_metric = SplitVariance(pRef)
     fitness_consistency = MannWhitneyU()
     fitness_consistency.set_pRef(pRef)
     # split_variance_linkage = VarianceSplitLinkage()
     # split_variance_linkage.set_pRef(pRef)
     # split_variance_linkage.set_solution(to_explain)
 
-    # def perturbation_atomicity(ps: PS) -> float:
-    #     return -ground_truth_atomicity_metric.get_atomicity(ps)
+    def perturbation_atomicity(ps: PS) -> float:
+        return -ground_truth_atomicity_metric.get_atomicity(ps)
     #
     # def statical_atomicity(ps: PS) -> float:
     #     return -estimated_atomicity_metric.get_atomicity(ps)
@@ -146,9 +147,9 @@ def find_ps_in_solution(to_explain: FullSolution,
     # def dependency(ps: PS) -> float:
     #     return ground_truth_atomicity_metric.get_dependence(ps)
 
-    # def simplicity(ps: PS) -> float:
-    #     return -float(np.sum(ps.values == STAR))
-    #     #return -simplicity_metric.get_single_score(ps)
+    def simplicity(ps: PS) -> float:
+        return -float(np.sum(ps.values == STAR))
+        #return -simplicity_metric.get_single_score(ps)
 
 
     metric = SplitVarianceAndConsistency(pRef)
@@ -167,7 +168,7 @@ def find_ps_in_solution(to_explain: FullSolution,
     #     return split_variance_linkage.get_atomicity(ps)
 
     # objectives = [simplicity, consistency, atomicity]
-    objectives = [variance, consistency]
+    objectives = [variance, consistency] #, perturbation_atomicity]
 
     # construct the optimisation problem instance
     problem = SimplePSSearchTask(solution_to_explain=to_explain,
