@@ -94,7 +94,6 @@ def get_trees_from_dict(tree_dict: dict,
         else:
             raise NotImplemented
         for tree in trees:
-            print(f"Training a tree {tree}")
             tree.train_from_pRef(train_pRef)
         return trees
 

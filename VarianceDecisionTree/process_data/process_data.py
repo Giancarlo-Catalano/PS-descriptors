@@ -36,8 +36,9 @@ def json_to_entries(data: dict):
     return [entry for item in data for entry in item_to_list_of_entries(item)]
 
 def convert_accuracy_data_to_df():
-    input_directory = r"/Users/gian/Desktop/CondorResults/VDT/compareown/run2/"
-    output_filename = r"/Users/gian/Desktop/CondorResults/VDT/compareown/run2/results.csv"
+    main_folder = r"/Users/gian/Desktop/CondorResults/VDT/compareown/run3/"
+    input_directory = os.path.join(main_folder, "data")
+    output_filename = os.path.join(main_folder, "results.csv")
 
     all_dicts = []
     # Iterate through all files in the input directory
@@ -69,6 +70,8 @@ def json_to_tree_data(data: dict):
     def item_to_list_of_entries(item) -> list[dict]:
         surrounding_information = {prop: item[prop]
                                    for prop in ["problem_name", "pRef_method"]}
+        surrounding_information = {"problem": item["problem_name"],
+                                   "pRef_method": item["pRef_method"]}
 
         entries = item["results_by_tree"]
         entries = [thing for thing in entries if "order_tree" in thing]
@@ -77,8 +80,8 @@ def json_to_tree_data(data: dict):
             if accumulator is None:
                 accumulator = defaultdict(list)
             accumulator[current_depth].append(order_tree["own"])
-            if len(order_tree["maching"]) > 0:
-                convert_order_tree(order_tree["maching"], accumulator, current_depth+1)
+            if len(order_tree["matching"]) > 0:
+                convert_order_tree(order_tree["matching"], accumulator, current_depth+1)
 
             if len(order_tree["unmatching"]) > 0:
                 convert_order_tree(order_tree["unmatching"], accumulator, current_depth+1)
@@ -86,14 +89,15 @@ def json_to_tree_data(data: dict):
             return accumulator
         def convert_tree_to_averages_by_level(entry):
             ps_search_info = {prop: entry[prop]
-                                   for prop in ["ps_budget", "ps_population"]}
+                                   for prop in ["ps_budget", "ps_population", "metrics"]}
             tree_structure = entry["order_tree"]
             just_depths = convert_order_tree(tree_structure)
-            average_depths = {f"average_at_{depth}": np.average(orders)
+            average_orders_by_depth = {f"average_at_{depth}": np.average(orders)
                               for depth, orders in just_depths.items()}
             standard_deviations = {f"sd_at_{depth}": np.std(orders)
                               for depth, orders in just_depths.items()}
-            return surrounding_information | ps_search_info | average_depths | standard_deviations
+            overall_average = {"overall_average": np.average(list(itertools.chain(*(just_depths.values()))))}
+            return surrounding_information | ps_search_info | average_orders_by_depth | overall_average | standard_deviations
 
 
         entries = list(map(convert_tree_to_averages_by_level, entries))
@@ -102,8 +106,8 @@ def json_to_tree_data(data: dict):
     return [entry for item in data for entry in item_to_list_of_entries(item)]
 
 def convert_tree_data_to_df():
-    input_directory = r"/Users/gian/Desktop/CondorResults/VDT/compareown/run2/data/"
-    output_filename = r"/Users/gian/Desktop/CondorResults/VDT/compareown/run2/tree_data.csv"
+    input_directory = r"/Users/gian/Desktop/CondorResults/VDT/compareown/run3/data/"
+    output_filename = r"/Users/gian/Desktop/CondorResults/VDT/compareown/run3/tree_data.csv"
 
     all_dicts = []
     # Iterate through all files in the input directory

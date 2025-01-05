@@ -4,13 +4,22 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="a05e8814-504e-4333-8593-ec6366f9f3e6" name="Changes" comment="Order of operations was changed slightly (train a tree, get output, next)">
-      <change beforePath="$PROJECT_DIR$/main.py" beforeDir="false" afterPath="$PROJECT_DIR$/main.py" afterDir="false" />
+    <list default="true" id="a05e8814-504e-4333-8593-ec6366f9f3e6" name="Changes" comment="Ready for condor">
+      <change afterPath="$PROJECT_DIR$/VarianceDecisionTree/process_data/accuracy_by_settings.ipynb" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/VarianceDecisionTree/process_data.py" beforeDir="false" afterPath="$PROJECT_DIR$/VarianceDecisionTree/process_data/process_data.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
     <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="FileTemplateManagerImpl">
+    <option name="RECENT_TEMPLATES">
+      <list>
+        <option value="Jupyter Notebook" />
+      </list>
+    </option>
   </component>
   <component name="Git.Settings">
     <option name="RECENT_BRANCH_BY_REPOSITORY">
@@ -76,13 +85,14 @@
       <recent name="C:\Users\gac8\PycharmProjects\PS-descriptors-LCS\resources\explanations\messing_around" />
     </key>
     <key name="MoveFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$/VarianceDecisionTree/process_data" />
       <recent name="C:\Users\gac8\PycharmProjects\PS-descriptors-LCS\RepresentationBasedSearch\ContinuousVariables" />
       <recent name="C:\Users\gac8\PycharmProjects\PS-descriptors-LCS\ThirdPaper" />
       <recent name="C:\Users\gac8\PycharmProjects\PS-descriptors-LCS\resources\explanations\old_material" />
       <recent name="C:\Users\gac8\PycharmProjects\PS-descriptors-LCS\LCS\DifferenceExplainer" />
     </key>
   </component>
-  <component name="RunManager" selected="Python.main">
+  <component name="RunManager">
     <configuration name="Compare_prediction_powers" type="PythonConfigurationType" factoryName="Python">
       <module name="PS-descriptors-LCS" />
       <option name="ENV_FILES" value="" />
@@ -215,7 +225,7 @@
       <option name="ADD_SOURCE_ROOTS" value="true" />
       <EXTENSION ID="PythonCoverageRunConfigurationExtension" runner="coverage.py" />
       <option name="SCRIPT_NAME" value="main.py" />
-      <option name="PARAMETERS" value="7" />
+      <option name="PARAMETERS" value="" />
       <option name="SHOW_COMMAND_LINE" value="false" />
       <option name="EMULATE_TERMINAL" value="false" />
       <option name="MODULE_MODE" value="false" />
@@ -350,15 +360,7 @@
       <workItem from="1734785503008" duration="6924000" />
       <workItem from="1735040034906" duration="3441000" />
       <workItem from="1735043529174" duration="19693000" />
-      <workItem from="1735555415695" duration="43882000" />
-    </task>
-    <task id="LOCAL-00073" summary="Rota numbers are also scrambled, but I'm not sure if they are being displayed correctly...">
-      <option name="closed" value="true" />
-      <created>1731084038010</created>
-      <option name="number" value="00073" />
-      <option name="presentableId" value="LOCAL-00073" />
-      <option name="project" value="LOCAL" />
-      <updated>1731084038010</updated>
+      <workItem from="1735555415695" duration="53586000" />
     </task>
     <task id="LOCAL-00074" summary="Fixed a quite serious bug, in which the rotas are not deterministic to how the pretty printer is created. Now, the rotas are first sorted by hash (instead of being converted from a set to a list) and then shuffled after setting a seed. The seed is calculated from the worker names.">
       <option name="closed" value="true" />
@@ -744,7 +746,15 @@
       <option name="project" value="LOCAL" />
       <updated>1735919235502</updated>
     </task>
-    <option name="localTasksCounter" value="122" />
+    <task id="LOCAL-00122" summary="Ready for condor">
+      <option name="closed" value="true" />
+      <created>1735919987776</created>
+      <option name="number" value="00122" />
+      <option name="presentableId" value="LOCAL-00122" />
+      <option name="project" value="LOCAL" />
+      <updated>1735919987776</updated>
+    </task>
+    <option name="localTasksCounter" value="123" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -774,7 +784,6 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="removed unused functions in compare_prediction_powers.py" />
     <MESSAGE value="Which trees are tested is now controlled by some dictionaries" />
     <MESSAGE value="results now also include the orders of the split pss." />
     <MESSAGE value="The code now avoids importing the IAI libraries if it's running on Linux (ie the university condor cluster)" />
@@ -799,7 +808,8 @@
     <MESSAGE value="Added the ability to print how much progress is being made on the run, by printing on the err stream." />
     <MESSAGE value="The metrics for the search are now parametrised." />
     <MESSAGE value="Order of operations was changed slightly (train a tree, get output, next)" />
-    <option name="LAST_COMMIT_MESSAGE" value="Order of operations was changed slightly (train a tree, get output, next)" />
+    <MESSAGE value="Ready for condor" />
+    <option name="LAST_COMMIT_MESSAGE" value="Ready for condor" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
@@ -911,8 +921,8 @@
           <option name="timeStamp" value="203" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/VarianceDecisionTree/process_data.py</url>
-          <line>87</line>
+          <url>file://$PROJECT_DIR$/VarianceDecisionTree/process_data/process_data.py</url>
+          <line>88</line>
           <option name="timeStamp" value="212" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
@@ -931,6 +941,16 @@
           <line>135</line>
           <option name="timeStamp" value="222" />
         </line-breakpoint>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/main.py</url>
+          <line>50</line>
+          <option name="timeStamp" value="224" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/VarianceDecisionTree/process_data/process_data.py</url>
+          <line>82</line>
+          <option name="timeStamp" value="225" />
+        </line-breakpoint>
       </breakpoints>
     </breakpoint-manager>
   </component>
@@ -945,7 +965,7 @@
     <SUITE FILE_PATH="coverage/PS_descriptors$BTProblem.coverage" NAME="BTProblem Coverage Results" MODIFIED="1734787454612" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/BenchmarkProblems/BT" />
     <SUITE FILE_PATH="coverage/PS_descriptors_LCS$utils.coverage" NAME="utils Coverage Results" MODIFIED="1730195736328" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
     <SUITE FILE_PATH="coverage/PS_descriptors_LCS$ContinuousVariableRepresentation.coverage" NAME="ContinuousVariableRepresentation Coverage Results" MODIFIED="1734015702902" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/RepresentationBasedSearch" />
-    <SUITE FILE_PATH="coverage/PS_descriptors$process_data.coverage" NAME="process_data Coverage Results" MODIFIED="1735901874946" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/VarianceDecisionTree" />
+    <SUITE FILE_PATH="coverage/PS_descriptors$process_data.coverage" NAME="process_data Coverage Results" MODIFIED="1736115564463" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/VarianceDecisionTree/process_data" />
     <SUITE FILE_PATH="coverage/PS_descriptors_LCS$BTProblemPrettyPrinter.coverage" NAME="BTProblemPrettyPrinter Coverage Results" MODIFIED="1731322336537" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/PairExplanation" />
     <SUITE FILE_PATH="coverage/PS_descriptors_LCS$generate_data_for_problem.coverage" NAME="generate_data_for_problem Coverage Results" MODIFIED="1731685130089" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/resources" />
     <SUITE FILE_PATH="coverage/PS_descriptors_LCS$load_data.coverage" NAME="load_data Coverage Results" MODIFIED="1730206695810" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/PairExplanation" />
@@ -974,7 +994,7 @@
     <SUITE FILE_PATH="coverage/PS_descriptors_LCS$EfficientBTProblem.coverage" NAME="EfficientBTProblem Coverage Results" MODIFIED="1730888916093" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/BenchmarkProblems/EfficientBTProblem" />
     <SUITE FILE_PATH="coverage/PS_descriptors_LCS$SignificantlyHighAverage.coverage" NAME="SignificantlyHighAverage Coverage Results" MODIFIED="1733921961378" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Core/PSMetric/FitnessQuality" />
     <SUITE FILE_PATH="coverage/PS_descriptors$SimplePSSearchTask.coverage" NAME="SimplePSSearchTask Coverage Results" MODIFIED="1735911947478" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/VarianceDecisionTree" />
-    <SUITE FILE_PATH="coverage/PS_descriptors$main.coverage" NAME="main Coverage Results" MODIFIED="1735919512590" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="" />
+    <SUITE FILE_PATH="coverage/PS_descriptors$main.coverage" NAME="main Coverage Results" MODIFIED="1736079891229" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="" />
     <SUITE FILE_PATH="coverage/PS_descriptors_LCS$DiffExplanation.coverage" NAME="DiffExplanation Coverage Results" MODIFIED="1731685086513" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="" />
     <SUITE FILE_PATH="coverage/PS_descriptors$TabuSearch.coverage" NAME="TabuSearch Coverage Results" MODIFIED="1735908503677" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/FSStochasticSearch" />
     <SUITE FILE_PATH="coverage/PS_descriptors_LCS$show_off_problems.coverage" NAME="show_off_problems Coverage Results" MODIFIED="1732641094708" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="" />
