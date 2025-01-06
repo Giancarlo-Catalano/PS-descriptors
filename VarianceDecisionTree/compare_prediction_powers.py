@@ -16,7 +16,7 @@ from VarianceDecisionTree.AbstractDecisionTreeRegressor import AbstractDecisionT
 
 import platform
 
-if platform.system() in {"DarwinNOT", "Windows"}:  # I KNOW THAT THIS IS DODGY, BUT THE LIBRARY WON'T WORK ON CONDOR
+if False and (platform.system() in {"Darwin", "Windows"}):  # I KNOW THAT THIS IS DODGY, BUT THE LIBRARY WON'T WORK ON CONDOR
     from VarianceDecisionTree.IAIDecisionTree import IAIDecisionTree
 
 from VarianceDecisionTree.PSDecisionTree import PSDecisionTree, PSDecisionTreeRestrictedDepth

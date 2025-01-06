@@ -598,3 +598,5 @@ def get_resources_directory():
 
     # construct the location of a resource
     return os.path.join(script_folder, "resources")
+
+
