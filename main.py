@@ -188,7 +188,7 @@ def gather_data_compare_iai():
 
 
     mode = "local"
-    repeats = 5
+    repeats = 1
 
     debug = False
     print_progress = True
@@ -203,6 +203,7 @@ def gather_data_compare_iai():
 
     def make_file_with_json_contents(json_dict, seed):
         json_file_name = os.path.join(destination_folder, f"output_{seed}_" + utils.get_formatted_timestamp() + ".json")
+        print(f"Storing the results at {json_file_name}")
         with open(json_file_name, "w") as file:
             json.dump(json_dict, file, indent=4)
 
@@ -231,14 +232,19 @@ def gather_data_compare_iai():
             print(json.dumps(results, indent=4))
 
     if mode == "local":
+        on_windows = utils.get_os() == "Windows"
 
-
-        destination_folder = r"/Users/gian/Desktop/CondorResults/VDT/compareown/iai_run_1"+utils.get_formatted_timestamp()
+        run_name = "iai_run_W_2"+utils.get_formatted_timestamp()
+        if on_windows:
+            destination_folder = r"C:\Users\gac8\Desktop\CondorResults\VDT\compareown"+"\\"+run_name
+        else:
+            destination_folder = r"/Users/gian/Desktop/CondorResults/VDT/compareown/" + run_name
         utils.make_directory(destination_folder)
         print(f"Storing the results in {destination_folder}")
 
         for iteration in range(repeats):
-            single_run(seed = iteration)
+            actual_seed = 111-iteration if on_windows else iteration
+            single_run(seed = actual_seed)
 
     else:
         # just print out the results to the console at the end

@@ -16,7 +16,7 @@ from VarianceDecisionTree.AbstractDecisionTreeRegressor import AbstractDecisionT
 
 import platform
 
-if (platform.system() in {"Darwin", "Windows"}):  # I KNOW THAT THIS IS DODGY, BUT THE LIBRARY WON'T WORK ON CONDOR
+if (utils.get_os() in {"Darwin", "Windows"}):  # I KNOW THAT THIS IS DODGY, BUT THE LIBRARY WON'T WORK ON CONDOR
     from VarianceDecisionTree.IAIDecisionTree import IAIDecisionTree
 
 from VarianceDecisionTree.PSDecisionTree import PSDecisionTree, PSDecisionTreeRestrictedDepth
@@ -90,7 +90,7 @@ def get_trees_from_dict(tree_dict: dict,
             trees = [NaiveRegressorWrapper(depth) for depth in depths]
         elif kind == "iai":
             cp = tree_dict["cp"]
-            trees = eval("[IAIDecisionTree(depth, cp) for depth in depths]")
+            trees = eval(f"[IAIDecisionTree(depth, {cp}) for depth in depths]")
         else:
             raise NotImplemented
         for tree in trees:

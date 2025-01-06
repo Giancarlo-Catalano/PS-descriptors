@@ -1,6 +1,7 @@
 import errno
 import json
 import os
+import platform
 import re
 import sys
 import time
@@ -598,5 +599,10 @@ def get_resources_directory():
 
     # construct the location of a resource
     return os.path.join(script_folder, "resources")
+
+
+
+def get_os():
+    return platform.system()
 
 
