@@ -177,18 +177,17 @@ def gather_data_compare_iai():
 
     problems = get_problems_with_names()
     pRef_methods = ["uniform", "GA", "SA", "Tabu"]
-    sample_sizes = [10000, 30000]
+    sample_sizes = [10000]
 
     depths = [2, 3, 4, 5, 6]
     tree_dicts = []
     tree_dicts.extend([{"kind": "iai",
                         "cp": cp,
                         "depths": depths}
-                       for cp in [0.25, 0.5, 0.75]])
+                       for cp in [0.25]])
 
 
     mode = "local"
-    repeats = 1
 
     debug = False
     print_progress = True
@@ -242,9 +241,9 @@ def gather_data_compare_iai():
         utils.make_directory(destination_folder)
         print(f"Storing the results in {destination_folder}")
 
-        for iteration in range(repeats):
-            actual_seed = 111-iteration if on_windows else iteration
-            single_run(seed = actual_seed)
+        seeds = list(range(97, -1, -1),)
+        for seed in seeds:
+            single_run(seed)
 
     else:
         # just print out the results to the console at the end
