@@ -258,6 +258,3 @@ def gather_data_compare_iai():
 
 
 gather_data_compare_iai()
-
-
-

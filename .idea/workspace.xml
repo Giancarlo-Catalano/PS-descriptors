@@ -4,9 +4,9 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="a05e8814-504e-4333-8593-ec6366f9f3e6" name="Changes" comment="Processing and displaying the data">
+    <list default="true" id="a05e8814-504e-4333-8593-ec6366f9f3e6" name="Changes" comment="Code to make pretty latex tables was added">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/VarianceDecisionTree/process_data/accuracy_by_settings.ipynb" beforeDir="false" afterPath="$PROJECT_DIR$/VarianceDecisionTree/process_data/accuracy_by_settings.ipynb" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/main.py" beforeDir="false" afterPath="$PROJECT_DIR$/main.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -67,7 +67,7 @@
     "RunOnceActivity.ShowReadmeOnStart": "true",
     "SHARE_PROJECT_CONFIGURATION_FILES": "true",
     "WebServerToolWindowFactoryState": "false",
-    "git-widget-placeholder": "19319a93",
+    "git-widget-placeholder": "18ffb994",
     "ignore.virus.scanning.warn.message": "true",
     "last_opened_file_path": "C:/Users/gac8/PycharmProjects/PS-descriptors-LCS/resources/variance_tree_materials",
     "node.js.detected.package.eslint": "true",
@@ -350,14 +350,6 @@
       <workItem from="1735040034906" duration="3441000" />
       <workItem from="1735043529174" duration="19693000" />
       <workItem from="1735555415695" duration="59803000" />
-    </task>
-    <task id="LOCAL-00077" summary="Preparing for fairly big changes, clearing up code that was used for the LCS">
-      <option name="closed" value="true" />
-      <created>1732617790896</created>
-      <option name="number" value="00077" />
-      <option name="presentableId" value="LOCAL-00077" />
-      <option name="project" value="LOCAL" />
-      <updated>1732617790896</updated>
     </task>
     <task id="LOCAL-00078" summary="In a frenzy, I implemented the variance based decision tree">
       <option name="closed" value="true" />
@@ -743,7 +735,15 @@
       <option name="project" value="LOCAL" />
       <updated>1736528354912</updated>
     </task>
-    <option name="localTasksCounter" value="126" />
+    <task id="LOCAL-00126" summary="Code to make pretty latex tables was added">
+      <option name="closed" value="true" />
+      <created>1736777718728</created>
+      <option name="number" value="00126" />
+      <option name="presentableId" value="LOCAL-00126" />
+      <option name="project" value="LOCAL" />
+      <updated>1736777718728</updated>
+    </task>
+    <option name="localTasksCounter" value="127" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -773,7 +773,6 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="moving the main code in main, having some issues.. (incorrect exec code?)" />
     <MESSAGE value="Remove numba import so that it works on the condor cluster" />
     <MESSAGE value="I just want condor to work!!" />
     <MESSAGE value="Removed another numba dependency..." />
@@ -798,7 +797,8 @@
     <MESSAGE value="Last commit from my office for this year?" />
     <MESSAGE value="Made the code work for both windows and mac." />
     <MESSAGE value="Processing and displaying the data" />
-    <option name="LAST_COMMIT_MESSAGE" value="Processing and displaying the data" />
+    <MESSAGE value="Code to make pretty latex tables was added" />
+    <option name="LAST_COMMIT_MESSAGE" value="Code to make pretty latex tables was added" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
