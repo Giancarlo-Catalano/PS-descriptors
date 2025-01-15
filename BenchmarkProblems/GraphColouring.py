@@ -2,6 +2,7 @@ import itertools
 import json
 import os
 import random
+import re
 from typing import TypeAlias, Iterable, Optional
 
 import utils
@@ -139,7 +140,7 @@ class GraphColouring(BenchmarkProblem):
                 "external_edge_count": external_edge_count}
 
     def repr_property_new(self, property_name: str, property_value: float, rank: (float, float), ps: PS):
-        #lower_rank, upper_rank = property_rank_range
+        # lower_rank, upper_rank = property_rank_range
         is_low = rank < 0.5
         rank_str = f"(rank = {int(rank * 100)}%)"  # "~ {int(property_rank_range[1]*100)}%)"
 
@@ -217,7 +218,7 @@ class GraphColouring(BenchmarkProblem):
                     line_contents = line[2:]
                     # the values in the line are 1-indexed
                     a, b = [int(value_str) for value_str in line_contents.split()]
-                    edge_pairs.append((a-1, b-1))
+                    edge_pairs.append((a - 1, b - 1))
 
             return cls(amount_of_nodes=qty_nodes,
                        amount_of_colours=qty_colours,
@@ -231,7 +232,6 @@ class GraphColouring(BenchmarkProblem):
             json.dump(data, file, indent=4)
 
 
-
 def convert_problem_files_from_cnf():
     file_names = ["anna.col", "jean.col"]
     root_directory = r"/Users/gian/PycharmProjects/PS-descriptors/resources/problem_definitions/GC"
@@ -239,7 +239,110 @@ def convert_problem_files_from_cnf():
     for file_name in file_names:
         full_path = os.path.join(root_directory, file_name)
         problem = GraphColouring.load_from_cnf_file(full_path)
-        new_file_name = full_path+".json"
+        new_file_name = full_path + ".json"
         problem.to_json(new_file_name)
 
+
 # convert_problem_files_from_cnf()
+
+
+class GraphColouringPrettifier:
+    abbreviation_list: list[str]
+    abbreviation_dict: dict[str, str]
+    connections_by_chapter: dict[(str, str), str]
+
+    def __init__(self,
+                 abbreviation_list,
+                 abbreviation_dict,
+                 connections_by_chapter):
+        self.abbreviation_list = abbreviation_list
+        self.abbreviation_dict = abbreviation_dict
+        self.connections_by_chapter = connections_by_chapter
+
+    def get_abbreviation_from_node_number(self, node_number: int) -> str:
+        return self.abbreviation_list[node_number]
+
+    def get_name_from_abbreviation(self, abbr: str) -> str:
+        return self.abbreviation_dict[abbr]
+
+    @classmethod
+    def from_json(cls, json_file_name: str):
+        with open(json_file_name, "r") as file:
+            data = json.load(file)
+        return cls(abbreviation_list=data["abbreviation_list"],
+                   abbreviation_dict=data["abbreviation_dict"],
+                   connections_by_chapter=data["connections_by_chapter"])
+
+    def store_as_json(self, json_file_name: str):
+        data = {"abbreviation_list": self.abbreviation_list,
+                "abbreviation_dict": self.abbreviation_dict,
+                "connections_by_chapter": self.connections_by_chapter}
+
+        with utils.open_and_make_directories(json_file_name) as file:
+            json.dump(data, file, indent=4)
+
+    @classmethod
+    def from_dat_file(cls, dat_file_name: str):
+        # comment_line_pattern = re.compile(r"^\*(.*)")
+        name_line_pattern = re.compile(r"^([A-Z]{1,}) (.*)")
+        # chapter_line_pattern = re.compile(r"(\d+\.)+:")
+
+        # comment_lines = []
+        name_list = []
+        name_dict = dict()
+        # chapter_lines = []
+
+        with open(dat_file_name, "r") as file:
+            for line in file:
+                match = name_line_pattern.match(line)
+                if match:
+                    abbr = match.group(1)
+                    full_name = match.group(2)
+                    name_list.append(abbr)
+                    name_dict[abbr] = full_name
+
+        return cls(abbreviation_list=name_list,
+                   abbreviation_dict=name_dict,
+                   connections_by_chapter=None)
+
+    def repr_ps(self, ps: PS) -> str:
+        abbreviations = [self.abbreviation_list[index] for index in ps.get_fixed_variable_positions()]
+        full_names = list(map(self.get_name_from_abbreviation, abbreviations))
+        colours = ["Red", "Green", "Blue", "Yellow"]
+        chosen_colours = [colours[ps.values[index]] for index in ps.get_fixed_variable_positions()]
+        return " + ".join(f"[{colour}]\t{name}" for name, colour in zip(full_names, chosen_colours))
+
+
+def convert_dat_files():
+    gc_folder = r"C:\Users\gac8\PycharmProjects\PS-descriptors-LCS\resources\problem_definitions\GC"
+    file_names = ["anna.dat", "jean.dat"]
+
+    for file_name in file_names:
+        full_path = os.path.join(gc_folder, file_name)
+        gcp = GraphColouringPrettifier.from_dat_file(full_path)
+
+        converted_file_name = full_path + ".json"
+        gcp.store_as_json(converted_file_name)
+
+
+#convert_dat_files()
+
+
+def test_gcp():
+    problem_file_name = r"C:\Users\gac8\PycharmProjects\PS-descriptors-LCS\resources\problem_definitions\GC\jean.json"
+    dat_json_file_name = r"C:\Users\gac8\PycharmProjects\PS-descriptors-LCS\resources\problem_definitions\GC\jean.dat.json"
+    problem = GraphColouring.from_json(problem_file_name)
+    gcp = GraphColouringPrettifier.from_json(dat_json_file_name)
+
+
+    def random_small_ps():
+        result = PS.empty(problem.search_space)
+        for _ in range(random.randrange(3, 7)):
+            result = result.with_fixed_value(random.randrange(problem.amount_of_nodes), random.randrange(3))
+        return result
+
+    pss = [random_small_ps() for _ in range(12)]
+    for ps in pss:
+        print(ps)
+        print(gcp.repr_ps(ps))
+        print("\n\n\n\n")

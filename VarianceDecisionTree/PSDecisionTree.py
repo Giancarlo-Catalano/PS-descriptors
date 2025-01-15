@@ -71,8 +71,11 @@ class PSDecisionTree(AbstractDecisionTreeRegressor):
 
     def set_repr_ps(self, repr_ps):
         self.repr_ps = repr_ps
+        if self.split_ps is not None:
+            self.matching_branch.set_repr_ps(repr_ps)
+            self.unmatching_branch.set_repr_ps(repr_ps)
 
-    def train_from_pRef(self, pRef: PRef, random_state: int = 42) -> None:
+    def train_from_pRef(self, pRef: PRef, random_state: int = 42, verbose = False) -> None:
         # print(f"Making a branch with max depth = {self.maximum_depth}, splitting a pref of size {pRef.sample_size}")
         pRef_variance = float(np.var(pRef.fitness_array))
         self.own_variance = pRef_variance
@@ -82,17 +85,19 @@ class PSDecisionTree(AbstractDecisionTreeRegressor):
 
         best_solution = pRef.get_best_solution()
         unexplained_vars = get_unexplained_parts(best_solution, self.ancestor_splits)
-        pss = find_ps_in_solution(pRef=pRef,
-                                  ps_budget=self.ps_budget,
-                                  culling_method="biggest",
-                                  population_size=self.ps_search_population_size,
-                                  to_explain=best_solution,
-                                  unexplained_mask=unexplained_vars,
-                                  proportion_unexplained_that_needs_used=0,
-                                  proportion_used_that_should_be_unexplained=0.5 if self.avoid_ancestors else 0,
-                                  problem = self.optimisation_problem,
-                                  metrics = self.metrics_to_use,
-                                  verbose=False)
+
+        with utils.announce(f"Searching for a ps in a branch with {pRef.sample_size} datapoints", verbose):
+            pss = find_ps_in_solution(pRef=pRef,
+                                      ps_budget=self.ps_budget,
+                                      culling_method="biggest",
+                                      population_size=self.ps_search_population_size,
+                                      to_explain=best_solution,
+                                      unexplained_mask=unexplained_vars,
+                                      proportion_unexplained_that_needs_used=0,
+                                      proportion_used_that_should_be_unexplained=0.5 if self.avoid_ancestors else 0,
+                                      problem = self.optimisation_problem,
+                                      metrics = self.metrics_to_use,
+                                      verbose=False)
 
         self.split_ps = pss[0]
         match_pRef, unmatch_pRef = split_pRef_using_ps(pRef, self.split_ps)
@@ -112,8 +117,8 @@ class PSDecisionTree(AbstractDecisionTreeRegressor):
                                                 metrics_to_use=self.metrics_to_use)
 
         # sue me
-        self.matching_branch.train_from_pRef(match_pRef)
-        self.unmatching_branch.train_from_pRef(unmatch_pRef)
+        self.matching_branch.train_from_pRef(match_pRef, random_state, verbose)
+        self.unmatching_branch.train_from_pRef(unmatch_pRef, random_state, verbose)
 
     def get_prediction(self, solution: FullSolution) -> float:
         if self.split_ps is None:
@@ -132,13 +137,15 @@ class PSDecisionTree(AbstractDecisionTreeRegressor):
             branch_to_navigate = self.matching_branch if contains(solution, self.split_ps) else self.unmatching_branch
             return branch_to_navigate.get_prediction_with_restricted_depth(solution, allowed_depth-1)
 
+
+
     def repr_long(self):
         if self.split_ps is None:
-            return f"Leaf(Average = {self.own_average}"
+            return f"Leaf(Average = {self.own_average:.2f}, variance = {self.own_variance:.2f})"
         else:
             head_repr = f"Split by {self.repr_ps(self.split_ps)}"
-            matches_repr = "(matches)" + repr(self.matching_branch)
-            unmatches_repr = "(UNmatches)" + repr(self.unmatching_branch)
+            matches_repr = "(matches)" + (self.matching_branch.repr_long())
+            unmatches_repr = "(NOT matches)" + (self.unmatching_branch.repr_long())
             return (f"{head_repr}"
                     f"\n{utils.indent(matches_repr)}"
                     f"\n{utils.indent(unmatches_repr)}")
