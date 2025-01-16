@@ -4,14 +4,8 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="a05e8814-504e-4333-8593-ec6366f9f3e6" name="Changes" comment="Just a safety net submit.">
-      <change afterPath="$PROJECT_DIR$/VarianceDecisionTree/process_data/show_pss.ipynb" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/resources/problem_definitions/GC/anna.dat" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/resources/problem_definitions/GC/jean.dat" afterDir="false" />
+    <list default="true" id="a05e8814-504e-4333-8593-ec6366f9f3e6" name="Changes" comment="Implemented functionality to see what the splits for the les mis problem look like.">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/BenchmarkProblems/GraphColouring.py" beforeDir="false" afterPath="$PROJECT_DIR$/BenchmarkProblems/GraphColouring.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Core/PRef.py" beforeDir="false" afterPath="$PROJECT_DIR$/Core/PRef.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/VarianceDecisionTree/PSDecisionTree.py" beforeDir="false" afterPath="$PROJECT_DIR$/VarianceDecisionTree/PSDecisionTree.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/VarianceDecisionTree/process_data/accuracy_by_settings.ipynb" beforeDir="false" afterPath="$PROJECT_DIR$/VarianceDecisionTree/process_data/accuracy_by_settings.ipynb" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -73,7 +67,7 @@
     &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
     &quot;SHARE_PROJECT_CONFIGURATION_FILES&quot;: &quot;true&quot;,
     &quot;WebServerToolWindowFactoryState&quot;: &quot;false&quot;,
-    &quot;git-widget-placeholder&quot;: &quot;01e29ad8&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;158fba31&quot;,
     &quot;ignore.virus.scanning.warn.message&quot;: &quot;true&quot;,
     &quot;last_opened_file_path&quot;: &quot;C:/Users/gac8/PycharmProjects/PS-descriptors-LCS/resources/variance_tree_materials&quot;,
     &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
@@ -97,7 +91,7 @@
       <recent name="C:\Users\gac8\PycharmProjects\PS-descriptors-LCS\LCS\DifferenceExplainer" />
     </key>
   </component>
-  <component name="RunManager">
+  <component name="RunManager" selected="Python.compare_prediction_powers">
     <configuration name="Compare_prediction_powers" type="PythonConfigurationType" factoryName="Python">
       <module name="PS-descriptors-LCS" />
       <option name="INTERPRETER_OPTIONS" value="" />
@@ -357,15 +351,8 @@
       <workItem from="1735043529174" duration="19693000" />
       <workItem from="1735555415695" duration="59803000" />
       <workItem from="1736852260845" duration="8265000" />
-      <workItem from="1736934604612" duration="11181000" />
-    </task>
-    <task id="LOCAL-00079" summary="Implemented some functionality for representation based search.">
-      <option name="closed" value="true" />
-      <created>1733150884509</created>
-      <option name="number" value="00079" />
-      <option name="presentableId" value="LOCAL-00079" />
-      <option name="project" value="LOCAL" />
-      <updated>1733150884509</updated>
+      <workItem from="1736934604612" duration="11491000" />
+      <workItem from="1737040665577" duration="5895000" />
     </task>
     <task id="LOCAL-00080" summary="Played around with the variance decision tree again, seems to work nicely when paired with the perturbation metric.">
       <option name="closed" value="true" />
@@ -751,7 +738,15 @@
       <option name="project" value="LOCAL" />
       <updated>1736787948370</updated>
     </task>
-    <option name="localTasksCounter" value="128" />
+    <task id="LOCAL-00128" summary="Implemented functionality to see what the splits for the les mis problem look like.">
+      <option name="closed" value="true" />
+      <created>1736958306892</created>
+      <option name="number" value="00128" />
+      <option name="presentableId" value="LOCAL-00128" />
+      <option name="project" value="LOCAL" />
+      <updated>1736958306892</updated>
+    </task>
+    <option name="localTasksCounter" value="129" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -781,7 +776,6 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="I just want condor to work!!" />
     <MESSAGE value="Removed another numba dependency..." />
     <MESSAGE value="Removed pymoo.AGEMOA, which requires numba??" />
     <MESSAGE value="added results to .gitignore once and for all!" />
@@ -806,7 +800,8 @@
     <MESSAGE value="Processing and displaying the data" />
     <MESSAGE value="Code to make pretty latex tables was added" />
     <MESSAGE value="Just a safety net submit." />
-    <option name="LAST_COMMIT_MESSAGE" value="Just a safety net submit." />
+    <MESSAGE value="Implemented functionality to see what the splits for the les mis problem look like." />
+    <option name="LAST_COMMIT_MESSAGE" value="Implemented functionality to see what the splits for the les mis problem look like." />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
@@ -927,6 +922,11 @@
           <url>file://$PROJECT_DIR$/BenchmarkProblems/GraphColouring.py</url>
           <line>321</line>
           <option name="timeStamp" value="226" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" suspend="THREAD" type="jupyter-line">
+          <url>notebook://C:/Users/gac8/PycharmProjects/PS-descriptors-LCS/VarianceDecisionTree/process_data/accuracy_by_settings.ipynb</url>
+          <line>222</line>
+          <option name="timeStamp" value="228" />
         </line-breakpoint>
       </breakpoints>
     </breakpoint-manager>
