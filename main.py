@@ -189,7 +189,7 @@ def gather_data_compare_iai():
 
     mode = "local"
 
-    debug = False
+    debug = True
     print_progress = True
     if debug:
         print("NOTE: using debug mode")
@@ -233,7 +233,7 @@ def gather_data_compare_iai():
     if mode == "local":
         on_windows = utils.get_os() == "Windows"
 
-        run_name = "iai_run_W_2"+utils.get_formatted_timestamp()
+        run_name = "iai_run_3"+utils.get_formatted_timestamp()
         if on_windows:
             destination_folder = r"C:\Users\gac8\Desktop\CondorResults\VDT\compareown"+"\\"+run_name
         else:
