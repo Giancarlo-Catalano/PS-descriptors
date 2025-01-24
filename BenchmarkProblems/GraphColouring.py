@@ -314,7 +314,8 @@ class GraphColouringPrettifier:
 
 
 def convert_dat_files():
-    gc_folder = r"C:\Users\gac8\PycharmProjects\PS-descriptors-LCS\resources\problem_definitions\GC"
+    #gc_folder = r"C:\Users\gac8\PycharmProjects\PS-descriptors-LCS\resources\problem_definitions\GC"
+    gc_folder = r"/Users/gian/PycharmProjects/PS-descriptors/resources/problem_definitions/GC/"
     file_names = ["anna.dat", "jean.dat"]
 
     for file_name in file_names:
@@ -323,9 +324,6 @@ def convert_dat_files():
 
         converted_file_name = full_path + ".json"
         gcp.store_as_json(converted_file_name)
-
-
-#convert_dat_files()
 
 
 def test_gcp():

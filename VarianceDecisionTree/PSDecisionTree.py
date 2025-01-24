@@ -94,7 +94,7 @@ class PSDecisionTree(AbstractDecisionTreeRegressor):
                                       to_explain=best_solution,
                                       unexplained_mask=unexplained_vars,
                                       proportion_unexplained_that_needs_used=0,
-                                      proportion_used_that_should_be_unexplained=0.5 if self.avoid_ancestors else 0,
+                                      proportion_used_that_should_be_unexplained=0.8 if self.avoid_ancestors else 0,
                                       problem = self.optimisation_problem,
                                       metrics = self.metrics_to_use,
                                       verbose=False)

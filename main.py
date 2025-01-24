@@ -96,15 +96,15 @@ def gather_data_compare_with_naive():
     pRef_methods = ["uniform", "GA", "SA", "Tabu"]
     sample_sizes = [10000, 30000]
 
-    depths = [2, 3, 4, 5, 6]
+    depths = [2, 3, 4, 5]
     tree_dicts = []
-    tree_dicts.extend([{"kind": "naive",
-                        "depths": depths}])
+    # tree_dicts.extend([{"kind": "naive",
+    #                     "depths": depths}])
     tree_dicts.extend([{"kind": "ps",
                         "ps_budget": 5000,
                         "ps_population": 100,
                         "depths": depths,
-                        "avoid_ancestors": False,
+                        "avoid_ancestors": True,
                         "metrics": metrics}
                       for metrics in ["variance", "variance estimated_atomicity"]])
 
@@ -257,4 +257,4 @@ def gather_data_compare_iai():
         single_run(seed)
 
 
-gather_data_compare_iai()
+gather_data_compare_with_naive()
