@@ -89,17 +89,18 @@ class PSDecisionTree(AbstractDecisionTreeRegressor):
         with utils.announce(f"Searching for a ps in a branch with {pRef.sample_size} datapoints", verbose):
             pss = find_ps_in_solution(pRef=pRef,
                                       ps_budget=self.ps_budget,
-                                      culling_method="biggest",
+                                      culling_method="elbow",
                                       population_size=self.ps_search_population_size,
                                       to_explain=best_solution,
                                       unexplained_mask=unexplained_vars,
                                       proportion_unexplained_that_needs_used=0,
-                                      proportion_used_that_should_be_unexplained=0.5 if self.avoid_ancestors else 0,
+                                      proportion_used_that_should_be_unexplained=0.9 if self.avoid_ancestors else 0,
                                       problem = self.optimisation_problem,
                                       metrics = self.metrics_to_use,
                                       verbose=False)
 
         self.split_ps = pss[0]
+        print(f"The chosen ps is {self.split_ps}, it has order {self.split_ps.fixed_count()}")
         match_pRef, unmatch_pRef = split_pRef_using_ps(pRef, self.split_ps)
 
         self.matching_branch = PSDecisionTree(maximum_depth=self.maximum_depth - 1,

@@ -92,7 +92,8 @@ class SimplePSSearchTask(Problem):
         satisfies_A = h >= threshold_h_A
         satisfies_B = h >= threshold_h_B
 
-        return np.logical_and(satisfies_A, satisfies_B)
+        #return np.logical_and(satisfies_A, satisfies_B)
+        return np.ones(len(X))
 
     def get_metrics_for_ps(self, ps: PS) -> list[float]:
         return [objective(ps) for objective in self.objectives]
@@ -114,6 +115,12 @@ def construct_objectives_list(metrics_str: str,
                               ):
     metrics_list_str = metrics_str.split()
     objectives = []
+
+    def simplicity(ps: PS) -> float:
+        return -float(np.sum(ps.values == STAR))
+
+    if "simplicity" in metrics_list_str:
+        objectives.append(simplicity)
 
     if "ground_truth_atomicity" in metrics_list_str:
         ground_truth_atomicity_metric = TraditionalPerturbationLinkage(problem)
@@ -137,11 +144,7 @@ def construct_objectives_list(metrics_str: str,
     fitness_consistency = MannWhitneyU()
     fitness_consistency.set_pRef(pRef)
 
-    def simplicity(ps: PS) -> float:
-        return -float(np.sum(ps.values == STAR))
 
-    if "simplicity" in metrics_list_str:
-        objectives.append(simplicity)
 
     if "consistency" in metrics_list_str or "variance" in metrics_list_str:
         variance_and_consistency_metric = SplitVarianceAndConsistency(pRef)

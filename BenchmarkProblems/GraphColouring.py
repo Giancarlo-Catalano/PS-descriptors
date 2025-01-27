@@ -346,3 +346,51 @@ def test_gcp():
         print(ps)
         print(gcp.repr_ps(ps))
         print("\n\n\n\n")
+
+
+def interactive_checker():
+    problem_file_name = r"C:\Users\gac8\PycharmProjects\PS-descriptors-LCS\resources\problem_definitions\GC\jean.json"
+    dat_json_file_name = r"C:\Users\gac8\PycharmProjects\PS-descriptors-LCS\resources\problem_definitions\GC\jean.dat.json"
+    problem = GraphColouring.from_json(problem_file_name)
+    gcp = GraphColouringPrettifier.from_json(dat_json_file_name)
+
+    def get_person() -> int:
+        how = input("How would you like to find the person?")
+        if how == "initials":
+            initials = input("input the initials:")
+            index = gcp.abbreviation_list.index(initials)
+            print(f"The index is {index} for {initials}, the name is {gcp.abbreviation_dict[initials]}")
+        elif how == "name":
+            partial_name = input("input part of the name")
+            winner_abbr = None
+            for abbr, name in gcp.abbreviation_dict.items():
+                if name.find(partial_name) >= 0:
+                    print(f"Found for {name = }, {abbr = }")
+                    if winner_abbr is None:
+                        winner_abbr = abbr
+                    else:
+                        print("That pattern is present in multiple places... please retry")
+                        return get_person()
+            if winner_abbr is None:
+                print("Could not find the pattern, please retry")
+                return get_person()
+
+            index = gcp.abbreviation_list.index(winner_abbr)
+            print(f"The index is {index} for {winner_abbr} = {gcp.abbreviation_dict[winner_abbr]}")
+        else:
+            index = int(input("Insert the number directly "))
+            return index
+
+    while True:
+        print("Getting person a")
+        person_a = get_person()
+        print("Getting person b")
+        person_b = get_person()
+        if ((person_a, person_b) in problem.connections) or ((person_b, person_a) in problem.connections):
+            print("They are connected!")
+        else:
+            print("They are not connected")
+
+
+
+# interactive_checker()

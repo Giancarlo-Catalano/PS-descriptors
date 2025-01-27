@@ -4,11 +4,16 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="a05e8814-504e-4333-8593-ec6366f9f3e6" name="Changes" comment="data for statistical tests added.">
-      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
+    <list default="true" id="a05e8814-504e-4333-8593-ec6366f9f3e6" name="Changes" comment="Data crunching.">
+      <change afterPath="$PROJECT_DIR$/Core/PSMetric/Linkage/LikelyhoodLinkage.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/VarianceDecisionTree/process_data/accuracy_by_settings.ipynb" beforeDir="false" afterPath="$PROJECT_DIR$/VarianceDecisionTree/process_data/accuracy_by_settings.ipynb" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/BenchmarkProblems/GraphColouring.py" beforeDir="false" afterPath="$PROJECT_DIR$/BenchmarkProblems/GraphColouring.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/LCS/PSFilter.py" beforeDir="false" afterPath="$PROJECT_DIR$/LCS/PSFilter.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/VarianceDecisionTree/PSDecisionTree.py" beforeDir="false" afterPath="$PROJECT_DIR$/VarianceDecisionTree/PSDecisionTree.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/VarianceDecisionTree/SimplePSSearchTask.py" beforeDir="false" afterPath="$PROJECT_DIR$/VarianceDecisionTree/SimplePSSearchTask.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/VarianceDecisionTree/compare_prediction_powers.py" beforeDir="false" afterPath="$PROJECT_DIR$/VarianceDecisionTree/compare_prediction_powers.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/VarianceDecisionTree/process_data/tree_data.ipynb" beforeDir="false" afterPath="$PROJECT_DIR$/VarianceDecisionTree/process_data/tree_data.ipynb" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/main.py" beforeDir="false" afterPath="$PROJECT_DIR$/main.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -50,37 +55,37 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent"><![CDATA[{
-  "keyToString": {
-    "Python.BTProblem.executor": "Run",
-    "Python.Compare_prediction_powers.executor": "Run",
-    "Python.GraphColouring.executor": "Run",
-    "Python.IAIDecisionTree.executor": "Run",
-    "Python.QAP.executor": "Run",
-    "Python.SimplePSSearchTask.executor": "Run",
-    "Python.TabuSearch.executor": "Run",
-    "Python.compare_prediction_powers.executor": "Run",
-    "Python.gather_data.executor": "Run",
-    "Python.main.executor": "Run",
-    "Python.process_data.executor": "Run",
-    "Python.testing_IAI.executor": "Run",
-    "Python.utils.executor": "Run",
-    "RunOnceActivity.OpenProjectViewOnStart": "true",
-    "RunOnceActivity.ShowReadmeOnStart": "true",
-    "SHARE_PROJECT_CONFIGURATION_FILES": "true",
-    "WebServerToolWindowFactoryState": "false",
-    "git-widget-placeholder": "LCS",
-    "ignore.virus.scanning.warn.message": "true",
-    "last_opened_file_path": "C:/Users/gac8/PycharmProjects/PS-descriptors-LCS/resources/variance_tree_materials",
-    "node.js.detected.package.eslint": "true",
-    "node.js.detected.package.tslint": "true",
-    "node.js.selected.package.eslint": "(autodetect)",
-    "node.js.selected.package.tslint": "(autodetect)",
-    "nodejs_package_manager_path": "npm",
-    "settings.editor.selected.configurable": "com.jetbrains.python.configuration.PyActiveSdkModuleConfigurable",
-    "vue.rearranger.settings.migration": "true"
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;Python.BTProblem.executor&quot;: &quot;Run&quot;,
+    &quot;Python.Compare_prediction_powers.executor&quot;: &quot;Run&quot;,
+    &quot;Python.GraphColouring.executor&quot;: &quot;Run&quot;,
+    &quot;Python.IAIDecisionTree.executor&quot;: &quot;Run&quot;,
+    &quot;Python.QAP.executor&quot;: &quot;Run&quot;,
+    &quot;Python.SimplePSSearchTask.executor&quot;: &quot;Run&quot;,
+    &quot;Python.TabuSearch.executor&quot;: &quot;Run&quot;,
+    &quot;Python.compare_prediction_powers.executor&quot;: &quot;Run&quot;,
+    &quot;Python.gather_data.executor&quot;: &quot;Run&quot;,
+    &quot;Python.main.executor&quot;: &quot;Run&quot;,
+    &quot;Python.process_data.executor&quot;: &quot;Run&quot;,
+    &quot;Python.testing_IAI.executor&quot;: &quot;Run&quot;,
+    &quot;Python.utils.executor&quot;: &quot;Run&quot;,
+    &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;SHARE_PROJECT_CONFIGURATION_FILES&quot;: &quot;true&quot;,
+    &quot;WebServerToolWindowFactoryState&quot;: &quot;false&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;LCS&quot;,
+    &quot;ignore.virus.scanning.warn.message&quot;: &quot;true&quot;,
+    &quot;last_opened_file_path&quot;: &quot;C:/Users/gac8/PycharmProjects/PS-descriptors-LCS/resources/variance_tree_materials&quot;,
+    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
+    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
+    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
+    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
+    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
+    &quot;settings.editor.selected.configurable&quot;: &quot;com.jetbrains.python.configuration.PyActiveSdkModuleConfigurable&quot;,
+    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
   }
-}]]></component>
+}</component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
       <recent name="C:\Users\gac8\PycharmProjects\PS-descriptors-LCS\resources\explanations\messing_around" />
@@ -93,7 +98,7 @@
       <recent name="C:\Users\gac8\PycharmProjects\PS-descriptors-LCS\LCS\DifferenceExplainer" />
     </key>
   </component>
-  <component name="RunManager" selected="Python.compare_prediction_powers">
+  <component name="RunManager" selected="Python.main">
     <configuration name="Compare_prediction_powers" type="PythonConfigurationType" factoryName="Python">
       <module name="PS-descriptors-LCS" />
       <option name="INTERPRETER_OPTIONS" value="" />
@@ -355,15 +360,10 @@
       <workItem from="1736852260845" duration="8265000" />
       <workItem from="1736934604612" duration="11491000" />
       <workItem from="1737040665577" duration="6540000" />
-      <workItem from="1737367310642" duration="7310000" />
-    </task>
-    <task id="LOCAL-00081" summary="Another manic episode, where i tried to implement many things that did not end up working. I think the safest approach is to have a representation of the solutions and search using variance but not perturbation linkage....">
-      <option name="closed" value="true" />
-      <created>1733245101432</created>
-      <option name="number" value="00081" />
-      <option name="presentableId" value="LOCAL-00081" />
-      <option name="project" value="LOCAL" />
-      <updated>1733245101433</updated>
+      <workItem from="1737367310642" duration="7983000" />
+      <workItem from="1737460145602" duration="2278000" />
+      <workItem from="1737986135671" duration="3168000" />
+      <workItem from="1737994187733" duration="1656000" />
     </task>
     <task id="LOCAL-00082" summary="Fixing some issues in linkage methods, seeing that they are not that good....">
       <option name="closed" value="true" />
@@ -749,7 +749,15 @@
       <option name="project" value="LOCAL" />
       <updated>1737048130797</updated>
     </task>
-    <option name="localTasksCounter" value="130" />
+    <task id="LOCAL-00130" summary="Data crunching.">
+      <option name="closed" value="true" />
+      <created>1737397511864</created>
+      <option name="number" value="00130" />
+      <option name="presentableId" value="LOCAL-00130" />
+      <option name="project" value="LOCAL" />
+      <updated>1737397511864</updated>
+    </task>
+    <option name="localTasksCounter" value="131" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -779,7 +787,6 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="Removed pymoo.AGEMOA, which requires numba??" />
     <MESSAGE value="added results to .gitignore once and for all!" />
     <MESSAGE value="remove include to PermutationMethod from scipy.stats (condor doesn't like it?)" />
     <MESSAGE value="Problem definitions directories are now written in an os independent way (os.path.join everywhere)" />
@@ -804,7 +811,8 @@
     <MESSAGE value="Just a safety net submit." />
     <MESSAGE value="Implemented functionality to see what the splits for the les mis problem look like." />
     <MESSAGE value="data for statistical tests added." />
-    <option name="LAST_COMMIT_MESSAGE" value="data for statistical tests added." />
+    <MESSAGE value="Data crunching." />
+    <option name="LAST_COMMIT_MESSAGE" value="Data crunching." />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
@@ -903,13 +911,8 @@
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <condition expression="metrics_str != &quot;variance&quot;" language="Python" />
           <url>file://$PROJECT_DIR$/VarianceDecisionTree/SimplePSSearchTask.py</url>
-          <line>114</line>
+          <line>115</line>
           <option name="timeStamp" value="221" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/VarianceDecisionTree/compare_prediction_powers.py</url>
-          <line>134</line>
-          <option name="timeStamp" value="222" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/main.py</url>
@@ -926,6 +929,21 @@
           <line>321</line>
           <option name="timeStamp" value="226" />
         </line-breakpoint>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/BenchmarkProblems/GraphColouring.py</url>
+          <line>388</line>
+          <option name="timeStamp" value="230" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/VarianceDecisionTree/SimplePSSearchTask.py</url>
+          <line>134</line>
+          <option name="timeStamp" value="231" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/VarianceDecisionTree/SimplePSSearchTask.py</url>
+          <line>125</line>
+          <option name="timeStamp" value="232" />
+        </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="jupyter-line">
           <url>notebook://C:/Users/gac8/PycharmProjects/PS-descriptors-LCS/VarianceDecisionTree/process_data/accuracy_by_settings.ipynb</url>
           <line>229</line>
@@ -936,7 +954,7 @@
   </component>
   <component name="com.intellij.coverage.CoverageDataManagerImpl">
     <SUITE FILE_PATH="coverage/PS_descriptors_LCS$EfficientBTProblem.coverage" NAME="EfficientBTProblem Coverage Results" MODIFIED="1730888916093" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/BenchmarkProblems/EfficientBTProblem" />
-    <SUITE FILE_PATH="coverage/PS_descriptors_LCS$GraphColouring.coverage" NAME="GraphColouring Coverage Results" MODIFIED="1736941214862" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/BenchmarkProblems" />
+    <SUITE FILE_PATH="coverage/PS_descriptors_LCS$GraphColouring.coverage" NAME="GraphColouring Coverage Results" MODIFIED="1737462116832" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/BenchmarkProblems" />
     <SUITE FILE_PATH="coverage/PS_descriptors_LCS$installing_IAI.coverage" NAME="installing_IAI Coverage Results" MODIFIED="1736160030993" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/MessingAround" />
     <SUITE FILE_PATH="coverage/PS_descriptors_LCS$test_representation_linkage.coverage" NAME="test_representation_linkage Coverage Results" MODIFIED="1733234360534" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/RepresentationBasedSearch" />
     <SUITE FILE_PATH="coverage/PS_descriptors$TabuSearch.coverage" NAME="TabuSearch Coverage Results" MODIFIED="1735908503677" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/FSStochasticSearch" />
@@ -960,8 +978,8 @@
     <SUITE FILE_PATH="coverage/PS_descriptors_LCS$PairExplanationTester.coverage" NAME="PairExplanationTester Coverage Results" MODIFIED="1731598536958" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/PairExplanation" />
     <SUITE FILE_PATH="coverage/PS_descriptors_LCS$ContinuousVariableRepresentation.coverage" NAME="ContinuousVariableRepresentation Coverage Results" MODIFIED="1734015702902" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/RepresentationBasedSearch" />
     <SUITE FILE_PATH="coverage/PS_descriptors$compare_prediction_powers.coverage" NAME="compare_prediction_powers Coverage Results" MODIFIED="1735302342980" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/VarianceDecisionTree" />
-    <SUITE FILE_PATH="coverage/PS_descriptors_LCS$main.coverage" NAME="main Coverage Results" MODIFIED="1736351987722" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="" />
-    <SUITE FILE_PATH="coverage/PS_descriptors_LCS$compare_prediction_powers.coverage" NAME="compare_prediction_powers Coverage Results" MODIFIED="1734109797736" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="" />
+    <SUITE FILE_PATH="coverage/PS_descriptors_LCS$main.coverage" NAME="main Coverage Results" MODIFIED="1737995703443" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="" />
+    <SUITE FILE_PATH="coverage/PS_descriptors_LCS$compare_prediction_powers.coverage" NAME="compare_prediction_powers Coverage Results" MODIFIED="1737986471117" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="" />
     <SUITE FILE_PATH="coverage/PS_descriptors_LCS$show_off_problems.coverage" NAME="show_off_problems Coverage Results" MODIFIED="1732641094708" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="" />
     <SUITE FILE_PATH="coverage/PS_descriptors_LCS$generate_all_data.coverage" NAME="generate_all_data Coverage Results" MODIFIED="1730458114958" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/resources/explanations" />
     <SUITE FILE_PATH="coverage/PS_descriptors_LCS$PSDecisionTree.coverage" NAME="PSDecisionTree Coverage Results" MODIFIED="1733921779017" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/VarianceDecisionTree" />

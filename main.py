@@ -93,20 +93,20 @@ def gather_data_compare_own():
 def gather_data_compare_with_naive():
 
     problems = get_problems_with_names()
-    pRef_methods = ["uniform", "GA", "SA", "Tabu"]
-    sample_sizes = [10000, 30000]
+    pRef_methods = ["GA", "uniform", "GA", "SA", "Tabu"]
+    sample_sizes = [10000] # , 30000]
 
-    depths = [2, 3, 4, 5, 6]
+    depths = [2]
     tree_dicts = []
-    tree_dicts.extend([{"kind": "naive",
-                        "depths": depths}])
+    # tree_dicts.extend([{"kind": "naive",
+    #                     "depths": depths}])
     tree_dicts.extend([{"kind": "ps",
-                        "ps_budget": 5000,
+                        "ps_budget": 2500,
                         "ps_population": 100,
                         "depths": depths,
                         "avoid_ancestors": False,
                         "metrics": metrics}
-                      for metrics in ["variance", "variance estimated_atomicity"]])
+                      for metrics in ["simplicity variance", "simplicity variance estimated_atomicity"]])
 
 
 
@@ -117,8 +117,8 @@ def gather_data_compare_with_naive():
     print_progress = True
     if debug:
         print("NOTE: using debug mode")
-        problems = dict(list(problems.items())[:1])
-        # pRef_methods = ["GA"]
+        #problems = dict(list(problems.items())[2:3])
+        pRef_methods = ["GA"]
         # sample_size = 100
         tree_dicts = tree_dicts[:1]
 
@@ -257,4 +257,4 @@ def gather_data_compare_iai():
         single_run(seed)
 
 
-gather_data_compare_iai()
+gather_data_compare_with_naive()
