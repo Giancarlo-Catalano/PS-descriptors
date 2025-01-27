@@ -101,7 +101,7 @@ def gather_data_compare_with_naive():
     # tree_dicts.extend([{"kind": "naive",
     #                     "depths": depths}])
     tree_dicts.extend([{"kind": "ps",
-                        "ps_budget": 5000,
+                        "ps_budget": 50,
                         "ps_population": 100,
                         "depths": depths,
                         "avoid_ancestors": False,

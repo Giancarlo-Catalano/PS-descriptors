@@ -1,10 +1,13 @@
 import json
+import os
 from typing import TypeAlias
 
 import numpy as np
 
+import utils
 from BenchmarkProblems.BenchmarkProblem import BenchmarkProblem
 from Core.FullSolution import FullSolution
+from Core.PS import PS, STAR
 from Core.SearchSpace import SearchSpace
 
 Clause: TypeAlias = np.ndarray
@@ -35,9 +38,9 @@ class SATProblem(BenchmarkProblem):
     def long_repr(self) -> str:
         def repr_var(var_number):
             if var_number < 0:
-                return f"NOT(var{-var_number})"
+                return f"NOT(var{utils.alphabet[(-var_number) - 1]})"
             else:
-                return f"var{var_number}"
+                return f"var{utils.alphabet[var_number]}"
 
         def repr_clause(clause: Clause):
             numbers = SATProblem.clause_to_numbers(clause)
@@ -47,6 +50,9 @@ class SATProblem(BenchmarkProblem):
         result += "\n".join(repr_clause(clause) for clause in self.clauses)
 
         return result
+
+    def repr_ps(self, ps: PS) -> str:
+        return ", ".join(f"{utils.alphabet[var]}={val}" for var, val in enumerate(ps.values) if val != STAR)
 
     @staticmethod
     def numbers_to_clause(numbers: list[int], amount_of_variables: int) -> Clause:
@@ -97,11 +103,11 @@ class SATProblem(BenchmarkProblem):
 
             for line in file.readlines():
                 if len(line) == 0:
-                    #print("Found an empty line, skipping")
+                    # print("Found an empty line, skipping")
                     continue
 
                 if line[:1] == "c":
-                    #print("Found a comment line, skipping")
+                    # print("Found a comment line, skipping")
                     continue
 
                 if clause_reading_mode:
@@ -117,7 +123,7 @@ class SATProblem(BenchmarkProblem):
                         break
 
                 elif line[:1] == "p":
-                    #print("Found the problem line")
+                    # print("Found the problem line")
                     p_char, problem_kind, var_str, clause_str = line.split()
                     if problem_kind != "cnf":
                         print(f"Error! The problem kind is not cnf, but {problem_kind}! Terminating")
@@ -176,4 +182,28 @@ class SATProblem(BenchmarkProblem):
         else:
             return np.nan
 
+
 # convert_problem_files_from_cnf()
+
+
+class SATExplainer:
+    problem: SATProblem
+
+    univariate_counts: np.ndarray
+    bivariate_counts: np.ndarray
+
+    def __init__(self, problem: SATProblem):
+        self.problem = problem
+        self.univariate_counts = self.get_univariate_counts(problem)
+        self.bivariate_counts = self.get_bivariate_counts(problem)
+
+    @classmethod
+    def get_clause_matrix(cls, problem: SATProblem) -> np.ndarray:
+        return np.abs(np.array([clause for clause in problem.clauses], dtype=int))
+
+    @classmethod
+    def get_univariate_counts(cls, problem: SATProblem) -> np.ndarray:
+        return np.sum(cls.get_clause_matrix(problem), axis=0)
+
+    def get_bivariate_counts(self, problem: SATProblem) -> np.ndarray:
+        return sum([np.outer(clause, clause) for clause in self.get_clause_matrix(problem)])
