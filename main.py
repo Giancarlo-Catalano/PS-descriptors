@@ -93,15 +93,15 @@ def gather_data_compare_own():
 def gather_data_compare_with_naive():
 
     problems = get_problems_with_names()
-    pRef_methods = ["GA", "uniform", "GA", "SA", "Tabu"]
+    pRef_methods = ["GA", "uniform", "SA", "Tabu"]
     sample_sizes = [10000] # , 30000]
 
-    depths = [2]
+    depths = [2, 3, 4, 5]
     tree_dicts = []
     # tree_dicts.extend([{"kind": "naive",
     #                     "depths": depths}])
     tree_dicts.extend([{"kind": "ps",
-                        "ps_budget": 2500,
+                        "ps_budget": 5000,
                         "ps_population": 100,
                         "depths": depths,
                         "avoid_ancestors": False,
