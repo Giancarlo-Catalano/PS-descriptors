@@ -92,8 +92,8 @@ class SimplePSSearchTask(Problem):
         satisfies_A = h >= threshold_h_A
         satisfies_B = h >= threshold_h_B
 
-        #return np.logical_and(satisfies_A, satisfies_B)
-        return np.ones(len(X))
+        return np.logical_and(satisfies_A, satisfies_B)
+        #return np.ones(len(X))
 
     def get_metrics_for_ps(self, ps: PS) -> list[float]:
         return [objective(ps) for objective in self.objectives]

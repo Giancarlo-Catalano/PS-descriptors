@@ -5,13 +5,16 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="a05e8814-504e-4333-8593-ec6366f9f3e6" name="Changes" comment="Small mistake when uncommenting has been fixed.">
-      <change afterPath="$PROJECT_DIR$/VarianceDecisionTree/process_data/show_sat.ipynb" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/BenchmarkProblems/SimplifiedBTProblem/SimplifiedBTProblem.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/VarianceDecisionTree/PSRegressionTree.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/VarianceDecisionTree/process_data/show_simplified_bt.ipynb" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/resources/BT/SimplifiedInstance/problem.json" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/BenchmarkProblems/SATProblem.py" beforeDir="false" afterPath="$PROJECT_DIR$/BenchmarkProblems/SATProblem.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/VarianceDecisionTree/process_data/show_pss.ipynb" beforeDir="false" afterPath="$PROJECT_DIR$/VarianceDecisionTree/process_data/show_pss.ipynb" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/VarianceDecisionTree/PSDecisionTree.py" beforeDir="false" afterPath="$PROJECT_DIR$/VarianceDecisionTree/PSDecisionTree.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/VarianceDecisionTree/SimplePSSearchTask.py" beforeDir="false" afterPath="$PROJECT_DIR$/VarianceDecisionTree/SimplePSSearchTask.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/VarianceDecisionTree/process_data/accuracy_by_settings.ipynb" beforeDir="false" afterPath="$PROJECT_DIR$/VarianceDecisionTree/process_data/accuracy_by_settings.ipynb" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/VarianceDecisionTree/process_data/show_sat.ipynb" beforeDir="false" afterPath="$PROJECT_DIR$/VarianceDecisionTree/process_data/show_sat.ipynb" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/VarianceDecisionTree/process_data/tree_data.ipynb" beforeDir="false" afterPath="$PROJECT_DIR$/VarianceDecisionTree/process_data/tree_data.ipynb" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/main.py" beforeDir="false" afterPath="$PROJECT_DIR$/main.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -53,39 +56,40 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent">{
-  &quot;keyToString&quot;: {
-    &quot;Python.BTProblem.executor&quot;: &quot;Run&quot;,
-    &quot;Python.Compare_prediction_powers.executor&quot;: &quot;Run&quot;,
-    &quot;Python.GraphColouring.executor&quot;: &quot;Run&quot;,
-    &quot;Python.IAIDecisionTree.executor&quot;: &quot;Run&quot;,
-    &quot;Python.QAP.executor&quot;: &quot;Run&quot;,
-    &quot;Python.SimplePSSearchTask.executor&quot;: &quot;Run&quot;,
-    &quot;Python.TabuSearch.executor&quot;: &quot;Run&quot;,
-    &quot;Python.compare_prediction_powers.executor&quot;: &quot;Run&quot;,
-    &quot;Python.gather_data.executor&quot;: &quot;Run&quot;,
-    &quot;Python.main.executor&quot;: &quot;Run&quot;,
-    &quot;Python.process_data.executor&quot;: &quot;Run&quot;,
-    &quot;Python.testing_IAI.executor&quot;: &quot;Run&quot;,
-    &quot;Python.utils.executor&quot;: &quot;Run&quot;,
-    &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
-    &quot;SHARE_PROJECT_CONFIGURATION_FILES&quot;: &quot;true&quot;,
-    &quot;WebServerToolWindowFactoryState&quot;: &quot;false&quot;,
-    &quot;git-widget-placeholder&quot;: &quot;LCS&quot;,
-    &quot;ignore.virus.scanning.warn.message&quot;: &quot;true&quot;,
-    &quot;last_opened_file_path&quot;: &quot;C:/Users/gac8/PycharmProjects/PS-descriptors-LCS/resources/variance_tree_materials&quot;,
-    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
-    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
-    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
-    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
-    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
-    &quot;settings.editor.selected.configurable&quot;: &quot;com.jetbrains.python.configuration.PyActiveSdkModuleConfigurable&quot;,
-    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "Python.BTProblem.executor": "Run",
+    "Python.Compare_prediction_powers.executor": "Run",
+    "Python.GraphColouring.executor": "Run",
+    "Python.IAIDecisionTree.executor": "Run",
+    "Python.QAP.executor": "Run",
+    "Python.SimplePSSearchTask.executor": "Run",
+    "Python.TabuSearch.executor": "Run",
+    "Python.compare_prediction_powers.executor": "Run",
+    "Python.gather_data.executor": "Run",
+    "Python.main.executor": "Run",
+    "Python.process_data.executor": "Run",
+    "Python.testing_IAI.executor": "Run",
+    "Python.utils.executor": "Run",
+    "RunOnceActivity.OpenProjectViewOnStart": "true",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "SHARE_PROJECT_CONFIGURATION_FILES": "true",
+    "WebServerToolWindowFactoryState": "false",
+    "git-widget-placeholder": "LCS",
+    "ignore.virus.scanning.warn.message": "true",
+    "last_opened_file_path": "C:/Users/gac8/PycharmProjects/PS-descriptors-LCS/VarianceDecisionTree/process_data",
+    "node.js.detected.package.eslint": "true",
+    "node.js.detected.package.tslint": "true",
+    "node.js.selected.package.eslint": "(autodetect)",
+    "node.js.selected.package.tslint": "(autodetect)",
+    "nodejs_package_manager_path": "npm",
+    "settings.editor.selected.configurable": "com.jetbrains.python.configuration.PyActiveSdkModuleConfigurable",
+    "vue.rearranger.settings.migration": "true"
   }
-}</component>
+}]]></component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
+      <recent name="C:\Users\gac8\PycharmProjects\PS-descriptors-LCS\VarianceDecisionTree\process_data" />
       <recent name="C:\Users\gac8\PycharmProjects\PS-descriptors-LCS\resources\explanations\messing_around" />
     </key>
     <key name="MoveFile.RECENT_KEYS">
@@ -362,6 +366,8 @@
       <workItem from="1737460145602" duration="2278000" />
       <workItem from="1737986135671" duration="3168000" />
       <workItem from="1737994187733" duration="6856000" />
+      <workItem from="1738058780620" duration="8141000" />
+      <workItem from="1738231932542" duration="25090000" />
     </task>
     <task id="LOCAL-00084" summary="Implemented the variance split linkage, and while it does kinda work, it's also not that good.">
       <option name="closed" value="true" />
@@ -942,29 +948,27 @@
           <line>125</line>
           <option name="timeStamp" value="232" />
         </line-breakpoint>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/BenchmarkProblems/SimplifiedBTProblem/SimplifiedBTProblem.py</url>
+          <line>147</line>
+          <option name="timeStamp" value="233" />
+        </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="jupyter-line">
           <url>notebook://C:/Users/gac8/PycharmProjects/PS-descriptors-LCS/VarianceDecisionTree/process_data/accuracy_by_settings.ipynb</url>
-          <line>229</line>
+          <line>234</line>
           <option name="timeStamp" value="228" />
         </line-breakpoint>
       </breakpoints>
     </breakpoint-manager>
   </component>
   <component name="com.intellij.coverage.CoverageDataManagerImpl">
-    <SUITE FILE_PATH="coverage/PS_descriptors_LCS$EfficientBTProblem.coverage" NAME="EfficientBTProblem Coverage Results" MODIFIED="1730888916093" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/BenchmarkProblems/EfficientBTProblem" />
+    <SUITE FILE_PATH="coverage/PS_descriptors_LCS$PSRegressionTree.coverage" NAME="PSRegressionTree Coverage Results" MODIFIED="1738334699818" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/VarianceDecisionTree" />
     <SUITE FILE_PATH="coverage/PS_descriptors_LCS$GraphColouring.coverage" NAME="GraphColouring Coverage Results" MODIFIED="1737462116832" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/BenchmarkProblems" />
-    <SUITE FILE_PATH="coverage/PS_descriptors_LCS$installing_IAI.coverage" NAME="installing_IAI Coverage Results" MODIFIED="1736160030993" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/MessingAround" />
-    <SUITE FILE_PATH="coverage/PS_descriptors_LCS$test_representation_linkage.coverage" NAME="test_representation_linkage Coverage Results" MODIFIED="1733234360534" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/RepresentationBasedSearch" />
     <SUITE FILE_PATH="coverage/PS_descriptors$TabuSearch.coverage" NAME="TabuSearch Coverage Results" MODIFIED="1735908503677" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/FSStochasticSearch" />
-    <SUITE FILE_PATH="coverage/PS_descriptors_LCS$PairwiseExplanation.coverage" NAME="PairwiseExplanation Coverage Results" MODIFIED="1730888593528" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/PairExplanation" />
-    <SUITE FILE_PATH="coverage/PS_descriptors_LCS$SolutionDifferencePSSearch.coverage" NAME="SolutionDifferencePSSearch Coverage Results" MODIFIED="1731599938287" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/LCS/ConstrainedPSSearch" />
-    <SUITE FILE_PATH="coverage/PS_descriptors_LCS$test_variance_tree.coverage" NAME="test_variance_tree Coverage Results" MODIFIED="1732884886305" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/VarianceDecisionTree" />
     <SUITE FILE_PATH="coverage/PS_descriptors$Compare_prediction_powers.coverage" NAME="Compare_prediction_powers Coverage Results" MODIFIED="1735565236627" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="" />
-    <SUITE FILE_PATH="coverage/PS_descriptors_LCS$BTProblem.coverage" NAME="BTProblem Coverage Results" MODIFIED="1730810801795" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/BenchmarkProblems/BT" />
     <SUITE FILE_PATH="coverage/PS_descriptors_LCS$SimplePSSearchTask.coverage" NAME="SimplePSSearchTask Coverage Results" MODIFIED="1732884926578" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/VarianceDecisionTree" />
     <SUITE FILE_PATH="coverage/PS_descriptors$utils.coverage" NAME="utils Coverage Results" MODIFIED="1734789342022" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
     <SUITE FILE_PATH="coverage/PS_descriptors$testing_IAI.coverage" NAME="testing_IAI Coverage Results" MODIFIED="1735056962987" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/MessingAround" />
-    <SUITE FILE_PATH="coverage/PS_descriptors$process_data.coverage" NAME="process_data Coverage Results" MODIFIED="1736115564463" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/VarianceDecisionTree/process_data" />
     <SUITE FILE_PATH="coverage/PS_descriptors_LCS$TSPPredicates.coverage" NAME="TSPPredicates Coverage Results" MODIFIED="1733232626802" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/RepresentationBasedSearch" />
     <SUITE FILE_PATH="coverage/PS_descriptors$QAP.coverage" NAME="QAP Coverage Results" MODIFIED="1734367424493" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/BenchmarkProblems" />
     <SUITE FILE_PATH="coverage/PS_descriptors$GraphColouring.coverage" NAME="GraphColouring Coverage Results" MODIFIED="1734787866922" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/BenchmarkProblems" />
@@ -972,32 +976,41 @@
     <SUITE FILE_PATH="coverage/PS_descriptors_LCS$TSP.coverage" NAME="TSP Coverage Results" MODIFIED="1731685829542" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/BenchmarkProblems" />
     <SUITE FILE_PATH="coverage/PS_descriptors_LCS$variance_tree.coverage" NAME="variance_tree Coverage Results" MODIFIED="1733921416409" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="" />
     <SUITE FILE_PATH="coverage/PS_descriptors_LCS$testing_IAI.coverage" NAME="testing_IAI Coverage Results" MODIFIED="1736170528223" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/MessingAround" />
-    <SUITE FILE_PATH="coverage/PS_descriptors_LCS$cached_explanations.coverage" NAME="cached_explanations Coverage Results" MODIFIED="1730387794178" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="" />
     <SUITE FILE_PATH="coverage/PS_descriptors_LCS$PairExplanationTester.coverage" NAME="PairExplanationTester Coverage Results" MODIFIED="1731598536958" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/PairExplanation" />
-    <SUITE FILE_PATH="coverage/PS_descriptors_LCS$ContinuousVariableRepresentation.coverage" NAME="ContinuousVariableRepresentation Coverage Results" MODIFIED="1734015702902" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/RepresentationBasedSearch" />
-    <SUITE FILE_PATH="coverage/PS_descriptors$compare_prediction_powers.coverage" NAME="compare_prediction_powers Coverage Results" MODIFIED="1735302342980" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/VarianceDecisionTree" />
     <SUITE FILE_PATH="coverage/PS_descriptors_LCS$main.coverage" NAME="main Coverage Results" MODIFIED="1737996133133" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="" />
     <SUITE FILE_PATH="coverage/PS_descriptors_LCS$compare_prediction_powers.coverage" NAME="compare_prediction_powers Coverage Results" MODIFIED="1737986471117" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="" />
     <SUITE FILE_PATH="coverage/PS_descriptors_LCS$show_off_problems.coverage" NAME="show_off_problems Coverage Results" MODIFIED="1732641094708" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="" />
     <SUITE FILE_PATH="coverage/PS_descriptors_LCS$generate_all_data.coverage" NAME="generate_all_data Coverage Results" MODIFIED="1730458114958" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/resources/explanations" />
-    <SUITE FILE_PATH="coverage/PS_descriptors_LCS$PSDecisionTree.coverage" NAME="PSDecisionTree Coverage Results" MODIFIED="1733921779017" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/VarianceDecisionTree" />
-    <SUITE FILE_PATH="coverage/PS_descriptors_LCS$PRef.coverage" NAME="PRef Coverage Results" MODIFIED="1733921522563" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Core" />
+    <SUITE FILE_PATH="coverage/PS_descriptors_LCS$PSDecisionTree.coverage" NAME="PSDecisionTree Coverage Results" MODIFIED="1738250438538" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/VarianceDecisionTree" />
+    <SUITE FILE_PATH="coverage/PS_descriptors_LCS$SimplifiedBTProblem.coverage" NAME="SimplifiedBTProblem Coverage Results" MODIFIED="1738242950458" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/BenchmarkProblems/SimplifiedBTProblem" />
     <SUITE FILE_PATH="coverage/PS_descriptors_LCS$test_continuous_problem.coverage" NAME="test_continuous_problem Coverage Results" MODIFIED="1734016124645" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/RepresentationBasedSearch" />
-    <SUITE FILE_PATH="coverage/PS_descriptors$IAIDecisionTree.coverage" NAME="IAIDecisionTree Coverage Results" MODIFIED="1735302189159" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/VarianceDecisionTree" />
-    <SUITE FILE_PATH="coverage/PS_descriptors_LCS$SATProblem.coverage" NAME="SATProblem Coverage Results" MODIFIED="1738002735449" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/BenchmarkProblems" />
-    <SUITE FILE_PATH="coverage/PS_descriptors_LCS$DiffExplanation.coverage" NAME="DiffExplanation Coverage Results" MODIFIED="1731685086513" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="" />
     <SUITE FILE_PATH="coverage/PS_descriptors_LCS$RepresentationLinkage.coverage" NAME="RepresentationLinkage Coverage Results" MODIFIED="1733234149399" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/RepresentationBasedSearch" />
     <SUITE FILE_PATH="coverage/PS_descriptors$gather_data.coverage" NAME="gather_data Coverage Results" MODIFIED="1735580934921" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/VarianceDecisionTree" />
     <SUITE FILE_PATH="coverage/PS_descriptors_LCS$Mining.coverage" NAME="Mining Coverage Results" MODIFIED="1730738417293" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/PSMiners" />
-    <SUITE FILE_PATH="coverage/PS_descriptors$main.coverage" NAME="main Coverage Results" MODIFIED="1736079891229" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="" />
     <SUITE FILE_PATH="coverage/PS_descriptors_LCS$utils.coverage" NAME="utils Coverage Results" MODIFIED="1730195736328" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
     <SUITE FILE_PATH="coverage/PS_descriptors_LCS$generate_data_for_problem.coverage" NAME="generate_data_for_problem Coverage Results" MODIFIED="1731685130089" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/resources" />
     <SUITE FILE_PATH="coverage/PS_descriptors$BTProblem.coverage" NAME="BTProblem Coverage Results" MODIFIED="1734787454612" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/BenchmarkProblems/BT" />
     <SUITE FILE_PATH="coverage/PS_descriptors_LCS$SignificantlyHighAverage.coverage" NAME="SignificantlyHighAverage Coverage Results" MODIFIED="1733921961378" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Core/PSMetric/FitnessQuality" />
     <SUITE FILE_PATH="coverage/PS_descriptors_LCS$manage_explanations.coverage" NAME="manage_explanations Coverage Results" MODIFIED="1730896903291" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/resources/explanations" />
     <SUITE FILE_PATH="coverage/PS_descriptors_LCS$WeightedGraphVisualiser.coverage" NAME="WeightedGraphVisualiser Coverage Results" MODIFIED="1730206638189" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/PairExplanation" />
+    <SUITE FILE_PATH="coverage/PS_descriptors_LCS$load_data.coverage" NAME="load_data Coverage Results" MODIFIED="1730206695810" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/PairExplanation" />
+    <SUITE FILE_PATH="coverage/PS_descriptors_LCS$EfficientBTProblem.coverage" NAME="EfficientBTProblem Coverage Results" MODIFIED="1730888916093" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/BenchmarkProblems/EfficientBTProblem" />
+    <SUITE FILE_PATH="coverage/PS_descriptors_LCS$installing_IAI.coverage" NAME="installing_IAI Coverage Results" MODIFIED="1736160030993" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/MessingAround" />
+    <SUITE FILE_PATH="coverage/PS_descriptors_LCS$test_representation_linkage.coverage" NAME="test_representation_linkage Coverage Results" MODIFIED="1733234360534" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/RepresentationBasedSearch" />
+    <SUITE FILE_PATH="coverage/PS_descriptors_LCS$PairwiseExplanation.coverage" NAME="PairwiseExplanation Coverage Results" MODIFIED="1730888593528" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/PairExplanation" />
+    <SUITE FILE_PATH="coverage/PS_descriptors_LCS$SolutionDifferencePSSearch.coverage" NAME="SolutionDifferencePSSearch Coverage Results" MODIFIED="1731599938287" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/LCS/ConstrainedPSSearch" />
+    <SUITE FILE_PATH="coverage/PS_descriptors_LCS$test_variance_tree.coverage" NAME="test_variance_tree Coverage Results" MODIFIED="1732884886305" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/VarianceDecisionTree" />
+    <SUITE FILE_PATH="coverage/PS_descriptors_LCS$BTProblem.coverage" NAME="BTProblem Coverage Results" MODIFIED="1730810801795" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/BenchmarkProblems/BT" />
+    <SUITE FILE_PATH="coverage/PS_descriptors$process_data.coverage" NAME="process_data Coverage Results" MODIFIED="1736115564463" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/VarianceDecisionTree/process_data" />
+    <SUITE FILE_PATH="coverage/PS_descriptors_LCS$cached_explanations.coverage" NAME="cached_explanations Coverage Results" MODIFIED="1730387794178" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="" />
+    <SUITE FILE_PATH="coverage/PS_descriptors_LCS$ContinuousVariableRepresentation.coverage" NAME="ContinuousVariableRepresentation Coverage Results" MODIFIED="1734015702902" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/RepresentationBasedSearch" />
+    <SUITE FILE_PATH="coverage/PS_descriptors$compare_prediction_powers.coverage" NAME="compare_prediction_powers Coverage Results" MODIFIED="1735302342980" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/VarianceDecisionTree" />
+    <SUITE FILE_PATH="coverage/PS_descriptors_LCS$PRef.coverage" NAME="PRef Coverage Results" MODIFIED="1733921522563" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Core" />
+    <SUITE FILE_PATH="coverage/PS_descriptors$IAIDecisionTree.coverage" NAME="IAIDecisionTree Coverage Results" MODIFIED="1735302189159" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/VarianceDecisionTree" />
+    <SUITE FILE_PATH="coverage/PS_descriptors_LCS$SATProblem.coverage" NAME="SATProblem Coverage Results" MODIFIED="1738002735449" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/BenchmarkProblems" />
+    <SUITE FILE_PATH="coverage/PS_descriptors_LCS$DiffExplanation.coverage" NAME="DiffExplanation Coverage Results" MODIFIED="1731685086513" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="" />
+    <SUITE FILE_PATH="coverage/PS_descriptors$main.coverage" NAME="main Coverage Results" MODIFIED="1736079891229" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="" />
     <SUITE FILE_PATH="coverage/PS_descriptors$SimplePSSearchTask.coverage" NAME="SimplePSSearchTask Coverage Results" MODIFIED="1735911947478" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/VarianceDecisionTree" />
     <SUITE FILE_PATH="coverage/PS_descriptors_LCS$DescriptorsManager.coverage" NAME="DescriptorsManager Coverage Results" MODIFIED="1730738533278" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/LCS/DifferenceExplainer" />
-    <SUITE FILE_PATH="coverage/PS_descriptors_LCS$load_data.coverage" NAME="load_data Coverage Results" MODIFIED="1730206695810" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/PairExplanation" />
   </component>
 </project>
