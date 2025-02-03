@@ -1,3 +1,5 @@
+import json
+import os
 from dataclasses import dataclass
 from typing import Optional, Iterator, Callable
 
@@ -6,6 +8,7 @@ import numpy as np
 import utils
 from BenchmarkProblems.BenchmarkProblem import BenchmarkProblem
 from BenchmarkProblems.RoyalRoad import RoyalRoad
+from BenchmarkProblems.SimplifiedBTProblem.SimplifiedBTProblem import SimplifiedBTProblem
 from Core.FullSolution import FullSolution
 from Core.PRef import PRef
 from Core.PS import PS, contains, STAR
@@ -165,13 +168,20 @@ class PSRegressionTreeBranchNode(PSRegressionTreeNode):
         ps_repr: str = custom_ps_repr(self.split_ps)
         is_multiline = len(ps_repr.split("\n")) > 1
 
+        properties_str = "(no properties registered)"
+        if self.ps_properties is not None:
+            properties_str = "\n".join(f"{prop_name} = {prop_value:.2f}-> {prop_rank:.2f}" for prop_name, prop_value, prop_rank in self.ps_properties)
+
+
         result = ""
         if is_multiline:
             result = (f"Branching, split ps = \n"
+                      f"properties: \n\t{properties_str}\n"
                       f"{ps_repr}\n"
                       f"prediction = {self.prediction:.2f}, mae = {self.other_statistics['mae']:.2f})")
         else:
-            result = (f"Branching, split ps = {ps_repr}, "
+            result = (f"Branching, split ps = {ps_repr}, \n"
+                      f"properties: \n{utils.indent(properties_str)}\n"
                       f"prediction = {self.prediction:.2f}, "
                       f"mae = {self.other_statistics['mae']:.2f}")
 
@@ -183,11 +193,19 @@ class PSRegressionTreeBranchNode(PSRegressionTreeNode):
 
         return result
 
+    @classmethod
+    def plain_ps_repr(cls, ps: PS) -> str:
+        return " ".join("*" if value == STAR else f"{value}" for value in ps.values)
+
+
     def as_dict(self) -> dict:
         own_dict = {"node_type": "branch",
-                    "split_ps": self.split_ps.__repr__(),
+                    "split_ps": self.plain_ps_repr(self.split_ps),
                     "matching_branch": self.matching_branch.as_dict(),
                     "not_matching_branch": self.not_matching_branch.as_dict()}
+
+        if self.ps_properties is not None:
+            own_dict["ps_properties"] = self.ps_properties
 
         return own_dict | super().as_dict()
 
@@ -211,6 +229,7 @@ class PSRegressionTreeBranchNode(PSRegressionTreeNode):
         result_node.matching_branch = cls.get_node_from_dict(d["matching_branch"])
         result_node.not_matching_branch = cls.get_node_from_dict(d["not_matching_branch"])
         result_node.split_ps = PS(STAR if c == "*" else int(c) for c in d["split_ps"].split())
+        result_node.ps_properties = d.get("ps_properties", None)
         return result_node
 
 
@@ -292,7 +311,7 @@ class PSRegressionTree(AbstractDecisionTreeRegressor):
         for node in nodes_to_modify:
             descriptors = ps_property_manager.get_significant_properties_of_ps(ps=node.split_ps)
             descriptors = ps_property_manager.sort_pvrs_by_rank(descriptors)
-            node.ps_properties = descriptors#
+            node.ps_properties = descriptors
 
     def all_pss_as_list(self) -> list[PS]:
         return [node.split_ps for node in self.all_nodes_as_list() if isinstance(node, PSRegressionTreeBranchNode)]
@@ -324,15 +343,42 @@ class PSRegressionTree(AbstractDecisionTreeRegressor):
         result.root_node = PSRegressionTreeBranchNode.get_node_from_dict(d["tree"]) if "tree" in d else None
         return result
 
+    @classmethod
+    def from_file(cls, filename: str):
+        with open(filename, "r") as file:
+            data = json.load(file)
+        return cls.from_dict(data)
+
+    def to_file(self, filename: str):
+        with utils.open_and_make_directories(filename) as file:
+            data = self.as_dict()
+            json.dump(data, file, indent=4)
+
+
 def test_ps_regression_tree():
-    problem = RoyalRoad(5)
+    messing_around_path = r"C:\Users\gac8\PycharmProjects\PS-descriptors-LCS\MessingAround\table_files"
+    generate_pRef = False
+    generate_decision_tree = True
+    generate_properties_table = True
 
-    with utils.announce("generating the pRef"):
-        pRef = PRefManager.generate_pRef(problem=problem,
-                                         sample_size=10000,
-                                         which_algorithm="GA")
+    problem_path = r"C:\Users\gac8\PycharmProjects\PS-descriptors-LCS\resources\BT\SimplifiedInstance\problem.json"
+    problem = SimplifiedBTProblem.from_json(problem_path)
 
-    search_settings = PSSearchSettings(ps_search_budget=2000,
+    pRef_path = os.path.join(messing_around_path, "pRef.npz")
+    if generate_pRef:
+        with utils.announce("generating the pRef"):
+            pRef = PRefManager.generate_pRef(problem=problem,
+                                             sample_size=10000,
+                                             which_algorithm="GA")
+            pRef.save(pRef_path)
+    else:
+        pRef = PRef.load(pRef_path)
+
+    best_solution = pRef.get_best_solution()
+    print(f"The best solution has fitness {best_solution.fitness}, it is ")
+    print(problem.repr_ps(PS.from_FS(best_solution)))
+
+    search_settings = PSSearchSettings(ps_search_budget=3000,
                                        ps_search_population=50,
                                        metrics="simplicity variance ground_truth_atomicity",
                                        avoid_ancestors=True,
@@ -340,33 +386,57 @@ def test_ps_regression_tree():
                                        culling_method="biggest",
                                        verbose=True)
 
-    decision_tree = PSRegressionTree(maximum_depth=3)
-    decision_tree.search_settings = search_settings
+    decision_tree_path = os.path.join(messing_around_path, "decision_tree.json")
+    if generate_decision_tree:
+        decision_tree = PSRegressionTree(maximum_depth=3)
+        decision_tree.search_settings = search_settings
 
-    with utils.announce("training the decision tree"):
-        decision_tree.train_from_pRef(pRef, random_state=42)
+        with utils.announce("training the decision tree"):
+            decision_tree.train_from_pRef(pRef, random_state=42)
+
+        with utils.announce("Writing the decision tree"):
+            decision_tree.to_file(decision_tree_path)
+    else:
+        decision_tree = PSRegressionTree.from_file(decision_tree_path)
 
     decision_tree.problem = problem
     print(decision_tree)
 
-    mined_ps_manager = MinedPSManager(problem=problem,
-                                           mined_ps_file=None,
-                                           control_ps_file=None,
-                                           verbose=False)
 
-    mined_ps_manager.cached_pss = decision_tree.all_pss_as_list()
-    mined_ps_manager.cached_control_pss = mined_ps_manager.generate_control_pss()
 
+
+
+    ps_property_path = os.path.join(messing_around_path, "property_table.csv")
     ps_property_manager = PSPropertyManager(problem=problem,
-                                                 property_table_file=None,
-                                                 verbose=True,
-                                                 threshold=0.1)
+                                            property_table_file=ps_property_path,
+                                            verbose=True,
+                                            threshold=0.25)
 
-    ps_property_path = # TODO
-    ps_property_manager.generate_property_table_file()
 
-    ps_property_manager = PSPropertyManager(problem = problem,property_table_file=None, verbose = True)
-    ps_property_manager.generate_property_table_file()
+    if generate_properties_table:
+        mined_ps_manager = MinedPSManager(problem=problem,
+                                          mined_ps_file=None,
+                                          control_ps_file=None,
+                                          verbose=False)
+        mined_ps_manager.cached_pss = decision_tree.all_pss_as_list()
+        mined_ps_manager.cached_control_pss = mined_ps_manager.generate_control_pss()
+        ps_property_manager.generate_property_table_file(pss = decision_tree.all_pss_as_list(),
+                                                         control_pss = mined_ps_manager.cached_control_pss)
+
+        decision_tree.add_properties_to_pss(ps_property_manager)
+
+
+
+    decision_tree_path = os.path.join(messing_around_path, "decision_tree.json")
+    decision_tree.to_file(decision_tree_path)
+    # this depends on the decision tree having been generated, and if the properties have been generated.
+    # just in case, let's rewrite it every time
+
+    print(decision_tree)
+
+
+
+
 
 
 

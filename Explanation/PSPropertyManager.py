@@ -46,7 +46,7 @@ class PSPropertyManager:
 
     def generate_property_table_file(self, pss: list[PS], control_pss: list[PS]):
         with announce(f"Generating the properties file and storing it at {self.property_table_file}", self.verbose):
-            properties_dicts = [self.problem.get_descriptors_of_ps(ps) for ps in itertools.chain(pss, control_pss)]
+            properties_dicts = [self.get_sanitised_descriptors_of_ps(ps) for ps in itertools.chain(pss, control_pss)]
             properties_df = pd.DataFrame(properties_dicts)
             properties_df["control"] = np.array([index >= len(pss) for index in range(len(properties_dicts))])   # not my best work
             properties_df["size"] = np.array([ps.fixed_count() for ps in itertools.chain(pss, control_pss)])
@@ -69,13 +69,17 @@ class PSPropertyManager:
 
         return utils.ecdf(property_value, control_values)
 
+    def get_sanitised_descriptors_of_ps(self, ps: PS) -> dict[str, float]:
+        return {key: float(value)
+                for key, value in self.problem.get_descriptors_of_ps(ps).items()}
+
     def is_property_rank_significant(self, rank: PropertyRank) -> bool:
         is_low = rank < self.threshold
         is_high = 1-rank < self.threshold
         return is_low or is_high
     def get_significant_properties_of_ps(self, ps: PS) -> list[PVR]:
         pvrs = [(name, value, self.get_rank_of_property(ps, name, value))
-                for name, value in self.problem.get_descriptors_of_ps(ps).items()]
+                for name, value in self.get_sanitised_descriptors_of_ps(ps).items()]
         pvrs = [(name, value, rank) for name, value, rank in pvrs
                 if self.is_property_rank_significant(rank)]
 

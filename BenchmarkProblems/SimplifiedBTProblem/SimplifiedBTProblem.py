@@ -50,6 +50,17 @@ class SimplifiedBTProblem(BenchmarkProblem):
         counts_per_day = counts_per_day.reshape(2, -1)
         return sum(np.abs(counts_per_day[0] - counts_per_day[1]))
 
+    def worker_has_skill(self, worker_index: int, skill: int) -> bool:
+        return self.skills[worker_index, skill]
+
+    def skill_differences_matrix(self, ps: PS, skill: int) -> np.ndarray:
+        rotas_of_active_relevant_workers = [self.rotas[ps.values[worker_index]]
+                                            for worker_index in ps.get_fixed_variable_positions()
+                                            if self.worker_has_skill(worker_index, skill)]
+        counts_per_day = np.sum(rotas_of_active_relevant_workers, axis=0)
+        counts_per_day = counts_per_day.reshape(2, -1)
+        return np.abs(counts_per_day[0] - counts_per_day[1])
+
     def fitness_function(self, fs: FullSolution) -> float:
         return -float(sum(self.differences_for_skill(fs, skill) for skill in range(self.qty_skills)))
 
@@ -134,14 +145,22 @@ class SimplifiedBTProblem(BenchmarkProblem):
         rota_average_bivariate_distance = average_bivariate_distance(rotas_matrix, hamming_distance, default=0)
         rota_properties = {"rota_average_bivariate_distance": rota_average_bivariate_distance}
 
-        days_worked = np.sum(rotas_matrix, axis=0)
-        differences = days_worked.reshape((2, -1))
-        differences = np.abs(differences[0] - differences[1])
+        # days_worked = np.sum(rotas_matrix, axis=0)
+        # differences = days_worked.reshape((2, -1))
+        # differences = np.abs(differences[0] - differences[1])
+        #
+        # differences_by_weekday = {f"difference_{weekday}": difference
+        #                           for weekday, difference in zip(utils.weekdays, differences)}
 
-        differences_by_weekday = {f"difference_{weekday}": difference
-                                  for weekday, difference in zip(utils.weekdays, differences)}
+        skills_present = [index for index in range(self.qty_skills) if skill_counts[index] > 0]
+        skill_differences_dict = {self.skill_names[skill]: self.skill_differences_matrix(ps, skill)
+                                  for skill in skills_present}
+        rota_differences = {f"diff_{weekday}_{skill_name}": diff_for_combinations
+                            for skill_name, row_of_skill_diff in skill_differences_dict.items()
+                            for weekday, diff_for_combinations in zip(utils.weekdays, row_of_skill_diff)
+                            }
 
-        return skill_properties | individual_skill_counts | rota_properties | differences_by_weekday
+        return skill_properties | individual_skill_counts | rota_properties | rota_differences
 
 
 def test_simplified_problem():
