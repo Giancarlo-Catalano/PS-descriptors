@@ -2,6 +2,7 @@ import errno
 import json
 import os
 import platform
+import random
 import re
 import sys
 import time
@@ -606,3 +607,7 @@ def get_os():
     return platform.system()
 
 
+def shuffled(original: Iterable) -> list:
+    result = list(original)
+    random.shuffle(result)
+    return result

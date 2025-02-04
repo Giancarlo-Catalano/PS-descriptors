@@ -358,8 +358,8 @@ class PSRegressionTree(AbstractDecisionTreeRegressor):
 def test_ps_regression_tree():
     messing_around_path = r"C:\Users\gac8\PycharmProjects\PS-descriptors-LCS\MessingAround\table_files"
     generate_pRef = False
-    generate_decision_tree = True
-    generate_properties_table = True
+    generate_decision_tree = False
+    generate_properties_table = False
 
     problem_path = r"C:\Users\gac8\PycharmProjects\PS-descriptors-LCS\resources\BT\SimplifiedInstance\problem.json"
     problem = SimplifiedBTProblem.from_json(problem_path)
@@ -378,8 +378,8 @@ def test_ps_regression_tree():
     print(f"The best solution has fitness {best_solution.fitness}, it is ")
     print(problem.repr_ps(PS.from_FS(best_solution)))
 
-    search_settings = PSSearchSettings(ps_search_budget=3000,
-                                       ps_search_population=50,
+    search_settings = PSSearchSettings(ps_search_budget=5000,
+                                       ps_search_population=100,
                                        metrics="simplicity variance ground_truth_atomicity",
                                        avoid_ancestors=True,
                                        original_problem=problem,
@@ -388,7 +388,7 @@ def test_ps_regression_tree():
 
     decision_tree_path = os.path.join(messing_around_path, "decision_tree.json")
     if generate_decision_tree:
-        decision_tree = PSRegressionTree(maximum_depth=3)
+        decision_tree = PSRegressionTree(maximum_depth=4)
         decision_tree.search_settings = search_settings
 
         with utils.announce("training the decision tree"):
@@ -419,7 +419,7 @@ def test_ps_regression_tree():
                                           control_ps_file=None,
                                           verbose=False)
         mined_ps_manager.cached_pss = decision_tree.all_pss_as_list()
-        mined_ps_manager.cached_control_pss = mined_ps_manager.generate_control_pss()
+        mined_ps_manager.cached_control_pss = mined_ps_manager.generate_control_pss(samples_for_each_category=3000)
         ps_property_manager.generate_property_table_file(pss = decision_tree.all_pss_as_list(),
                                                          control_pss = mined_ps_manager.cached_control_pss)
 

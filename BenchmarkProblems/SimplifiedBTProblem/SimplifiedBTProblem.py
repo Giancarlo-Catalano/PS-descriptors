@@ -1,5 +1,8 @@
 import itertools
 import json
+import os
+import random
+from typing import Optional
 
 import numpy as np
 import setuptools.errors
@@ -23,11 +26,14 @@ class SimplifiedBTProblem(BenchmarkProblem):
 
     worker_indices_for_each_skill = list[list[int]]
 
+    original_indexes: Optional[list[int]]
+
     def __init__(self,
                  rotas: np.ndarray,
                  worker_names: list[str],
                  skills: np.ndarray,
-                 skill_names: list[str]):
+                 skill_names: list[str],
+                 original_indexes: Optional[list[int]] = None):
         self.rotas = rotas
         self.worker_names = worker_names
         self.skills = skills
@@ -42,6 +48,7 @@ class SimplifiedBTProblem(BenchmarkProblem):
                                               for skill_index in range(self.qty_skills)]
 
         search_space = SearchSpace(variable_cardinality for worker in worker_names)
+        self.original_indexes = original_indexes
         super().__init__(search_space)
 
     def differences_for_skill(self, fs: FullSolution, skill: int) -> int:
@@ -100,7 +107,35 @@ class SimplifiedBTProblem(BenchmarkProblem):
         worker_names = [item["name"] for item in data["workers"]]
         skills_table = np.array([read_skills_from_list(worker["skills"]) for worker in data["workers"]])
 
-        return cls(rotas=rotas, worker_names=worker_names, skills=skills_table, skill_names=data["skills"])
+        original_indexes = data.get("original_indexes", None)
+        return cls(rotas=rotas, worker_names=worker_names, skills=skills_table, skill_names=data["skills"], original_indexes=original_indexes)
+
+    def to_dict(self):
+        result = dict()
+
+        def rota_to_str(rota: np.ndarray) -> str:
+            return "".join("W" if cell else "-" for cell in rota)
+
+        result["rotas"] = list(map(rota_to_str, self.rotas))
+        result["skills"] = self.skill_names
+
+        def convert_skill_row(skill_row: np.ndarray) -> list[str]:
+            return [skill_name
+                    for skill_name, is_present in zip(self.skill_names, skill_row)
+                    if is_present]
+
+        result["workers"] = [{"name": worker_name,
+                              "skills": convert_skill_row(skill_row)}
+                             for worker_name, skill_row in zip(self.worker_names, self.skills)]
+        if self.original_indexes is not None:
+            result["original_indexes"] = self.original_indexes
+        return result
+
+    def to_json(self, json_file_name: str):
+        with utils.open_and_make_directories(json_file_name) as file:
+            data = self.to_dict()
+            json.dump(data, file, indent=4)
+
 
     def repr_fs(self, fs: FullSolution) -> str:
         return "".join(" " if value == STAR else utils.alphabet[value] for value in fs.values)
@@ -185,3 +220,49 @@ def test_simplified_problem():
     print(f"The best solution is {problem.repr_fs(best_solution)}, it has fitness {best_solution.fitness}")
 
 # test_simplified_problem()
+
+
+def make_shuffled_instance():
+    folder_a = r"C:\Users\gac8\PycharmProjects\PS-descriptors-LCS\UserStudy\Instances\A"
+    folder_b = r"C:\Users\gac8\PycharmProjects\PS-descriptors-LCS\UserStudy\Instances\B"
+
+    problem_a_file = os.path.join(folder_a, "problem.json")
+
+    problem_a = SimplifiedBTProblem.from_json(problem_a_file)
+
+
+    # first, we generate the new rotas: shuffle the days and the rotas' order
+
+    weekdays_reassignment = utils.shuffled(range(7))
+
+    def get_shuffled_rota(rota: np.ndarray) -> np.ndarray:
+        # organise in weeks, shuffle the columns, and then flatten
+        new_rota = rota.reshape((-1, 7))
+        new_rota = new_rota[:, weekdays_reassignment]
+        return new_rota.ravel()
+
+    new_rotas = np.array(utils.shuffled(map(get_shuffled_rota, problem_a.rotas)))
+
+    # then we shuffle the workers and give them new names
+    problem_b_names = ["Alice", "Brandon", "Clara", "Dominic", "Eleanor", "Fiona", "Gabriel", "Hazel", "Ivy", "Joshua",
+                       "Kevin", "Lucas", "Matilda", "Nathan", "Oscar", "Phoebe", "Quentin", "Rose", "Sophia"]
+    worker_qty = len(problem_a.worker_names)
+    assert len(problem_b_names) >= worker_qty
+
+    worker_indexes_reassignment = utils.shuffled(range(worker_qty))
+    new_skill_names = ["security", "management", "sales", "cloud", "database"]
+
+    new_skill_matrix = problem_a.skills[worker_indexes_reassignment]
+
+    problem_b = SimplifiedBTProblem(rotas = new_rotas,
+                                    worker_names=problem_b_names,
+                                    skills = new_skill_matrix,
+                                    skill_names=new_skill_names,
+                                    original_indexes=worker_indexes_reassignment)
+
+    problem_b_destination = os.path.join(folder_b, "problem.json")
+    problem_b.to_json(problem_b_destination)
+
+
+
+make_shuffled_instance()
