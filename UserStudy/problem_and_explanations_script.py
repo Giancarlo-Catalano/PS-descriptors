@@ -71,7 +71,7 @@ def prepare_data_for_instance_a(generate_pRef=False,
     print(f"The best solution has fitness {best_solution.fitness}, it is ")
     print(problem.repr_ps(PS.from_FS(best_solution)))
 
-    search_settings = PSSearchSettings(ps_search_budget=1000,
+    search_settings = PSSearchSettings(ps_search_budget=5000,
                                        ps_search_population=100,
                                        metrics="simplicity variance ground_truth_atomicity",
                                        avoid_ancestors=True,
@@ -151,17 +151,18 @@ def show_data_for_instance(instance_path: str):
     print(f"The best solution has fitness {best_solution.fitness}, "
           f"and it is \n{problem.repr_ps(PS.from_FS(best_solution))}")
 
-    print(f"The decision tree is \n{decision_tree}")
+    print(f"The decision tree is")
+    decision_tree.print_ASCII()
 
 
 def prepare_data():
     # prepare_data_for_instance_a(generate_pRef=False,
     #                             generate_decision_tree=True,
     #                             generate_properties_table=True)
-
-    prepare_data_for_instance_b(generate_pRef=False,
-                                generate_decision_tree=True,
-                                generate_properties_table=True)
+    #
+    # prepare_data_for_instance_b(generate_pRef=True,
+    #                             generate_decision_tree=True,
+    #                             generate_properties_table=True)
 
     print("FOR INSTANCE A")
     show_data_for_instance(instance_a_path)

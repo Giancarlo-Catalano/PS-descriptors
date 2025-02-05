@@ -13,6 +13,7 @@ from Explanation.PSPropertyManager import PSPropertyManager
 from GuestLecture.show_off_problems import get_unexplained_parts
 from VarianceDecisionTree.AbstractDecisionTreeRegressor import AbstractDecisionTreeRegressor
 from VarianceDecisionTree.SimplePSSearchTask import find_ps_in_solution
+from anytree import Node, RenderTree
 
 
 @dataclass
@@ -89,11 +90,15 @@ class PSRegressionTreeNode:
         prediction = stats.get("average", float('nan'))
         return cls(prediction=prediction, other_statistics=stats)
 
-    def repr_custom(self, custom_ps_repr) -> str:
+    def repr_custom(self, custom_ps_repr, custom_prop_repr) -> str:
         raise NotImplemented
 
     @classmethod
     def from_dict(cls, d: dict):
+        raise NotImplemented
+
+
+    def get_node_text(self, custom_repr_ps, custom_repr_properties) -> str:
         raise NotImplemented
 
 
@@ -109,7 +114,7 @@ class PSRegressionTreeLeafNode(PSRegressionTreeNode):
     def __repr__(self):
         return f"LeafNode(prediction = {self.prediction:.2f}, mae = {self.other_statistics['mae']:.2f})"
 
-    def repr_custom(self, custom_ps_repr: Callable):
+    def repr_custom(self, custom_ps_repr: Callable, custom_prop_repr:Callable):
         return self.__repr__()
 
     def as_dict(self) -> dict:
@@ -120,6 +125,9 @@ class PSRegressionTreeLeafNode(PSRegressionTreeNode):
         assert (d["node_type"] == "leaf")
         return cls(prediction=d["prediction"],
                    other_statistics=d["other_statistics"])
+
+    def get_node_text(self, custom_ps_repr: Callable, custom_prop_repr: Callable):
+        return f"prediction = {self.prediction:.2f} ± {self.other_statistics['mae']:.2f}\n"
 
 
 class PSRegressionTreeBranchNode(PSRegressionTreeNode):
@@ -161,38 +169,36 @@ class PSRegressionTreeBranchNode(PSRegressionTreeNode):
 
         return ps_candidates[0]
 
-    def repr_custom(self, custom_ps_repr: Callable):
+
+    def get_node_text(self, custom_ps_repr: Callable, custom_prop_repr: Callable):
         ps_repr: str = custom_ps_repr(self.split_ps)
         is_multiline = len(ps_repr.split("\n")) > 1
 
         properties_str = "(no properties registered)"
         if self.ps_properties is not None:
-            properties_str = "\n".join(
-                f"{prop_name} = {prop_value:.2f}-> {prop_rank:.2f}" for prop_name, prop_value, prop_rank in
-                self.ps_properties)
+            properties_str = custom_prop_repr(self.ps_properties)
 
-        result = ""
-        if is_multiline:
-            result = (f"prediction = {self.prediction:.2f}, mae = {self.other_statistics['mae']:.2f})\n"
-                      f"Branching, split ps = \n"
-                      f"properties: \n\t{properties_str}\n"
-                      f"{ps_repr}")
-        else:
-            result = (f"prediction = {self.prediction:.2f}, mae = {self.other_statistics['mae']:.2f}\n"
-                      f"Branching, split ps = {ps_repr}, \n"
-                      f"properties: \n{utils.indent(properties_str)}")
+        result = (f"prediction = {self.prediction:.2f} ± {self.other_statistics['mae']:.2f}\n"
+                  f"Branching, split ps = {ps_repr}, \n"
+                  f"properties: \n{utils.indent(properties_str)}")
+
+        return result
+
+    def repr_custom(self, custom_ps_repr: Callable, custom_prop_repr: Callable):
+        result = self.get_node_text(custom_ps_repr, custom_prop_repr)
 
         result += (f",\n"
                    f"matching = \n"
-                   f"{utils.indent(self.matching_branch.repr_custom(custom_ps_repr))},\n"
+                   f"{utils.indent(self.matching_branch.repr_custom(custom_ps_repr, custom_prop_repr))},\n"
                    f"not_matching = \n"
-                   f"   {utils.indent(self.not_matching_branch.repr_custom(custom_ps_repr))}")
+                   f"   {utils.indent(self.not_matching_branch.repr_custom(custom_ps_repr, custom_prop_repr))}")
 
         return result
 
     @classmethod
     def plain_ps_repr(cls, ps: PS) -> str:
         return " ".join("*" if value == STAR else f"{value}" for value in ps.values)
+
 
     def as_dict(self) -> dict:
         own_dict = {"node_type": "branch",
@@ -223,6 +229,7 @@ class PSRegressionTreeBranchNode(PSRegressionTreeNode):
         result_node.split_ps = PS(STAR if c == "*" else int(c) for c in d["split_ps"].split())
         result_node.ps_properties = d.get("ps_properties", None)
         return result_node
+
 
 
 class PSRegressionTree(AbstractDecisionTreeRegressor):
@@ -308,15 +315,33 @@ class PSRegressionTree(AbstractDecisionTreeRegressor):
     def all_pss_as_list(self) -> list[PS]:
         return [node.split_ps for node in self.all_nodes_as_list() if isinstance(node, PSRegressionTreeBranchNode)]
 
-    def __repr__(self):
+    @classmethod
+    def default_properties_repr(cls, properties: list[(str, float, float)]) -> str:
+        return "\n".join(
+            f"{prop_name} = {prop_value:.2f}-> {prop_rank:.2f}" for prop_name, prop_value, prop_rank in
+            properties)
+
+
+    def get_custom_reprs(self) -> (Callable, Callable):
         if self.problem is None:
             repr_ps = repr
+            repr_properties = PSRegressionTree.default_properties_repr
         else:
             repr_ps = self.problem.repr_ps
+            if hasattr(self.problem, "repr_descriptors"):
+                repr_properties = self.problem.repr_descriptors
+            else:
+                repr_properties = PSRegressionTree.default_properties_repr
+
+        return repr_ps, repr_properties
+
+    def __repr__(self):
+        repr_ps, repr_properties = self.get_custom_reprs()
+
         if self.root_node is None:
             return "Invalid Tree"
 
-        return self.root_node.repr_custom(repr_ps)
+        return self.root_node.repr_custom(repr_ps, repr_properties)
 
     def as_dict(self) -> dict:
         result = {"maximum_depth": self.maximum_depth}
@@ -366,3 +391,22 @@ class PSRegressionTree(AbstractDecisionTreeRegressor):
         result.search_settings = self.search_settings
         result.problem = None  # this needs to be set somewhere else, since the problem will be different
         return result
+
+
+    def print_ASCII(self):
+        repr_ps, repr_properties = self.get_custom_reprs()
+        def add_node_repr(node: PSRegressionTreeNode, parent, preamble: str):
+            own_node_repr = Node(preamble+"\n"+node.get_node_text(repr_ps, repr_properties), parent = parent)
+            if isinstance(node, PSRegressionTreeBranchNode):
+                add_node_repr(node.matching_branch, parent = own_node_repr, preamble = "Matching")
+                add_node_repr(node.not_matching_branch, parent = own_node_repr, preamble = "NOT matching")
+            return own_node_repr
+
+        root_node_repr = add_node_repr(self.root_node, parent = None, preamble="Root")
+        for pre, fill, node in RenderTree(root_node_repr):
+            lines = node.name.splitlines()
+            # Print the first line with the usual prefix.
+            print(f"{pre}{lines[0]}")
+            # For any additional lines, print them with an indentation that matches the node's position.
+            for line in lines[1:]:
+                print(f"{fill}{line}")

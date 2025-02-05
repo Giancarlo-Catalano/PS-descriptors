@@ -204,6 +204,33 @@ class SimplifiedBTProblem(BenchmarkProblem):
                     search_space=self.search_space)  # the search space remains the same because the cardinalities are all the same
 
 
+    def repr_descriptors(self, descriptors: list[(str, float, float)]):
+
+        diff_lines = []
+        skill_count_lines = []
+        other_lines = []
+
+        for property_name, property_value, property_rank in descriptors:
+            parts = property_name.split("_")
+            if parts[0] == "diff":
+                diff_lines.append(f"Balanced on {parts[1]}s on skill {parts[2]}")
+            elif (parts[0], parts[1]) == ("count", "skill") and property_value > 0:
+                skill_count_lines.append(f"{int(property_value)} workers with skill {parts[2]}")
+            elif property_name == "average_qty_skills":
+                other_lines.append(f"{property_value:.2f} skills on average")
+            elif property_name == "total_qty_of_skills":
+                other_lines.append(f"{property_value:.2f} different skills present")
+            elif property_name == "skill_bivariate_distance":
+                other_lines.append("The skills are very similar" if property_rank < 0.5 else "The skills are very different")
+            elif property_name == "rota_average_bivariate_distance":
+                other_lines.append("The rotas are very similar" if property_rank < 0.5 else "The rotas are very different")
+            else:
+                other_lines.append(f"{property_name} = {property_value:.2f} <- rank {int(property_rank*100)}%")
+
+        return "\n".join(itertools.chain(skill_count_lines, diff_lines, other_lines))
+
+
+
 def test_simplified_problem():
     path = r"C:\Users\gac8\PycharmProjects\PS-descriptors-LCS\resources\BT\SimplifiedInstance\problem.json"
     problem = SimplifiedBTProblem.from_json(path)
