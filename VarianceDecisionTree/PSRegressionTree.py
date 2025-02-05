@@ -1,23 +1,17 @@
 import json
-import os
 from dataclasses import dataclass
-from typing import Optional, Iterator, Callable
+from typing import Optional, Callable
 
 import numpy as np
 
 import utils
 from BenchmarkProblems.BenchmarkProblem import BenchmarkProblem
-from BenchmarkProblems.RoyalRoad import RoyalRoad
-from BenchmarkProblems.SimplifiedBTProblem.SimplifiedBTProblem import SimplifiedBTProblem
 from Core.FullSolution import FullSolution
 from Core.PRef import PRef
 from Core.PS import PS, contains, STAR
-from Explanation.MinedPSManager import MinedPSManager
-from Explanation.PRefManager import PRefManager
 from Explanation.PSPropertyManager import PSPropertyManager
 from GuestLecture.show_off_problems import get_unexplained_parts
 from VarianceDecisionTree.AbstractDecisionTreeRegressor import AbstractDecisionTreeRegressor
-from VarianceDecisionTree.PSDecisionTree import PSDecisionTree
 from VarianceDecisionTree.SimplePSSearchTask import find_ps_in_solution
 
 
@@ -44,12 +38,11 @@ class PSSearchSettings:
     def from_dict(cls, d: dict):
         return cls(ps_search_budget=d["ps_search_budget"],
                    ps_search_population=d["ps_search_population"],
-                   metrics = d["metrics"],
-                   avoid_ancestors= d["avoid_ancestors"],
-                   culling_method= d["culling_method"],
+                   metrics=d["metrics"],
+                   avoid_ancestors=d["avoid_ancestors"],
+                   culling_method=d["culling_method"],
                    original_problem=None,
                    verbose=d["verbose"])
-
 
 class PSRegressionTreeNode:
     prediction: float
@@ -81,10 +74,14 @@ class PSRegressionTreeNode:
 
         return stats
 
-    def as_dict(self):
-        result = self.other_statistics.copy()
-        result["prediction"] = self.prediction
-        return result
+    def as_dict(self) -> dict:
+        raise NotImplemented
+
+    def get_prediction_dict(self) -> dict:
+        prediction_dict = dict()
+        prediction_dict["other_statistics"] = self.other_statistics
+        prediction_dict["prediction"] = self.prediction
+        return prediction_dict
 
     @classmethod
     def from_pRef(cls, pRef: PRef):
@@ -100,6 +97,9 @@ class PSRegressionTreeNode:
         raise NotImplemented
 
 
+
+
+
 class PSRegressionTreeLeafNode(PSRegressionTreeNode):
     def __init__(self,
                  prediction: float,
@@ -113,16 +113,13 @@ class PSRegressionTreeLeafNode(PSRegressionTreeNode):
         return self.__repr__()
 
     def as_dict(self) -> dict:
-        return {"node_type": "leaf"} | super().as_dict()
+        return {"node_type": "leaf"} | self.get_prediction_dict()
 
     @classmethod
-    def from_dict(cls, d:dict):
-        assert(d["node_type"] == "leaf")
-        other_statistics = d.copy()
-        del other_statistics["prediction"]
-        del other_statistics["node_type"]
+    def from_dict(cls, d: dict):
+        assert (d["node_type"] == "leaf")
         return cls(prediction=d["prediction"],
-                   other_statistics=other_statistics)
+                   other_statistics=d["other_statistics"])
 
 
 class PSRegressionTreeBranchNode(PSRegressionTreeNode):
@@ -170,20 +167,20 @@ class PSRegressionTreeBranchNode(PSRegressionTreeNode):
 
         properties_str = "(no properties registered)"
         if self.ps_properties is not None:
-            properties_str = "\n".join(f"{prop_name} = {prop_value:.2f}-> {prop_rank:.2f}" for prop_name, prop_value, prop_rank in self.ps_properties)
-
+            properties_str = "\n".join(
+                f"{prop_name} = {prop_value:.2f}-> {prop_rank:.2f}" for prop_name, prop_value, prop_rank in
+                self.ps_properties)
 
         result = ""
         if is_multiline:
-            result = (f"Branching, split ps = \n"
+            result = (f"prediction = {self.prediction:.2f}, mae = {self.other_statistics['mae']:.2f})\n"
+                      f"Branching, split ps = \n"
                       f"properties: \n\t{properties_str}\n"
-                      f"{ps_repr}\n"
-                      f"prediction = {self.prediction:.2f}, mae = {self.other_statistics['mae']:.2f})")
+                      f"{ps_repr}")
         else:
-            result = (f"Branching, split ps = {ps_repr}, \n"
-                      f"properties: \n{utils.indent(properties_str)}\n"
-                      f"prediction = {self.prediction:.2f}, "
-                      f"mae = {self.other_statistics['mae']:.2f}")
+            result = (f"prediction = {self.prediction:.2f}, mae = {self.other_statistics['mae']:.2f}\n"
+                      f"Branching, split ps = {ps_repr}, \n"
+                      f"properties: \n{utils.indent(properties_str)}")
 
         result += (f",\n"
                    f"matching = \n"
@@ -197,7 +194,6 @@ class PSRegressionTreeBranchNode(PSRegressionTreeNode):
     def plain_ps_repr(cls, ps: PS) -> str:
         return " ".join("*" if value == STAR else f"{value}" for value in ps.values)
 
-
     def as_dict(self) -> dict:
         own_dict = {"node_type": "branch",
                     "split_ps": self.plain_ps_repr(self.split_ps),
@@ -207,8 +203,7 @@ class PSRegressionTreeBranchNode(PSRegressionTreeNode):
         if self.ps_properties is not None:
             own_dict["ps_properties"] = self.ps_properties
 
-        return own_dict | super().as_dict()
-
+        return own_dict | self.get_prediction_dict()
 
     @classmethod
     def get_node_from_dict(cls, d: dict) -> PSRegressionTreeNode:
@@ -217,15 +212,12 @@ class PSRegressionTreeBranchNode(PSRegressionTreeNode):
         else:
             return PSRegressionTreeLeafNode.from_dict(d)
 
-
     @classmethod
     def from_dict(cls, d: dict):
-        assert(d["node_type"] == "branch")
-        other_statistics = d.copy()
-        del other_statistics["prediction"]
-        del other_statistics["node_type"]
+        assert (d["node_type"] == "branch")
+
         result_node = cls(prediction=d["prediction"],
-                   other_statistics=other_statistics)
+                          other_statistics=d["other_statistics"])
         result_node.matching_branch = cls.get_node_from_dict(d["matching_branch"])
         result_node.not_matching_branch = cls.get_node_from_dict(d["not_matching_branch"])
         result_node.split_ps = PS(STAR if c == "*" else int(c) for c in d["split_ps"].split())
@@ -249,8 +241,8 @@ class PSRegressionTree(AbstractDecisionTreeRegressor):
         def recursively_train_node(pRef_to_split: PRef,
                                    current_depth: int,
                                    ancestors: list[PS]) -> PSRegressionTreeNode:
-            print(f"Splitting a pRef of size {pRef.sample_size}")
-            if (current_depth >= self.maximum_depth) or (pRef.sample_size < 2):
+            print(f"Splitting a pRef of size {pRef_to_split.sample_size}")
+            if (current_depth >= self.maximum_depth) or (pRef_to_split.sample_size < 2):
                 return PSRegressionTreeLeafNode.from_pRef(pRef_to_split)
 
             # otherwise we split more
@@ -326,7 +318,6 @@ class PSRegressionTree(AbstractDecisionTreeRegressor):
 
         return self.root_node.repr_custom(repr_ps)
 
-
     def as_dict(self) -> dict:
         result = {"maximum_depth": self.maximum_depth}
         if self.search_settings is not None:
@@ -354,90 +345,24 @@ class PSRegressionTree(AbstractDecisionTreeRegressor):
             data = self.as_dict()
             json.dump(data, file, indent=4)
 
+    def with_permutation(self, permutation: list[int]):
+        def permute_ps(ps: PS) -> PS:
+            return PS(ps.values[permutation])
 
-def test_ps_regression_tree():
-    messing_around_path = r"C:\Users\gac8\PycharmProjects\PS-descriptors-LCS\MessingAround\table_files"
-    generate_pRef = False
-    generate_decision_tree = False
-    generate_properties_table = False
+        def permute_node(node: PSRegressionTreeNode) -> PSRegressionTreeNode:
+            if isinstance(node, PSRegressionTreeBranchNode):
+                result = PSRegressionTreeBranchNode(prediction=node.prediction,
+                                                    other_statistics=node.other_statistics)
+                result.split_ps = permute_ps(node.split_ps)
+                result.matching_branch = permute_node(node.matching_branch)
+                result.not_matching_branch = permute_node(node.not_matching_branch)
+                result.ps_properties = None  # because their names might have changed...
+                return result
+            else:
+                return node
 
-    problem_path = r"C:\Users\gac8\PycharmProjects\PS-descriptors-LCS\resources\BT\SimplifiedInstance\problem.json"
-    problem = SimplifiedBTProblem.from_json(problem_path)
-
-    pRef_path = os.path.join(messing_around_path, "pRef.npz")
-    if generate_pRef:
-        with utils.announce("generating the pRef"):
-            pRef = PRefManager.generate_pRef(problem=problem,
-                                             sample_size=10000,
-                                             which_algorithm="GA")
-            pRef.save(pRef_path)
-    else:
-        pRef = PRef.load(pRef_path)
-
-    best_solution = pRef.get_best_solution()
-    print(f"The best solution has fitness {best_solution.fitness}, it is ")
-    print(problem.repr_ps(PS.from_FS(best_solution)))
-
-    search_settings = PSSearchSettings(ps_search_budget=5000,
-                                       ps_search_population=100,
-                                       metrics="simplicity variance ground_truth_atomicity",
-                                       avoid_ancestors=True,
-                                       original_problem=problem,
-                                       culling_method="biggest",
-                                       verbose=True)
-
-    decision_tree_path = os.path.join(messing_around_path, "decision_tree.json")
-    if generate_decision_tree:
-        decision_tree = PSRegressionTree(maximum_depth=4)
-        decision_tree.search_settings = search_settings
-
-        with utils.announce("training the decision tree"):
-            decision_tree.train_from_pRef(pRef, random_state=42)
-
-        with utils.announce("Writing the decision tree"):
-            decision_tree.to_file(decision_tree_path)
-    else:
-        decision_tree = PSRegressionTree.from_file(decision_tree_path)
-
-    decision_tree.problem = problem
-    print(decision_tree)
-
-
-
-
-
-    ps_property_path = os.path.join(messing_around_path, "property_table.csv")
-    ps_property_manager = PSPropertyManager(problem=problem,
-                                            property_table_file=ps_property_path,
-                                            verbose=True,
-                                            threshold=0.25)
-
-
-    if generate_properties_table:
-        mined_ps_manager = MinedPSManager(problem=problem,
-                                          mined_ps_file=None,
-                                          control_ps_file=None,
-                                          verbose=False)
-        mined_ps_manager.cached_pss = decision_tree.all_pss_as_list()
-        mined_ps_manager.cached_control_pss = mined_ps_manager.generate_control_pss(samples_for_each_category=3000)
-        ps_property_manager.generate_property_table_file(pss = decision_tree.all_pss_as_list(),
-                                                         control_pss = mined_ps_manager.cached_control_pss)
-
-        decision_tree.add_properties_to_pss(ps_property_manager)
-
-
-
-    decision_tree_path = os.path.join(messing_around_path, "decision_tree.json")
-    decision_tree.to_file(decision_tree_path)
-    # this depends on the decision tree having been generated, and if the properties have been generated.
-    # just in case, let's rewrite it every time
-
-    print(decision_tree)
-
-
-
-
-
-
-
-test_ps_regression_tree()
+        result = PSRegressionTree(maximum_depth=self.maximum_depth)
+        result.root_node = permute_node(self.root_node)
+        result.search_settings = self.search_settings
+        result.problem = None  # this needs to be set somewhere else, since the problem will be different
+        return result

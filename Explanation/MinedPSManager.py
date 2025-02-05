@@ -25,8 +25,8 @@ class MinedPSManager:
 
     def __init__(self,
                  problem: BenchmarkProblem,
-                 mined_ps_file: str,
-                 control_ps_file: str,
+                 mined_ps_file: Optional[str] = None,
+                 control_ps_file: Optional[str] = None,
                  verbose: bool = False):
         self.problem = problem
         self.mined_ps_file = mined_ps_file

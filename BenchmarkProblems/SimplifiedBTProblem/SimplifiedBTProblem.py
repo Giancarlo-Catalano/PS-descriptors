@@ -10,6 +10,7 @@ import setuptools.errors
 import utils
 from BenchmarkProblems.BenchmarkProblem import BenchmarkProblem
 from Core.FullSolution import FullSolution
+from Core.PRef import PRef
 from Core.PS import PS, STAR
 from Core.SearchSpace import SearchSpace
 from Explanation.PRefManager import PRefManager
@@ -108,7 +109,8 @@ class SimplifiedBTProblem(BenchmarkProblem):
         skills_table = np.array([read_skills_from_list(worker["skills"]) for worker in data["workers"]])
 
         original_indexes = data.get("original_indexes", None)
-        return cls(rotas=rotas, worker_names=worker_names, skills=skills_table, skill_names=data["skills"], original_indexes=original_indexes)
+        return cls(rotas=rotas, worker_names=worker_names, skills=skills_table, skill_names=data["skills"],
+                   original_indexes=original_indexes)
 
     def to_dict(self):
         result = dict()
@@ -135,7 +137,6 @@ class SimplifiedBTProblem(BenchmarkProblem):
         with utils.open_and_make_directories(json_file_name) as file:
             data = self.to_dict()
             json.dump(data, file, indent=4)
-
 
     def repr_fs(self, fs: FullSolution) -> str:
         return "".join(" " if value == STAR else utils.alphabet[value] for value in fs.values)
@@ -197,6 +198,11 @@ class SimplifiedBTProblem(BenchmarkProblem):
 
         return skill_properties | individual_skill_counts | rota_properties | rota_differences
 
+    def get_permutated_pRef(self, original_pRef: PRef) -> PRef:
+        return PRef(fitness_array=original_pRef.fitness_array,
+                    full_solution_matrix=original_pRef.full_solution_matrix[:, self.original_indexes],
+                    search_space=self.search_space)  # the search space remains the same because the cardinalities are all the same
+
 
 def test_simplified_problem():
     path = r"C:\Users\gac8\PycharmProjects\PS-descriptors-LCS\resources\BT\SimplifiedInstance\problem.json"
@@ -219,6 +225,7 @@ def test_simplified_problem():
 
     print(f"The best solution is {problem.repr_fs(best_solution)}, it has fitness {best_solution.fitness}")
 
+
 # test_simplified_problem()
 
 
@@ -229,7 +236,6 @@ def make_shuffled_instance():
     problem_a_file = os.path.join(folder_a, "problem.json")
 
     problem_a = SimplifiedBTProblem.from_json(problem_a_file)
-
 
     # first, we generate the new rotas: shuffle the days and the rotas' order
 
@@ -254,9 +260,9 @@ def make_shuffled_instance():
 
     new_skill_matrix = problem_a.skills[worker_indexes_reassignment]
 
-    problem_b = SimplifiedBTProblem(rotas = new_rotas,
+    problem_b = SimplifiedBTProblem(rotas=new_rotas,
                                     worker_names=problem_b_names,
-                                    skills = new_skill_matrix,
+                                    skills=new_skill_matrix,
                                     skill_names=new_skill_names,
                                     original_indexes=worker_indexes_reassignment)
 
@@ -264,5 +270,4 @@ def make_shuffled_instance():
     problem_b.to_json(problem_b_destination)
 
 
-
-make_shuffled_instance()
+#make_shuffled_instance()
