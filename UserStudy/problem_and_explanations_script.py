@@ -50,13 +50,14 @@ def generate_control_data_for_ps_properties(ps_property_manager: PSPropertyManag
                                                      control_pss=mined_ps_manager.cached_control_pss)
 
 
-def prepare_data_for_instance_a(generate_pRef=False,
+def prepare_data_for_instance(instance_path: str,
+                                generate_pRef=False,
                                 generate_decision_tree=False,
                                 generate_properties_table=False, ):
-    problem_path = get_problem_path(instance_a_path)
+    problem_path = get_problem_path(instance_path)
     problem = SimplifiedBTProblem.from_json(problem_path)
 
-    pRef_path = get_pRef_path(instance_a_path)
+    pRef_path = get_pRef_path(instance_path)
     if generate_pRef:
         with utils.announce(f"generating the pRef, storing it in {pRef_path}"):
             pRef = PRefManager.generate_pRef(problem=problem,
@@ -67,21 +68,17 @@ def prepare_data_for_instance_a(generate_pRef=False,
         with utils.announce(f"Loading the pRef from {pRef_path}"):
             pRef = PRef.load(pRef_path)
 
-    best_solution = pRef.get_best_solution()
-    print(f"The best solution has fitness {best_solution.fitness}, it is ")
-    print(problem.repr_ps(PS.from_FS(best_solution)))
-
-    search_settings = PSSearchSettings(ps_search_budget=5000,
-                                       ps_search_population=100,
+    search_settings = PSSearchSettings(ps_search_budget=10,
+                                       ps_search_population=10,
                                        metrics="simplicity variance ground_truth_atomicity",
                                        avoid_ancestors=True,
                                        original_problem=problem,
                                        culling_method="biggest",
                                        verbose=True)
 
-    decision_tree_path = get_decision_tree_path(instance_a_path)
+    decision_tree_path = get_decision_tree_path(instance_path)
     if generate_decision_tree:
-        decision_tree = PSRegressionTree(maximum_depth=4)
+        decision_tree = PSRegressionTree(maximum_depth=2)
         decision_tree.search_settings = search_settings
 
         with utils.announce(f"training the decision tree, storing it at {decision_tree_path}"):
@@ -91,7 +88,7 @@ def prepare_data_for_instance_a(generate_pRef=False,
         with utils.announce(f"Loading the decision tree from {decision_tree_path}"):
             decision_tree = PSRegressionTree.from_file(decision_tree_path)
 
-    ps_property_manager = get_ps_property_manager(instance_a_path, problem)
+    ps_property_manager = get_ps_property_manager(instance_path, problem)
 
     if generate_properties_table:
         with utils.announce(
@@ -101,6 +98,15 @@ def prepare_data_for_instance_a(generate_pRef=False,
 
             decision_tree.add_properties_to_pss(ps_property_manager)
             decision_tree.to_file(decision_tree_path)
+
+
+def prepare_data_for_instance_a(generate_pRef=True,
+                                generate_properties_table=True,
+                                generate_decision_tree=True):
+    prepare_data_for_instance(instance_path=instance_a_path,
+                              generate_pRef=generate_pRef,
+                              generate_properties_table=generate_properties_table,
+                              generate_decision_tree=generate_decision_tree)
 
 
 def prepare_data_for_instance_b(generate_pRef=True,
@@ -155,7 +161,7 @@ def show_data_for_instance(instance_path: str):
     decision_tree.print_ASCII()
 
 
-def prepare_data():
+def prepare_a_b_data():
     # prepare_data_for_instance_a(generate_pRef=False,
     #                             generate_decision_tree=True,
     #                             generate_properties_table=True)
@@ -170,4 +176,21 @@ def prepare_data():
     print("FOR INSTANCE B")
     show_data_for_instance(instance_b_path)
 
-prepare_data()
+
+
+
+instance_c_path = r"C:\Users\gac8\PycharmProjects\PS-descriptors-LCS\UserStudy\Instances\Constructed"
+def prepare_constructed_problem_data():
+    prepare_data_for_instance(instance_path = instance_c_path,
+                              generate_pRef=True,
+                                generate_decision_tree=True,
+                                generate_properties_table=True)
+
+
+    show_data_for_instance(instance_c_path)
+
+prepare_constructed_problem_data()
+
+
+
+

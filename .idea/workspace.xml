@@ -4,12 +4,10 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="a05e8814-504e-4333-8593-ec6366f9f3e6" name="Changes" comment="Made a script which generates the pRef, decision tree and descriptors for problem A. Then it produces the equivalent versions for problem B. Changed the format for how the decision trees were being stored to avoid bugs (other stats is now in its own dict in the json)">
-      <change afterPath="$PROJECT_DIR$/MessingAround/tree_view.py" afterDir="false" />
+    <list default="true" id="a05e8814-504e-4333-8593-ec6366f9f3e6" name="Changes" comment="Tree is now produced using AnyTree">
+      <change afterPath="$PROJECT_DIR$/UserStudy/Instances/Constructed/problem.json" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/BenchmarkProblems/SimplifiedBTProblem/SimplifiedBTProblem.py" beforeDir="false" afterPath="$PROJECT_DIR$/BenchmarkProblems/SimplifiedBTProblem/SimplifiedBTProblem.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/UserStudy/problem_and_explanations_script.py" beforeDir="false" afterPath="$PROJECT_DIR$/UserStudy/problem_and_explanations_script.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/VarianceDecisionTree/PSRegressionTree.py" beforeDir="false" afterPath="$PROJECT_DIR$/VarianceDecisionTree/PSRegressionTree.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -366,15 +364,8 @@
       <workItem from="1738231932542" duration="26047000" />
       <workItem from="1738579627935" duration="12954000" />
       <workItem from="1738664423778" duration="6347000" />
-      <workItem from="1738749868119" duration="13872000" />
-    </task>
-    <task id="LOCAL-00088" summary="Implemented an interface to make decision trees, and some simple functions to test them. For RR and a horrible ps budget given, the mse appears to be lower for my approach.">
-      <option name="closed" value="true" />
-      <created>1733922289298</created>
-      <option name="number" value="00088" />
-      <option name="presentableId" value="LOCAL-00088" />
-      <option name="project" value="LOCAL" />
-      <updated>1733922289298</updated>
+      <workItem from="1738749868119" duration="14489000" />
+      <workItem from="1738843402834" duration="4533000" />
     </task>
     <task id="LOCAL-00089" summary="Final commit of the day">
       <option name="closed" value="true" />
@@ -760,7 +751,15 @@
       <option name="project" value="LOCAL" />
       <updated>1738757284806</updated>
     </task>
-    <option name="localTasksCounter" value="137" />
+    <task id="LOCAL-00137" summary="Tree is now produced using AnyTree">
+      <option name="closed" value="true" />
+      <created>1738773582460</created>
+      <option name="number" value="00137" />
+      <option name="presentableId" value="LOCAL-00137" />
+      <option name="project" value="LOCAL" />
+      <updated>1738773582460</updated>
+    </task>
+    <option name="localTasksCounter" value="138" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -790,7 +789,6 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="The problem definition files are now referenced using the location of the main script." />
     <MESSAGE value="I forgot to remove a break statement, which prevented some datapoints from getting collected..." />
     <MESSAGE value="Ready for another round of condor..." />
     <MESSAGE value="Implemented tabu search, added a seed from the command line, added functionality to process tree data (orders by depth)." />
@@ -815,7 +813,8 @@
     <MESSAGE value="System now stores the decision tree, ps properties, pRef." />
     <MESSAGE value="Fixing some issues with the simplified BT problem" />
     <MESSAGE value="Made a script which generates the pRef, decision tree and descriptors for problem A. Then it produces the equivalent versions for problem B. Changed the format for how the decision trees were being stored to avoid bugs (other stats is now in its own dict in the json)" />
-    <option name="LAST_COMMIT_MESSAGE" value="Made a script which generates the pRef, decision tree and descriptors for problem A. Then it produces the equivalent versions for problem B. Changed the format for how the decision trees were being stored to avoid bugs (other stats is now in its own dict in the json)" />
+    <MESSAGE value="Tree is now produced using AnyTree" />
+    <option name="LAST_COMMIT_MESSAGE" value="Tree is now produced using AnyTree" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
@@ -941,6 +940,16 @@
           <line>234</line>
           <option name="timeStamp" value="233" />
         </line-breakpoint>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/UserStudy/problem_and_explanations_script.py</url>
+          <line>70</line>
+          <option name="timeStamp" value="234" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/UserStudy/problem_and_explanations_script.py</url>
+          <line>59</line>
+          <option name="timeStamp" value="235" />
+        </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="jupyter-line">
           <url>notebook://C:/Users/gac8/PycharmProjects/PS-descriptors-LCS/VarianceDecisionTree/process_data/accuracy_by_settings.ipynb</url>
           <line>234</line>
@@ -966,7 +975,7 @@
     <SUITE FILE_PATH="coverage/PS_descriptors_LCS$testing_IAI.coverage" NAME="testing_IAI Coverage Results" MODIFIED="1736170528223" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/MessingAround" />
     <SUITE FILE_PATH="coverage/PS_descriptors_LCS$PairExplanationTester.coverage" NAME="PairExplanationTester Coverage Results" MODIFIED="1731598536958" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/PairExplanation" />
     <SUITE FILE_PATH="coverage/PS_descriptors_LCS$main.coverage" NAME="main Coverage Results" MODIFIED="1737996133133" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="" />
-    <SUITE FILE_PATH="coverage/PS_descriptors_LCS$compare_prediction_powers.coverage" NAME="compare_prediction_powers Coverage Results" MODIFIED="1738582588395" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="" />
+    <SUITE FILE_PATH="coverage/PS_descriptors_LCS$compare_prediction_powers.coverage" NAME="compare_prediction_powers Coverage Results" MODIFIED="1738845734938" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="" />
     <SUITE FILE_PATH="coverage/PS_descriptors_LCS$show_off_problems.coverage" NAME="show_off_problems Coverage Results" MODIFIED="1732641094708" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="" />
     <SUITE FILE_PATH="coverage/PS_descriptors_LCS$generate_all_data.coverage" NAME="generate_all_data Coverage Results" MODIFIED="1730458114958" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/resources/explanations" />
     <SUITE FILE_PATH="coverage/PS_descriptors_LCS$PSDecisionTree.coverage" NAME="PSDecisionTree Coverage Results" MODIFIED="1738250438538" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/VarianceDecisionTree" />
@@ -999,7 +1008,7 @@
     <SUITE FILE_PATH="coverage/PS_descriptors_LCS$SATProblem.coverage" NAME="SATProblem Coverage Results" MODIFIED="1738002735449" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/BenchmarkProblems" />
     <SUITE FILE_PATH="coverage/PS_descriptors_LCS$DiffExplanation.coverage" NAME="DiffExplanation Coverage Results" MODIFIED="1731685086513" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="" />
     <SUITE FILE_PATH="coverage/PS_descriptors$main.coverage" NAME="main Coverage Results" MODIFIED="1736079891229" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="" />
-    <SUITE FILE_PATH="coverage/PS_descriptors_LCS$problem_and_explanations_script.coverage" NAME="problem_and_explanations_script Coverage Results" MODIFIED="1738764384446" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/UserStudy" />
+    <SUITE FILE_PATH="coverage/PS_descriptors_LCS$problem_and_explanations_script.coverage" NAME="problem_and_explanations_script Coverage Results" MODIFIED="1738848949287" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/UserStudy" />
     <SUITE FILE_PATH="coverage/PS_descriptors$SimplePSSearchTask.coverage" NAME="SimplePSSearchTask Coverage Results" MODIFIED="1735911947478" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/VarianceDecisionTree" />
     <SUITE FILE_PATH="coverage/PS_descriptors_LCS$DescriptorsManager.coverage" NAME="DescriptorsManager Coverage Results" MODIFIED="1730738533278" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/LCS/DifferenceExplainer" />
   </component>
