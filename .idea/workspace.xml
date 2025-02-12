@@ -4,9 +4,12 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="a05e8814-504e-4333-8593-ec6366f9f3e6" name="Changes" comment="Fixing small issues, writing the tasks as json data.">
+    <list default="true" id="a05e8814-504e-4333-8593-ec6366f9f3e6" name="Changes" comment="tree is weird, rerunning">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/UserStudy/Instances/Constructed_A/decision_tree.json" beforeDir="false" afterPath="$PROJECT_DIR$/UserStudy/Instances/Constructed_A/decision_tree.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/UserStudy/Instances/Constructed_A/pRef.npz" beforeDir="false" afterPath="$PROJECT_DIR$/UserStudy/Instances/Constructed_A/pRef.npz" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/UserStudy/Instances/Constructed_A/ps_properties.csv" beforeDir="false" afterPath="$PROJECT_DIR$/UserStudy/Instances/Constructed_A/ps_properties.csv" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/UserStudy/problem_and_explanations_script.py" beforeDir="false" afterPath="$PROJECT_DIR$/UserStudy/problem_and_explanations_script.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -181,15 +184,7 @@
       <workItem from="1738843402834" duration="5147000" />
       <workItem from="1738924231593" duration="6594000" />
       <workItem from="1739279511868" duration="3359000" />
-      <workItem from="1739355293455" duration="6987000" />
-    </task>
-    <task id="LOCAL-00092" summary="Implemented the IAI trees, which are to be tuned so that nobody can complain">
-      <option name="closed" value="true" />
-      <created>1735211965725</created>
-      <option name="number" value="00092" />
-      <option name="presentableId" value="LOCAL-00092" />
-      <option name="project" value="LOCAL" />
-      <updated>1735211965725</updated>
+      <workItem from="1739355293455" duration="8660000" />
     </task>
     <task id="LOCAL-00093" summary="The training data and the to_predict data passed to iai trees is now pd.DataFrames with categorical columns, as suggested by the IAI website.">
       <option name="closed" value="true" />
@@ -575,7 +570,15 @@
       <option name="project" value="LOCAL" />
       <updated>1739373754625</updated>
     </task>
-    <option name="localTasksCounter" value="141" />
+    <task id="LOCAL-00141" summary="tree is weird, rerunning">
+      <option name="closed" value="true" />
+      <created>1739374293476</created>
+      <option name="number" value="00141" />
+      <option name="presentableId" value="LOCAL-00141" />
+      <option name="project" value="LOCAL" />
+      <updated>1739374293476</updated>
+    </task>
+    <option name="localTasksCounter" value="142" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -605,7 +608,6 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="I discovered that the linkage thing was causing for the data to be SIGNIFICANTLY slower, so I had to scrap it..." />
     <MESSAGE value="Made tabu search more efficient." />
     <MESSAGE value="Added the ability to print how much progress is being made on the run, by printing on the err stream." />
     <MESSAGE value="The metrics for the search are now parametrised." />
@@ -630,7 +632,8 @@
     <MESSAGE value="Implemented the constructed problem (to be completed)" />
     <MESSAGE value="Submitting instance files before a new search is carried out." />
     <MESSAGE value="Fixing small issues, writing the tasks as json data." />
-    <option name="LAST_COMMIT_MESSAGE" value="Fixing small issues, writing the tasks as json data." />
+    <MESSAGE value="tree is weird, rerunning" />
+    <option name="LAST_COMMIT_MESSAGE" value="tree is weird, rerunning" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
@@ -758,12 +761,12 @@
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/UserStudy/problem_and_explanations_script.py</url>
-          <line>72</line>
+          <line>73</line>
           <option name="timeStamp" value="234" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/UserStudy/problem_and_explanations_script.py</url>
-          <line>61</line>
+          <line>62</line>
           <option name="timeStamp" value="235" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
@@ -835,7 +838,7 @@
     <SUITE FILE_PATH="coverage/PS_descriptors_LCS$DiffExplanation.coverage" NAME="DiffExplanation Coverage Results" MODIFIED="1731685086513" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="" />
     <SUITE FILE_PATH="coverage/PS_descriptors_LCS$check_answers.coverage" NAME="check_answers Coverage Results" MODIFIED="1739373404923" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/UserStudy" />
     <SUITE FILE_PATH="coverage/PS_descriptors$main.coverage" NAME="main Coverage Results" MODIFIED="1736079891229" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="" />
-    <SUITE FILE_PATH="coverage/PS_descriptors_LCS$problem_and_explanations_script.coverage" NAME="problem_and_explanations_script Coverage Results" MODIFIED="1739373725434" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/UserStudy" />
+    <SUITE FILE_PATH="coverage/PS_descriptors_LCS$problem_and_explanations_script.coverage" NAME="problem_and_explanations_script Coverage Results" MODIFIED="1739380266317" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/UserStudy" />
     <SUITE FILE_PATH="coverage/PS_descriptors$SimplePSSearchTask.coverage" NAME="SimplePSSearchTask Coverage Results" MODIFIED="1735911947478" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/VarianceDecisionTree" />
     <SUITE FILE_PATH="coverage/PS_descriptors_LCS$DescriptorsManager.coverage" NAME="DescriptorsManager Coverage Results" MODIFIED="1730738533278" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/LCS/DifferenceExplainer" />
   </component>

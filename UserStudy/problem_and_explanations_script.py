@@ -1,4 +1,5 @@
 import os
+import random
 
 import utils
 from BenchmarkProblems.SimplifiedBTProblem.SimplifiedBTProblem import SimplifiedBTProblem
@@ -84,7 +85,9 @@ def prepare_data_for_instance(instance_path: str,
         decision_tree.search_settings = search_settings
 
         with utils.announce(f"training the decision tree, storing it at {decision_tree_path}"):
-            decision_tree.train_from_pRef(pRef, random_state=42)
+            seed = random.randint(0,  10000)
+            print(f"The seed is {seed}")
+            decision_tree.train_from_pRef(pRef, random_state=seed)
             decision_tree.to_file(decision_tree_path)
     else:
         with utils.announce(f"Loading the decision tree from {decision_tree_path}"):
@@ -189,7 +192,7 @@ def prepare_constructed_problem_data():
         prepare_data_for_instance(instance_path = instance_path,
                                    ps_search_budget=5000,
                                    depth=4,
-                                   #generate_pRef=True,
+                                   generate_pRef=True,
                                    generate_decision_tree=True,
                                    generate_properties_table=True
                                    )
