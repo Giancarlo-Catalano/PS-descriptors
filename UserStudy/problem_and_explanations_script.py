@@ -53,7 +53,9 @@ def generate_control_data_for_ps_properties(ps_property_manager: PSPropertyManag
 def prepare_data_for_instance(instance_path: str,
                                 generate_pRef=False,
                                 generate_decision_tree=False,
-                                generate_properties_table=False, ):
+                                generate_properties_table=False,
+                              ps_search_budget: int = 5000,
+                              depth: int = 4):
     problem_path = get_problem_path(instance_path)
     problem = SimplifiedBTProblem.from_json(problem_path)
 
@@ -68,8 +70,8 @@ def prepare_data_for_instance(instance_path: str,
         with utils.announce(f"Loading the pRef from {pRef_path}"):
             pRef = PRef.load(pRef_path)
 
-    search_settings = PSSearchSettings(ps_search_budget=10,
-                                       ps_search_population=10,
+    search_settings = PSSearchSettings(ps_search_budget=ps_search_budget,
+                                       ps_search_population=100,
                                        metrics="simplicity variance ground_truth_atomicity",
                                        avoid_ancestors=True,
                                        original_problem=problem,
@@ -78,7 +80,7 @@ def prepare_data_for_instance(instance_path: str,
 
     decision_tree_path = get_decision_tree_path(instance_path)
     if generate_decision_tree:
-        decision_tree = PSRegressionTree(maximum_depth=2)
+        decision_tree = PSRegressionTree(maximum_depth=depth)
         decision_tree.search_settings = search_settings
 
         with utils.announce(f"training the decision tree, storing it at {decision_tree_path}"):
@@ -179,17 +181,21 @@ def prepare_a_b_data():
 
 
 
-instance_c_path = r"C:\Users\gac8\PycharmProjects\PS-descriptors-LCS\UserStudy\Instances\Constructed"
+instance_ca_path = r"C:\Users\gac8\PycharmProjects\PS-descriptors-LCS\UserStudy\Instances\Constructed_A"
+instance_cb_path = r"C:\Users\gac8\PycharmProjects\PS-descriptors-LCS\UserStudy\Instances\Constructed_B"
 def prepare_constructed_problem_data():
-    prepare_data_for_instance(instance_path = instance_c_path,
+    instance_path = instance_cb_path
+    prepare_data_for_instance(instance_path = instance_path,
+                              ps_search_budget=5000,
+                              depth=4,
                               generate_pRef=True,
-                                generate_decision_tree=True,
-                                generate_properties_table=True)
+                              generate_decision_tree=True,
+                              generate_properties_table=True)
 
 
-    show_data_for_instance(instance_c_path)
+    show_data_for_instance(instance_path)
 
-prepare_constructed_problem_data()
+#prepare_constructed_problem_data()
 
 
 

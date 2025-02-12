@@ -1,0 +1,134 @@
+{
+    "rotas": [
+        "WWW-WW-WWWW--W",
+        "WWWW--WWWW-WW-",
+        "-WWWW--WWWW-WW",
+        "WWWW-WW-WWWW--"
+    ],
+    "skills":  ["phone", "fibre", "electricity", "modem", "network", "coding"],
+    "workers": [
+    {
+        "name": "Adam",
+        "skills": [
+            "fibre",
+            "network"
+        ]
+    },
+    {
+        "name": "Ben",
+        "skills": [
+            "electricity"
+        ]
+    },
+    {
+        "name": "Chloe",
+        "skills": [
+            "fibre"
+        ]
+    },
+    {
+        "name": "Daniel",
+        "skills": [
+            "coding"
+        ]
+    },
+    {
+        "name": "Ethan",
+        "skills": [
+            "phone",
+            "fibre",
+            "network"
+        ]
+    },
+    {
+        "name": "Felix",
+        "skills": [
+            "fibre",
+            "network",
+            "coding"
+        ]
+    },
+    {
+        "name": "Grace",
+        "skills": [
+            "modem"
+        ]
+    },
+    {
+        "name": "Hannah",
+        "skills": [
+            "fibre",
+            "modem"
+        ]
+    },
+    {
+        "name": "Isaac",
+        "skills": [
+            "network",
+            "coding"
+        ]
+    },
+    {
+        "name": "James",
+        "skills": [
+            "phone"
+        ]
+    },
+    {
+        "name": "Katy",
+        "skills": [
+            "coding"
+        ]
+    },
+    {
+        "name": "Leo",
+        "skills": [
+            "fibre"
+        ]
+    },
+    {
+        "name": "Mike",
+        "skills": [
+            "fibre"
+        ]
+    },
+    {
+        "name": "Noah",
+        "skills": [
+            "electricity"
+        ]
+    },
+    {
+        "name": "Olivia",
+        "skills": [
+            "fibre",
+            "network"
+        ]
+    },
+    {
+        "name": "Peter",
+        "skills": [
+            "electricity"
+        ]
+    },
+    {
+        "name": "Quinn",
+        "skills": [
+            "phone",
+            "coding"
+        ]
+    },
+    {
+        "name": "Riley",
+        "skills": [
+            "electricity"
+        ]
+    },
+    {
+        "name": "Sam",
+        "skills": [
+            "modem"
+        ]
+    }
+]
+}

@@ -1,0 +1,154 @@
+{
+    "rotas": [
+        "WWWW-WWW-W-WW-",
+        "W-WW-WWWWW-W-W",
+        "WWW-W-WW-WW-WW",
+        "W-W-WW-WWWW-WW"
+    ],
+    "skills": [
+        "security",
+        "management",
+        "sales",
+        "cloud",
+        "database"
+    ],
+    "workers": [
+        {
+            "name": "Alice",
+            "skills": [
+                "cloud"
+            ]
+        },
+        {
+            "name": "Brandon",
+            "skills": [
+                "cloud"
+            ]
+        },
+        {
+            "name": "Clara",
+            "skills": [
+                "management"
+            ]
+        },
+        {
+            "name": "Dominic",
+            "skills": [
+                "management",
+                "database"
+            ]
+        },
+        {
+            "name": "Eleanor",
+            "skills": [
+                "sales"
+            ]
+        },
+        {
+            "name": "Fiona",
+            "skills": [
+                "security"
+            ]
+        },
+        {
+            "name": "Gabriel",
+            "skills": [
+                "sales"
+            ]
+        },
+        {
+            "name": "Hazel",
+            "skills": [
+                "sales"
+            ]
+        },
+        {
+            "name": "Ivy",
+            "skills": []
+        },
+        {
+            "name": "Joshua",
+            "skills": [
+                "security"
+            ]
+        },
+        {
+            "name": "Kevin",
+            "skills": []
+        },
+        {
+            "name": "Lucas",
+            "skills": [
+                "sales"
+            ]
+        },
+        {
+            "name": "Matilda",
+            "skills": [
+                "management",
+                "database"
+            ]
+        },
+        {
+            "name": "Nathan",
+            "skills": [
+                "management"
+            ]
+        },
+        {
+            "name": "Oscar",
+            "skills": [
+                "management",
+                "cloud"
+            ]
+        },
+        {
+            "name": "Phoebe",
+            "skills": [
+                "management",
+                "database"
+            ]
+        },
+        {
+            "name": "Quentin",
+            "skills": [
+                "management"
+            ]
+        },
+        {
+            "name": "Rose",
+            "skills": [
+                "database"
+            ]
+        },
+        {
+            "name": "Sophia",
+            "skills": [
+                "security",
+                "management",
+                "database"
+            ]
+        }
+    ],
+    "original_indexes": [
+        18,
+        6,
+        2,
+        0,
+        1,
+        9,
+        13,
+        17,
+        3,
+        16,
+        10,
+        15,
+        5,
+        12,
+        7,
+        14,
+        11,
+        8,
+        4
+    ]
+}

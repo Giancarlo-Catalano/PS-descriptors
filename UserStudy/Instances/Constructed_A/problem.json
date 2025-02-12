@@ -1,0 +1,134 @@
+{
+  "rotas": [
+    "WWW-WW-WWWW---",
+    "WWWW--WWWW-WW-",
+    "-WWWW--WWWW-WW",
+    "WWWW-WW-WWWW--"
+  ],
+  "skills": [
+    "Troubleshooting",
+    "Coding",
+    "Fiberoptics",
+    "Monitoring",
+    "Cybersecurity",
+    "Integration",
+    "Switching",
+    "Routing",
+    "Network"
+  ],
+  "workers": [
+    {
+      "name": "Adam",
+      "skills": [
+        "Troubleshooting",
+        "Coding"
+      ]
+    },
+    {
+      "name": "Ben",
+      "skills": [
+        "Fiberoptics"
+      ]
+    },
+    {
+      "name": "Chloe",
+      "skills": [
+        "Monitoring",
+        "Cybersecurity",
+        "Integration"
+      ]
+    },
+    {
+      "name": "Daniel",
+      "skills": [
+        "Switching"
+      ]
+    },
+    {
+      "name": "Ethan",
+      "skills": [
+        "Fiberoptics"
+      ]
+    },
+    {
+      "name": "Felix",
+      "skills": [
+        "Coding"
+      ]
+    },
+    {
+      "name": "Grace",
+      "skills": [
+        "Switching",
+        "Monitoring"
+      ]
+    },
+    {
+      "name": "Hannah",
+      "skills": [
+        "Switching",
+        "Routing"
+      ]
+    },
+    {
+      "name": "Isaac",
+      "skills": [
+        "Network"
+      ]
+    },
+    {
+      "name": "James",
+      "skills": [
+        "Switching"
+      ]
+    },
+    {
+      "name": "Katy",
+      "skills": [
+        "Switching"
+      ]
+    },
+    {
+      "name": "Leo",
+      "skills": [
+        "Routing"
+      ]
+    },
+    {
+      "name": "Mike",
+      "skills": [
+        "Cybersecurity"
+      ]
+    },
+    {
+      "name": "Noah",
+      "skills": [
+        "Integration"
+      ]
+    },
+    {
+      "name": "Olivia",
+      "skills": [
+        "Network"
+      ]
+    },
+    {
+      "name": "Peter",
+      "skills": [
+        "Troubleshooting"
+      ]
+    },
+    {
+      "name": "Quinn",
+      "skills": [
+        "Fiberoptics"
+      ]
+    },
+    {
+      "name": "Riley",
+      "skills": [
+        "Fiberoptics"
+      ]
+    }
+  ]
+}

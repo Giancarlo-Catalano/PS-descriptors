@@ -1,0 +1,6 @@
+{"rotas":["WWW-WW-WWWW---",
+"WWWW--WWWW-WW-", 
+"-WWWW--WWWW-WW", 
+"WWWW-WW-WWWW--"],
+"skills":["S0", "S1", "S2", "S3", "S4", "S5", "S6", "S7", "S8"],
+"workers":[{"name": "W0", "skills": ["S0"]}, {"name": "W1", "skills": ["S0"]}, {"name": "W2", "skills": ["S1"]}, {"name": "W3", "skills": ["S1", "S2"]}, {"name": "W4", "skills": ["S2"]}, {"name": "W5", "skills": ["S3"]}, {"name": "W6", "skills": ["S3"]}, {"name": "W7", "skills": ["S3"]}, {"name": "W8", "skills": ["S3"]}, {"name": "W9", "skills": ["S4", "S5"]}, {"name": "W10", "skills": ["S5"]}, {"name": "W11", "skills": ["S4", "S6"]}, {"name": "W12", "skills": ["S6", "S7", "S8"]}, {"name": "W13", "skills": ["S7"]}, {"name": "W14", "skills": ["S8"]}, {"name": "W15", "skills": ["S4"]}, {"name": "W16", "skills": ["S4"]}, {"name": "W17", "skills": ["S4"]}]}

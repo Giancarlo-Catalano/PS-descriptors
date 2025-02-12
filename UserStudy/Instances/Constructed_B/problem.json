@@ -1,0 +1,134 @@
+{
+  "rotas": [
+    "WWW-WW-WWWW--W",
+    "WWWW--WWWW-WW-",
+    "-WWWW--WWWW-WW",
+    "WWWW-WW-WWWW--"
+  ],
+  "skills": [
+    "Maintenance",
+    "Automation",
+    "Implementation",
+    "Communication",
+    "Configuration",
+    "Negotiation",
+    "Optimization",
+    "Documentation",
+    "Diagnostics"
+  ],
+  "workers": [
+    {
+      "name": "Alice",
+      "skills": [
+        "Maintenance"
+      ]
+    },
+    {
+      "name": "Brandon",
+      "skills": [
+        "Automation"
+      ]
+    },
+    {
+      "name": "Clara",
+      "skills": [
+        "Implementation"
+      ]
+    },
+    {
+      "name": "Dominic",
+      "skills": [
+        "Communication"
+      ]
+    },
+    {
+      "name": "Eleanor",
+      "skills": [
+        "Configuration",
+        "Negotiation"
+      ]
+    },
+    {
+      "name": "Fiona",
+      "skills": [
+        "Optimization"
+      ]
+    },
+    {
+      "name": "Gabriel",
+      "skills": [
+        "Optimization"
+      ]
+    },
+    {
+      "name": "Hazel",
+      "skills": [
+        "Implementation",
+        "Documentation"
+      ]
+    },
+    {
+      "name": "Ivy",
+      "skills": [
+        "Documentation",
+        "Communication"
+      ]
+    },
+    {
+      "name": "Joshua",
+      "skills": [
+        "Implementation",
+        "Negotiation"
+      ]
+    },
+    {
+      "name": "Kevin",
+      "skills": [
+        "Automation"
+      ]
+    },
+    {
+      "name": "Lucas",
+      "skills": [
+        "Diagnostics"
+      ]
+    },
+    {
+      "name": "Matilda",
+      "skills": [
+        "Optimization"
+      ]
+    },
+    {
+      "name": "Nathan",
+      "skills": [
+        "Configuration"
+      ]
+    },
+    {
+      "name": "Oscar",
+      "skills": [
+        "Optimization"
+      ]
+    },
+    {
+      "name": "Phoebe",
+      "skills": [
+        "Diagnostics",
+        "Maintenance"
+      ]
+    },
+    {
+      "name": "Quentin",
+      "skills": [
+        "Implementation"
+      ]
+    },
+    {
+      "name": "Rose",
+      "skills": [
+        "Configuration"
+      ]
+    }
+  ]
+}
