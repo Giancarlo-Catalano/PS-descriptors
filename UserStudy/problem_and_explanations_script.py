@@ -189,7 +189,7 @@ def prepare_constructed_problem_data():
         prepare_data_for_instance(instance_path = instance_path,
                                    ps_search_budget=5000,
                                    depth=4,
-                                   generate_pRef=True,
+                                   #generate_pRef=True,
                                    generate_decision_tree=True,
                                    generate_properties_table=True
                                    )
