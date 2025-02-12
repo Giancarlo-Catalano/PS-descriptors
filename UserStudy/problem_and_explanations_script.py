@@ -184,18 +184,20 @@ def prepare_a_b_data():
 instance_ca_path = r"C:\Users\gac8\PycharmProjects\PS-descriptors-LCS\UserStudy\Instances\Constructed_A"
 instance_cb_path = r"C:\Users\gac8\PycharmProjects\PS-descriptors-LCS\UserStudy\Instances\Constructed_B"
 def prepare_constructed_problem_data():
-    instance_path = instance_cb_path
-    prepare_data_for_instance(instance_path = instance_path,
-                              ps_search_budget=5000,
-                              depth=4,
-                              generate_pRef=True,
-                              generate_decision_tree=True,
-                              generate_properties_table=True)
+    instance_paths = [instance_ca_path]# , instance_cb_path]
+    for instance_path in instance_paths:
+        prepare_data_for_instance(instance_path = instance_path,
+                                   ps_search_budget=5000,
+                                   depth=4,
+                                   generate_pRef=True,
+                                   generate_decision_tree=True,
+                                   generate_properties_table=True
+                                   )
 
 
-    show_data_for_instance(instance_path)
+        show_data_for_instance(instance_path)
 
-#prepare_constructed_problem_data()
+prepare_constructed_problem_data()
 
 
 

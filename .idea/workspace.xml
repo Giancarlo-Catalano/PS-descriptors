@@ -4,15 +4,18 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="a05e8814-504e-4333-8593-ec6366f9f3e6" name="Changes" comment="Implemented the constructed problem (to be completed)">
-      <change afterPath="$PROJECT_DIR$/UserStudy/Instances/A/problem_nameless.json" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/UserStudy/Instances/Constructed_A/problem.json" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/UserStudy/Instances/Constructed_A/problem_nameless.json" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/UserStudy/Instances/Constructed_B/problem.json" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/UserStudy/check_answers.py" afterDir="false" />
+    <list default="true" id="a05e8814-504e-4333-8593-ec6366f9f3e6" name="Changes" comment="Submitting instance files before a new search is carried out.">
+      <change afterPath="$PROJECT_DIR$/UserStudy/Instances/Constructed_A/questions.json" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/UserStudy/Instances/Constructed/problem.json" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/UserStudy/Instances/Constructed_A/decision_tree.json" beforeDir="false" afterPath="$PROJECT_DIR$/UserStudy/Instances/Constructed_A/decision_tree.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/UserStudy/Instances/Constructed_A/pRef.npz" beforeDir="false" afterPath="$PROJECT_DIR$/UserStudy/Instances/Constructed_A/pRef.npz" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/UserStudy/Instances/Constructed_A/ps_properties.csv" beforeDir="false" afterPath="$PROJECT_DIR$/UserStudy/Instances/Constructed_A/ps_properties.csv" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/UserStudy/Instances/Constructed_B/decision_tree.json" beforeDir="false" afterPath="$PROJECT_DIR$/UserStudy/Instances/Constructed_B/decision_tree.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/UserStudy/Instances/Constructed_B/pRef.npz" beforeDir="false" afterPath="$PROJECT_DIR$/UserStudy/Instances/Constructed_B/pRef.npz" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/UserStudy/Instances/Constructed_B/ps_properties.csv" beforeDir="false" afterPath="$PROJECT_DIR$/UserStudy/Instances/Constructed_B/ps_properties.csv" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/UserStudy/check_answers.py" beforeDir="false" afterPath="$PROJECT_DIR$/UserStudy/check_answers.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/UserStudy/problem_and_explanations_script.py" beforeDir="false" afterPath="$PROJECT_DIR$/UserStudy/problem_and_explanations_script.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/VarianceDecisionTree/PSRegressionTree.py" beforeDir="false" afterPath="$PROJECT_DIR$/VarianceDecisionTree/PSRegressionTree.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -101,194 +104,6 @@
       <recent name="C:\Users\gac8\PycharmProjects\PS-descriptors-LCS\LCS\DifferenceExplainer" />
     </key>
   </component>
-  <component name="RunManager" selected="Python.compare_prediction_powers">
-    <configuration name="Compare_prediction_powers" type="PythonConfigurationType" factoryName="Python">
-      <module name="PS-descriptors-LCS" />
-      <option name="INTERPRETER_OPTIONS" value="" />
-      <option name="PARENT_ENVS" value="true" />
-      <envs>
-        <env name="PYTHONUNBUFFERED" value="1" />
-      </envs>
-      <option name="SDK_HOME" value="" />
-      <option name="WORKING_DIRECTORY" value="" />
-      <option name="IS_MODULE_SDK" value="false" />
-      <option name="ADD_CONTENT_ROOTS" value="true" />
-      <option name="ADD_SOURCE_ROOTS" value="true" />
-      <EXTENSION ID="PythonCoverageRunConfigurationExtension" runner="coverage.py" />
-      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/VarianceDecisionTree/compare_prediction_powers.py" />
-      <option name="PARAMETERS" value="" />
-      <option name="SHOW_COMMAND_LINE" value="false" />
-      <option name="EMULATE_TERMINAL" value="false" />
-      <option name="MODULE_MODE" value="false" />
-      <option name="REDIRECT_INPUT" value="false" />
-      <option name="INPUT_FILE" value="" />
-      <method v="2" />
-    </configuration>
-    <configuration name="DiffExplanation" type="PythonConfigurationType" factoryName="Python">
-      <module name="PS-descriptors-LCS" />
-      <option name="INTERPRETER_OPTIONS" value="" />
-      <option name="PARENT_ENVS" value="true" />
-      <envs>
-        <env name="PYTHONUNBUFFERED" value="1" />
-      </envs>
-      <option name="SDK_HOME" value="" />
-      <option name="WORKING_DIRECTORY" value="" />
-      <option name="IS_MODULE_SDK" value="false" />
-      <option name="ADD_CONTENT_ROOTS" value="true" />
-      <option name="ADD_SOURCE_ROOTS" value="true" />
-      <EXTENSION ID="PythonCoverageRunConfigurationExtension" runner="coverage.py" />
-      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/LCS/test_difference_explainer.py" />
-      <option name="PARAMETERS" value="" />
-      <option name="SHOW_COMMAND_LINE" value="false" />
-      <option name="EMULATE_TERMINAL" value="false" />
-      <option name="MODULE_MODE" value="false" />
-      <option name="REDIRECT_INPUT" value="false" />
-      <option name="INPUT_FILE" value="" />
-      <method v="2" />
-    </configuration>
-    <configuration name="PairExplanationTester" type="PythonConfigurationType" factoryName="Python">
-      <module name="PS-descriptors-LCS" />
-      <option name="INTERPRETER_OPTIONS" value="" />
-      <option name="PARENT_ENVS" value="true" />
-      <envs>
-        <env name="PYTHONUNBUFFERED" value="1" />
-      </envs>
-      <option name="SDK_HOME" value="" />
-      <option name="WORKING_DIRECTORY" value="" />
-      <option name="IS_MODULE_SDK" value="false" />
-      <option name="ADD_CONTENT_ROOTS" value="true" />
-      <option name="ADD_SOURCE_ROOTS" value="true" />
-      <EXTENSION ID="PythonCoverageRunConfigurationExtension" runner="coverage.py" />
-      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/PairExplanation/run_tester.py" />
-      <option name="PARAMETERS" value="" />
-      <option name="SHOW_COMMAND_LINE" value="false" />
-      <option name="EMULATE_TERMINAL" value="false" />
-      <option name="MODULE_MODE" value="false" />
-      <option name="REDIRECT_INPUT" value="false" />
-      <option name="INPUT_FILE" value="" />
-      <method v="2" />
-    </configuration>
-    <configuration name="cached_explanations" type="PythonConfigurationType" factoryName="Python">
-      <module name="PS-descriptors-LCS" />
-      <option name="INTERPRETER_OPTIONS" value="" />
-      <option name="PARENT_ENVS" value="true" />
-      <envs>
-        <env name="PYTHONUNBUFFERED" value="1" />
-      </envs>
-      <option name="SDK_HOME" value="" />
-      <option name="WORKING_DIRECTORY" value="" />
-      <option name="IS_MODULE_SDK" value="false" />
-      <option name="ADD_CONTENT_ROOTS" value="true" />
-      <option name="ADD_SOURCE_ROOTS" value="true" />
-      <EXTENSION ID="PythonCoverageRunConfigurationExtension" runner="coverage.py" />
-      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/PairExplanation/load_data.py" />
-      <option name="PARAMETERS" value="" />
-      <option name="SHOW_COMMAND_LINE" value="false" />
-      <option name="EMULATE_TERMINAL" value="false" />
-      <option name="MODULE_MODE" value="false" />
-      <option name="REDIRECT_INPUT" value="false" />
-      <option name="INPUT_FILE" value="" />
-      <method v="2" />
-    </configuration>
-    <configuration name="compare_prediction_powers" type="PythonConfigurationType" factoryName="Python" nameIsGenerated="true">
-      <module name="PS-descriptors-LCS" />
-      <option name="INTERPRETER_OPTIONS" value="" />
-      <option name="PARENT_ENVS" value="true" />
-      <envs>
-        <env name="PYTHONUNBUFFERED" value="1" />
-      </envs>
-      <option name="SDK_HOME" value="" />
-      <option name="WORKING_DIRECTORY" value="" />
-      <option name="IS_MODULE_SDK" value="false" />
-      <option name="ADD_CONTENT_ROOTS" value="true" />
-      <option name="ADD_SOURCE_ROOTS" value="true" />
-      <EXTENSION ID="PythonCoverageRunConfigurationExtension" runner="coverage.py" />
-      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/VarianceDecisionTree/compare_prediction_powers.py" />
-      <option name="PARAMETERS" value="" />
-      <option name="SHOW_COMMAND_LINE" value="false" />
-      <option name="EMULATE_TERMINAL" value="false" />
-      <option name="MODULE_MODE" value="false" />
-      <option name="REDIRECT_INPUT" value="false" />
-      <option name="INPUT_FILE" value="" />
-      <method v="2" />
-    </configuration>
-    <configuration name="main" type="PythonConfigurationType" factoryName="Python" nameIsGenerated="true">
-      <module name="PS-descriptors-LCS" />
-      <option name="INTERPRETER_OPTIONS" value="" />
-      <option name="PARENT_ENVS" value="true" />
-      <envs>
-        <env name="PYTHONUNBUFFERED" value="1" />
-      </envs>
-      <option name="SDK_HOME" value="" />
-      <option name="WORKING_DIRECTORY" value="" />
-      <option name="IS_MODULE_SDK" value="false" />
-      <option name="ADD_CONTENT_ROOTS" value="true" />
-      <option name="ADD_SOURCE_ROOTS" value="true" />
-      <EXTENSION ID="PythonCoverageRunConfigurationExtension" runner="coverage.py" />
-      <option name="SCRIPT_NAME" value="main.py" />
-      <option name="PARAMETERS" value="" />
-      <option name="SHOW_COMMAND_LINE" value="false" />
-      <option name="EMULATE_TERMINAL" value="false" />
-      <option name="MODULE_MODE" value="false" />
-      <option name="REDIRECT_INPUT" value="false" />
-      <option name="INPUT_FILE" value="" />
-      <method v="2" />
-    </configuration>
-    <configuration name="show_off_problems" type="PythonConfigurationType" factoryName="Python">
-      <module name="PS-descriptors-LCS" />
-      <option name="INTERPRETER_OPTIONS" value="" />
-      <option name="PARENT_ENVS" value="true" />
-      <envs>
-        <env name="PYTHONUNBUFFERED" value="1" />
-      </envs>
-      <option name="SDK_HOME" value="" />
-      <option name="WORKING_DIRECTORY" value="" />
-      <option name="IS_MODULE_SDK" value="false" />
-      <option name="ADD_CONTENT_ROOTS" value="true" />
-      <option name="ADD_SOURCE_ROOTS" value="true" />
-      <EXTENSION ID="PythonCoverageRunConfigurationExtension" runner="coverage.py" />
-      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/GuestLecture/show_off_problems.py" />
-      <option name="PARAMETERS" value="" />
-      <option name="SHOW_COMMAND_LINE" value="false" />
-      <option name="EMULATE_TERMINAL" value="false" />
-      <option name="MODULE_MODE" value="false" />
-      <option name="REDIRECT_INPUT" value="false" />
-      <option name="INPUT_FILE" value="" />
-      <method v="2" />
-    </configuration>
-    <configuration name="variance_tree" type="PythonConfigurationType" factoryName="Python">
-      <module name="PS-descriptors-LCS" />
-      <option name="INTERPRETER_OPTIONS" value="" />
-      <option name="PARENT_ENVS" value="true" />
-      <envs>
-        <env name="PYTHONUNBUFFERED" value="1" />
-      </envs>
-      <option name="SDK_HOME" value="" />
-      <option name="WORKING_DIRECTORY" value="" />
-      <option name="IS_MODULE_SDK" value="false" />
-      <option name="ADD_CONTENT_ROOTS" value="true" />
-      <option name="ADD_SOURCE_ROOTS" value="true" />
-      <EXTENSION ID="PythonCoverageRunConfigurationExtension" runner="coverage.py" />
-      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/VarianceDecisionTree/test_variance_tree.py" />
-      <option name="PARAMETERS" value="" />
-      <option name="SHOW_COMMAND_LINE" value="false" />
-      <option name="EMULATE_TERMINAL" value="false" />
-      <option name="MODULE_MODE" value="false" />
-      <option name="REDIRECT_INPUT" value="false" />
-      <option name="INPUT_FILE" value="" />
-      <method v="2" />
-    </configuration>
-    <list>
-      <item itemvalue="Python.compare_prediction_powers" />
-      <item itemvalue="Python.DiffExplanation" />
-      <item itemvalue="Python.PairExplanationTester" />
-      <item itemvalue="Python.cached_explanations" />
-      <item itemvalue="Python.show_off_problems" />
-      <item itemvalue="Python.variance_tree" />
-      <item itemvalue="Python.Compare_prediction_powers" />
-      <item itemvalue="Python.main" />
-    </list>
-  </component>
   <component name="SharedIndexes">
     <attachedChunks>
       <set>
@@ -375,14 +190,7 @@
       <workItem from="1738843402834" duration="5147000" />
       <workItem from="1738924231593" duration="6594000" />
       <workItem from="1739279511868" duration="3359000" />
-    </task>
-    <task id="LOCAL-00090" summary="Implementing continuous problems">
-      <option name="closed" value="true" />
-      <created>1734023566416</created>
-      <option name="number" value="00090" />
-      <option name="presentableId" value="LOCAL-00090" />
-      <option name="project" value="LOCAL" />
-      <updated>1734023566417</updated>
+      <workItem from="1739355293455" duration="6574000" />
     </task>
     <task id="LOCAL-00091" summary="Implemented code which compares decision trees for many problems and depths.">
       <option name="closed" value="true" />
@@ -768,7 +576,15 @@
       <option name="project" value="LOCAL" />
       <updated>1738862766250</updated>
     </task>
-    <option name="localTasksCounter" value="139" />
+    <task id="LOCAL-00139" summary="Submitting instance files before a new search is carried out.">
+      <option name="closed" value="true" />
+      <created>1739355507141</created>
+      <option name="number" value="00139" />
+      <option name="presentableId" value="LOCAL-00139" />
+      <option name="project" value="LOCAL" />
+      <updated>1739355507141</updated>
+    </task>
+    <option name="localTasksCounter" value="140" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -798,7 +614,6 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="Ready for another round of condor..." />
     <MESSAGE value="Implemented tabu search, added a seed from the command line, added functionality to process tree data (orders by depth)." />
     <MESSAGE value="I discovered that the linkage thing was causing for the data to be SIGNIFICANTLY slower, so I had to scrap it..." />
     <MESSAGE value="Made tabu search more efficient." />
@@ -823,7 +638,8 @@
     <MESSAGE value="Made a script which generates the pRef, decision tree and descriptors for problem A. Then it produces the equivalent versions for problem B. Changed the format for how the decision trees were being stored to avoid bugs (other stats is now in its own dict in the json)" />
     <MESSAGE value="Tree is now produced using AnyTree" />
     <MESSAGE value="Implemented the constructed problem (to be completed)" />
-    <option name="LAST_COMMIT_MESSAGE" value="Implemented the constructed problem (to be completed)" />
+    <MESSAGE value="Submitting instance files before a new search is carried out." />
+    <option name="LAST_COMMIT_MESSAGE" value="Submitting instance files before a new search is carried out." />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
@@ -959,6 +775,16 @@
           <line>61</line>
           <option name="timeStamp" value="235" />
         </line-breakpoint>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/UserStudy/check_answers.py</url>
+          <line>104</line>
+          <option name="timeStamp" value="236" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/UserStudy/check_answers.py</url>
+          <line>25</line>
+          <option name="timeStamp" value="237" />
+        </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="jupyter-line">
           <url>notebook://C:/Users/gac8/PycharmProjects/PS-descriptors-LCS/VarianceDecisionTree/process_data/accuracy_by_settings.ipynb</url>
           <line>234</line>
@@ -1016,9 +842,9 @@
     <SUITE FILE_PATH="coverage/PS_descriptors$IAIDecisionTree.coverage" NAME="IAIDecisionTree Coverage Results" MODIFIED="1735302189159" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/VarianceDecisionTree" />
     <SUITE FILE_PATH="coverage/PS_descriptors_LCS$SATProblem.coverage" NAME="SATProblem Coverage Results" MODIFIED="1738002735449" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/BenchmarkProblems" />
     <SUITE FILE_PATH="coverage/PS_descriptors_LCS$DiffExplanation.coverage" NAME="DiffExplanation Coverage Results" MODIFIED="1731685086513" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="" />
-    <SUITE FILE_PATH="coverage/PS_descriptors_LCS$check_answers.coverage" NAME="check_answers Coverage Results" MODIFIED="1739281245556" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/UserStudy" />
+    <SUITE FILE_PATH="coverage/PS_descriptors_LCS$check_answers.coverage" NAME="check_answers Coverage Results" MODIFIED="1739373404923" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/UserStudy" />
     <SUITE FILE_PATH="coverage/PS_descriptors$main.coverage" NAME="main Coverage Results" MODIFIED="1736079891229" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="" />
-    <SUITE FILE_PATH="coverage/PS_descriptors_LCS$problem_and_explanations_script.coverage" NAME="problem_and_explanations_script Coverage Results" MODIFIED="1738947502227" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/UserStudy" />
+    <SUITE FILE_PATH="coverage/PS_descriptors_LCS$problem_and_explanations_script.coverage" NAME="problem_and_explanations_script Coverage Results" MODIFIED="1739373615165" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/UserStudy" />
     <SUITE FILE_PATH="coverage/PS_descriptors$SimplePSSearchTask.coverage" NAME="SimplePSSearchTask Coverage Results" MODIFIED="1735911947478" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/VarianceDecisionTree" />
     <SUITE FILE_PATH="coverage/PS_descriptors_LCS$DescriptorsManager.coverage" NAME="DescriptorsManager Coverage Results" MODIFIED="1730738533278" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/LCS/DifferenceExplainer" />
   </component>

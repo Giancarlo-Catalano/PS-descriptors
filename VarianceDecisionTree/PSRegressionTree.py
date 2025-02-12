@@ -167,7 +167,7 @@ class PSRegressionTreeBranchNode(PSRegressionTreeNode):
                                             metrics=search_settings.metrics,
                                             verbose=search_settings.verbose)
 
-        return ps_candidates[0]
+        return ps_candidates[0] #  the culling method should leave just one left in the array anyway
 
 
     def get_node_text(self, custom_ps_repr: Callable, custom_prop_repr: Callable):
