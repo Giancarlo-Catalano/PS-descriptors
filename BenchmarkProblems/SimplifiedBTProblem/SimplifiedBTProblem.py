@@ -156,7 +156,7 @@ class SimplifiedBTProblem(BenchmarkProblem):
         skillsets = [{skill for skill, is_used in zip(self.skill_names, row)} for row in skill_matrix]
 
         skill_counts = np.sum(skill_matrix, 0)
-        total_qty_of_skills = np.sum(skill_counts > 0)
+        total_qty_of_skills = np.sum(skill_counts > 0) # this might be wrong?
 
         def average_bivariate_distance(items, bivariate_aggregation, default) -> float:
             if len(items) == 0:
@@ -212,10 +212,10 @@ class SimplifiedBTProblem(BenchmarkProblem):
 
         for property_name, property_value, property_rank in descriptors:
             parts = property_name.split("_")
-            if parts[0] == "diff":
+            if parts[0] == "diff" and property_value == 0.0:
                 diff_lines.append(f"Balanced on {parts[1]}s on skill {parts[2]}")
             elif (parts[0], parts[1]) == ("count", "skill") and property_value > 0:
-                skill_count_lines.append(f"{int(property_value)} workers with skill {parts[2]}")
+                skill_count_lines.append(f"{int(property_value)} people with skill \"{parts[2]}\"")
             elif property_name == "average_qty_skills":
                 other_lines.append(f"{property_value:.2f} skills on average")
             elif property_name == "total_qty_of_skills":

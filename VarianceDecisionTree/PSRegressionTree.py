@@ -72,6 +72,8 @@ class PSRegressionTreeNode:
             average = stats["average"]
             stats["mse"] = np.average((fitnesses - average) ** 2)
             stats["mae"] = np.average(np.abs(fitnesses - average))
+            stats["min"] = np.min(fitnesses)
+            stats["max"] = np.max(fitnesses)
 
         return stats
 
@@ -127,7 +129,7 @@ class PSRegressionTreeLeafNode(PSRegressionTreeNode):
                    other_statistics=d["other_statistics"])
 
     def get_node_text(self, custom_ps_repr: Callable, custom_prop_repr: Callable):
-        return f"prediction = {self.prediction:.2f} ± {self.other_statistics['mae']:.2f}\n"
+        return f"(n = {self.other_statistics['n']}), prediction = {self.prediction:.2f} ± {self.other_statistics['mae']:.2f}, min = {self.other_statistics['min']:.2f}, max = {self.other_statistics['max']:.2f}\n"
 
 
 class PSRegressionTreeBranchNode(PSRegressionTreeNode):
@@ -178,7 +180,7 @@ class PSRegressionTreeBranchNode(PSRegressionTreeNode):
         if self.ps_properties is not None:
             properties_str = custom_prop_repr(self.ps_properties)
 
-        result = (f"prediction = {self.prediction:.2f} ± {self.other_statistics['mae']:.2f}\n"
+        result = (f"(n = {self.other_statistics['n']}), prediction = {self.prediction:.2f} ± {self.other_statistics['mae']:.2f}, min = {self.other_statistics['min']:.2f}, max = {self.other_statistics['max']:.2f}\n"
                   f"Branching, split ps = {ps_repr}, \n"
                   f"properties: \n{utils.indent(properties_str)}")
 
@@ -261,8 +263,8 @@ class PSRegressionTree(AbstractDecisionTreeRegressor):
             if self.search_settings.verbose:
                 print(f"The splitting PS is {splitting_ps}")
             node.split_ps = splitting_ps
-            matching_indexes = pRef.get_indexes_matching_ps(splitting_ps)
-            matching_pRef, not_matching_pRef = pRef.split_by_indexes(matching_indexes)
+            matching_indexes = pRef_to_split.get_indexes_matching_ps(splitting_ps)
+            matching_pRef, not_matching_pRef = pRef_to_split.split_by_indexes(matching_indexes)
 
             node.matching_branch = recursively_train_node(pRef_to_split=matching_pRef,
                                                           current_depth=current_depth + 1,
