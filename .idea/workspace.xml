@@ -4,14 +4,10 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="a05e8814-504e-4333-8593-ec6366f9f3e6" name="Changes" comment="Found a bug in how the tree was getting generated, the not-matching branch was always the root node - the matching branch">
-      <change afterPath="$PROJECT_DIR$/UserStudy/Instances/Constructed_A/tasks.json" afterDir="false" />
+    <list default="true" id="a05e8814-504e-4333-8593-ec6366f9f3e6" name="Changes" comment="Instances and tasks are complete">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/UserStudy/Instances/Constructed_B/ps_properties.csv" beforeDir="false" afterPath="$PROJECT_DIR$/UserStudy/Instances/Constructed_B/ps_properties.csv" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/UserStudy/Instances/Constructed_B/tasks.json" beforeDir="false" afterPath="$PROJECT_DIR$/UserStudy/Instances/Constructed_B/tasks.json" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/UserStudy/check_answers.py" beforeDir="false" afterPath="$PROJECT_DIR$/UserStudy/check_answers.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/UserStudy/problem_and_explanations_script.py" beforeDir="false" afterPath="$PROJECT_DIR$/UserStudy/problem_and_explanations_script.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/VarianceDecisionTree/PSRegressionTree.py" beforeDir="false" afterPath="$PROJECT_DIR$/VarianceDecisionTree/PSRegressionTree.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -188,15 +184,7 @@
       <workItem from="1739279511868" duration="3359000" />
       <workItem from="1739355293455" duration="10552000" />
       <workItem from="1739440360020" duration="11155000" />
-      <workItem from="1739524940341" duration="4270000" />
-    </task>
-    <task id="LOCAL-00095" summary="Implementing some additional arguments for the IAI trees.">
-      <option name="closed" value="true" />
-      <created>1735302507864</created>
-      <option name="number" value="00095" />
-      <option name="presentableId" value="LOCAL-00095" />
-      <option name="project" value="LOCAL" />
-      <updated>1735302507865</updated>
+      <workItem from="1739524940341" duration="6539000" />
     </task>
     <task id="LOCAL-00096" summary="Made a proper data gathering function.">
       <option name="closed" value="true" />
@@ -582,7 +570,15 @@
       <option name="project" value="LOCAL" />
       <updated>1739452358308</updated>
     </task>
-    <option name="localTasksCounter" value="144" />
+    <task id="LOCAL-00144" summary="Instances and tasks are complete">
+      <option name="closed" value="true" />
+      <created>1739544883020</created>
+      <option name="number" value="00144" />
+      <option name="presentableId" value="LOCAL-00144" />
+      <option name="project" value="LOCAL" />
+      <updated>1739544883020</updated>
+    </task>
+    <option name="localTasksCounter" value="145" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -612,7 +608,6 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="The metrics for the search are now parametrised." />
     <MESSAGE value="Order of operations was changed slightly (train a tree, get output, next)" />
     <MESSAGE value="Ready for condor" />
     <MESSAGE value="Ready for another round of condor, gathering data for the naive trees with absolutely default settings." />
@@ -637,7 +632,8 @@
     <MESSAGE value="tree is weird, rerunning" />
     <MESSAGE value="Discovered that the seed for the decision tree was fixed, and so I kept getting the same result. This last tree seems pretty good!" />
     <MESSAGE value="Found a bug in how the tree was getting generated, the not-matching branch was always the root node - the matching branch" />
-    <option name="LAST_COMMIT_MESSAGE" value="Found a bug in how the tree was getting generated, the not-matching branch was always the root node - the matching branch" />
+    <MESSAGE value="Instances and tasks are complete" />
+    <option name="LAST_COMMIT_MESSAGE" value="Instances and tasks are complete" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
@@ -830,9 +826,9 @@
     <SUITE FILE_PATH="coverage/PS_descriptors$IAIDecisionTree.coverage" NAME="IAIDecisionTree Coverage Results" MODIFIED="1735302189159" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/VarianceDecisionTree" />
     <SUITE FILE_PATH="coverage/PS_descriptors_LCS$SATProblem.coverage" NAME="SATProblem Coverage Results" MODIFIED="1738002735449" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/BenchmarkProblems" />
     <SUITE FILE_PATH="coverage/PS_descriptors_LCS$DiffExplanation.coverage" NAME="DiffExplanation Coverage Results" MODIFIED="1731685086513" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="" />
-    <SUITE FILE_PATH="coverage/PS_descriptors_LCS$check_answers.coverage" NAME="check_answers Coverage Results" MODIFIED="1739543464884" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/UserStudy" />
+    <SUITE FILE_PATH="coverage/PS_descriptors_LCS$check_answers.coverage" NAME="check_answers Coverage Results" MODIFIED="1739549921761" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/UserStudy" />
     <SUITE FILE_PATH="coverage/PS_descriptors$main.coverage" NAME="main Coverage Results" MODIFIED="1736079891229" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="" />
-    <SUITE FILE_PATH="coverage/PS_descriptors_LCS$problem_and_explanations_script.coverage" NAME="problem_and_explanations_script Coverage Results" MODIFIED="1739542674733" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/UserStudy" />
+    <SUITE FILE_PATH="coverage/PS_descriptors_LCS$problem_and_explanations_script.coverage" NAME="problem_and_explanations_script Coverage Results" MODIFIED="1739551622583" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/UserStudy" />
     <SUITE FILE_PATH="coverage/PS_descriptors$SimplePSSearchTask.coverage" NAME="SimplePSSearchTask Coverage Results" MODIFIED="1735911947478" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/VarianceDecisionTree" />
     <SUITE FILE_PATH="coverage/PS_descriptors_LCS$DescriptorsManager.coverage" NAME="DescriptorsManager Coverage Results" MODIFIED="1730738533278" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/LCS/DifferenceExplainer" />
   </component>

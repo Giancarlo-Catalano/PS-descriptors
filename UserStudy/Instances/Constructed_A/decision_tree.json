@@ -1,0 +1,1705 @@
+{
+    "maximum_depth": 4,
+    "search_settings": {
+        "ps_search_budget": 5000,
+        "ps_search_population": 100,
+        "metrics": "simplicity variance ground_truth_atomicity",
+        "avoid_ancestors": true,
+        "culling_method": "biggest",
+        "verbose": true
+    },
+    "tree": {
+        "node_type": "branch",
+        "split_ps": "* * 1 * * * 0 * * * * * 0 0 * * * *",
+        "matching_branch": {
+            "node_type": "branch",
+            "split_ps": "1 * * * * 0 * * 0 * * * * * 1 0 * *",
+            "matching_branch": {
+                "node_type": "branch",
+                "split_ps": "* 3 * * 2 * * * * * * * * * * * 1 0",
+                "matching_branch": {
+                    "node_type": "branch",
+                    "split_ps": "* * * * * * * 1 * * 2 0 * * * * * *",
+                    "matching_branch": {
+                        "node_type": "leaf",
+                        "other_statistics": {
+                            "n": 2,
+                            "average": -4.0,
+                            "variance": 0.0,
+                            "sd": 0.0,
+                            "mse": 0.0,
+                            "mae": 0.0,
+                            "min": -4.0,
+                            "max": -4.0
+                        },
+                        "prediction": -4.0
+                    },
+                    "not_matching_branch": {
+                        "node_type": "leaf",
+                        "other_statistics": {
+                            "n": 20,
+                            "average": -9.7,
+                            "variance": 9.709999999999999,
+                            "sd": 3.1160872901765764,
+                            "mse": 9.709999999999999,
+                            "mae": 2.3300000000000005,
+                            "min": -18.0,
+                            "max": -4.0
+                        },
+                        "prediction": -9.7
+                    },
+                    "ps_properties": [
+                        [
+                            "count_skill_Routing",
+                            2.0,
+                            0.9901666666666666
+                        ],
+                        [
+                            "diff_Friday_Routing",
+                            0.0,
+                            0.013227513227513227
+                        ],
+                        [
+                            "diff_Sunday_Routing",
+                            0.0,
+                            0.013227513227513227
+                        ],
+                        [
+                            "diff_Saturday_Routing",
+                            0.0,
+                            0.014814814814814815
+                        ],
+                        [
+                            "diff_Friday_Switching",
+                            0.0,
+                            0.059366754617414245
+                        ],
+                        [
+                            "diff_Sunday_Switching",
+                            0.0,
+                            0.059366754617414245
+                        ],
+                        [
+                            "diff_Saturday_Switching",
+                            2.0,
+                            0.9343007915567282
+                        ],
+                        [
+                            "total_qty_of_skills",
+                            2.0,
+                            0.07083333333333333
+                        ],
+                        [
+                            "skill_bivariate_distance",
+                            1.3333333333333333,
+                            0.076
+                        ],
+                        [
+                            "count_skill_Switching",
+                            2.0,
+                            0.9123333333333333
+                        ],
+                        [
+                            "rota_average_bivariate_distance",
+                            6.0,
+                            0.8151666666666667
+                        ],
+                        [
+                            "count_skill_Fiberoptics",
+                            0.0,
+                            0.2235
+                        ],
+                        [
+                            "diff_Monday_Routing",
+                            0.0,
+                            0.24285714285714285
+                        ],
+                        [
+                            "diff_Thursday_Routing",
+                            0.0,
+                            0.24814814814814815
+                        ]
+                    ],
+                    "other_statistics": {
+                        "n": 22,
+                        "average": -9.181818181818182,
+                        "variance": 11.512396694214877,
+                        "sd": 3.3929922920948226,
+                        "mse": 11.512396694214877,
+                        "mae": 2.6363636363636362,
+                        "min": -18.0,
+                        "max": -4.0
+                    },
+                    "prediction": -9.181818181818182
+                },
+                "not_matching_branch": {
+                    "node_type": "branch",
+                    "split_ps": "* * * * * * * 3 * 2 * 2 * * * * 1 0",
+                    "matching_branch": {
+                        "node_type": "leaf",
+                        "other_statistics": {
+                            "n": 8,
+                            "average": -7.75,
+                            "variance": 6.4375,
+                            "sd": 2.537222891273055,
+                            "mse": 6.4375,
+                            "mae": 1.875,
+                            "min": -12.0,
+                            "max": -4.0
+                        },
+                        "prediction": -7.75
+                    },
+                    "not_matching_branch": {
+                        "node_type": "leaf",
+                        "other_statistics": {
+                            "n": 54,
+                            "average": -14.222222222222221,
+                            "variance": 12.691358024691354,
+                            "sd": 3.562493231529199,
+                            "mse": 12.691358024691354,
+                            "mae": 2.8395061728395063,
+                            "min": -24.0,
+                            "max": -8.0
+                        },
+                        "prediction": -14.222222222222221
+                    },
+                    "ps_properties": [
+                        [
+                            "count_skill_Routing",
+                            2.0,
+                            0.9658333333333333
+                        ],
+                        [
+                            "diff_Friday_Routing",
+                            0.0,
+                            0.03493150684931507
+                        ],
+                        [
+                            "diff_Sunday_Routing",
+                            0.0,
+                            0.03493150684931507
+                        ],
+                        [
+                            "diff_Saturday_Routing",
+                            0.0,
+                            0.03561643835616438
+                        ],
+                        [
+                            "total_qty_of_skills",
+                            3.0,
+                            0.041666666666666664
+                        ],
+                        [
+                            "diff_Saturday_Fiberoptics",
+                            0.0,
+                            0.08096900916630292
+                        ],
+                        [
+                            "diff_Friday_Fiberoptics",
+                            0.0,
+                            0.08511567001309472
+                        ],
+                        [
+                            "diff_Sunday_Fiberoptics",
+                            0.0,
+                            0.08511567001309472
+                        ],
+                        [
+                            "diff_Saturday_Switching",
+                            0.0,
+                            0.09921104536489152
+                        ],
+                        [
+                            "diff_Friday_Switching",
+                            0.0,
+                            0.10295857988165681
+                        ],
+                        [
+                            "diff_Sunday_Switching",
+                            0.0,
+                            0.10295857988165681
+                        ],
+                        [
+                            "rota_average_bivariate_distance",
+                            5.4,
+                            0.8853333333333333
+                        ],
+                        [
+                            "skill_bivariate_distance",
+                            1.8,
+                            0.16033333333333333
+                        ],
+                        [
+                            "count_skill_Fiberoptics",
+                            2.0,
+                            0.83
+                        ],
+                        [
+                            "diff_Thursday_Switching",
+                            0.0,
+                            0.21143984220907297
+                        ],
+                        [
+                            "diff_Monday_Switching",
+                            0.0,
+                            0.21301775147928995
+                        ],
+                        [
+                            "diff_Thursday_Fiberoptics",
+                            0.0,
+                            0.22435617634220864
+                        ],
+                        [
+                            "diff_Monday_Fiberoptics",
+                            0.0,
+                            0.22697512003491924
+                        ],
+                        [
+                            "diff_Thursday_Routing",
+                            0.0,
+                            0.23938356164383562
+                        ],
+                        [
+                            "diff_Monday_Routing",
+                            0.0,
+                            0.24246575342465754
+                        ]
+                    ],
+                    "other_statistics": {
+                        "n": 62,
+                        "average": -13.387096774193548,
+                        "variance": 16.592091571279916,
+                        "sd": 4.073339118128997,
+                        "mse": 16.592091571279916,
+                        "mae": 3.3173777315296564,
+                        "min": -24.0,
+                        "max": -4.0
+                    },
+                    "prediction": -13.387096774193548
+                },
+                "ps_properties": [
+                    [
+                        "count_skill_Fiberoptics",
+                        4.0,
+                        0.9995
+                    ],
+                    [
+                        "total_qty_of_skills",
+                        1.0,
+                        0.0005
+                    ],
+                    [
+                        "skill_bivariate_distance",
+                        0.0,
+                        0.0005
+                    ],
+                    [
+                        "rota_average_bivariate_distance",
+                        6.0,
+                        0.951
+                    ],
+                    [
+                        "diff_Friday_Fiberoptics",
+                        0.0,
+                        0.06388888888888888
+                    ],
+                    [
+                        "diff_Sunday_Fiberoptics",
+                        0.0,
+                        0.06388888888888888
+                    ],
+                    [
+                        "diff_Saturday_Fiberoptics",
+                        0.0,
+                        0.06843434343434343
+                    ],
+                    [
+                        "count_skill_Switching",
+                        0.0,
+                        0.119
+                    ],
+                    [
+                        "average_qty_skills",
+                        1.0,
+                        0.16816666666666666
+                    ],
+                    [
+                        "diff_Thursday_Fiberoptics",
+                        0.0,
+                        0.2318181818181818
+                    ],
+                    [
+                        "diff_Monday_Fiberoptics",
+                        0.0,
+                        0.23383838383838385
+                    ]
+                ],
+                "other_statistics": {
+                    "n": 84,
+                    "average": -12.285714285714286,
+                    "variance": 18.680272108843536,
+                    "sd": 4.32206803611923,
+                    "mse": 18.680272108843536,
+                    "mae": 3.517006802721088,
+                    "min": -24.0,
+                    "max": -4.0
+                },
+                "prediction": -12.285714285714286
+            },
+            "not_matching_branch": {
+                "node_type": "branch",
+                "split_ps": "1 * * * * * * * * * * * * * * 0 * 0",
+                "matching_branch": {
+                    "node_type": "branch",
+                    "split_ps": "* 3 * * 1 0 * * * * * * * * * * 2 0",
+                    "matching_branch": {
+                        "node_type": "leaf",
+                        "other_statistics": {
+                            "n": 14,
+                            "average": -11.714285714285714,
+                            "variance": 10.775510204081632,
+                            "sd": 3.282607226593159,
+                            "mse": 10.775510204081632,
+                            "mae": 2.897959183673469,
+                            "min": -16.0,
+                            "max": -8.0
+                        },
+                        "prediction": -11.714285714285714
+                    },
+                    "not_matching_branch": {
+                        "node_type": "leaf",
+                        "other_statistics": {
+                            "n": 87,
+                            "average": -17.03448275862069,
+                            "variance": 18.470075307173996,
+                            "sd": 4.297682550767797,
+                            "mse": 18.470075307173996,
+                            "mae": 3.5751089972255254,
+                            "min": -28.0,
+                            "max": -8.0
+                        },
+                        "prediction": -17.03448275862069
+                    },
+                    "ps_properties": [
+                        [
+                            "skill_bivariate_distance",
+                            0.8,
+                            0.0006666666666666666
+                        ],
+                        [
+                            "count_skill_Fiberoptics",
+                            4.0,
+                            0.999
+                        ],
+                        [
+                            "total_qty_of_skills",
+                            2.0,
+                            0.0023333333333333335
+                        ],
+                        [
+                            "count_skill_Switching",
+                            0.0,
+                            0.0775
+                        ],
+                        [
+                            "diff_Saturday_Fiberoptics",
+                            0.0,
+                            0.08096900916630292
+                        ],
+                        [
+                            "diff_Friday_Fiberoptics",
+                            0.0,
+                            0.08511567001309472
+                        ],
+                        [
+                            "diff_Sunday_Fiberoptics",
+                            0.0,
+                            0.08511567001309472
+                        ],
+                        [
+                            "rota_average_bivariate_distance",
+                            5.4,
+                            0.8853333333333333
+                        ],
+                        [
+                            "average_qty_skills",
+                            1.0,
+                            0.1195
+                        ],
+                        [
+                            "diff_Thursday_Fiberoptics",
+                            0.0,
+                            0.22435617634220864
+                        ],
+                        [
+                            "diff_Monday_Fiberoptics",
+                            0.0,
+                            0.22697512003491924
+                        ],
+                        [
+                            "diff_Monday_Coding",
+                            0.0,
+                            0.2426470588235294
+                        ]
+                    ],
+                    "other_statistics": {
+                        "n": 101,
+                        "average": -16.297029702970296,
+                        "variance": 20.783060484266247,
+                        "sd": 4.558844204868844,
+                        "mse": 20.783060484266247,
+                        "mae": 3.707479658856974,
+                        "min": -28.0,
+                        "max": -8.0
+                    },
+                    "prediction": -16.297029702970296
+                },
+                "not_matching_branch": {
+                    "node_type": "branch",
+                    "split_ps": "* 3 * * 2 * * 1 0 * * * * * 1 * 1 0",
+                    "matching_branch": {
+                        "node_type": "leaf",
+                        "other_statistics": {
+                            "n": 14,
+                            "average": -14.571428571428571,
+                            "variance": 9.387755102040817,
+                            "sd": 3.0639443699324596,
+                            "mse": 9.387755102040817,
+                            "mae": 2.3673469387755097,
+                            "min": -20.0,
+                            "max": -8.0
+                        },
+                        "prediction": -14.571428571428571
+                    },
+                    "not_matching_branch": {
+                        "node_type": "leaf",
+                        "other_statistics": {
+                            "n": 94,
+                            "average": -21.19148936170213,
+                            "variance": 37.47397012222725,
+                            "sd": 6.1215986573955705,
+                            "mse": 37.47397012222725,
+                            "mae": 4.7985513807152556,
+                            "min": -40.0,
+                            "max": -8.0
+                        },
+                        "prediction": -21.19148936170213
+                    },
+                    "ps_properties": [
+                        [
+                            "count_skill_Fiberoptics",
+                            4.0,
+                            0.993
+                        ],
+                        [
+                            "skill_bivariate_distance",
+                            1.619047619047619,
+                            0.019166666666666665
+                        ],
+                        [
+                            "total_qty_of_skills",
+                            4.0,
+                            0.029166666666666667
+                        ],
+                        [
+                            "diff_Friday_Network",
+                            0.0,
+                            0.054261514028586554
+                        ],
+                        [
+                            "diff_Sunday_Network",
+                            0.0,
+                            0.054261514028586554
+                        ],
+                        [
+                            "diff_Saturday_Network",
+                            0.0,
+                            0.05849655902593965
+                        ],
+                        [
+                            "count_skill_Network",
+                            2.0,
+                            0.9305
+                        ],
+                        [
+                            "diff_Friday_Fiberoptics",
+                            0.0,
+                            0.10666666666666667
+                        ],
+                        [
+                            "diff_Sunday_Fiberoptics",
+                            0.0,
+                            0.10666666666666667
+                        ],
+                        [
+                            "diff_Saturday_Fiberoptics",
+                            0.0,
+                            0.11666666666666667
+                        ],
+                        [
+                            "count_skill_Monitoring",
+                            0.0,
+                            0.17516666666666666
+                        ],
+                        [
+                            "count_skill_Integration",
+                            0.0,
+                            0.17683333333333334
+                        ],
+                        [
+                            "count_skill_Switching",
+                            1.0,
+                            0.17983333333333335
+                        ],
+                        [
+                            "count_skill_Cybersecurity",
+                            0.0,
+                            0.1815
+                        ],
+                        [
+                            "count_skill_Troubleshooting",
+                            0.0,
+                            0.18316666666666667
+                        ],
+                        [
+                            "count_skill_Coding",
+                            0.0,
+                            0.18733333333333332
+                        ],
+                        [
+                            "diff_Monday_Switching",
+                            0.0,
+                            0.19097586568730326
+                        ],
+                        [
+                            "rota_average_bivariate_distance",
+                            5.0476190476190474,
+                            0.806
+                        ],
+                        [
+                            "diff_Monday_Fiberoptics",
+                            0.0,
+                            0.20796296296296296
+                        ],
+                        [
+                            "diff_Thursday_Fiberoptics",
+                            0.0,
+                            0.20962962962962964
+                        ],
+                        [
+                            "diff_Monday_Network",
+                            0.0,
+                            0.2263102170460561
+                        ],
+                        [
+                            "diff_Monday_Routing",
+                            0.0,
+                            0.24179260031266284
+                        ],
+                        [
+                            "diff_Thursday_Network",
+                            0.0,
+                            0.2458973001588142
+                        ]
+                    ],
+                    "other_statistics": {
+                        "n": 108,
+                        "average": -20.333333333333332,
+                        "variance": 38.77777777777778,
+                        "sd": 6.227180564089801,
+                        "mse": 38.77777777777778,
+                        "mae": 4.796296296296295,
+                        "min": -40.0,
+                        "max": -8.0
+                    },
+                    "prediction": -20.333333333333332
+                },
+                "ps_properties": [
+                    [
+                        "count_skill_Troubleshooting",
+                        2.0,
+                        0.9923333333333333
+                    ],
+                    [
+                        "diff_Friday_Troubleshooting",
+                        0.0,
+                        0.012004175365344467
+                    ],
+                    [
+                        "diff_Sunday_Troubleshooting",
+                        0.0,
+                        0.012004175365344467
+                    ],
+                    [
+                        "diff_Saturday_Troubleshooting",
+                        0.0,
+                        0.013048016701461378
+                    ],
+                    [
+                        "count_skill_Coding",
+                        1.0,
+                        0.8276666666666667
+                    ],
+                    [
+                        "count_skill_Switching",
+                        0.0,
+                        0.18416666666666667
+                    ],
+                    [
+                        "diff_Thursday_Troubleshooting",
+                        0.0,
+                        0.238517745302714
+                    ],
+                    [
+                        "diff_Monday_Fiberoptics",
+                        0.0,
+                        0.24532851115129597
+                    ],
+                    [
+                        "diff_Monday_Coding",
+                        0.0,
+                        0.24664602683178535
+                    ]
+                ],
+                "other_statistics": {
+                    "n": 209,
+                    "average": -18.382775119617225,
+                    "variance": 34.150133925505365,
+                    "sd": 5.843811592232022,
+                    "mse": 34.150133925505365,
+                    "mae": 4.582495821982097,
+                    "min": -40.0,
+                    "max": -8.0
+                },
+                "prediction": -18.382775119617225
+            },
+            "ps_properties": [
+                [
+                    "diff_Saturday_Coding",
+                    0.0,
+                    0.028409090909090908
+                ],
+                [
+                    "count_skill_Coding",
+                    2.0,
+                    0.9676666666666667
+                ],
+                [
+                    "count_skill_Troubleshooting",
+                    2.0,
+                    0.9666666666666667
+                ],
+                [
+                    "diff_Friday_Coding",
+                    0.0,
+                    0.03442513368983957
+                ],
+                [
+                    "diff_Sunday_Coding",
+                    0.0,
+                    0.03442513368983957
+                ],
+                [
+                    "diff_Saturday_Network",
+                    0.0,
+                    0.035258562793821356
+                ],
+                [
+                    "count_skill_Network",
+                    2.0,
+                    0.9645
+                ],
+                [
+                    "diff_Friday_Network",
+                    0.0,
+                    0.035594358629952985
+                ],
+                [
+                    "diff_Sunday_Network",
+                    0.0,
+                    0.035594358629952985
+                ],
+                [
+                    "diff_Friday_Troubleshooting",
+                    0.0,
+                    0.03767820773930754
+                ],
+                [
+                    "diff_Sunday_Troubleshooting",
+                    0.0,
+                    0.03767820773930754
+                ],
+                [
+                    "diff_Saturday_Troubleshooting",
+                    0.0,
+                    0.038696537678207736
+                ],
+                [
+                    "total_qty_of_skills",
+                    3.0,
+                    0.041666666666666664
+                ],
+                [
+                    "count_skill_Switching",
+                    0.0,
+                    0.0775
+                ],
+                [
+                    "count_skill_Fiberoptics",
+                    0.0,
+                    0.11816666666666667
+                ],
+                [
+                    "skill_bivariate_distance",
+                    1.8,
+                    0.16033333333333333
+                ],
+                [
+                    "diff_Thursday_Coding",
+                    0.0,
+                    0.2356283422459893
+                ],
+                [
+                    "diff_Monday_Network",
+                    0.0,
+                    0.24009402283411685
+                ],
+                [
+                    "diff_Monday_Coding",
+                    0.0,
+                    0.2426470588235294
+                ],
+                [
+                    "diff_Thursday_Troubleshooting",
+                    0.0,
+                    0.24575695858791582
+                ],
+                [
+                    "diff_Monday_Troubleshooting",
+                    0.0,
+                    0.24915139171758316
+                ]
+            ],
+            "other_statistics": {
+                "n": 293,
+                "average": -16.63481228668942,
+                "variance": 37.317149879439484,
+                "sd": 6.108776463371326,
+                "mse": 37.317149879439484,
+                "mae": 4.801220748057636,
+                "min": -40.0,
+                "max": -4.0
+            },
+            "prediction": -16.63481228668942
+        },
+        "not_matching_branch": {
+            "node_type": "branch",
+            "split_ps": "* * 0 * * * 1 * * * * * * 1 * * * *",
+            "matching_branch": {
+                "node_type": "branch",
+                "split_ps": "3 * * * * * * 2 * * * 3 * * * * * *",
+                "matching_branch": {
+                    "node_type": "branch",
+                    "split_ps": "3 * * * * 2 * * 3 * * * 1 * 2 2 * *",
+                    "matching_branch": {
+                        "node_type": "leaf",
+                        "other_statistics": {
+                            "n": 261,
+                            "average": -10.42911877394636,
+                            "variance": 12.84267700121842,
+                            "sd": 3.583668093060296,
+                            "mse": 12.84267700121842,
+                            "mae": 2.8051848915899646,
+                            "min": -20.0,
+                            "max": -4.0
+                        },
+                        "prediction": -10.42911877394636
+                    },
+                    "not_matching_branch": {
+                        "node_type": "leaf",
+                        "other_statistics": {
+                            "n": 652,
+                            "average": -15.033742331288343,
+                            "variance": 21.391499491889043,
+                            "sd": 4.625094538697457,
+                            "mse": 21.391499491889043,
+                            "mae": 3.638554330234484,
+                            "min": -32.0,
+                            "max": -4.0
+                        },
+                        "prediction": -15.033742331288343
+                    },
+                    "ps_properties": [
+                        [
+                            "diff_Friday_Network",
+                            0.0,
+                            0.04277286135693215
+                        ],
+                        [
+                            "diff_Sunday_Network",
+                            0.0,
+                            0.04277286135693215
+                        ],
+                        [
+                            "diff_Saturday_Network",
+                            0.0,
+                            0.04365781710914454
+                        ],
+                        [
+                            "diff_Friday_Coding",
+                            0.0,
+                            0.044322132097334876
+                        ],
+                        [
+                            "diff_Sunday_Coding",
+                            0.0,
+                            0.044322132097334876
+                        ],
+                        [
+                            "count_skill_Switching",
+                            0.0,
+                            0.0445
+                        ],
+                        [
+                            "diff_Friday_Troubleshooting",
+                            0.0,
+                            0.04655990510083037
+                        ],
+                        [
+                            "diff_Sunday_Troubleshooting",
+                            0.0,
+                            0.04655990510083037
+                        ],
+                        [
+                            "diff_Saturday_Troubleshooting",
+                            0.0,
+                            0.04804270462633452
+                        ],
+                        [
+                            "diff_Saturday_Coding",
+                            0.0,
+                            0.04895712630359212
+                        ],
+                        [
+                            "count_skill_Network",
+                            2.0,
+                            0.9503333333333334
+                        ],
+                        [
+                            "count_skill_Troubleshooting",
+                            2.0,
+                            0.9498333333333333
+                        ],
+                        [
+                            "count_skill_Coding",
+                            2.0,
+                            0.9473333333333334
+                        ],
+                        [
+                            "count_skill_Fiberoptics",
+                            0.0,
+                            0.0815
+                        ],
+                        [
+                            "total_qty_of_skills",
+                            4.0,
+                            0.084
+                        ],
+                        [
+                            "count_skill_Routing",
+                            0.0,
+                            0.20666666666666667
+                        ],
+                        [
+                            "count_skill_Integration",
+                            0.0,
+                            0.21133333333333335
+                        ],
+                        [
+                            "count_skill_Monitoring",
+                            0.0,
+                            0.21466666666666667
+                        ],
+                        [
+                            "skill_bivariate_distance",
+                            1.9333333333333333,
+                            0.22833333333333333
+                        ],
+                        [
+                            "diff_Thursday_Network",
+                            0.0,
+                            0.23569321533923304
+                        ],
+                        [
+                            "diff_Thursday_Coding",
+                            0.0,
+                            0.23667439165701043
+                        ],
+                        [
+                            "diff_Monday_Coding",
+                            0.0,
+                            0.2369640787949015
+                        ],
+                        [
+                            "diff_Monday_Network",
+                            0.0,
+                            0.23805309734513275
+                        ],
+                        [
+                            "diff_Monday_Troubleshooting",
+                            0.0,
+                            0.2402135231316726
+                        ],
+                        [
+                            "diff_Thursday_Troubleshooting",
+                            0.0,
+                            0.2452550415183867
+                        ]
+                    ],
+                    "other_statistics": {
+                        "n": 913,
+                        "average": -13.717415115005476,
+                        "variance": 23.27611511464558,
+                        "sd": 4.824532631731864,
+                        "mse": 23.27611511464558,
+                        "mae": 3.8172052943427595,
+                        "min": -32.0,
+                        "max": -4.0
+                    },
+                    "prediction": -13.717415115005476
+                },
+                "not_matching_branch": {
+                    "node_type": "branch",
+                    "split_ps": "* 1 * * * * * * * * * * 1 * * * * 0",
+                    "matching_branch": {
+                        "node_type": "leaf",
+                        "other_statistics": {
+                            "n": 391,
+                            "average": -17.907928388746804,
+                            "variance": 32.011983176457505,
+                            "sd": 5.657913323519326,
+                            "mse": 32.011983176457505,
+                            "mae": 4.4788299396262445,
+                            "min": -36.0,
+                            "max": -4.0
+                        },
+                        "prediction": -17.907928388746804
+                    },
+                    "not_matching_branch": {
+                        "node_type": "leaf",
+                        "other_statistics": {
+                            "n": 550,
+                            "average": -23.494545454545456,
+                            "variance": 57.99178842975206,
+                            "sd": 7.615233970781992,
+                            "mse": 57.99178842975206,
+                            "mae": 5.918122314049587,
+                            "min": -56.0,
+                            "max": -4.0
+                        },
+                        "prediction": -23.494545454545456
+                    },
+                    "ps_properties": [
+                        [
+                            "diff_Saturday_Fiberoptics",
+                            0.0,
+                            0.0461121157323689
+                        ],
+                        [
+                            "diff_Friday_Fiberoptics",
+                            0.0,
+                            0.046413502109704644
+                        ],
+                        [
+                            "diff_Sunday_Fiberoptics",
+                            0.0,
+                            0.046413502109704644
+                        ],
+                        [
+                            "count_skill_Fiberoptics",
+                            2.0,
+                            0.9435
+                        ],
+                        [
+                            "total_qty_of_skills",
+                            2.0,
+                            0.07083333333333333
+                        ],
+                        [
+                            "skill_bivariate_distance",
+                            1.3333333333333333,
+                            0.076
+                        ],
+                        [
+                            "count_skill_Cybersecurity",
+                            1.0,
+                            0.8306666666666667
+                        ],
+                        [
+                            "count_skill_Switching",
+                            0.0,
+                            0.18416666666666667
+                        ],
+                        [
+                            "average_qty_skills",
+                            1.0,
+                            0.22016666666666668
+                        ],
+                        [
+                            "diff_Thursday_Fiberoptics",
+                            0.0,
+                            0.23116335141651598
+                        ],
+                        [
+                            "diff_Monday_Cybersecurity",
+                            0.0,
+                            0.23951781970649896
+                        ],
+                        [
+                            "diff_Thursday_Cybersecurity",
+                            1.0,
+                            0.7557651991614256
+                        ],
+                        [
+                            "diff_Monday_Fiberoptics",
+                            0.0,
+                            0.24532851115129597
+                        ]
+                    ],
+                    "other_statistics": {
+                        "n": 941,
+                        "average": -21.173219978746015,
+                        "variance": 54.776583574351115,
+                        "sd": 7.401120426959091,
+                        "mse": 54.776583574351115,
+                        "mae": 5.785777447511578,
+                        "min": -56.0,
+                        "max": -4.0
+                    },
+                    "prediction": -21.173219978746015
+                },
+                "ps_properties": [
+                    [
+                        "count_skill_Routing",
+                        2.0,
+                        0.9901666666666666
+                    ],
+                    [
+                        "diff_Friday_Routing",
+                        0.0,
+                        0.013227513227513227
+                    ],
+                    [
+                        "diff_Sunday_Routing",
+                        0.0,
+                        0.013227513227513227
+                    ],
+                    [
+                        "diff_Saturday_Routing",
+                        0.0,
+                        0.014814814814814815
+                    ],
+                    [
+                        "average_qty_skills",
+                        1.6666666666666667,
+                        0.8665
+                    ],
+                    [
+                        "count_skill_Troubleshooting",
+                        1.0,
+                        0.8326666666666667
+                    ],
+                    [
+                        "count_skill_Coding",
+                        1.0,
+                        0.8276666666666667
+                    ],
+                    [
+                        "count_skill_Fiberoptics",
+                        0.0,
+                        0.2235
+                    ],
+                    [
+                        "diff_Thursday_Switching",
+                        0.0,
+                        0.22585751978891822
+                    ],
+                    [
+                        "diff_Thursday_Troubleshooting",
+                        0.0,
+                        0.238517745302714
+                    ],
+                    [
+                        "diff_Monday_Routing",
+                        0.0,
+                        0.24285714285714285
+                    ],
+                    [
+                        "diff_Thursday_Coding",
+                        0.0,
+                        0.24458204334365324
+                    ],
+                    [
+                        "diff_Monday_Troubleshooting",
+                        1.0,
+                        0.7520876826722338
+                    ],
+                    [
+                        "diff_Thursday_Routing",
+                        0.0,
+                        0.24814814814814815
+                    ]
+                ],
+                "other_statistics": {
+                    "n": 1854,
+                    "average": -17.501618122977348,
+                    "variance": 53.158303746295076,
+                    "sd": 7.290974128763253,
+                    "mse": 53.158303746295076,
+                    "mae": 5.666244244055537,
+                    "min": -56.0,
+                    "max": -4.0
+                },
+                "prediction": -17.501618122977348
+            },
+            "not_matching_branch": {
+                "node_type": "branch",
+                "split_ps": "1 * * * * 0 * * * * * * * * * 0 * *",
+                "matching_branch": {
+                    "node_type": "branch",
+                    "split_ps": "* 3 1 * 1 * * * * * * * * * * * 2 0",
+                    "matching_branch": {
+                        "node_type": "leaf",
+                        "other_statistics": {
+                            "n": 110,
+                            "average": -20.327272727272728,
+                            "variance": 42.43834710743801,
+                            "sd": 6.514472128072851,
+                            "mse": 42.43834710743801,
+                            "mae": 5.108099173553722,
+                            "min": -40.0,
+                            "max": -8.0
+                        },
+                        "prediction": -20.327272727272728
+                    },
+                    "not_matching_branch": {
+                        "node_type": "leaf",
+                        "other_statistics": {
+                            "n": 485,
+                            "average": -26.878350515463918,
+                            "variance": 70.41200552662345,
+                            "sd": 8.391186181144084,
+                            "mse": 70.41200552662345,
+                            "mae": 6.798410032947178,
+                            "min": -56.0,
+                            "max": -8.0
+                        },
+                        "prediction": -26.878350515463918
+                    },
+                    "ps_properties": [
+                        [
+                            "count_skill_Fiberoptics",
+                            4.0,
+                            0.999
+                        ],
+                        [
+                            "skill_bivariate_distance",
+                            1.6,
+                            0.058166666666666665
+                        ],
+                        [
+                            "count_skill_Switching",
+                            0.0,
+                            0.0775
+                        ],
+                        [
+                            "diff_Saturday_Fiberoptics",
+                            0.0,
+                            0.08096900916630292
+                        ],
+                        [
+                            "diff_Friday_Fiberoptics",
+                            0.0,
+                            0.08511567001309472
+                        ],
+                        [
+                            "diff_Sunday_Fiberoptics",
+                            0.0,
+                            0.08511567001309472
+                        ],
+                        [
+                            "rota_average_bivariate_distance",
+                            5.4,
+                            0.8853333333333333
+                        ],
+                        [
+                            "total_qty_of_skills",
+                            4.0,
+                            0.2055
+                        ],
+                        [
+                            "diff_Thursday_Fiberoptics",
+                            0.0,
+                            0.22435617634220864
+                        ],
+                        [
+                            "diff_Monday_Fiberoptics",
+                            0.0,
+                            0.22697512003491924
+                        ],
+                        [
+                            "diff_Monday_Cybersecurity",
+                            0.0,
+                            0.2338764426340801
+                        ],
+                        [
+                            "diff_Monday_Monitoring",
+                            0.0,
+                            0.24695121951219512
+                        ],
+                        [
+                            "diff_Monday_Integration",
+                            0.0,
+                            0.24982817869415808
+                        ]
+                    ],
+                    "other_statistics": {
+                        "n": 595,
+                        "average": -25.667226890756304,
+                        "variance": 71.70774945272225,
+                        "sd": 8.468042834842196,
+                        "mse": 71.70774945272225,
+                        "mae": 6.805067438740203,
+                        "min": -56.0,
+                        "max": -8.0
+                    },
+                    "prediction": -25.667226890756304
+                },
+                "not_matching_branch": {
+                    "node_type": "branch",
+                    "split_ps": "3 * * * * 2 * * * * * * * * * 2 * *",
+                    "matching_branch": {
+                        "node_type": "leaf",
+                        "other_statistics": {
+                            "n": 564,
+                            "average": -22.407801418439718,
+                            "variance": 62.337244102409336,
+                            "sd": 7.895393853533169,
+                            "mse": 62.337244102409336,
+                            "mae": 6.407046929228913,
+                            "min": -52.0,
+                            "max": -8.0
+                        },
+                        "prediction": -22.407801418439718
+                    },
+                    "not_matching_branch": {
+                        "node_type": "leaf",
+                        "other_statistics": {
+                            "n": 1900,
+                            "average": -37.13368421052632,
+                            "variance": 108.95686537396124,
+                            "sd": 10.438240530566501,
+                            "mse": 108.95686537396124,
+                            "mae": 8.40042216066482,
+                            "min": -70.0,
+                            "max": -12.0
+                        },
+                        "prediction": -37.13368421052632
+                    },
+                    "ps_properties": [
+                        [
+                            "count_skill_Troubleshooting",
+                            2.0,
+                            0.9923333333333333
+                        ],
+                        [
+                            "count_skill_Coding",
+                            2.0,
+                            0.9891666666666666
+                        ],
+                        [
+                            "diff_Friday_Troubleshooting",
+                            0.0,
+                            0.012004175365344467
+                        ],
+                        [
+                            "diff_Sunday_Troubleshooting",
+                            0.0,
+                            0.012004175365344467
+                        ],
+                        [
+                            "diff_Saturday_Troubleshooting",
+                            0.0,
+                            0.013048016701461378
+                        ],
+                        [
+                            "diff_Friday_Coding",
+                            0.0,
+                            0.017543859649122806
+                        ],
+                        [
+                            "diff_Saturday_Coding",
+                            0.0,
+                            0.017543859649122806
+                        ],
+                        [
+                            "diff_Sunday_Coding",
+                            0.0,
+                            0.017543859649122806
+                        ],
+                        [
+                            "total_qty_of_skills",
+                            2.0,
+                            0.07083333333333333
+                        ],
+                        [
+                            "skill_bivariate_distance",
+                            1.3333333333333333,
+                            0.076
+                        ],
+                        [
+                            "count_skill_Switching",
+                            0.0,
+                            0.18416666666666667
+                        ],
+                        [
+                            "count_skill_Fiberoptics",
+                            0.0,
+                            0.2235
+                        ],
+                        [
+                            "diff_Thursday_Troubleshooting",
+                            0.0,
+                            0.238517745302714
+                        ],
+                        [
+                            "diff_Thursday_Coding",
+                            0.0,
+                            0.24458204334365324
+                        ],
+                        [
+                            "diff_Monday_Coding",
+                            0.0,
+                            0.24664602683178535
+                        ]
+                    ],
+                    "other_statistics": {
+                        "n": 2464,
+                        "average": -33.76298701298701,
+                        "variance": 136.5607079608703,
+                        "sd": 11.685919217625557,
+                        "mse": 136.5607079608703,
+                        "mae": 9.524290036262439,
+                        "min": -70.0,
+                        "max": -8.0
+                    },
+                    "prediction": -33.76298701298701
+                },
+                "ps_properties": [
+                    [
+                        "count_skill_Troubleshooting",
+                        2.0,
+                        0.9923333333333333
+                    ],
+                    [
+                        "count_skill_Coding",
+                        2.0,
+                        0.9891666666666666
+                    ],
+                    [
+                        "diff_Friday_Troubleshooting",
+                        0.0,
+                        0.012004175365344467
+                    ],
+                    [
+                        "diff_Sunday_Troubleshooting",
+                        0.0,
+                        0.012004175365344467
+                    ],
+                    [
+                        "diff_Saturday_Troubleshooting",
+                        0.0,
+                        0.013048016701461378
+                    ],
+                    [
+                        "diff_Friday_Coding",
+                        0.0,
+                        0.017543859649122806
+                    ],
+                    [
+                        "diff_Saturday_Coding",
+                        0.0,
+                        0.017543859649122806
+                    ],
+                    [
+                        "diff_Sunday_Coding",
+                        0.0,
+                        0.017543859649122806
+                    ],
+                    [
+                        "total_qty_of_skills",
+                        2.0,
+                        0.07083333333333333
+                    ],
+                    [
+                        "skill_bivariate_distance",
+                        1.3333333333333333,
+                        0.076
+                    ],
+                    [
+                        "count_skill_Switching",
+                        0.0,
+                        0.18416666666666667
+                    ],
+                    [
+                        "count_skill_Fiberoptics",
+                        0.0,
+                        0.2235
+                    ],
+                    [
+                        "diff_Thursday_Troubleshooting",
+                        0.0,
+                        0.238517745302714
+                    ],
+                    [
+                        "diff_Thursday_Coding",
+                        0.0,
+                        0.24458204334365324
+                    ],
+                    [
+                        "diff_Monday_Coding",
+                        0.0,
+                        0.24664602683178535
+                    ]
+                ],
+                "other_statistics": {
+                    "n": 3059,
+                    "average": -32.18829682902909,
+                    "variance": 134.21495293444892,
+                    "sd": 11.58511773502751,
+                    "mse": 134.21495293444892,
+                    "mae": 9.442692536591846,
+                    "min": -70.0,
+                    "max": -8.0
+                },
+                "prediction": -32.18829682902909
+            },
+            "ps_properties": [
+                [
+                    "count_skill_Monitoring",
+                    2.0,
+                    0.9921666666666666
+                ],
+                [
+                    "count_skill_Integration",
+                    2.0,
+                    0.9903333333333333
+                ],
+                [
+                    "diff_Friday_Monitoring",
+                    0.0,
+                    0.012459371614301192
+                ],
+                [
+                    "diff_Sunday_Monitoring",
+                    0.0,
+                    0.012459371614301192
+                ],
+                [
+                    "diff_Saturday_Monitoring",
+                    0.0,
+                    0.014084507042253521
+                ],
+                [
+                    "diff_Friday_Integration",
+                    0.0,
+                    0.016842105263157894
+                ],
+                [
+                    "diff_Sunday_Integration",
+                    0.0,
+                    0.016842105263157894
+                ],
+                [
+                    "diff_Saturday_Integration",
+                    0.0,
+                    0.017368421052631578
+                ],
+                [
+                    "average_qty_skills",
+                    2.0,
+                    0.9711666666666666
+                ],
+                [
+                    "count_skill_Cybersecurity",
+                    1.0,
+                    0.8306666666666667
+                ],
+                [
+                    "count_skill_Fiberoptics",
+                    0.0,
+                    0.2235
+                ],
+                [
+                    "diff_Monday_Monitoring",
+                    0.0,
+                    0.23185265438786565
+                ],
+                [
+                    "diff_Monday_Cybersecurity",
+                    0.0,
+                    0.23951781970649896
+                ],
+                [
+                    "diff_Monday_Switching",
+                    0.0,
+                    0.24195250659630607
+                ],
+                [
+                    "diff_Thursday_Cybersecurity",
+                    1.0,
+                    0.7557651991614256
+                ],
+                [
+                    "diff_Monday_Integration",
+                    0.0,
+                    0.2463157894736842
+                ],
+                [
+                    "diff_Thursday_Integration",
+                    0.0,
+                    0.24947368421052632
+                ]
+            ],
+            "other_statistics": {
+                "n": 4913,
+                "average": -26.6460411154081,
+                "variance": 154.30764614282407,
+                "sd": 12.422062877912994,
+                "mse": 154.30764614282407,
+                "mae": 10.2166485779906,
+                "min": -70.0,
+                "max": -4.0
+            },
+            "prediction": -26.6460411154081
+        },
+        "ps_properties": [
+            [
+                "count_skill_Integration",
+                2.0,
+                0.9806666666666667
+            ],
+            [
+                "count_skill_Monitoring",
+                2.0,
+                0.9783333333333334
+            ],
+            [
+                "count_skill_Cybersecurity",
+                2.0,
+                0.9783333333333334
+            ],
+            [
+                "diff_Friday_Monitoring",
+                0.0,
+                0.022222222222222223
+            ],
+            [
+                "diff_Sunday_Monitoring",
+                0.0,
+                0.022222222222222223
+            ],
+            [
+                "diff_Saturday_Integration",
+                0.0,
+                0.02364066193853428
+            ],
+            [
+                "diff_Friday_Cybersecurity",
+                0.0,
+                0.024819855884707767
+            ],
+            [
+                "diff_Sunday_Cybersecurity",
+                0.0,
+                0.024819855884707767
+            ],
+            [
+                "diff_Saturday_Monitoring",
+                0.0,
+                0.025
+            ],
+            [
+                "diff_Friday_Integration",
+                0.0,
+                0.026792750197005517
+            ],
+            [
+                "diff_Sunday_Integration",
+                0.0,
+                0.026792750197005517
+            ],
+            [
+                "diff_Saturday_Cybersecurity",
+                0.0,
+                0.02802241793434748
+            ],
+            [
+                "average_qty_skills",
+                1.75,
+                0.9373333333333334
+            ],
+            [
+                "count_skill_Fiberoptics",
+                0.0,
+                0.17
+            ],
+            [
+                "diff_Monday_Switching",
+                0.0,
+                0.22594050743657043
+            ],
+            [
+                "diff_Monday_Cybersecurity",
+                0.0,
+                0.2377902321857486
+            ],
+            [
+                "diff_Thursday_Integration",
+                0.0,
+                0.23877068557919623
+            ],
+            [
+                "diff_Monday_Monitoring",
+                0.0,
+                0.24325396825396825
+            ],
+            [
+                "rota_average_bivariate_distance",
+                4.0,
+                0.24416666666666667
+            ],
+            [
+                "diff_Thursday_Monitoring",
+                0.0,
+                0.2488095238095238
+            ],
+            [
+                "diff_Thursday_Cybersecurity",
+                0.0,
+                0.24899919935948758
+            ]
+        ],
+        "other_statistics": {
+            "n": 5206,
+            "average": -26.08259700345755,
+            "variance": 153.0465776581854,
+            "sd": 12.371199523820858,
+            "mse": 153.0465776581854,
+            "mae": 10.143720217621768,
+            "min": -70.0,
+            "max": -4.0
+        },
+        "prediction": -26.08259700345755
+    }
+}

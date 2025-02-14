@@ -1,0 +1,1725 @@
+{
+    "maximum_depth": 4,
+    "search_settings": {
+        "ps_search_budget": 5000,
+        "ps_search_population": 100,
+        "metrics": "simplicity variance ground_truth_atomicity",
+        "avoid_ancestors": true,
+        "culling_method": "biggest",
+        "verbose": true
+    },
+    "tree": {
+        "node_type": "branch",
+        "split_ps": "* * * * 1 * * 1 0 0 * * * * * * * *",
+        "matching_branch": {
+            "node_type": "branch",
+            "split_ps": "2 * * * * * * * * * * 2 * * * 3 * *",
+            "matching_branch": {
+                "node_type": "branch",
+                "split_ps": "* * 2 1 * * * * * * * * * * * * 3 *",
+                "matching_branch": {
+                    "node_type": "branch",
+                    "split_ps": "* 2 * * * * * * * * 3 * * * * * * 0",
+                    "matching_branch": {
+                        "node_type": "leaf",
+                        "other_statistics": {
+                            "n": 110,
+                            "average": -9.636363636363637,
+                            "variance": 11.21322314049587,
+                            "sd": 3.3486151078462076,
+                            "mse": 11.21322314049587,
+                            "mae": 2.651239669421488,
+                            "min": -18.0,
+                            "max": -4.0
+                        },
+                        "prediction": -9.636363636363637
+                    },
+                    "not_matching_branch": {
+                        "node_type": "leaf",
+                        "other_statistics": {
+                            "n": 212,
+                            "average": -12.575471698113208,
+                            "variance": 17.385813456746174,
+                            "sd": 4.169629894456602,
+                            "mse": 17.385813456746174,
+                            "mae": 3.4004983980064076,
+                            "min": -22.0,
+                            "max": -4.0
+                        },
+                        "prediction": -12.575471698113208
+                    },
+                    "ps_properties": [
+                        [
+                            "count_skill_Automation",
+                            2.0,
+                            0.9916666666666667
+                        ],
+                        [
+                            "diff_Saturday_Automation",
+                            0.0,
+                            0.0110062893081761
+                        ],
+                        [
+                            "diff_Friday_Automation",
+                            0.0,
+                            0.014150943396226415
+                        ],
+                        [
+                            "diff_Sunday_Automation",
+                            0.0,
+                            0.014150943396226415
+                        ],
+                        [
+                            "total_qty_of_skills",
+                            2.0,
+                            0.063
+                        ],
+                        [
+                            "skill_bivariate_distance",
+                            1.3333333333333333,
+                            0.06616666666666667
+                        ],
+                        [
+                            "average_qty_skills",
+                            1.0,
+                            0.1815
+                        ],
+                        [
+                            "rota_average_bivariate_distance",
+                            6.0,
+                            0.8056666666666666
+                        ],
+                        [
+                            "count_skill_Optimization",
+                            0.0,
+                            0.22266666666666668
+                        ],
+                        [
+                            "count_skill_Implementation",
+                            0.0,
+                            0.2245
+                        ],
+                        [
+                            "diff_Monday_Configuration",
+                            0.0,
+                            0.2372316802368616
+                        ],
+                        [
+                            "diff_Monday_Automation",
+                            0.0,
+                            0.24161425576519915
+                        ]
+                    ],
+                    "other_statistics": {
+                        "n": 322,
+                        "average": -11.571428571428571,
+                        "variance": 17.22005323868678,
+                        "sd": 4.149705199009537,
+                        "mse": 17.22005323868678,
+                        "mae": 3.3469387755102042,
+                        "min": -22.0,
+                        "max": -4.0
+                    },
+                    "prediction": -11.571428571428571
+                },
+                "not_matching_branch": {
+                    "node_type": "branch",
+                    "split_ps": "* 2 * * * 3 2 * * * 3 * 0 * 1 * * *",
+                    "matching_branch": {
+                        "node_type": "leaf",
+                        "other_statistics": {
+                            "n": 80,
+                            "average": -11.225,
+                            "variance": 11.249374999999997,
+                            "sd": 3.354008795456565,
+                            "mse": 11.249374999999997,
+                            "mae": 2.694375,
+                            "min": -18.0,
+                            "max": -4.0
+                        },
+                        "prediction": -11.225
+                    },
+                    "not_matching_branch": {
+                        "node_type": "leaf",
+                        "other_statistics": {
+                            "n": 274,
+                            "average": -16.51094890510949,
+                            "variance": 17.928712238265224,
+                            "sd": 4.234231009081251,
+                            "mse": 17.928712238265224,
+                            "mae": 3.4359848686664183,
+                            "min": -28.0,
+                            "max": -8.0
+                        },
+                        "prediction": -16.51094890510949
+                    },
+                    "ps_properties": [
+                        [
+                            "total_qty_of_skills",
+                            2.0,
+                            0.0
+                        ],
+                        [
+                            "skill_bivariate_distance",
+                            1.0666666666666667,
+                            0.0
+                        ],
+                        [
+                            "count_skill_Optimization",
+                            4.0,
+                            0.998
+                        ],
+                        [
+                            "diff_Saturday_Automation",
+                            0.0,
+                            0.04118329466357309
+                        ],
+                        [
+                            "rota_average_bivariate_distance",
+                            5.333333333333333,
+                            0.9555
+                        ],
+                        [
+                            "average_qty_skills",
+                            1.0,
+                            0.04666666666666667
+                        ],
+                        [
+                            "diff_Friday_Automation",
+                            0.0,
+                            0.05046403712296984
+                        ],
+                        [
+                            "diff_Sunday_Automation",
+                            0.0,
+                            0.05046403712296984
+                        ],
+                        [
+                            "count_skill_Automation",
+                            2.0,
+                            0.9491666666666667
+                        ],
+                        [
+                            "count_skill_Implementation",
+                            0.0,
+                            0.08516666666666667
+                        ],
+                        [
+                            "diff_Friday_Optimization",
+                            0.0,
+                            0.09541984732824428
+                        ],
+                        [
+                            "diff_Sunday_Optimization",
+                            0.0,
+                            0.09541984732824428
+                        ],
+                        [
+                            "diff_Saturday_Optimization",
+                            0.0,
+                            0.09903575733226196
+                        ],
+                        [
+                            "count_skill_Configuration",
+                            0.0,
+                            0.12633333333333333
+                        ],
+                        [
+                            "diff_Monday_Optimization",
+                            0.0,
+                            0.21153073523503416
+                        ],
+                        [
+                            "count_skill_Diagnostics",
+                            0.0,
+                            0.21183333333333335
+                        ],
+                        [
+                            "count_skill_Maintenance",
+                            0.0,
+                            0.213
+                        ],
+                        [
+                            "count_skill_Communication",
+                            0.0,
+                            0.21383333333333332
+                        ],
+                        [
+                            "count_skill_Negotiation",
+                            0.0,
+                            0.21766666666666667
+                        ],
+                        [
+                            "count_skill_Documentation",
+                            0.0,
+                            0.21866666666666668
+                        ],
+                        [
+                            "diff_Thursday_Optimization",
+                            0.0,
+                            0.22257934913619928
+                        ],
+                        [
+                            "diff_Thursday_Automation",
+                            0.0,
+                            0.23723897911832947
+                        ],
+                        [
+                            "diff_Monday_Automation",
+                            0.0,
+                            0.2433294663573086
+                        ]
+                    ],
+                    "other_statistics": {
+                        "n": 354,
+                        "average": -15.31638418079096,
+                        "variance": 21.306680711162183,
+                        "sd": 4.615916020809108,
+                        "mse": 21.306680711162183,
+                        "mae": 3.7421877493695943,
+                        "min": -28.0,
+                        "max": -4.0
+                    },
+                    "prediction": -15.31638418079096
+                },
+                "ps_properties": [
+                    [
+                        "diff_Saturday_Implementation",
+                        0.0,
+                        0.043557168784029036
+                    ],
+                    [
+                        "diff_Friday_Implementation",
+                        0.0,
+                        0.04900181488203267
+                    ],
+                    [
+                        "diff_Sunday_Implementation",
+                        0.0,
+                        0.04900181488203267
+                    ],
+                    [
+                        "count_skill_Implementation",
+                        2.0,
+                        0.9455
+                    ],
+                    [
+                        "total_qty_of_skills",
+                        2.0,
+                        0.063
+                    ],
+                    [
+                        "skill_bivariate_distance",
+                        1.3333333333333333,
+                        0.06616666666666667
+                    ],
+                    [
+                        "count_skill_Communication",
+                        1.0,
+                        0.8306666666666667
+                    ],
+                    [
+                        "average_qty_skills",
+                        1.0,
+                        0.1815
+                    ],
+                    [
+                        "rota_average_bivariate_distance",
+                        6.0,
+                        0.8056666666666666
+                    ],
+                    [
+                        "count_skill_Optimization",
+                        0.0,
+                        0.22266666666666668
+                    ],
+                    [
+                        "diff_Monday_Implementation",
+                        0.0,
+                        0.22988505747126436
+                    ],
+                    [
+                        "diff_Thursday_Implementation",
+                        0.0,
+                        0.23865698729582577
+                    ]
+                ],
+                "other_statistics": {
+                    "n": 676,
+                    "average": -13.532544378698224,
+                    "variance": 22.85840831903645,
+                    "sd": 4.781046780678521,
+                    "mse": 22.85840831903645,
+                    "mae": 3.845768705577536,
+                    "min": -28.0,
+                    "max": -4.0
+                },
+                "prediction": -13.532544378698224
+            },
+            "not_matching_branch": {
+                "node_type": "branch",
+                "split_ps": "* * 2 1 * * * * * * * * * * * * 3 *",
+                "matching_branch": {
+                    "node_type": "branch",
+                    "split_ps": "* 2 * * * 3 2 * * * 3 * 0 * 1 * * *",
+                    "matching_branch": {
+                        "node_type": "leaf",
+                        "other_statistics": {
+                            "n": 93,
+                            "average": -13.290322580645162,
+                            "variance": 18.29205688518904,
+                            "sd": 4.2769214261182125,
+                            "mse": 18.29205688518904,
+                            "mae": 3.449184876864378,
+                            "min": -26.0,
+                            "max": -4.0
+                        },
+                        "prediction": -13.290322580645162
+                    },
+                    "not_matching_branch": {
+                        "node_type": "leaf",
+                        "other_statistics": {
+                            "n": 363,
+                            "average": -18.385674931129476,
+                            "variance": 25.768610219399097,
+                            "sd": 5.076279170750865,
+                            "mse": 25.768610219399097,
+                            "mae": 4.093223747618939,
+                            "min": -36.0,
+                            "max": -8.0
+                        },
+                        "prediction": -18.385674931129476
+                    },
+                    "ps_properties": [
+                        [
+                            "total_qty_of_skills",
+                            2.0,
+                            0.0
+                        ],
+                        [
+                            "skill_bivariate_distance",
+                            1.0666666666666667,
+                            0.0
+                        ],
+                        [
+                            "count_skill_Optimization",
+                            4.0,
+                            0.998
+                        ],
+                        [
+                            "diff_Saturday_Automation",
+                            0.0,
+                            0.04118329466357309
+                        ],
+                        [
+                            "rota_average_bivariate_distance",
+                            5.333333333333333,
+                            0.9555
+                        ],
+                        [
+                            "average_qty_skills",
+                            1.0,
+                            0.04666666666666667
+                        ],
+                        [
+                            "diff_Friday_Automation",
+                            0.0,
+                            0.05046403712296984
+                        ],
+                        [
+                            "diff_Sunday_Automation",
+                            0.0,
+                            0.05046403712296984
+                        ],
+                        [
+                            "count_skill_Automation",
+                            2.0,
+                            0.9491666666666667
+                        ],
+                        [
+                            "count_skill_Implementation",
+                            0.0,
+                            0.08516666666666667
+                        ],
+                        [
+                            "diff_Friday_Optimization",
+                            0.0,
+                            0.09541984732824428
+                        ],
+                        [
+                            "diff_Sunday_Optimization",
+                            0.0,
+                            0.09541984732824428
+                        ],
+                        [
+                            "diff_Saturday_Optimization",
+                            0.0,
+                            0.09903575733226196
+                        ],
+                        [
+                            "count_skill_Configuration",
+                            0.0,
+                            0.12633333333333333
+                        ],
+                        [
+                            "diff_Monday_Optimization",
+                            0.0,
+                            0.21153073523503416
+                        ],
+                        [
+                            "count_skill_Diagnostics",
+                            0.0,
+                            0.21183333333333335
+                        ],
+                        [
+                            "count_skill_Maintenance",
+                            0.0,
+                            0.213
+                        ],
+                        [
+                            "count_skill_Communication",
+                            0.0,
+                            0.21383333333333332
+                        ],
+                        [
+                            "count_skill_Negotiation",
+                            0.0,
+                            0.21766666666666667
+                        ],
+                        [
+                            "count_skill_Documentation",
+                            0.0,
+                            0.21866666666666668
+                        ],
+                        [
+                            "diff_Thursday_Optimization",
+                            0.0,
+                            0.22257934913619928
+                        ],
+                        [
+                            "diff_Thursday_Automation",
+                            0.0,
+                            0.23723897911832947
+                        ],
+                        [
+                            "diff_Monday_Automation",
+                            0.0,
+                            0.2433294663573086
+                        ]
+                    ],
+                    "other_statistics": {
+                        "n": 456,
+                        "average": -17.346491228070175,
+                        "variance": 28.45889119729148,
+                        "sd": 5.3346875444857575,
+                        "mse": 28.45889119729148,
+                        "mae": 4.283087103724223,
+                        "min": -36.0,
+                        "max": -4.0
+                    },
+                    "prediction": -17.346491228070175
+                },
+                "not_matching_branch": {
+                    "node_type": "branch",
+                    "split_ps": "* 2 * 1 * * * * 0 * 3 * * * * * * 0",
+                    "matching_branch": {
+                        "node_type": "leaf",
+                        "other_statistics": {
+                            "n": 123,
+                            "average": -19.170731707317074,
+                            "variance": 27.24727344834424,
+                            "sd": 5.219892091637933,
+                            "mse": 27.24727344834424,
+                            "mae": 4.2395399563751734,
+                            "min": -32.0,
+                            "max": -8.0
+                        },
+                        "prediction": -19.170731707317074
+                    },
+                    "not_matching_branch": {
+                        "node_type": "leaf",
+                        "other_statistics": {
+                            "n": 263,
+                            "average": -25.718631178707223,
+                            "variance": 48.51398747994044,
+                            "sd": 6.965198308730372,
+                            "mse": 48.51398747994044,
+                            "mae": 5.5533548265841635,
+                            "min": -50.0,
+                            "max": -12.0
+                        },
+                        "prediction": -25.718631178707223
+                    },
+                    "ps_properties": [
+                        [
+                            "diff_Saturday_Automation",
+                            0.0,
+                            0.029957203994293864
+                        ],
+                        [
+                            "count_skill_Automation",
+                            2.0,
+                            0.9685
+                        ],
+                        [
+                            "count_skill_Communication",
+                            2.0,
+                            0.9663333333333334
+                        ],
+                        [
+                            "diff_Saturday_Communication",
+                            0.0,
+                            0.03396099529253531
+                        ],
+                        [
+                            "diff_Friday_Automation",
+                            0.0,
+                            0.03459343794579173
+                        ],
+                        [
+                            "diff_Sunday_Automation",
+                            0.0,
+                            0.03459343794579173
+                        ],
+                        [
+                            "diff_Friday_Communication",
+                            0.0,
+                            0.03564223268325487
+                        ],
+                        [
+                            "diff_Sunday_Communication",
+                            0.0,
+                            0.03564223268325487
+                        ],
+                        [
+                            "count_skill_Implementation",
+                            0.0,
+                            0.11683333333333333
+                        ],
+                        [
+                            "rota_average_bivariate_distance",
+                            5.4,
+                            0.882
+                        ],
+                        [
+                            "count_skill_Optimization",
+                            0.0,
+                            0.12333333333333334
+                        ],
+                        [
+                            "total_qty_of_skills",
+                            4.0,
+                            0.15483333333333332
+                        ],
+                        [
+                            "skill_bivariate_distance",
+                            2.0,
+                            0.22333333333333333
+                        ],
+                        [
+                            "diff_Monday_Documentation",
+                            0.0,
+                            0.2268005540166205
+                        ],
+                        [
+                            "diff_Monday_Configuration",
+                            0.0,
+                            0.22906916276651065
+                        ],
+                        [
+                            "diff_Monday_Automation",
+                            0.0,
+                            0.23573466476462196
+                        ],
+                        [
+                            "diff_Thursday_Communication",
+                            0.0,
+                            0.23739071956960323
+                        ],
+                        [
+                            "diff_Monday_Communication",
+                            0.0,
+                            0.2414256893073302
+                        ],
+                        [
+                            "count_skill_Maintenance",
+                            0.0,
+                            0.2465
+                        ],
+                        [
+                            "count_skill_Diagnostics",
+                            0.0,
+                            0.24716666666666667
+                        ],
+                        [
+                            "diff_Thursday_Automation",
+                            0.0,
+                            0.24893009985734665
+                        ]
+                    ],
+                    "other_statistics": {
+                        "n": 386,
+                        "average": -23.632124352331605,
+                        "variance": 51.04601465811163,
+                        "sd": 7.144649372650251,
+                        "mse": 51.04601465811163,
+                        "mae": 5.659400252355768,
+                        "min": -50.0,
+                        "max": -8.0
+                    },
+                    "prediction": -23.632124352331605
+                },
+                "ps_properties": [
+                    [
+                        "diff_Saturday_Implementation",
+                        0.0,
+                        0.043557168784029036
+                    ],
+                    [
+                        "diff_Friday_Implementation",
+                        0.0,
+                        0.04900181488203267
+                    ],
+                    [
+                        "diff_Sunday_Implementation",
+                        0.0,
+                        0.04900181488203267
+                    ],
+                    [
+                        "count_skill_Implementation",
+                        2.0,
+                        0.9455
+                    ],
+                    [
+                        "total_qty_of_skills",
+                        2.0,
+                        0.063
+                    ],
+                    [
+                        "skill_bivariate_distance",
+                        1.3333333333333333,
+                        0.06616666666666667
+                    ],
+                    [
+                        "count_skill_Communication",
+                        1.0,
+                        0.8306666666666667
+                    ],
+                    [
+                        "average_qty_skills",
+                        1.0,
+                        0.1815
+                    ],
+                    [
+                        "rota_average_bivariate_distance",
+                        6.0,
+                        0.8056666666666666
+                    ],
+                    [
+                        "count_skill_Optimization",
+                        0.0,
+                        0.22266666666666668
+                    ],
+                    [
+                        "diff_Monday_Implementation",
+                        0.0,
+                        0.22988505747126436
+                    ],
+                    [
+                        "diff_Thursday_Implementation",
+                        0.0,
+                        0.23865698729582577
+                    ]
+                ],
+                "other_statistics": {
+                    "n": 842,
+                    "average": -20.228028503562946,
+                    "variance": 48.622587324603224,
+                    "sd": 6.972989841137245,
+                    "mse": 48.622587324603224,
+                    "mae": 5.50597209449281,
+                    "min": -50.0,
+                    "max": -4.0
+                },
+                "prediction": -20.228028503562946
+            },
+            "ps_properties": [
+                [
+                    "count_skill_Maintenance",
+                    2.0,
+                    0.9923333333333333
+                ],
+                [
+                    "count_skill_Diagnostics",
+                    2.0,
+                    0.9903333333333333
+                ],
+                [
+                    "diff_Saturday_Maintenance",
+                    0.0,
+                    0.011589403973509934
+                ],
+                [
+                    "diff_Friday_Diagnostics",
+                    0.0,
+                    0.013736263736263736
+                ],
+                [
+                    "diff_Sunday_Diagnostics",
+                    0.0,
+                    0.013736263736263736
+                ],
+                [
+                    "diff_Saturday_Diagnostics",
+                    0.0,
+                    0.015384615384615385
+                ],
+                [
+                    "diff_Friday_Maintenance",
+                    0.0,
+                    0.016004415011037526
+                ],
+                [
+                    "diff_Sunday_Maintenance",
+                    0.0,
+                    0.016004415011037526
+                ],
+                [
+                    "total_qty_of_skills",
+                    2.0,
+                    0.063
+                ],
+                [
+                    "skill_bivariate_distance",
+                    1.3333333333333333,
+                    0.06616666666666667
+                ],
+                [
+                    "count_skill_Optimization",
+                    0.0,
+                    0.22266666666666668
+                ],
+                [
+                    "count_skill_Implementation",
+                    0.0,
+                    0.2245
+                ],
+                [
+                    "diff_Monday_Diagnostics",
+                    0.0,
+                    0.22692307692307692
+                ],
+                [
+                    "diff_Monday_Maintenance",
+                    0.0,
+                    0.2306843267108168
+                ]
+            ],
+            "other_statistics": {
+                "n": 1518,
+                "average": -17.246376811594203,
+                "variance": 48.22256592388918,
+                "sd": 6.944246965934404,
+                "mse": 48.22256592388918,
+                "mae": 5.424528842298218,
+                "min": -50.0,
+                "max": -4.0
+            },
+            "prediction": -17.246376811594203
+        },
+        "not_matching_branch": {
+            "node_type": "branch",
+            "split_ps": "* 2 * * * * * * * * 3 * * * * * * *",
+            "matching_branch": {
+                "node_type": "branch",
+                "split_ps": "* * * * 0 * * * * 1 * * * * * 0 * *",
+                "matching_branch": {
+                    "node_type": "branch",
+                    "split_ps": "* * * 0 * * * 0 1 * * 1 * * * * * *",
+                    "matching_branch": {
+                        "node_type": "leaf",
+                        "other_statistics": {
+                            "n": 129,
+                            "average": -13.51937984496124,
+                            "variance": 29.257376359593778,
+                            "sd": 5.409008814893333,
+                            "mse": 29.257376359593778,
+                            "mae": 4.262243855537527,
+                            "min": -30.0,
+                            "max": -4.0
+                        },
+                        "prediction": -13.51937984496124
+                    },
+                    "not_matching_branch": {
+                        "node_type": "leaf",
+                        "other_statistics": {
+                            "n": 399,
+                            "average": -21.26817042606516,
+                            "variance": 49.97069113887476,
+                            "sd": 7.068995058625714,
+                            "mse": 49.97069113887476,
+                            "mae": 5.731521786923449,
+                            "min": -44.0,
+                            "max": -8.0
+                        },
+                        "prediction": -21.26817042606516
+                    },
+                    "ps_properties": [
+                        [
+                            "count_skill_Communication",
+                            2.0,
+                            0.9818333333333333
+                        ],
+                        [
+                            "count_skill_Documentation",
+                            2.0,
+                            0.979
+                        ],
+                        [
+                            "diff_Friday_Communication",
+                            0.0,
+                            0.021827000808407437
+                        ],
+                        [
+                            "diff_Sunday_Communication",
+                            0.0,
+                            0.021827000808407437
+                        ],
+                        [
+                            "diff_Saturday_Communication",
+                            0.0,
+                            0.023443815683104285
+                        ],
+                        [
+                            "diff_Friday_Documentation",
+                            0.0,
+                            0.02570281124497992
+                        ],
+                        [
+                            "diff_Sunday_Documentation",
+                            0.0,
+                            0.02570281124497992
+                        ],
+                        [
+                            "diff_Saturday_Documentation",
+                            0.0,
+                            0.026907630522088354
+                        ],
+                        [
+                            "count_skill_Optimization",
+                            0.0,
+                            0.1665
+                        ],
+                        [
+                            "average_qty_skills",
+                            1.5,
+                            0.8276666666666667
+                        ],
+                        [
+                            "rota_average_bivariate_distance",
+                            5.333333333333333,
+                            0.7975
+                        ],
+                        [
+                            "count_skill_Configuration",
+                            0.0,
+                            0.21883333333333332
+                        ],
+                        [
+                            "count_skill_Diagnostics",
+                            1.0,
+                            0.776
+                        ],
+                        [
+                            "diff_Monday_Implementation",
+                            0.0,
+                            0.2330978809283552
+                        ],
+                        [
+                            "diff_Monday_Communication",
+                            0.0,
+                            0.24130962004850445
+                        ],
+                        [
+                            "diff_Thursday_Documentation",
+                            0.0,
+                            0.24176706827309236
+                        ],
+                        [
+                            "diff_Monday_Diagnostics",
+                            0.0,
+                            0.24522821576763484
+                        ],
+                        [
+                            "diff_Thursday_Communication",
+                            0.0,
+                            0.246160064672595
+                        ],
+                        [
+                            "diff_Monday_Documentation",
+                            0.0,
+                            0.24899598393574296
+                        ]
+                    ],
+                    "other_statistics": {
+                        "n": 528,
+                        "average": -19.375,
+                        "variance": 55.99573863636363,
+                        "sd": 7.483030043796672,
+                        "mse": 55.99573863636363,
+                        "mae": 6.121685606060606,
+                        "min": -44.0,
+                        "max": -4.0
+                    },
+                    "prediction": -19.375
+                },
+                "not_matching_branch": {
+                    "node_type": "branch",
+                    "split_ps": "2 * * * * * * * * * * 2 * * * 3 * *",
+                    "matching_branch": {
+                        "node_type": "leaf",
+                        "other_statistics": {
+                            "n": 409,
+                            "average": -21.03667481662592,
+                            "variance": 46.338508258558946,
+                            "sd": 6.8072394007085535,
+                            "mse": 46.338508258558946,
+                            "mae": 5.45355419922167,
+                            "min": -44.0,
+                            "max": -4.0
+                        },
+                        "prediction": -21.03667481662592
+                    },
+                    "not_matching_branch": {
+                        "node_type": "leaf",
+                        "other_statistics": {
+                            "n": 1133,
+                            "average": -29.91703442188879,
+                            "variance": 83.5059145945786,
+                            "sd": 9.138157067734095,
+                            "mse": 83.5059145945786,
+                            "mae": 7.301637701966754,
+                            "min": -62.0,
+                            "max": -8.0
+                        },
+                        "prediction": -29.91703442188879
+                    },
+                    "ps_properties": [
+                        [
+                            "count_skill_Maintenance",
+                            2.0,
+                            0.9923333333333333
+                        ],
+                        [
+                            "count_skill_Diagnostics",
+                            2.0,
+                            0.9903333333333333
+                        ],
+                        [
+                            "diff_Saturday_Maintenance",
+                            0.0,
+                            0.011589403973509934
+                        ],
+                        [
+                            "diff_Friday_Diagnostics",
+                            0.0,
+                            0.013736263736263736
+                        ],
+                        [
+                            "diff_Sunday_Diagnostics",
+                            0.0,
+                            0.013736263736263736
+                        ],
+                        [
+                            "diff_Saturday_Diagnostics",
+                            0.0,
+                            0.015384615384615385
+                        ],
+                        [
+                            "diff_Friday_Maintenance",
+                            0.0,
+                            0.016004415011037526
+                        ],
+                        [
+                            "diff_Sunday_Maintenance",
+                            0.0,
+                            0.016004415011037526
+                        ],
+                        [
+                            "total_qty_of_skills",
+                            2.0,
+                            0.063
+                        ],
+                        [
+                            "skill_bivariate_distance",
+                            1.3333333333333333,
+                            0.06616666666666667
+                        ],
+                        [
+                            "count_skill_Optimization",
+                            0.0,
+                            0.22266666666666668
+                        ],
+                        [
+                            "count_skill_Implementation",
+                            0.0,
+                            0.2245
+                        ],
+                        [
+                            "diff_Monday_Diagnostics",
+                            0.0,
+                            0.22692307692307692
+                        ],
+                        [
+                            "diff_Monday_Maintenance",
+                            0.0,
+                            0.2306843267108168
+                        ]
+                    ],
+                    "other_statistics": {
+                        "n": 1542,
+                        "average": -27.561608300907913,
+                        "variance": 89.01663243282346,
+                        "sd": 9.4348626080523,
+                        "mse": 89.01663243282346,
+                        "mae": 7.519996097173648,
+                        "min": -62.0,
+                        "max": -4.0
+                    },
+                    "prediction": -27.561608300907913
+                },
+                "ps_properties": [
+                    [
+                        "average_qty_skills",
+                        2.0,
+                        0.9936666666666667
+                    ],
+                    [
+                        "count_skill_Negotiation",
+                        2.0,
+                        0.9905
+                    ],
+                    [
+                        "diff_Saturday_Negotiation",
+                        0.0,
+                        0.015748031496062992
+                    ],
+                    [
+                        "diff_Friday_Negotiation",
+                        0.0,
+                        0.01687289088863892
+                    ],
+                    [
+                        "diff_Sunday_Negotiation",
+                        0.0,
+                        0.01687289088863892
+                    ],
+                    [
+                        "total_qty_of_skills",
+                        5.0,
+                        0.9553333333333334
+                    ],
+                    [
+                        "skill_bivariate_distance",
+                        3.3333333333333335,
+                        0.9553333333333334
+                    ],
+                    [
+                        "count_skill_Maintenance",
+                        1.0,
+                        0.8413333333333334
+                    ],
+                    [
+                        "count_skill_Diagnostics",
+                        1.0,
+                        0.8386666666666667
+                    ],
+                    [
+                        "count_skill_Optimization",
+                        0.0,
+                        0.22266666666666668
+                    ],
+                    [
+                        "diff_Monday_Diagnostics",
+                        0.0,
+                        0.22692307692307692
+                    ],
+                    [
+                        "diff_Monday_Implementation",
+                        0.0,
+                        0.22988505747126436
+                    ],
+                    [
+                        "diff_Monday_Maintenance",
+                        0.0,
+                        0.2306843267108168
+                    ],
+                    [
+                        "diff_Monday_Configuration",
+                        0.0,
+                        0.2372316802368616
+                    ],
+                    [
+                        "diff_Monday_Negotiation",
+                        0.0,
+                        0.2373453318335208
+                    ],
+                    [
+                        "diff_Thursday_Diagnostics",
+                        1.0,
+                        0.7604395604395604
+                    ],
+                    [
+                        "diff_Thursday_Maintenance",
+                        1.0,
+                        0.7599337748344371
+                    ]
+                ],
+                "other_statistics": {
+                    "n": 2070,
+                    "average": -25.47342995169082,
+                    "variance": 93.32852108567295,
+                    "sd": 9.660668770104529,
+                    "mse": 93.32852108567295,
+                    "mae": 7.670923475460337,
+                    "min": -62.0,
+                    "max": -4.0
+                },
+                "prediction": -25.47342995169082
+            },
+            "not_matching_branch": {
+                "node_type": "branch",
+                "split_ps": "* * * * 0 * * * * 1 * * * * * * * *",
+                "matching_branch": {
+                    "node_type": "branch",
+                    "split_ps": "* * * * * * * 0 1 1 * * * 1 1 * * *",
+                    "matching_branch": {
+                        "node_type": "leaf",
+                        "other_statistics": {
+                            "n": 66,
+                            "average": -21.272727272727273,
+                            "variance": 51.10743801652893,
+                            "sd": 7.148946636850001,
+                            "mse": 51.10743801652893,
+                            "mae": 5.619834710743802,
+                            "min": -40.0,
+                            "max": -8.0
+                        },
+                        "prediction": -21.272727272727273
+                    },
+                    "not_matching_branch": {
+                        "node_type": "leaf",
+                        "other_statistics": {
+                            "n": 390,
+                            "average": -30.55897435897436,
+                            "variance": 80.14908612754768,
+                            "sd": 8.952602198665351,
+                            "mse": 80.14908612754768,
+                            "mae": 7.152952005259699,
+                            "min": -58.0,
+                            "max": -10.0
+                        },
+                        "prediction": -30.55897435897436
+                    },
+                    "ps_properties": [
+                        [
+                            "count_skill_Documentation",
+                            2.0,
+                            0.969
+                        ],
+                        [
+                            "diff_Friday_Documentation",
+                            0.0,
+                            0.03393351800554017
+                        ],
+                        [
+                            "diff_Sunday_Documentation",
+                            0.0,
+                            0.03393351800554017
+                        ],
+                        [
+                            "diff_Saturday_Documentation",
+                            0.0,
+                            0.03462603878116344
+                        ],
+                        [
+                            "average_qty_skills",
+                            1.6,
+                            0.9436666666666667
+                        ],
+                        [
+                            "skill_bivariate_distance",
+                            2.8,
+                            0.9203333333333333
+                        ],
+                        [
+                            "diff_Saturday_Implementation",
+                            0.0,
+                            0.08329708568943019
+                        ],
+                        [
+                            "diff_Friday_Implementation",
+                            0.0,
+                            0.08394954327968682
+                        ],
+                        [
+                            "diff_Sunday_Implementation",
+                            0.0,
+                            0.08394954327968682
+                        ],
+                        [
+                            "rota_average_bivariate_distance",
+                            3.2,
+                            0.09616666666666666
+                        ],
+                        [
+                            "count_skill_Implementation",
+                            2.0,
+                            0.816
+                        ],
+                        [
+                            "total_qty_of_skills",
+                            6.0,
+                            0.7888333333333334
+                        ],
+                        [
+                            "diff_Monday_Implementation",
+                            0.0,
+                            0.2163984341017834
+                        ],
+                        [
+                            "diff_Thursday_Implementation",
+                            0.0,
+                            0.21944323618964767
+                        ],
+                        [
+                            "diff_Monday_Documentation",
+                            0.0,
+                            0.2268005540166205
+                        ],
+                        [
+                            "diff_Monday_Optimization",
+                            0.0,
+                            0.22743362831858407
+                        ],
+                        [
+                            "diff_Monday_Configuration",
+                            0.0,
+                            0.22906916276651065
+                        ],
+                        [
+                            "diff_Monday_Communication",
+                            0.0,
+                            0.2414256893073302
+                        ],
+                        [
+                            "count_skill_Maintenance",
+                            0.0,
+                            0.2465
+                        ],
+                        [
+                            "count_skill_Diagnostics",
+                            0.0,
+                            0.24716666666666667
+                        ]
+                    ],
+                    "other_statistics": {
+                        "n": 456,
+                        "average": -29.214912280701753,
+                        "variance": 86.62047937827026,
+                        "sd": 9.307012376604549,
+                        "mse": 86.62047937827026,
+                        "mae": 7.478397199138196,
+                        "min": -58.0,
+                        "max": -8.0
+                    },
+                    "prediction": -29.214912280701753
+                },
+                "not_matching_branch": {
+                    "node_type": "branch",
+                    "split_ps": "* * 2 * * * * 0 * 3 * * * * * * 1 *",
+                    "matching_branch": {
+                        "node_type": "leaf",
+                        "other_statistics": {
+                            "n": 84,
+                            "average": -25.88095238095238,
+                            "variance": 69.27154195011337,
+                            "sd": 8.32295271824329,
+                            "mse": 69.27154195011337,
+                            "mae": 6.651360544217688,
+                            "min": -48.0,
+                            "max": -12.0
+                        },
+                        "prediction": -25.88095238095238
+                    },
+                    "not_matching_branch": {
+                        "node_type": "leaf",
+                        "other_statistics": {
+                            "n": 1731,
+                            "average": -37.84286539572501,
+                            "variance": 113.61135724300243,
+                            "sd": 10.658862849432037,
+                            "mse": 113.61135724300243,
+                            "mae": 8.581835099308794,
+                            "min": -70.0,
+                            "max": -12.0
+                        },
+                        "prediction": -37.84286539572501
+                    },
+                    "ps_properties": [
+                        [
+                            "count_skill_Implementation",
+                            4.0,
+                            0.9996666666666667
+                        ],
+                        [
+                            "skill_bivariate_distance",
+                            1.0,
+                            0.007
+                        ],
+                        [
+                            "rota_average_bivariate_distance",
+                            6.0,
+                            0.9585
+                        ],
+                        [
+                            "diff_Saturday_Implementation",
+                            0.0,
+                            0.06331987891019172
+                        ],
+                        [
+                            "diff_Friday_Implementation",
+                            0.0,
+                            0.07088799192734611
+                        ],
+                        [
+                            "diff_Sunday_Implementation",
+                            0.0,
+                            0.07088799192734611
+                        ],
+                        [
+                            "total_qty_of_skills",
+                            3.0,
+                            0.10083333333333333
+                        ],
+                        [
+                            "count_skill_Optimization",
+                            0.0,
+                            0.1665
+                        ],
+                        [
+                            "average_qty_skills",
+                            1.5,
+                            0.8276666666666667
+                        ],
+                        [
+                            "count_skill_Negotiation",
+                            1.0,
+                            0.787
+                        ],
+                        [
+                            "count_skill_Configuration",
+                            0.0,
+                            0.21883333333333332
+                        ],
+                        [
+                            "diff_Thursday_Implementation",
+                            0.0,
+                            0.22830474268415743
+                        ],
+                        [
+                            "count_skill_Documentation",
+                            1.0,
+                            0.7715
+                        ],
+                        [
+                            "diff_Monday_Implementation",
+                            0.0,
+                            0.2330978809283552
+                        ],
+                        [
+                            "diff_Thursday_Negotiation",
+                            0.0,
+                            0.2393755420641804
+                        ],
+                        [
+                            "diff_Monday_Documentation",
+                            0.0,
+                            0.24899598393574296
+                        ]
+                    ],
+                    "other_statistics": {
+                        "n": 1815,
+                        "average": -37.289256198347104,
+                        "variance": 117.87500853766821,
+                        "sd": 10.857025768490567,
+                        "mse": 117.87500853766821,
+                        "mae": 8.772205905789678,
+                        "min": -70.0,
+                        "max": -12.0
+                    },
+                    "prediction": -37.289256198347104
+                },
+                "ps_properties": [
+                    [
+                        "count_skill_Negotiation",
+                        2.0,
+                        0.9965
+                    ],
+                    [
+                        "diff_Friday_Negotiation",
+                        0.0,
+                        0.00529500756429652
+                    ],
+                    [
+                        "diff_Sunday_Negotiation",
+                        0.0,
+                        0.00529500756429652
+                    ],
+                    [
+                        "diff_Saturday_Negotiation",
+                        0.0,
+                        0.00680786686838124
+                    ],
+                    [
+                        "average_qty_skills",
+                        2.0,
+                        0.9678333333333333
+                    ],
+                    [
+                        "rota_average_bivariate_distance",
+                        8.0,
+                        0.8815
+                    ],
+                    [
+                        "count_skill_Configuration",
+                        1.0,
+                        0.8325
+                    ],
+                    [
+                        "count_skill_Implementation",
+                        1.0,
+                        0.7756666666666666
+                    ],
+                    [
+                        "total_qty_of_skills",
+                        3.0,
+                        0.7635
+                    ],
+                    [
+                        "diff_Thursday_Negotiation",
+                        0.0,
+                        0.23978819969742815
+                    ],
+                    [
+                        "diff_Monday_Implementation",
+                        0.0,
+                        0.2439222042139384
+                    ]
+                ],
+                "other_statistics": {
+                    "n": 2271,
+                    "average": -35.66798767062968,
+                    "variance": 122.06149832833765,
+                    "sd": 11.048144564963732,
+                    "mse": 122.06149832833765,
+                    "mae": 8.933053427077498,
+                    "min": -70.0,
+                    "max": -8.0
+                },
+                "prediction": -35.66798767062968
+            },
+            "ps_properties": [
+                [
+                    "count_skill_Automation",
+                    2.0,
+                    0.9973333333333333
+                ],
+                [
+                    "diff_Friday_Automation",
+                    0.0,
+                    0.004329004329004329
+                ],
+                [
+                    "diff_Sunday_Automation",
+                    0.0,
+                    0.004329004329004329
+                ],
+                [
+                    "diff_Saturday_Automation",
+                    0.0,
+                    0.007215007215007215
+                ],
+                [
+                    "total_qty_of_skills",
+                    1.0,
+                    0.026
+                ],
+                [
+                    "skill_bivariate_distance",
+                    0.0,
+                    0.026
+                ],
+                [
+                    "rota_average_bivariate_distance",
+                    8.0,
+                    0.8815
+                ],
+                [
+                    "diff_Monday_Automation",
+                    0.0,
+                    0.23665223665223664
+                ]
+            ],
+            "other_statistics": {
+                "n": 4341,
+                "average": -30.806726560700298,
+                "variance": 134.28676424428184,
+                "sd": 11.588216611898565,
+                "mse": 134.28676424428184,
+                "mae": 9.398442742389587,
+                "min": -70.0,
+                "max": -4.0
+            },
+            "prediction": -30.806726560700298
+        },
+        "ps_properties": [
+            [
+                "average_qty_skills",
+                2.0,
+                1.0
+            ],
+            [
+                "count_skill_Negotiation",
+                2.0,
+                0.9791666666666666
+            ],
+            [
+                "count_skill_Documentation",
+                2.0,
+                0.979
+            ],
+            [
+                "diff_Saturday_Negotiation",
+                0.0,
+                0.02298352124891587
+            ],
+            [
+                "diff_Friday_Documentation",
+                0.0,
+                0.02570281124497992
+            ],
+            [
+                "diff_Sunday_Documentation",
+                0.0,
+                0.02570281124497992
+            ],
+            [
+                "diff_Friday_Negotiation",
+                0.0,
+                0.026019080659150044
+            ],
+            [
+                "diff_Sunday_Negotiation",
+                0.0,
+                0.026019080659150044
+            ],
+            [
+                "diff_Saturday_Documentation",
+                0.0,
+                0.026907630522088354
+            ],
+            [
+                "skill_bivariate_distance",
+                3.0,
+                0.9383333333333334
+            ],
+            [
+                "diff_Saturday_Implementation",
+                0.0,
+                0.06331987891019172
+            ],
+            [
+                "diff_Friday_Implementation",
+                0.0,
+                0.07088799192734611
+            ],
+            [
+                "diff_Sunday_Implementation",
+                0.0,
+                0.07088799192734611
+            ],
+            [
+                "count_skill_Implementation",
+                2.0,
+                0.8966666666666666
+            ],
+            [
+                "count_skill_Optimization",
+                0.0,
+                0.1665
+            ],
+            [
+                "rota_average_bivariate_distance",
+                5.333333333333333,
+                0.7975
+            ],
+            [
+                "count_skill_Communication",
+                1.0,
+                0.7756666666666666
+            ],
+            [
+                "diff_Thursday_Implementation",
+                0.0,
+                0.22830474268415743
+            ],
+            [
+                "diff_Monday_Implementation",
+                0.0,
+                0.2330978809283552
+            ],
+            [
+                "diff_Monday_Configuration",
+                0.0,
+                0.23355068168346177
+            ],
+            [
+                "diff_Thursday_Negotiation",
+                0.0,
+                0.2393755420641804
+            ],
+            [
+                "diff_Monday_Communication",
+                0.0,
+                0.24130962004850445
+            ],
+            [
+                "diff_Thursday_Documentation",
+                0.0,
+                0.24176706827309236
+            ],
+            [
+                "diff_Monday_Negotiation",
+                0.0,
+                0.24804856895056374
+            ],
+            [
+                "diff_Monday_Documentation",
+                0.0,
+                0.24899598393574296
+            ]
+        ],
+        "other_statistics": {
+            "n": 5859,
+            "average": -27.293394777265746,
+            "variance": 147.28702071648408,
+            "sd": 12.13618641569435,
+            "mse": 147.28702071648408,
+            "mae": 9.911818675903707,
+            "min": -70.0,
+            "max": -4.0
+        },
+        "prediction": -27.293394777265746
+    }
+}

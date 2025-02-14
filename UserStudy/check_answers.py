@@ -71,7 +71,7 @@ def write_tasks_for_instance_cb():
     write_modifications_to_file(task_1_modifications, task_2_modifications, instance_cb_modif_path)
 
 
-write_tasks_for_instance_cb()
+#write_tasks_for_instance_cb()
 
 
 def check_answers(instance_path):
@@ -119,5 +119,5 @@ def check_answers(instance_path):
     show_modification_ordered(task_2_modifications)
 
 
-check_answers(instance_ca_path)
+#check_answers(instance_ca_path)
 check_answers(instance_cb_path)

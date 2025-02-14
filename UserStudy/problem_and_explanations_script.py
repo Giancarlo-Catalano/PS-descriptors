@@ -164,7 +164,7 @@ def show_data_for_instance(instance_path: str):
           f"and it is \n{problem.repr_ps(PS.from_FS(best_solution))}")
 
     print(f"The decision tree is")
-    decision_tree.print_ASCII(show_not_matching_nodes=False)
+    decision_tree.print_ASCII(show_not_matching_nodes=True)
 
 
 def prepare_a_b_data():
@@ -188,7 +188,7 @@ def prepare_a_b_data():
 instance_ca_path = r"C:\Users\gac8\PycharmProjects\PS-descriptors-LCS\UserStudy\Instances\Constructed_A"
 instance_cb_path = r"C:\Users\gac8\PycharmProjects\PS-descriptors-LCS\UserStudy\Instances\Constructed_B"
 def prepare_constructed_problem_data():
-    instance_paths = [instance_ca_path]
+    instance_paths = [instance_cb_path]
     for instance_path in instance_paths:
         # prepare_data_for_instance(instance_path = instance_path,
         #                           seed = 5284,
@@ -202,7 +202,7 @@ def prepare_constructed_problem_data():
 
         show_data_for_instance(instance_path)
 
-#prepare_constructed_problem_data()
+prepare_constructed_problem_data()
 
 
 
