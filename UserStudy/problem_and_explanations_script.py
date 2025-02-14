@@ -52,10 +52,12 @@ def generate_control_data_for_ps_properties(ps_property_manager: PSPropertyManag
 
 
 def prepare_data_for_instance(instance_path: str,
+                                seed: int,
                                 generate_pRef=False,
                                 generate_decision_tree=False,
                                 generate_properties_table=False,
                               ps_search_budget: int = 5000,
+
                               depth: int = 4):
     problem_path = get_problem_path(instance_path)
     problem = SimplifiedBTProblem.from_json(problem_path)
@@ -85,7 +87,6 @@ def prepare_data_for_instance(instance_path: str,
         decision_tree.search_settings = search_settings
 
         with utils.announce(f"training the decision tree, storing it at {decision_tree_path}"):
-            seed = 5284#random.randint(0,  10000)
             print(f"The seed is {seed}")
             decision_tree.train_from_pRef(pRef, random_state=seed)
             decision_tree.to_file(decision_tree_path)
@@ -163,7 +164,7 @@ def show_data_for_instance(instance_path: str):
           f"and it is \n{problem.repr_ps(PS.from_FS(best_solution))}")
 
     print(f"The decision tree is")
-    decision_tree.print_ASCII()
+    decision_tree.print_ASCII(show_not_matching_nodes=False)
 
 
 def prepare_a_b_data():
@@ -187,20 +188,21 @@ def prepare_a_b_data():
 instance_ca_path = r"C:\Users\gac8\PycharmProjects\PS-descriptors-LCS\UserStudy\Instances\Constructed_A"
 instance_cb_path = r"C:\Users\gac8\PycharmProjects\PS-descriptors-LCS\UserStudy\Instances\Constructed_B"
 def prepare_constructed_problem_data():
-    instance_paths = [instance_cb_path]
+    instance_paths = [instance_ca_path]
     for instance_path in instance_paths:
-        prepare_data_for_instance(instance_path = instance_path,
-                                   ps_search_budget=5000,
-                                   depth=4,
-                                   #generate_pRef=True,
-                                   generate_decision_tree=True,
-                                   #generate_properties_table=True
-                                   )
+        # prepare_data_for_instance(instance_path = instance_path,
+        #                           seed = 5284,
+        #                            ps_search_budget=5000,
+        #                            depth=4,
+        #                            #generate_pRef=True,
+        #                            generate_decision_tree=True,
+        #                            generate_properties_table=True
+        #                            )
 
 
         show_data_for_instance(instance_path)
 
-prepare_constructed_problem_data()
+#prepare_constructed_problem_data()
 
 
 

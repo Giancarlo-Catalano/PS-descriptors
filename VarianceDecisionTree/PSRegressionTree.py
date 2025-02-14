@@ -395,13 +395,14 @@ class PSRegressionTree(AbstractDecisionTreeRegressor):
         return result
 
 
-    def print_ASCII(self):
+    def print_ASCII(self, show_not_matching_nodes: bool = True):
         repr_ps, repr_properties = self.get_custom_reprs()
         def add_node_repr(node: PSRegressionTreeNode, parent, preamble: str):
             own_node_repr = Node(preamble+"\n"+node.get_node_text(repr_ps, repr_properties), parent = parent)
             if isinstance(node, PSRegressionTreeBranchNode):
                 add_node_repr(node.matching_branch, parent = own_node_repr, preamble = "Matching")
-                add_node_repr(node.not_matching_branch, parent = own_node_repr, preamble = "NOT matching")
+                if show_not_matching_nodes:
+                    add_node_repr(node.not_matching_branch, parent = own_node_repr, preamble = "NOT matching")
             return own_node_repr
 
         root_node_repr = add_node_repr(self.root_node, parent = None, preamble="Root")

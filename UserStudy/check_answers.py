@@ -8,7 +8,7 @@ from Core.EvaluatedFS import EvaluatedFS
 from Core.FullSolution import FullSolution
 from Core.PRef import PRef
 from Core.PS import PS
-from UserStudy.problem_and_explanations_script import get_problem_path, get_pRef_path
+from UserStudy.problem_and_explanations_script import get_problem_path, get_pRef_path, instance_ca_path
 
 
 def modifications_to_dict(modifications: list[list[(str, str)]]) -> list[list[dict]]:
@@ -58,8 +58,8 @@ def write_tasks_for_instance_cb():
     task_1_modifications = [
         [("Brandon", "D"), ("Kevin", "C")],
         [("Brandon", "D")],
-        [("Phoebe", "C")],
-        [("Phoebe", "C"), ("Brandon", "D")]
+        [("Phoebe", "A")],
+        [("Phoebe", "A"), ("Brandon", "D")]
     ]
 
     to_combine = [("Alice", "B"), ("Lucas", "B"), ("Phoebe", "A"),
@@ -71,7 +71,7 @@ def write_tasks_for_instance_cb():
     write_modifications_to_file(task_1_modifications, task_2_modifications, instance_cb_modif_path)
 
 
-#write_tasks_for_instance_cb()
+write_tasks_for_instance_cb()
 
 
 def check_answers(instance_path):
@@ -119,4 +119,5 @@ def check_answers(instance_path):
     show_modification_ordered(task_2_modifications)
 
 
+check_answers(instance_ca_path)
 check_answers(instance_cb_path)
