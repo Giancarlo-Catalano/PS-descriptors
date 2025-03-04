@@ -119,5 +119,5 @@ def check_answers(instance_path):
     show_modification_ordered(task_2_modifications)
 
 
-#check_answers(instance_ca_path)
+check_answers(instance_ca_path)
 check_answers(instance_cb_path)

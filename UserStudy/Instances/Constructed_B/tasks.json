@@ -19,13 +19,13 @@
         [
             {
                 "person": "Phoebe",
-                "rota": "A"
+                "rota": "C"
             }
         ],
         [
             {
                 "person": "Phoebe",
-                "rota": "A"
+                "rota": "C"
             },
             {
                 "person": "Brandon",
@@ -37,27 +37,27 @@
         [
             {
                 "person": "Alice",
-                "rota": "B"
+                "rota": "D"
             },
             {
                 "person": "Lucas",
-                "rota": "B"
+                "rota": "D"
             }
         ],
         [
             {
                 "person": "Alice",
-                "rota": "B"
+                "rota": "D"
             },
             {
                 "person": "Phoebe",
-                "rota": "A"
+                "rota": "C"
             }
         ],
         [
             {
                 "person": "Alice",
-                "rota": "B"
+                "rota": "D"
             },
             {
                 "person": "Brandon",
@@ -67,7 +67,7 @@
         [
             {
                 "person": "Alice",
-                "rota": "B"
+                "rota": "D"
             },
             {
                 "person": "Kevin",
@@ -77,17 +77,17 @@
         [
             {
                 "person": "Lucas",
-                "rota": "B"
+                "rota": "D"
             },
             {
                 "person": "Phoebe",
-                "rota": "A"
+                "rota": "C"
             }
         ],
         [
             {
                 "person": "Lucas",
-                "rota": "B"
+                "rota": "D"
             },
             {
                 "person": "Brandon",
@@ -97,7 +97,7 @@
         [
             {
                 "person": "Lucas",
-                "rota": "B"
+                "rota": "D"
             },
             {
                 "person": "Kevin",
@@ -107,7 +107,7 @@
         [
             {
                 "person": "Phoebe",
-                "rota": "A"
+                "rota": "C"
             },
             {
                 "person": "Brandon",
@@ -117,7 +117,7 @@
         [
             {
                 "person": "Phoebe",
-                "rota": "A"
+                "rota": "C"
             },
             {
                 "person": "Kevin",

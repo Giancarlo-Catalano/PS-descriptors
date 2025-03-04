@@ -202,7 +202,7 @@ def prepare_constructed_problem_data():
 
         show_data_for_instance(instance_path)
 
-prepare_constructed_problem_data()
+#prepare_constructed_problem_data()
 
 
 
