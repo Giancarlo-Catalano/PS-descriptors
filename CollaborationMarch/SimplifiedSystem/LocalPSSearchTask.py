@@ -9,6 +9,9 @@ from pymoo.operators.mutation.bitflip import BitflipMutation
 from pymoo.optimize import minimize
 
 from BenchmarkProblems.BenchmarkProblem import BenchmarkProblem
+from CollaborationMarch.SimplifiedSystem.Operators.Sampling import LocalPSGeometricSampling
+from CollaborationMarch.SimplifiedSystem.ps_search_utils import construct_objectives_list, apply_culling_method, \
+    run_pymoo_algorithm_with_checks
 from Core.EvaluatedPS import EvaluatedPS
 from Core.FullSolution import FullSolution
 from Core.PRef import PRef
@@ -16,7 +19,6 @@ from Core.PS import PS, STAR
 from Core.PSMetric.FitnessQuality.SignificantlyHighAverage import MannWhitneyU
 from Core.PSMetric.Linkage.TraditionalPerturbationLinkage import TraditionalPerturbationLinkage
 from Core.PSMetric.Linkage.ValueSpecificMutualInformation import FasterSolutionSpecificMutualInformation
-from LCS.Operators import LocalPSGeometricSampling
 from LCS.PSFilter import keep_biggest, merge_pss_into_one, keep_middle, \
     keep_with_best_atomicity
 from VarianceDecisionTree.optimised_variance_objective import SplitVarianceAndConsistency
@@ -24,14 +26,13 @@ from VarianceDecisionTree.optimised_variance_objective import SplitVarianceAndCo
 PSObjective: TypeAlias = Callable[[PS], float]
 
 
-class SimplePSSearchTask(Problem):
+class LocalPSSearchTask(Problem):
     solution_to_explain: FullSolution
     unexplained_mask: np.ndarray
     proportion_unexplained_that_needs_used: float  # alpha
     proportion_used_that_should_be_unexplained: float  # beta
 
     objectives: list[Callable]
-
     difference_variables: list[int]
 
     # NOTE:
@@ -107,63 +108,6 @@ class SimplePSSearchTask(Problem):
 
 
 
-def construct_objectives_list(metrics_str: str,
-                              pRef: PRef,
-                              solution: FullSolution,
-                              problem: Optional[BenchmarkProblem] = None,
-                              ):
-    metrics_list_str = metrics_str.split()
-    objectives = []
-
-    def simplicity(ps: PS) -> float:
-        return -float(np.sum(ps.values == STAR))
-
-    if "simplicity" in metrics_list_str:
-        objectives.append(simplicity)
-
-    if "ground_truth_atomicity" in metrics_list_str:
-        ground_truth_atomicity_metric = TraditionalPerturbationLinkage(problem)
-        ground_truth_atomicity_metric.set_solution(solution)
-
-        def ground_truth_atomicity(ps: PS) -> float:
-            return -ground_truth_atomicity_metric.get_atomicity(ps)
-
-        objectives.append(ground_truth_atomicity)
-
-    if "estimated_atomicity" in metrics_list_str:
-        estimated_atomicity_metric = FasterSolutionSpecificMutualInformation()
-        estimated_atomicity_metric.set_pRef(pRef)
-        estimated_atomicity_metric.set_solution(solution)
-
-        def estimated_atomicity(ps: PS) -> float:
-            return -estimated_atomicity_metric.get_atomicity(ps)
-
-        objectives.append(estimated_atomicity)
-
-    fitness_consistency = MannWhitneyU()
-    fitness_consistency.set_pRef(pRef)
-
-
-
-    if "consistency" in metrics_list_str or "variance" in metrics_list_str:
-        variance_and_consistency_metric = SplitVarianceAndConsistency(pRef)
-
-        def variance(ps: PS) -> float:
-            variance_and_consistency_metric.evaluate(ps)
-            return variance_and_consistency_metric.get_split_variance(ps)
-            # return variance_metric.get_single_score(ps)
-
-        def consistency(ps: PS) -> float:
-            # always needs to be called AFTER variance.
-            return variance_and_consistency_metric.get_consistency(ps)
-
-        if "variance" in metrics_list_str:
-            objectives.append(variance)
-        if "consistency" in metrics_list_str:
-            objectives.append(consistency)
-
-    return objectives
-
 def find_ps_in_solution(to_explain: FullSolution,
                         pRef: PRef,
                         ps_budget: int,
@@ -176,72 +120,29 @@ def find_ps_in_solution(to_explain: FullSolution,
                         problem: Optional[BenchmarkProblem] = None,
                         metrics: str = "variance",
                         verbose=True) -> list[PS]:
-
     objectives = construct_objectives_list(metrics, pRef, to_explain, problem)
 
     if len(objectives) == 0:
         raise Exception("Somehow there are no objectives")
 
-
     # construct the optimisation problem instance
-    problem = SimplePSSearchTask(solution_to_explain=to_explain,
-                                 objectives=objectives,
-                                 unexplained_mask=unexplained_mask,
-                                 proportion_unexplained_that_needs_used=proportion_unexplained_that_needs_used,
-                                 proportion_used_that_should_be_unexplained=proportion_used_that_should_be_unexplained)
+    problem = LocalPSSearchTask(solution_to_explain=to_explain,
+                                objectives=objectives,
+                                unexplained_mask=unexplained_mask,
+                                proportion_unexplained_that_needs_used=proportion_unexplained_that_needs_used,
+                                proportion_used_that_should_be_unexplained=proportion_used_that_should_be_unexplained)
 
-    # the next line of code is a bit odd, but it works!
+    # the next line of code is a bit odd, but it works! It uses a GA if there is one objective
     algorithm = (GA if len(objectives) < 2 else NSGA2)(pop_size=population_size,
-                   sampling=LocalPSGeometricSampling(),
-                   crossover=SimulatedBinaryCrossover(prob=0.3),
-                   mutation=BitflipMutation(prob=1 / problem.n_var),
-                   eliminate_duplicates=True)
+                                                       sampling=LocalPSGeometricSampling(),
+                                                       crossover=SimulatedBinaryCrossover(prob=0.3),
+                                                       mutation=BitflipMutation(prob=1 / problem.n_var),
+                                                       eliminate_duplicates=True)
 
-    def run_and_get_results() -> list[EvaluatedPS]:
-        res = minimize(problem,
-                       algorithm,
-                       termination=('n_evals', ps_budget),
-                       verbose=verbose)
+    pss = run_pymoo_algorithm_with_checks(problem=problem,
+                                          algorithm=algorithm,
+                                          reattempts_when_fail=reattempts_when_fail,
+                                          ps_budget = ps_budget,
+                                          verbose=verbose)
 
-        if (res.X is None) or (res.F is None) or (res.G is None):
-            print("Result had some Nones")
-            return []
-
-        if len(res.X.shape) == 1:
-            result_pss = [EvaluatedPS(problem.individual_to_ps(res.X).values, metric_scores=res.F)]  # if there is only one result, the array has a different shape...
-        else:
-            result_pss = [EvaluatedPS(problem.individual_to_ps(values).values, metric_scores=ms)
-                      for values, ms in zip(res.X, res.F)]
-        if len(result_pss) == 0:
-            print("The pss population returned by NSGAII is empty...?")
-
-        filtered_pss = [ps for ps, satisfies_constr in zip(result_pss, res.G)
-                        if satisfies_constr]
-
-        return filtered_pss if filtered_pss else result_pss
-
-    for attempt in range(reattempts_when_fail):
-        pss = run_and_get_results()
-        if pss:
-            break
-    else:  # yes I am happy to use a for else
-        raise Exception("For some mysterious reason, Pymoo keeps returning None instead of search results...")
-
-    if verbose:
-        print("The pss are ")
-        for ps in pss:
-            print("\t", ps)
-
-    match culling_method:
-        case None:
-            return pss
-        case "best_atomicity":
-            return keep_biggest(keep_with_best_atomicity(pss))
-        case "biggest":
-            return keep_biggest(pss)#return keep_with_best_atomicity(keep_biggest(pss))
-        case "overlap":
-            return [merge_pss_into_one(pss)]
-        case "elbow":
-            return keep_middle(pss)
-        case _:
-            raise Exception(f"The culling method {culling_method} was not recognised")
+    return apply_culling_method(pss, culling_method)
