@@ -4,19 +4,23 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="a05e8814-504e-4333-8593-ec6366f9f3e6" name="Changes" comment="Implemented the notebook to analyse the data.">
-      <change afterPath="$PROJECT_DIR$/CollaborationMarch/MiningPSForRetailForecasting.ipynb" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/CollaborationMarch/SimplifiedSystem/GlobalPSSearchTask.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/CollaborationMarch/SimplifiedSystem/LocalPSSearchTask.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/CollaborationMarch/SimplifiedSystem/Operators/Crossover.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/CollaborationMarch/SimplifiedSystem/Operators/Mutation.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/CollaborationMarch/SimplifiedSystem/Operators/Sampling.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/CollaborationMarch/SimplifiedSystem/PSSearchSettings.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/CollaborationMarch/SimplifiedSystem/ps_search_utils.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/CollaborationMarch/SimplifiedSystem/search_methods.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/CollaborationMarch/test.ipynb" afterDir="false" />
+    <list default="true" id="a05e8814-504e-4333-8593-ec6366f9f3e6" name="Changes" comment="Cleaned up some code and put it in the SimplifiedSystem for the guests. Now it's time to try with their data!">
+      <change afterPath="$PROJECT_DIR$/CollaborationMarch/PolishSystem/PolishOperators.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/CollaborationMarch/PolishSystem/PolishPSSearchTask.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/CollaborationMarch/PolishSystem/polish_search_methods.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/CollaborationMarch/PolishSystem/read_data.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/CollaborationMarch/prettyfy_linkage.ipynb" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/CollaborationMarch/rearrange_linkage_table.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/CollaborationMarch/try_linkages.ipynb" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/CollaborationMarch/try_search.ipynb" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/VarianceDecisionTree/SimplePSSearchTask.py" beforeDir="false" afterPath="$PROJECT_DIR$/VarianceDecisionTree/SimplePSSearchTask.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/CollaborationMarch/MiningPSForRetailForecasting.ipynb" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/CollaborationMarch/SimplifiedSystem/LocalPSSearchTask.py" beforeDir="false" afterPath="$PROJECT_DIR$/CollaborationMarch/SimplifiedSystem/LocalPSSearchTask.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/CollaborationMarch/SimplifiedSystem/ps_search_utils.py" beforeDir="false" afterPath="$PROJECT_DIR$/CollaborationMarch/SimplifiedSystem/ps_search_utils.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/CollaborationMarch/test.ipynb" beforeDir="false" afterPath="$PROJECT_DIR$/CollaborationMarch/test.ipynb" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Core/PSMetric/Linkage/CleanLinkage.py" beforeDir="false" afterPath="$PROJECT_DIR$/Core/PSMetric/Linkage/CleanLinkage.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/UserStudy/parse_answers.ipynb" beforeDir="false" afterPath="$PROJECT_DIR$/UserStudy/parse_answers.ipynb" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -58,37 +62,39 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent">{
-  &quot;keyToString&quot;: {
-    &quot;Python.BTProblem.executor&quot;: &quot;Run&quot;,
-    &quot;Python.Compare_prediction_powers.executor&quot;: &quot;Run&quot;,
-    &quot;Python.GraphColouring.executor&quot;: &quot;Run&quot;,
-    &quot;Python.IAIDecisionTree.executor&quot;: &quot;Run&quot;,
-    &quot;Python.QAP.executor&quot;: &quot;Run&quot;,
-    &quot;Python.SimplePSSearchTask.executor&quot;: &quot;Run&quot;,
-    &quot;Python.TabuSearch.executor&quot;: &quot;Run&quot;,
-    &quot;Python.compare_prediction_powers.executor&quot;: &quot;Run&quot;,
-    &quot;Python.gather_data.executor&quot;: &quot;Run&quot;,
-    &quot;Python.main.executor&quot;: &quot;Run&quot;,
-    &quot;Python.process_data.executor&quot;: &quot;Run&quot;,
-    &quot;Python.testing_IAI.executor&quot;: &quot;Run&quot;,
-    &quot;Python.utils.executor&quot;: &quot;Run&quot;,
-    &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
-    &quot;SHARE_PROJECT_CONFIGURATION_FILES&quot;: &quot;true&quot;,
-    &quot;WebServerToolWindowFactoryState&quot;: &quot;false&quot;,
-    &quot;git-widget-placeholder&quot;: &quot;LCS&quot;,
-    &quot;ignore.virus.scanning.warn.message&quot;: &quot;true&quot;,
-    &quot;last_opened_file_path&quot;: &quot;C:/Users/gac8/PycharmProjects/PS-descriptors-LCS/UserStudy/Instances/Constructed_A&quot;,
-    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
-    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
-    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
-    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
-    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
-    &quot;settings.editor.selected.configurable&quot;: &quot;com.jetbrains.python.configuration.PyActiveSdkModuleConfigurable&quot;,
-    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "Python.BTProblem.executor": "Run",
+    "Python.Compare_prediction_powers.executor": "Run",
+    "Python.GraphColouring.executor": "Run",
+    "Python.IAIDecisionTree.executor": "Run",
+    "Python.QAP.executor": "Run",
+    "Python.SimplePSSearchTask.executor": "Run",
+    "Python.TabuSearch.executor": "Run",
+    "Python.compare_prediction_powers.executor": "Run",
+    "Python.gather_data.executor": "Run",
+    "Python.main.executor": "Run",
+    "Python.process_data.executor": "Run",
+    "Python.testing_IAI.executor": "Run",
+    "Python.utils.executor": "Run",
+    "RunOnceActivity.OpenProjectViewOnStart": "true",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "SHARE_PROJECT_CONFIGURATION_FILES": "true",
+    "WebServerToolWindowFactoryState": "false",
+    "database.data.extractors.current.export.id": "Markdown-Groovy.md.groovy",
+    "database.data.extractors.current.id": "Markdown-Groovy.md.groovy",
+    "git-widget-placeholder": "LCS",
+    "ignore.virus.scanning.warn.message": "true",
+    "last_opened_file_path": "C:/Users/gac8/PycharmProjects/PS-descriptors-LCS/UserStudy/Instances/Constructed_A",
+    "node.js.detected.package.eslint": "true",
+    "node.js.detected.package.tslint": "true",
+    "node.js.selected.package.eslint": "(autodetect)",
+    "node.js.selected.package.tslint": "(autodetect)",
+    "nodejs_package_manager_path": "npm",
+    "settings.editor.selected.configurable": "com.jetbrains.python.configuration.PyActiveSdkModuleConfigurable",
+    "vue.rearranger.settings.migration": "true"
   }
-}</component>
+}]]></component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
       <recent name="C:\Users\gac8\PycharmProjects\PS-descriptors-LCS\UserStudy\Instances\Constructed_A" />
@@ -205,15 +211,18 @@
       <workItem from="1741269088683" duration="288000" />
       <workItem from="1741277880441" duration="107000" />
       <workItem from="1741278233646" duration="1797000" />
-      <workItem from="1741342236117" duration="4982000" />
-    </task>
-    <task id="LOCAL-00098" summary="Which trees are tested is now controlled by some dictionaries">
-      <option name="closed" value="true" />
-      <created>1735563492618</created>
-      <option name="number" value="00098" />
-      <option name="presentableId" value="LOCAL-00098" />
-      <option name="project" value="LOCAL" />
-      <updated>1735563492618</updated>
+      <workItem from="1741342236117" duration="15222000" />
+      <workItem from="1741601413064" duration="12264000" />
+      <workItem from="1741618138938" duration="618000" />
+      <workItem from="1741863694208" duration="377000" />
+      <workItem from="1742465825058" duration="2814000" />
+      <workItem from="1742556964043" duration="7000" />
+      <workItem from="1742892921865" duration="1396000" />
+      <workItem from="1742898842879" duration="2650000" />
+      <workItem from="1742981877650" duration="1002000" />
+      <workItem from="1743071002857" duration="596000" />
+      <workItem from="1743072806282" duration="15000" />
+      <workItem from="1743586958861" duration="10741000" />
     </task>
     <task id="LOCAL-00099" summary="results now also include the orders of the split pss.">
       <option name="closed" value="true" />
@@ -599,7 +608,15 @@
       <option name="project" value="LOCAL" />
       <updated>1741103853153</updated>
     </task>
-    <option name="localTasksCounter" value="147" />
+    <task id="LOCAL-00147" summary="Cleaned up some code and put it in the SimplifiedSystem for the guests. Now it's time to try with their data!">
+      <option name="closed" value="true" />
+      <created>1741347680578</created>
+      <option name="number" value="00147" />
+      <option name="presentableId" value="LOCAL-00147" />
+      <option name="project" value="LOCAL" />
+      <updated>1741347680578</updated>
+    </task>
+    <option name="localTasksCounter" value="148" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -629,7 +646,6 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="Ready for another round of condor, gathering data for the naive trees with absolutely default settings." />
     <MESSAGE value="Last commit from my office for this year?" />
     <MESSAGE value="Made the code work for both windows and mac." />
     <MESSAGE value="Processing and displaying the data" />
@@ -654,7 +670,8 @@
     <MESSAGE value="Instances and tasks are complete" />
     <MESSAGE value="Questionnaire has been updated and now it's complete." />
     <MESSAGE value="Implemented the notebook to analyse the data." />
-    <option name="LAST_COMMIT_MESSAGE" value="Implemented the notebook to analyse the data." />
+    <MESSAGE value="Cleaned up some code and put it in the SimplifiedSystem for the guests. Now it's time to try with their data!" />
+    <option name="LAST_COMMIT_MESSAGE" value="Cleaned up some code and put it in the SimplifiedSystem for the guests. Now it's time to try with their data!" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
@@ -792,13 +809,29 @@
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/CollaborationMarch/SimplifiedSystem/ps_search_utils.py</url>
-          <line>99</line>
+          <line>106</line>
           <option name="timeStamp" value="238" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="jupyter-line">
           <url>notebook://C:/Users/gac8/PycharmProjects/PS-descriptors-LCS/VarianceDecisionTree/process_data/accuracy_by_settings.ipynb</url>
           <line>234</line>
           <option name="timeStamp" value="228" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" suspend="THREAD" type="jupyter-line">
+          <url>notebook://C:/Users/gac8/PycharmProjects/PS-descriptors-LCS/CollaborationMarch/prettyfy_linkage.ipynb</url>
+          <line>38</line>
+          <option name="timeStamp" value="240" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" suspend="THREAD" type="jupyter-line">
+          <url>notebook://C:/Users/gac8/PycharmProjects/PS-descriptors-LCS/UserStudy/parse_answers.ipynb</url>
+          <line>239</line>
+          <option name="timeStamp" value="241" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" suspend="THREAD" type="jupyter-line">
+          <condition expression="opt_without_newlines != opt" language="Jupyter" />
+          <url>notebook://C:/Users/gac8/PycharmProjects/PS-descriptors-LCS/UserStudy/parse_answers.ipynb</url>
+          <line>263</line>
+          <option name="timeStamp" value="242" />
         </line-breakpoint>
       </breakpoints>
     </breakpoint-manager>

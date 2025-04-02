@@ -9,7 +9,7 @@ from pymoo.operators.mutation.bitflip import BitflipMutation
 from pymoo.optimize import minimize
 
 from BenchmarkProblems.BenchmarkProblem import BenchmarkProblem
-from CollaborationMarch.PolishSystem.PolishPSSearchTask import PolishPSSearchTask
+from CollaborationMarch.PolishSystem.PolishOperators import PolishLocalUniformPSMutation
 from CollaborationMarch.SimplifiedSystem.Operators.Sampling import LocalPSGeometricSampling
 from CollaborationMarch.SimplifiedSystem.ps_search_utils import construct_objectives_list, apply_culling_method, \
     run_pymoo_algorithm_with_checks
@@ -27,7 +27,11 @@ from VarianceDecisionTree.optimised_variance_objective import SplitVarianceAndCo
 PSObjective: TypeAlias = Callable[[PS], float]
 
 
-class LocalPSSearchTask(Problem):
+# this is necessary because if a solution is 00010001011111
+# -> in the traditional system, we could get 00*****10**111
+# -> we need to only get ones                ***1******1**1
+
+class PolishPSSearchTask(Problem):
     solution_to_explain: FullSolution
     unexplained_mask: np.ndarray
     proportion_unexplained_that_needs_used: float  # alpha
@@ -72,7 +76,7 @@ class LocalPSSearchTask(Problem):
                          vtype=bool)
 
     def individual_to_ps(self, x):
-        return PS(sol_value if x_value == 1 else -1 for (sol_value, x_value) in zip(self.solution_to_explain.values, x))
+        return PS(1 if x_value == 1 else -1 for x_value in x)  # false -> *, true -> 1
 
     def get_which_rows_satisfy_constraint(self, X: np.ndarray) -> np.ndarray:
         # for a ps with some fixed variables, there are
@@ -109,19 +113,17 @@ class LocalPSSearchTask(Problem):
 
 
 
-def find_ps_in_solution(to_explain: FullSolution,
-                        pRef: PRef,
+def find_ps_in_polish_solution(to_explain: FullSolution,
                         ps_budget: int,
+                        metrics_functions: list[Callable],
                         population_size: int = 100,
                         proportion_unexplained_that_needs_used: float = 0.01,
                         proportion_used_that_should_be_unexplained: float = 0.5,
                         culling_method=Optional[Literal["biggest", "least_dependent", "overlap"]],
                         reattempts_when_fail: int = 1,
                         unexplained_mask: Optional[np.ndarray] = None,
-                        problem: Optional[BenchmarkProblem] = None,
-                        metrics: str = "variance",
                         verbose=True) -> list[PS]:
-    objectives = construct_objectives_list(metrics, pRef, to_explain, problem)
+    objectives = metrics_functions
 
     if len(objectives) == 0:
         raise Exception("Somehow there are no objectives")
@@ -135,9 +137,9 @@ def find_ps_in_solution(to_explain: FullSolution,
 
     # the next line of code is a bit odd, but it works! It uses a GA if there is one objective
     algorithm = (GA if len(objectives) < 2 else NSGA2)(pop_size=population_size,
-                                                       sampling=LocalPSGeometricSampling(),
-                                                       crossover=SimulatedBinaryCrossover(prob=0.3),
-                                                       mutation=BitflipMutation(prob=1 / problem.n_var),
+                                                       sampling=LocalPSGeometricSampling(), #this can stay the same because it just makes booleans
+                                                       crossover=SimulatedBinaryCrossover(prob=0.3), # idem con patate
+                                                       mutation=PolishLocalUniformPSMutation(solution_to_explain=to_explain),
                                                        eliminate_duplicates=True)
 
     pss = run_pymoo_algorithm_with_checks(problem=problem,

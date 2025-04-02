@@ -30,10 +30,10 @@ PSObjective: TypeAlias = Callable[[PS], float]
 
 
 def get_metric_function(metric_name: str,
-                        pRef: PRef,
-                        solution: Optional[FullSolution],
-                        problem: Optional[BenchmarkProblem],
-                        search_space: Optional[SearchSpace]):
+                        pRef: Optional[PRef] = None,
+                        solution: Optional[FullSolution] = None,
+                        problem: Optional[BenchmarkProblem] = None,
+                        search_space: Optional[SearchSpace] = None):
 
     # note that pymoo always wants to MINIMISE the objectives, so some signs have to be flipped
     def with_inverted_sign(func):
@@ -62,6 +62,13 @@ def get_metric_function(metric_name: str,
         estimated_atomicity_metric.set_solution(solution)
 
         return with_inverted_sign(estimated_atomicity_metric.get_atomicity)
+
+    if metric_name == "estimated_atomicity&evaluator":
+        estimated_atomicity_metric = FasterSolutionSpecificMutualInformation()
+        estimated_atomicity_metric.set_pRef(pRef)
+        estimated_atomicity_metric.set_solution(solution)
+
+        return estimated_atomicity_metric, with_inverted_sign(estimated_atomicity_metric.get_atomicity)
 
 
     if metric_name == "consistency":
