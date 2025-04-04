@@ -4,12 +4,7 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="a05e8814-504e-4333-8593-ec6366f9f3e6" name="Changes" comment="Made code to visualise the histograms, and exclude bad users.">
-      <change afterPath="$PROJECT_DIR$/Core/PSMetric/Linkage/partition_linkage.py.ipynb" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/UserStudy/parse_answers.ipynb" beforeDir="false" afterPath="$PROJECT_DIR$/UserStudy/parse_answers.ipynb" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/VarianceDecisionTree/process_data/accuracy_by_settings.ipynb" beforeDir="false" afterPath="$PROJECT_DIR$/VarianceDecisionTree/process_data/accuracy_by_settings.ipynb" afterDir="false" />
-    </list>
+    <list default="true" id="a05e8814-504e-4333-8593-ec6366f9f3e6" name="Changes" comment="Table in accuracy_by_settings has been fixed, it used to also use the instances with bigger pRefs." />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -211,15 +206,7 @@
       <workItem from="1743071002857" duration="596000" />
       <workItem from="1743072806282" duration="15000" />
       <workItem from="1743586958861" duration="11614000" />
-      <workItem from="1743752218220" duration="5143000" />
-    </task>
-    <task id="LOCAL-00100" summary="The code now avoids importing the IAI libraries if it's running on Linux (ie the university condor cluster)">
-      <option name="closed" value="true" />
-      <created>1735581023563</created>
-      <option name="number" value="00100" />
-      <option name="presentableId" value="LOCAL-00100" />
-      <option name="project" value="LOCAL" />
-      <updated>1735581023563</updated>
+      <workItem from="1743752218220" duration="5943000" />
     </task>
     <task id="LOCAL-00101" summary="Submitting before trying it on the server">
       <option name="closed" value="true" />
@@ -605,7 +592,15 @@
       <option name="project" value="LOCAL" />
       <updated>1743609375517</updated>
     </task>
-    <option name="localTasksCounter" value="149" />
+    <task id="LOCAL-00149" summary="Table in accuracy_by_settings has been fixed, it used to also use the instances with bigger pRefs.">
+      <option name="closed" value="true" />
+      <created>1743772720331</created>
+      <option name="number" value="00149" />
+      <option name="presentableId" value="LOCAL-00149" />
+      <option name="project" value="LOCAL" />
+      <updated>1743772720331</updated>
+    </task>
+    <option name="localTasksCounter" value="150" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -635,7 +630,6 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="Made the code work for both windows and mac." />
     <MESSAGE value="Processing and displaying the data" />
     <MESSAGE value="Code to make pretty latex tables was added" />
     <MESSAGE value="Just a safety net submit." />
@@ -660,7 +654,8 @@
     <MESSAGE value="Implemented the notebook to analyse the data." />
     <MESSAGE value="Cleaned up some code and put it in the SimplifiedSystem for the guests. Now it's time to try with their data!" />
     <MESSAGE value="Made code to visualise the histograms, and exclude bad users." />
-    <option name="LAST_COMMIT_MESSAGE" value="Made code to visualise the histograms, and exclude bad users." />
+    <MESSAGE value="Table in accuracy_by_settings has been fixed, it used to also use the instances with bigger pRefs." />
+    <option name="LAST_COMMIT_MESSAGE" value="Table in accuracy_by_settings has been fixed, it used to also use the instances with bigger pRefs." />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
