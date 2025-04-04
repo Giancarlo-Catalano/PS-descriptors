@@ -4,7 +4,10 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="a05e8814-504e-4333-8593-ec6366f9f3e6" name="Changes" comment="Table in accuracy_by_settings has been fixed, it used to also use the instances with bigger pRefs." />
+    <list default="true" id="a05e8814-504e-4333-8593-ec6366f9f3e6" name="Changes" comment="New branch added">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/VarianceDecisionTree/process_data/tree_data.ipynb" beforeDir="false" afterPath="$PROJECT_DIR$/VarianceDecisionTree/process_data/tree_data.ipynb" afterDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -20,7 +23,7 @@
   <component name="Git.Settings">
     <option name="RECENT_BRANCH_BY_REPOSITORY">
       <map>
-        <entry key="$PROJECT_DIR$" value="924c267dee13667c604c972c1f62ad0f55d07b33" />
+        <entry key="$PROJECT_DIR$" value="LCS" />
       </map>
     </option>
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
@@ -31,12 +34,17 @@
     &quot;assignee&quot;: &quot;Giancarlo-Catalano&quot;
   }
 }</component>
-  <component name="GithubPullRequestsUISettings">{
-  &quot;selectedUrlAndAccountId&quot;: {
-    &quot;url&quot;: &quot;https://github.com/Giancarlo-Catalano/PS-descriptors.git&quot;,
-    &quot;accountId&quot;: &quot;fcb01860-54d6-4b1d-a397-35a9a8ca5630&quot;
-  }
-}</component>
+  <component name="GithubPullRequestsUISettings">
+    <option name="selectedUrlAndAccountId">
+      <UrlAndAccount>
+        <option name="accountId" value="28d09c99-7cec-4ba5-a5be-329ae6ee5073" />
+        <option name="url" value="https://github.com/Giancarlo-Catalano/PS-descriptors.git" />
+      </UrlAndAccount>
+    </option>
+  </component>
+  <component name="MarkdownSettingsMigration">
+    <option name="stateVersion" value="1" />
+  </component>
   <component name="ProjectColorInfo">{
   &quot;associatedIndex&quot;: 0
 }</component>
@@ -45,39 +53,39 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent">{
-  &quot;keyToString&quot;: {
-    &quot;Python.BTProblem.executor&quot;: &quot;Run&quot;,
-    &quot;Python.Compare_prediction_powers.executor&quot;: &quot;Run&quot;,
-    &quot;Python.GraphColouring.executor&quot;: &quot;Run&quot;,
-    &quot;Python.IAIDecisionTree.executor&quot;: &quot;Run&quot;,
-    &quot;Python.QAP.executor&quot;: &quot;Run&quot;,
-    &quot;Python.SimplePSSearchTask.executor&quot;: &quot;Run&quot;,
-    &quot;Python.TabuSearch.executor&quot;: &quot;Run&quot;,
-    &quot;Python.compare_prediction_powers.executor&quot;: &quot;Run&quot;,
-    &quot;Python.gather_data.executor&quot;: &quot;Run&quot;,
-    &quot;Python.main.executor&quot;: &quot;Run&quot;,
-    &quot;Python.process_data.executor&quot;: &quot;Run&quot;,
-    &quot;Python.testing_IAI.executor&quot;: &quot;Run&quot;,
-    &quot;Python.utils.executor&quot;: &quot;Run&quot;,
-    &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
-    &quot;SHARE_PROJECT_CONFIGURATION_FILES&quot;: &quot;true&quot;,
-    &quot;WebServerToolWindowFactoryState&quot;: &quot;false&quot;,
-    &quot;database.data.extractors.current.export.id&quot;: &quot;Markdown-Groovy.md.groovy&quot;,
-    &quot;database.data.extractors.current.id&quot;: &quot;Markdown-Groovy.md.groovy&quot;,
-    &quot;git-widget-placeholder&quot;: &quot;LCS&quot;,
-    &quot;ignore.virus.scanning.warn.message&quot;: &quot;true&quot;,
-    &quot;last_opened_file_path&quot;: &quot;C:/Users/gac8/PycharmProjects/PS-descriptors-LCS/UserStudy/Instances/Constructed_A&quot;,
-    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
-    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
-    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
-    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
-    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
-    &quot;settings.editor.selected.configurable&quot;: &quot;com.jetbrains.python.configuration.PyActiveSdkModuleConfigurable&quot;,
-    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "Python.BTProblem.executor": "Run",
+    "Python.Compare_prediction_powers.executor": "Run",
+    "Python.GraphColouring.executor": "Run",
+    "Python.IAIDecisionTree.executor": "Run",
+    "Python.QAP.executor": "Run",
+    "Python.SimplePSSearchTask.executor": "Run",
+    "Python.TabuSearch.executor": "Run",
+    "Python.compare_prediction_powers.executor": "Run",
+    "Python.gather_data.executor": "Run",
+    "Python.main.executor": "Run",
+    "Python.process_data.executor": "Run",
+    "Python.testing_IAI.executor": "Run",
+    "Python.utils.executor": "Run",
+    "RunOnceActivity.OpenProjectViewOnStart": "true",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "SHARE_PROJECT_CONFIGURATION_FILES": "true",
+    "WebServerToolWindowFactoryState": "false",
+    "database.data.extractors.current.export.id": "Markdown-Groovy.md.groovy",
+    "database.data.extractors.current.id": "Markdown-Groovy.md.groovy",
+    "git-widget-placeholder": "InterpretableDecisionTrees",
+    "ignore.virus.scanning.warn.message": "true",
+    "last_opened_file_path": "C:/Users/gac8/PycharmProjects/PS-descriptors-LCS/UserStudy/Instances/Constructed_A",
+    "node.js.detected.package.eslint": "true",
+    "node.js.detected.package.tslint": "true",
+    "node.js.selected.package.eslint": "(autodetect)",
+    "node.js.selected.package.tslint": "(autodetect)",
+    "nodejs_package_manager_path": "npm",
+    "settings.editor.selected.configurable": "com.jetbrains.python.configuration.PyActiveSdkModuleConfigurable",
+    "vue.rearranger.settings.migration": "true"
   }
-}</component>
+}]]></component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
       <recent name="C:\Users\gac8\PycharmProjects\PS-descriptors-LCS\UserStudy\Instances\Constructed_A" />
@@ -206,23 +214,7 @@
       <workItem from="1743071002857" duration="596000" />
       <workItem from="1743072806282" duration="15000" />
       <workItem from="1743586958861" duration="11614000" />
-      <workItem from="1743752218220" duration="5943000" />
-    </task>
-    <task id="LOCAL-00101" summary="Submitting before trying it on the server">
-      <option name="closed" value="true" />
-      <created>1735581192714</created>
-      <option name="number" value="00101" />
-      <option name="presentableId" value="LOCAL-00101" />
-      <option name="project" value="LOCAL" />
-      <updated>1735581192714</updated>
-    </task>
-    <task id="LOCAL-00102" summary="moving the main code in main, having some issues.. (incorrect exec code?)">
-      <option name="closed" value="true" />
-      <created>1735612665645</created>
-      <option name="number" value="00102" />
-      <option name="presentableId" value="LOCAL-00102" />
-      <option name="project" value="LOCAL" />
-      <updated>1735612665645</updated>
+      <workItem from="1743752218220" duration="7410000" />
     </task>
     <task id="LOCAL-00103" summary="Remove numba import so that it works on the condor cluster">
       <option name="closed" value="true" />
@@ -600,7 +592,23 @@
       <option name="project" value="LOCAL" />
       <updated>1743772720331</updated>
     </task>
-    <option name="localTasksCounter" value="150" />
+    <task id="LOCAL-00150" summary="Final submit before changing the branch name">
+      <option name="closed" value="true" />
+      <created>1743773163741</created>
+      <option name="number" value="00150" />
+      <option name="presentableId" value="LOCAL-00150" />
+      <option name="project" value="LOCAL" />
+      <updated>1743773163741</updated>
+    </task>
+    <task id="LOCAL-00151" summary="New branch added">
+      <option name="closed" value="true" />
+      <created>1743773258391</created>
+      <option name="number" value="00151" />
+      <option name="presentableId" value="LOCAL-00151" />
+      <option name="project" value="LOCAL" />
+      <updated>1743773258391</updated>
+    </task>
+    <option name="localTasksCounter" value="152" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -630,8 +638,6 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="Processing and displaying the data" />
-    <MESSAGE value="Code to make pretty latex tables was added" />
     <MESSAGE value="Just a safety net submit." />
     <MESSAGE value="Implemented functionality to see what the splits for the les mis problem look like." />
     <MESSAGE value="data for statistical tests added." />
@@ -655,7 +661,9 @@
     <MESSAGE value="Cleaned up some code and put it in the SimplifiedSystem for the guests. Now it's time to try with their data!" />
     <MESSAGE value="Made code to visualise the histograms, and exclude bad users." />
     <MESSAGE value="Table in accuracy_by_settings has been fixed, it used to also use the instances with bigger pRefs." />
-    <option name="LAST_COMMIT_MESSAGE" value="Table in accuracy_by_settings has been fixed, it used to also use the instances with bigger pRefs." />
+    <MESSAGE value="Final submit before changing the branch name" />
+    <MESSAGE value="New branch added" />
+    <option name="LAST_COMMIT_MESSAGE" value="New branch added" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
