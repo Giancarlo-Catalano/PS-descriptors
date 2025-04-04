@@ -8,7 +8,7 @@ import warnings
 import utils
 from VarianceDecisionTree.compare_prediction_powers import get_problems_with_names, get_datapoint_for_instance
 
-
+# this file was made to work with our CondorCluster.
 warnings.simplefilter("always", UserWarning)
 warnings.formatwarning = lambda message, category, filename, lineno, line = None: f"{message}\n"
 
